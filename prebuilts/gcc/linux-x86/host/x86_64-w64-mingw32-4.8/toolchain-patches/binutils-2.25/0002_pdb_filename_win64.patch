@@ -1,0 +1,38 @@
+diff -Nur a/ld/emultempl/pep.em b/ld/emultempl/pep.em
+--- a/ld/emultempl/pep.em	2015-12-11 17:25:42.636935386 -0800
++++ b/ld/emultempl/pep.em	2015-12-11 17:26:46.504481832 -0800
+@@ -1288,6 +1288,9 @@
+       return TRUE;
+     }
+ 
++  const char * pdb_name = _bfd_XXi_get_codeview_pdb_name (abfd);
++  unsigned int pdb_name_length = strlen(pdb_name);
++
+   if (t->build_id.sec->contents == NULL)
+     t->build_id.sec->contents = (unsigned char *) xmalloc (t->build_id.sec->size);
+   contents = t->build_id.sec->contents;
+@@ -1306,7 +1309,7 @@
+   idd.MajorVersion = 0;
+   idd.MinorVersion = 0;
+   idd.Type = PE_IMAGE_DEBUG_TYPE_CODEVIEW;
+-  idd.SizeOfData = sizeof (CV_INFO_PDB70) + 1;
++  idd.SizeOfData = sizeof (CV_INFO_PDB70) + pdb_name_length + 1;
+   idd.AddressOfRawData = asec->vma - ib + link_order->offset
+     + sizeof (struct external_IMAGE_DEBUG_DIRECTORY);
+   idd.PointerToRawData = asec->filepos + link_order->offset
+@@ -1370,12 +1373,12 @@
+       t->build_id.style = emit_build_id;
+       t->build_id.sec = s;
+ 
+-      /* Section is a fixed size:
++      /* Section is a variable size:
+ 	 One IMAGE_DEBUG_DIRECTORY entry, of type IMAGE_DEBUG_TYPE_CODEVIEW,
+ 	 pointing at a CV_INFO_PDB70 record containing the build-id, with a
+-	 null byte for PdbFileName.  */
++     null terminated string for PdbFileName.  */
+       s->size = sizeof (struct external_IMAGE_DEBUG_DIRECTORY)
+-	+ sizeof (CV_INFO_PDB70) + 1;
++      + sizeof (CV_INFO_PDB70) + strlen(_bfd_XXi_get_codeview_pdb_name(link_info.output_bfd)) + 1;
+ 
+       return TRUE;
+     }
