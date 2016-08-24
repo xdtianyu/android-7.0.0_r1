@@ -1,0 +1,12 @@
+prefix=/usr/local/google/home/tfiala/android/master/prebuilts/libs/libedit
+exec_prefix=/usr/local/google/home/tfiala/android/master/prebuilts/libs/libedit/linux-x86
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libedit
+Description: command line editor library provides generic line editing, history, and tokenization functions.
+Version: 3.1
+Requires:
+Libs: -L${libdir} -ledit -ltinfo 
+Cflags: -I${includedir} -I${includedir}/editline
+

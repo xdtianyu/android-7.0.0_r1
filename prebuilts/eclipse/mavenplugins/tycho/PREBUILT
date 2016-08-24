@@ -1,0 +1,61 @@
+This folder mirrors a small subset of artifacts from Maven Central [1].
+
+In order to create this mirror, we do the following steps:
+ 
+ 1. Create a settings.xml [2] file that specifies the location for the
+    repository.
+ 2. Run maven to build the IDE. This process will use Tycho and download
+    and cache all the dependencies in the specified repository.
+ 3. Remove the folder p2 inside the repository, which contains artifacts
+    generated during the build in step 2. We only need cached artifacts.
+ 4. Update settings.xml to specify that it should run in offline mode,
+    and make sure that the repository has all the necessary contents.
+
+Step 1: Create a settings.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+          http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <localRepository>/path/to/tycho/tycho-dependencies-m2repo</localRepository>
+  <offline>false</offline>
+</settings>
+
+Step 2: Run maven using the above settings.xml
+
+ $ cd /path/to/folder/with/pom.xml
+ $ mvn -s /path/to/above/settings.xml package
+
+This should download and cache all the necessary dependencies in the repository
+specified in the settings.xml.
+
+Step 3: Remove unnecessary files from the repository. It turns out that Tycho
+also populates a whole bunch of eclipse plugins into the p2 folder inside the
+repository. These don't need to be checked in, so they can be removed.
+
+Step 4: Validate that the repository contains everything necessary by changing
+the offline attribute to true, and then rebuild.
+
+If everything goes well, then the repository can be checked in.
+
+TODO
+
+This method could possibly be automated using the Maven Dependency plugin [3].
+The "copy-dependencies" task from that plugin allows you to recursively copy
+all the dependencies of a particular POM. Here is an example command to download
+all the dependencies for com.android.tools:sdklib:22.7.2
+
+ $ mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:copy-dependencies \
+    -f ~/.m2/repository/com/android/tools/sdklib/22.7.2/sdklib-22.7.2.pom \
+    -DoutputDirectory=`pwd`/target \
+    -Dmdep.copyPom=true \
+    -Dmdep.useRepositoryLayout=true
+
+Unfortunately, this doesn't seem to work for the Tycho plugin since it seems
+like a more complicated multi module setup. The POM for the Tycho plugin specifies
+sub modules which the dependency plugin doesn't seem to be able to cope with.
+
+[1] http://search.maven.org/
+[2] https://maven.apache.org/settings.html
+[3] http://maven.apache.org/plugins/maven-dependency-plugin/

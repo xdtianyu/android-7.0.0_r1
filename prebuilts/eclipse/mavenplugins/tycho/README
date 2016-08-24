@@ -1,0 +1,9 @@
+Building the ADT Bundle [1] and the monitor RCP application [2] require
+the use of Tycho [3], which is a Maven plugin. This folder contains
+a mirror of the Maven Central repository that contains the Tycho
+maven plugin and all of its dependencies. This allows the build server
+to run Maven in offline mode.
+
+[1] http://developer.android.com/sdk/installing/bundle.html
+[2] http://developer.android.com/tools/help/monitor.html
+[3] https://eclipse.org/tycho/
