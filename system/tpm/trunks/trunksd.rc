@@ -1,0 +1,8 @@
+on post-fs-data
+    mkdir /data/misc/trunksd 0700 system system
+
+service trunksd /system/bin/trunksd
+    class late_start
+    user root
+    group root
+    oneshot

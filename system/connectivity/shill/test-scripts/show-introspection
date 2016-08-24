@@ -1,0 +1,28 @@
+#!/usr/bin/python
+
+import dbus
+
+bus = dbus.SystemBus()
+
+flimflam_object = dbus.Interface(bus.get_object("org.chromium.flimflam", '/'),
+                                 "org.freedesktop.DBus.Introspectable")
+print flimflam_object.Introspect()
+
+manager = dbus.Interface(bus.get_object("org.chromium.flimflam", "/"),
+                         "org.chromium.flimflam.Manager")
+properties = manager.GetProperties(utf8_strings = True)
+
+for path in properties["Devices"]:
+    device = dbus.Interface(bus.get_object("org.chromium.flimflam", path),
+                            "org.freedesktop.DBus.Introspectable")
+    print device.Introspect()
+
+    device_object = dbus.Interface(
+        bus.get_object("org.chromium.flimflam", path),
+        "org.chromium.flimflam.Device")
+    devprops = device_object.GetProperties(utf8_strings = True)
+    for ipconfig_path in devprops["IPConfigs"]:
+        ipconfig = dbus.Interface(
+            bus.get_object("org.chromium.flimflam", ipconfig_path),
+                           "org.freedesktop.DBus.Introspectable")
+        print ipconfig.Introspect()

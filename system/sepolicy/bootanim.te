@@ -1,0 +1,31 @@
+# bootanimation oneshot service
+type bootanim, domain;
+type bootanim_exec, exec_type, file_type;
+
+init_daemon_domain(bootanim)
+
+binder_use(bootanim)
+binder_call(bootanim, surfaceflinger)
+
+allow bootanim gpu_device:chr_file rw_file_perms;
+
+# /oem access
+allow bootanim oemfs:dir search;
+allow bootanim oemfs:file r_file_perms;
+
+allow bootanim audio_device:dir r_dir_perms;
+allow bootanim audio_device:chr_file rw_file_perms;
+
+allow bootanim surfaceflinger_service:service_manager find;
+
+# Allow access to ion memory allocation device
+allow bootanim ion_device:chr_file rw_file_perms;
+
+# Read access to pseudo filesystems.
+r_dir_file(bootanim, proc)
+allow bootanim proc_meminfo:file r_file_perms;
+r_dir_file(bootanim, sysfs)
+r_dir_file(bootanim, cgroup)
+
+# System file accesses.
+allow bootanim system_file:dir r_dir_perms;

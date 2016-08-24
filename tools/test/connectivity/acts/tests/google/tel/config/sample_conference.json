@@ -1,0 +1,14 @@
+{   "_description": "Sample config file for conference testbed",
+    "testbed":
+    [
+        {
+            "_description": "3 android devices with Live SIM, for conference call tests.",
+            "name": "conference testbed",
+            "AndroidDevice": ["<serial_1>", "<serial_2>", "<serial_3>"]
+        }
+    ],
+    "logpath": "/tmp/logs",
+    "testpaths": ["../tests/sample"],
+    "sim_conf_file": "../simcard_list.json",
+    "adb_logcat_param" : "-b all"
+}

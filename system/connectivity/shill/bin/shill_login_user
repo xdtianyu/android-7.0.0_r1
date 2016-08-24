@@ -1,0 +1,170 @@
+#!/bin/sh
+
+#
+# Copyright (C) 2012 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Perform login tasks for shill.  This script is called by the "login"
+# init script.
+
+# Shill expects to find a user profile in /var/run/shill/user_profiles.
+# There are 3 possible places a user profile could exist.  We should
+# use them in the following priority order:
+#
+#  - "New style" cryptohome store -- we create a link to it in
+#    /var/run/shill/user_profiles so if shill restarts while the
+#    user is logged in, shill can regain access to the profile.
+#  - User profile in ~chronos/shill -- if the above does not
+#    exist, we validate this profile and move it to the cryptohome.
+#    We then create a link to it using the step above.
+#  - Old flimflam profile in ~chronos/flimflam -- If the above
+#    does not exist, we move this to ~chronos/shill as an
+#    intermediate step then use the steps above to validate,
+#    and copy to the cryptohome profile.
+
+set -e
+# The login init script calls this script with the login name of the
+# user whose profile is being loaded.
+user=$1
+script_name=$(basename $0)
+
+profile_user=chronos
+profile_name="~${profile_user}/shill"
+shill_state_root=/var/run/shill
+profile_link_root="${shill_state_root}/user_profiles"
+profile_link_dir="$profile_link_root/$profile_user"
+log_link_dir="${shill_state_root}/log"
+username_hash=""
+
+# We should not load multiple network profiles.  If a profile link
+# directory already exists, we should go no further.
+if [ -e "$profile_link_dir" ] ; then
+  logger -t "$script_name" "User already logged in; doing nothing."
+  exit 0
+fi
+
+if [ -n "$user" ] ; then
+  profile_base=$(cryptohome-path system $user)
+  if [ ! -d "$profile_base" ] ; then
+    logger -t "$script_name" \
+      "User cryptohome dir $profile_base does not exist"
+    exit 1
+  fi
+  username_hash=$(basename $profile_base)
+
+  # Make references to the older connection manager profiles that lived
+  # in the user-owned home directory.
+  user_base=$(cryptohome-path user $user)
+  if [ -d "$user_base" ] ; then
+    flimflam_profile_dir="$user_base/flimflam"
+    flimflam_profile="$flimflam_profile_dir/flimflam.profile"
+    old_profile_dir="$user_base/shill"
+    old_profile="$old_profile_dir/shill.profile"
+  fi
+else
+  # If no user is given, create a temporary profile directory which will
+  # be erased on logout.
+  profile_base="${shill_state_root}/guest_user_profile"
+  rm -rf "$profile_base"
+  flimflam_profile=""
+  old_profile=""
+fi
+
+profile_dir="$profile_base/shill"
+profile="$profile_dir/shill.profile"
+log_dir="$profile_base/shill_logs"
+
+if [ ! -d "$profile_dir" ]; then
+  if ! mkdir -p --mode=700 $profile_dir ; then
+    logger -t "$script_name" \
+      "Failed to create shill user profile directory $profile_dir"
+    exit 1
+  fi
+fi
+
+if ! mkdir -p --mode 0700 "$profile_link_root"; then
+  logger -t "$script_name" \
+    "Unable to create shill user profile link directory"
+fi
+
+ln -s "$profile_dir" "$profile_link_dir" ||
+  logger -t "$script_name" \
+    "Failed to create shill user cryptohome link $profile_link_dir"
+
+if ! mkdir -p --mode 0700 "$log_dir"; then
+  logger -t "$script_name" \
+    "Unable to create shill log directory"
+fi
+
+if [ ! -h "$log_link_dir" ]; then
+  ln -s "$log_dir" "$log_link_dir" ||
+    logger -t "$script_name" \
+      "Failed to create shill logs link $log_link_dir"
+fi
+
+if [ ! -f "$profile" ]; then
+  if [ -f "$flimflam_profile" ]; then
+    if [ -f "$old_profile" ]; then
+      logger -t "$script_name" "Removing outdated flimflam user profile"
+      rm -f "$flimflam_profile"
+      rmdir --ignore-fail-on-non-empty "$flimflam_profile_dir"
+    else
+      old_profile="$flimflam_profile"
+      old_profile_dir="$flimflam_profile_dir"
+    fi
+  fi
+
+  if [ -f "$old_profile" ] ; then
+    test_profile="$profile_dir/shill.profile.test"
+    mv "$old_profile" "$test_profile" ||
+      logger -t "$script_name" "Failed to test-move old shill profile"
+    rmdir --ignore-fail-on-non-empty "$old_profile_dir"
+
+    # Inspect profile to make sure it makes sense as a shill profile,
+    # and is properly owned.  Do so while it's in a directory whose
+    # contents are unlikely to be modified underneath us.
+    if [ -h "$test_profile" ] ; then
+      logger -t "$script_name" "Old shill profile is a symlink"
+    elif [ ! -f "$test_profile" ] ; then
+      logger -t "$script_name" "Old shill profile is not a regular file"
+    elif [ ! -O "$test_profile" ] ; then
+      logger -t "$script_name" "Old shill profile was not properly owned"
+    else
+      logger -t "$script_name" "Moving old shill profile from $old_profile"
+      mv "$test_profile" "$profile" ||
+        logger -t "$script_name" "Failed to copy old shill profile"
+    fi
+    rm -rf "$test_profile"
+  fi
+  if [ -e "$old_profile" ] ; then
+    # Old profile exists but does not resolve to a regular file!?
+    logger -t "$script_name" "Old shill profile is not a file or was not moved"
+    rm -rf "$old_profile"
+    rmdir --ignore-fail-on-non-empty "$old_profile_dir"
+  fi
+
+  if [ ! -f "$profile" ]; then
+    # If profile still does not exist, ask shill to create one.
+    dbus-send --system --dest=org.chromium.flimflam --print-reply / \
+      org.chromium.flimflam.Manager.CreateProfile string:$profile_name ||
+        logger -t "$script_name" "Failed to create $profile_name profile"
+  fi
+fi
+
+# Push user's network profile
+dbus-send --system --dest=org.chromium.flimflam --print-reply / \
+  org.chromium.flimflam.Manager.InsertUserProfile \
+      string:$profile_name string:$username_hash ||
+    logger -t "$script_name" "Failed to push $profile_name profile"

@@ -1,0 +1,39 @@
+# cameraserver - camera daemon
+type cameraserver, domain;
+type cameraserver_exec, exec_type, file_type;
+
+init_daemon_domain(cameraserver)
+
+binder_use(cameraserver)
+binder_call(cameraserver, binderservicedomain)
+binder_call(cameraserver, appdomain)
+binder_service(cameraserver)
+
+# access /data/misc/camera
+allow cameraserver camera_data_file:dir create_dir_perms;
+allow cameraserver camera_data_file:file create_file_perms;
+
+allow cameraserver video_device:dir r_dir_perms;
+allow cameraserver video_device:chr_file rw_file_perms;
+allow cameraserver ion_device:chr_file rw_file_perms;
+
+allow cameraserver appops_service:service_manager find;
+allow cameraserver audioserver_service:service_manager find;
+allow cameraserver batterystats_service:service_manager find;
+allow cameraserver cameraproxy_service:service_manager find;
+allow cameraserver cameraserver_service:service_manager add;
+allow cameraserver mediaserver_service:service_manager find;
+allow cameraserver processinfo_service:service_manager find;
+allow cameraserver scheduling_policy_service:service_manager find;
+allow cameraserver surfaceflinger_service:service_manager find;
+
+###
+### neverallow rules
+###
+
+# cameraserver should never execute any executable without a
+# domain transition
+neverallow cameraserver { file_type fs_type }:file execute_no_trans;
+
+# cameraserver should never need network access. Disallow network sockets.
+neverallow cameraserver domain:{ tcp_socket udp_socket rawip_socket } *;

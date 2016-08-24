@@ -1,0 +1,23 @@
+{   "_description": "This is an example skeleton test configuration file.",
+    "testbed":
+    [
+        {
+            "_description": "Sample testbed with two android devices",
+            "name": "Enterprise-D",
+            "AndroidDevice": ["<serial>", "<serial>"]
+        },
+        {
+            "_description": "Sample testbed with two android devices",
+            "name": "Enterprise-E",
+            "AndroidDevice": [{"serial": "<serial>", "label": "caller"},
+                              {"serial": "<serial>", "label": "callee", "whatever": "anything"}]
+        },
+        {
+            "_description": "Sample testbed with no devices",
+            "name": "SampleTestBed"
+        }
+    ],
+    "logpath": "/tmp/logs",
+    "testpaths": ["../tests/sample"],
+    "custom_param1": {"favorite_food": "Icecream!"}
+}

@@ -1,0 +1,12 @@
+# bootstat command
+type bootstat, domain;
+type bootstat_exec, exec_type, file_type;
+
+init_daemon_domain(bootstat)
+
+# Allow persistent storage in /data/misc/bootstat.
+allow bootstat bootstat_data_file:dir rw_dir_perms;
+allow bootstat bootstat_data_file:file create_file_perms;
+
+# Read access to pseudo filesystems (for /proc/uptime).
+r_dir_file(bootstat, proc)

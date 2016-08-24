@@ -1,0 +1,30 @@
+#!/usr/bin/python
+
+import sys, dbus, flimflam
+
+flim = flimflam.FlimFlam(dbus.SystemBus())
+
+if len(sys.argv) == 2 and sys.argv[1] == '--list':
+    print "[%s]" % flim.ListDebugTags()
+else:
+    taglist = flim.GetDebugTags()
+    if len(sys.argv) < 2:
+        if taglist:
+            print "[%s]" % taglist
+        else:
+            print "No debug tags are enabled"
+    else:
+        if sys.argv[1].startswith("+"):
+            newtaglist = taglist
+            if newtaglist:
+                newtaglist += sys.argv[1]
+            else:
+                newtaglist = sys.argv[1].lstrip("+")
+        elif sys.argv[1].startswith("-"):
+            curr_tagset = set(taglist.split("+"))
+            tagset_to_remove = set(sys.argv[1].lstrip("-").split("+"))
+            newtaglist = "+".join(curr_tagset - tagset_to_remove)
+        else:
+            newtaglist = sys.argv[1]
+        flim.SetDebugTags(newtaglist)
+        print "tag list was [%s], now is [%s]" % (taglist, flim.GetDebugTags())

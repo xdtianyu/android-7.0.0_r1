@@ -1,0 +1,19 @@
+This package includes the Android Comms Testing Suite (ACTS) alpha release
+
+System dependencies:
+  - adb
+  - python3.4+
+  - python3.4-setuptools
+
+Python dependencies (installed automatically by setup.py):
+  - contextlib2
+  - future
+  - pyserial
+
+
+Setup:
+  1. Install the system dependencies.
+     On Ubuntu, sudo apt-get install python3.4 python3-setuptools
+  2. Run "python3.4 setup.py install" with elevated permissions
+  3. To verify ACTS is ready to go, at the location for README, and run:
+     cd tests/ && ./test_acts

@@ -1,0 +1,66 @@
+# mediadrmserver - mediadrm daemon
+type mediadrmserver, domain;
+type mediadrmserver_exec, exec_type, file_type;
+
+typeattribute mediadrmserver mlstrustedsubject;
+
+net_domain(mediadrmserver)
+init_daemon_domain(mediadrmserver)
+
+binder_use(mediadrmserver)
+binder_call(mediadrmserver, binderservicedomain)
+binder_call(mediadrmserver, appdomain)
+binder_service(mediadrmserver)
+
+# Required by Widevine DRM (b/22990512)
+allow mediadrmserver self:process execmem;
+
+# System file accesses.
+allow mediadrmserver system_file:dir r_dir_perms;
+allow mediadrmserver system_file:file r_file_perms;
+allow mediadrmserver system_file:lnk_file r_file_perms;
+
+# Read files already opened under /data.
+allow mediadrmserver system_data_file:dir { search getattr };
+allow mediadrmserver system_data_file:file { getattr read };
+allow mediadrmserver system_data_file:lnk_file r_file_perms;
+
+# Read access to pseudo filesystems.
+r_dir_file(mediadrmserver, cgroup)
+allow mediadrmserver cgroup:dir { search write };
+allow mediadrmserver cgroup:file w_file_perms;
+
+# Allow access to ion memory allocation device
+allow mediadrmserver ion_device:chr_file rw_file_perms;
+
+# Allow access to app_data and media_data_files
+allow mediadrmserver media_data_file:dir create_dir_perms;
+allow mediadrmserver media_data_file:file create_file_perms;
+allow mediadrmserver media_data_file:file { getattr read };
+
+allow mediadrmserver tee_device:chr_file rw_file_perms;
+
+# XXX Label with a specific type?
+allow mediadrmserver sysfs:file r_file_perms;
+
+# Connect to tee service.
+allow mediadrmserver tee:unix_stream_socket connectto;
+
+allow mediadrmserver mediadrmserver_service:service_manager { add find };
+allow mediadrmserver mediaserver_service:service_manager { add find };
+allow mediadrmserver processinfo_service:service_manager find;
+
+# only allow unprivileged socket ioctl commands
+allowxperm mediadrmserver self:{ rawip_socket tcp_socket udp_socket }
+  ioctl { unpriv_sock_ioctls unpriv_tty_ioctls };
+
+###
+### neverallow rules
+###
+
+# mediadrmserver should never execute any executable without a
+# domain transition
+neverallow mediadrmserver { file_type fs_type }:file execute_no_trans;
+
+# do not allow privileged socket ioctl commands
+neverallowxperm mediadrmserver domain:{ rawip_socket tcp_socket udp_socket } ioctl priv_sock_ioctls;

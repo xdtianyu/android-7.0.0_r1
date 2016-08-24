@@ -1,0 +1,125 @@
+# zygote
+type zygote, domain, domain_deprecated;
+type zygote_exec, exec_type, file_type;
+
+init_daemon_domain(zygote)
+typeattribute zygote mlstrustedsubject;
+# Override DAC on files and switch uid/gid.
+allow zygote self:capability { dac_override setgid setuid fowner chown };
+# Drop capabilities from bounding set.
+allow zygote self:capability setpcap;
+# Switch SELinux context to app domains.
+allow zygote self:process setcurrent;
+allow zygote system_server:process dyntransition;
+allow zygote { appdomain autoplay_app }:process dyntransition;
+# Allow zygote to read app /proc/pid dirs (b/10455872)
+allow zygote { appdomain autoplay_app }:dir { getattr search };
+allow zygote { appdomain autoplay_app }:file { r_file_perms };
+# Move children into the peer process group.
+allow zygote system_server:process { getpgid setpgid };
+allow zygote { appdomain autoplay_app }:process { getpgid setpgid };
+# Read system data.
+allow zygote system_data_file:dir r_dir_perms;
+allow zygote system_data_file:file r_file_perms;
+# Write to /data/dalvik-cache.
+allow zygote dalvikcache_data_file:dir create_dir_perms;
+allow zygote dalvikcache_data_file:file create_file_perms;
+# Create symlinks in /data/dalvik-cache
+allow zygote dalvikcache_data_file:lnk_file create_file_perms;
+# Write to /data/resource-cache
+allow zygote resourcecache_data_file:dir rw_dir_perms;
+allow zygote resourcecache_data_file:file create_file_perms;
+# For art.
+allow zygote dalvikcache_data_file:file execute;
+# Execute idmap and dex2oat within zygote's own domain.
+# TODO:  Should either of these be transitioned to the same domain
+# used by installd or stay in-domain for zygote?
+allow zygote idmap_exec:file rx_file_perms;
+allow zygote dex2oat_exec:file rx_file_perms;
+# Control cgroups.
+allow zygote cgroup:dir create_dir_perms;
+allow zygote self:capability sys_admin;
+# Check validity of SELinux context before use.
+selinux_check_context(zygote)
+# Check SELinux permissions.
+selinux_check_access(zygote)
+# Read /seapp_contexts and /data/security/seapp_contexts
+security_access_policy(zygote)
+
+# Native bridge functionality requires that zygote replaces
+# /proc/cpuinfo with /system/lib/<ISA>/cpuinfo using a bind mount
+allow zygote proc_cpuinfo:file mounton;
+
+# Allow remounting rootfs as MS_SLAVE
+allow zygote rootfs:dir mounton;
+allow zygote tmpfs:filesystem { mount unmount };
+allow zygote fuse:filesystem { unmount };
+allow zygote sdcardfs:filesystem { unmount };
+
+# Allowed to create user-specific storage source if started before vold
+allow zygote mnt_user_file:dir create_dir_perms;
+allow zygote mnt_user_file:lnk_file create_file_perms;
+# Allowed to mount user-specific storage into place
+allow zygote storage_file:dir { search mounton };
+
+# Handle --invoke-with command when launching Zygote with a wrapper command.
+allow zygote zygote_exec:file rx_file_perms;
+
+# Read access to pseudo filesystems.
+r_dir_file(zygote, proc_net)
+
+# Root fs.
+allow zygote rootfs:file r_file_perms;
+
+# System file accesses.
+allow zygote system_file:dir r_dir_perms;
+allow zygote system_file:file r_file_perms;
+
+userdebug_or_eng(`
+  # Allow zygote to create and write method traces in /data/misc/trace.
+  allow zygote method_trace_data_file:dir w_dir_perms;
+  allow zygote method_trace_data_file:file { create w_file_perms };
+')
+
+###
+### A/B OTA
+###
+
+# The zygote is responsible for detecting A/B OTA artifacts and moving them into
+# the actual dalvik-cache.
+
+# Allow zygote access to files in /data/ota.
+# This includes reading symlinks in /data/ota/dalvik-cache. This is required for PIC mode boot
+# images, where the oat file is symlinked to the original file in /system.
+r_dir_file(zygote, ota_data_file)
+
+# The zygote renames the OTA dalvik-cache to the regular dalvik-cache.
+allow zygote ota_data_file:dir { rw_dir_perms rename reparent };
+
+# And needs to relabel the entries, so as to have the dalvikcache_data_file label.
+allow zygote ota_data_file:{ dir file lnk_file } relabelfrom;
+allow zygote dalvikcache_data_file:{ dir file lnk_file } relabelto;
+
+# The zygote also cleans up the now-empty dalvik-cache directory after an OTA.
+# In case something goes wrong in relabelling, we also need to be able to delete the files that
+# have already been moved.
+allow zygote ota_data_file:dir rmdir;
+allow zygote ota_data_file:{ file lnk_file } unlink;
+
+###
+### neverallow rules
+###
+
+# Ensure that all types assigned to app processes are included
+# in the appdomain attribute, so that all allow and neverallow rules
+# written on appdomain are applied to all app processes.
+# This is achieved by ensuring that it is impossible for zygote to
+# setcon (dyntransition) to any types other than those associated
+# with appdomain plus system_server.
+neverallow zygote ~{ appdomain autoplay_app system_server }:process dyntransition;
+
+# Zygote should never execute anything from /data except for /data/dalvik-cache files.
+neverallow zygote {
+  data_file_type
+  -dalvikcache_data_file # map PROT_EXEC
+}:file no_x_file_perms;

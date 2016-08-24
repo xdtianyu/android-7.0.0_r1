@@ -1,0 +1,110 @@
+######################################
+# Attribute declarations
+#
+
+# All types used for devices.
+# On change, update CHECK_FC_ASSERT_ATTRS
+# in tools/checkfc.c
+attribute dev_type;
+
+# All types used for processes.
+attribute domain;
+
+# Temporary attribute used for migrating permissions out of domain.
+# Motivation: Domain is overly permissive. Start removing permissions
+# from domain and assign them to the domain_deprecated attribute.
+# Domain_deprecated and domain can initially be assigned to all
+# domains. The goal is to not assign domain_deprecated to new domains
+# and to start removing domain_deprecated where it's not required or
+# reassigning the appropriate permissions to the inheriting domain
+# when necessary.
+attribute domain_deprecated;
+
+# All types used for filesystems.
+# On change, update CHECK_FC_ASSERT_ATTRS
+# definition in tools/checkfc.c.
+attribute fs_type;
+
+# All types used for context= mounts.
+attribute contextmount_type;
+
+# All types used for files that can exist on a labeled fs.
+# Do not use for pseudo file types.
+# On change, update CHECK_FC_ASSERT_ATTRS
+# definition in tools/checkfc.c.
+attribute file_type;
+
+# All types used for domain entry points.
+attribute exec_type;
+
+# All types used for /data files.
+attribute data_file_type;
+
+# All types use for sysfs files.
+attribute sysfs_type;
+
+# All types use for debugfs files.
+attribute debugfs_type;
+
+# Attribute used for all sdcards
+attribute sdcard_type;
+
+# All types used for nodes/hosts.
+attribute node_type;
+
+# All types used for network interfaces.
+attribute netif_type;
+
+# All types used for network ports.
+attribute port_type;
+
+# All types used for property service
+# On change, update CHECK_PC_ASSERT_ATTRS
+# definition in tools/checkfc.c.
+attribute property_type;
+
+# All properties defined in core SELinux policy. Should not be
+# used by device specific properties
+attribute core_property_type;
+
+# All properties used to configure log filtering.
+attribute log_property_type;
+
+# All service_manager types created by system_server
+attribute system_server_service;
+
+# services which should be available to all but isolated apps
+attribute app_api_service;
+
+# services which export only system_api
+attribute system_api_service;
+
+# All types used for services managed by service_manager.
+# On change, update CHECK_SC_ASSERT_ATTRS
+# definition in tools/checkfc.c.
+attribute service_manager_type;
+
+# All domains that can override MLS restrictions.
+# i.e. processes that can read up and write down.
+attribute mlstrustedsubject;
+
+# All types that can override MLS restrictions.
+# i.e. files that can be read by lower and written by higher
+attribute mlstrustedobject;
+
+# All domains used for apps.
+attribute appdomain;
+
+# All domains used for apps with network access.
+attribute netdomain;
+
+# All domains used for apps with bluetooth access.
+attribute bluetoothdomain;
+
+# All domains used for binder service domains.
+attribute binderservicedomain;
+
+# All domains that access the boot_control HAL. The permissions the HAL
+# requires are specific to the implementation provided in each device, but
+# common daemons need to be aware of those when calling into the HAL.
+attribute boot_control_hal;

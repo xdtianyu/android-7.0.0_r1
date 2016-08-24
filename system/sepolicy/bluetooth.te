@@ -1,0 +1,72 @@
+# bluetooth subsystem
+type bluetooth, domain, domain_deprecated;
+app_domain(bluetooth)
+net_domain(bluetooth)
+
+wakelock_use(bluetooth);
+
+# Data file accesses.
+allow bluetooth bluetooth_data_file:dir create_dir_perms;
+allow bluetooth bluetooth_data_file:notdevfile_class_set create_file_perms;
+
+# Socket creation under /data/misc/bluedroid.
+type_transition bluetooth bluetooth_data_file:sock_file bluetooth_socket;
+allow bluetooth bluetooth_socket:sock_file create_file_perms;
+
+# bluetooth factory file accesses.
+r_dir_file(bluetooth, bluetooth_efs_file)
+
+allow bluetooth { uhid_device hci_attach_dev }:chr_file rw_file_perms;
+
+# sysfs access.
+allow bluetooth sysfs_bluetooth_writable:file rw_file_perms;
+allow bluetooth self:capability net_admin;
+allow bluetooth self:capability2 wake_alarm;
+
+# tethering
+allow bluetooth self:packet_socket create_socket_perms;
+allow bluetooth self:capability { net_admin net_raw net_bind_service };
+allow bluetooth self:tun_socket create_socket_perms;
+allow bluetooth tun_device:chr_file rw_file_perms;
+allow bluetooth efs_file:dir search;
+
+# proc access.
+allow bluetooth proc_bluetooth_writable:file rw_file_perms;
+
+# Allow write access to bluetooth specific properties
+set_prop(bluetooth, bluetooth_prop)
+set_prop(bluetooth, pan_result_prop)
+
+allow bluetooth audioserver_service:service_manager find;
+allow bluetooth bluetooth_service:service_manager find;
+allow bluetooth drmserver_service:service_manager find;
+allow bluetooth mediaserver_service:service_manager find;
+allow bluetooth radio_service:service_manager find;
+allow bluetooth surfaceflinger_service:service_manager find;
+allow bluetooth app_api_service:service_manager find;
+allow bluetooth system_api_service:service_manager find;
+
+# Bluetooth Sim Access Profile Socket to the RIL
+unix_socket_connect(bluetooth, sap_uim, rild)
+
+# already open bugreport file descriptors may be shared with
+# the bluetooth process, from a file in
+# /data/data/com.android.shell/files/bugreports/bugreport-*.
+allow bluetooth shell_data_file:file read;
+
+# Access to /data/media.
+# This should be removed if sdcardfs is modified to alter the secontext for its
+# accesses to the underlying FS.
+allow bluetooth media_rw_data_file:dir create_dir_perms;
+allow bluetooth media_rw_data_file:file create_file_perms;
+
+###
+### Neverallow rules
+###
+### These are things that the bluetooth app should NEVER be able to do
+###
+
+# Superuser capabilities.
+# bluetooth requires net_{admin,raw,bind_service} and wake_alarm and block_suspend.
+neverallow bluetooth self:capability ~{ net_admin net_raw net_bind_service };
+neverallow bluetooth self:capability2 ~{ wake_alarm block_suspend };

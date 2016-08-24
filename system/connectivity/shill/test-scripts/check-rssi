@@ -1,0 +1,45 @@
+#!/usr/bin/python
+
+import dbus, flimflam
+
+flim = flimflam.FlimFlam(dbus.SystemBus())
+
+strength = {}
+
+for device in flim.GetObjectList("Device"):
+    device_properties = device.GetProperties(utf8_strings = True)
+    try:
+        if device_properties["Type"] not in ["wifi", "wimax",
+            "bluetooth", "cellular"]:
+            continue
+    except Exception, e:
+        continue
+
+    for network in flim.GetObjectList("Network", device_properties):
+        network_properties = network.GetProperties(utf8_strings = True)
+
+        if "Name" not in network_properties:
+            continue
+        name = network_properties["Name"]
+
+        if "Strength" not in network_properties:
+            print "No strength for network %s" % name
+            continue
+
+        if strength.get(name, -1) < network_properties["Strength"]:
+            strength[name] = network_properties["Strength"]
+
+#        print "%-14s: strength %d network %d" % \
+#            (name,
+#             int(strength.get(name, -1)),
+#             int(network_properties.get("Strength", -1)))
+
+for service in flim.GetObjectList("Service"):
+    properties = service.GetProperties(utf8_strings = True)
+    if "Name" not in properties:
+        continue
+
+    name = properties["Name"]
+
+    print "%-14s: network %d service %d" % \
+        (name, int(strength.get(name, -1)), int(properties.get("Strength", -1)))

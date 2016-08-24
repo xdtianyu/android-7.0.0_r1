@@ -1,0 +1,109 @@
+###
+### AutoPlay apps.
+###
+### This file defines the security policy for apps with the autoplay
+### feature.
+###
+### The autoplay_app domain is a reduced permissions sandbox allowing
+### ephemeral applications to be safely installed and run. Non ephemeral
+### applications may also opt-in to autoplay to take advantage of the
+### additional security features.
+###
+### PackageManager flags an app as autoplay at install time.
+type autoplay_app, domain;
+
+# allow JITing
+allow autoplay_app self:process execmem;
+allow autoplay_app ashmem_device:chr_file execute;
+
+# Define and allow access to our own type for ashmem regions.
+# Label ashmem objects with our own unique type.
+tmpfs_domain(autoplay_app)
+# Map with PROT_EXEC.
+allow autoplay_app autoplay_app_tmpfs:file execute;
+
+# Read system properties managed by zygote.
+allow autoplay_app zygote_tmpfs:file read;
+
+# Send logcat messages to logd.
+write_logd(autoplay_app)
+
+# Receive and use open file descriptors inherited from zygote.
+allow autoplay_app zygote:fd use;
+
+# Notify zygote of death;
+allow autoplay_app zygote:process sigchld;
+
+# application inherit logd write socket (urge is to deprecate this long term)
+allow autoplay_app zygote:unix_dgram_socket write;
+
+# App sandbox file accesses.
+allow autoplay_app autoplay_data_file:dir create_dir_perms;
+allow autoplay_app autoplay_data_file:{ file sock_file fifo_file } create_file_perms;
+
+# For art.
+allow autoplay_app dalvikcache_data_file:file { execute r_file_perms };
+allow autoplay_app dalvikcache_data_file:lnk_file r_file_perms;
+allow autoplay_app dalvikcache_data_file:dir getattr;
+
+# Grant GPU access. autoplay_app needs that to render the standard UI.
+allow autoplay_app gpu_device:chr_file rw_file_perms;
+
+# Use the Binder.
+binder_use(autoplay_app)
+# Perform binder IPC to binder services.
+binder_call(autoplay_app, surfaceflinger)
+binder_call(autoplay_app, system_server)
+
+# Allow read access to ion memory allocation device
+allow autoplay_app ion_device:chr_file { read open };
+
+# Use pipes and sockets provided by system_server via binder or local socket.
+allow autoplay_app system_server:fifo_file rw_file_perms;
+allow autoplay_app system_server:unix_stream_socket { read write setopt getattr getopt shutdown };
+allow autoplay_app system_server:tcp_socket { read write getattr getopt shutdown };
+
+# Inherit or receive open files from system_server.
+allow autoplay_app system_server:fd use;
+
+# Communicate with surfaceflinger.
+allow autoplay_app surfaceflinger:unix_stream_socket { read write setopt getattr getopt shutdown };
+
+# Read files already opened under /data.
+allow autoplay_app system_data_file:file { getattr read };
+allow autoplay_app system_data_file:lnk_file read;
+
+# System file accesses. Check for libraries
+allow autoplay_app system_file:dir getattr;
+
+# services
+allow autoplay_app accessibility_service:service_manager find;
+allow autoplay_app activity_service:service_manager find;
+allow autoplay_app assetatlas_service:service_manager find;
+allow autoplay_app connectivity_service:service_manager find;
+allow autoplay_app display_service:service_manager find;
+allow autoplay_app graphicsstats_service:service_manager find;
+allow autoplay_app input_method_service:service_manager find;
+allow autoplay_app input_service:service_manager find;
+allow autoplay_app surfaceflinger_service:service_manager find;
+allow autoplay_app textservices_service:service_manager find;
+
+###
+### neverallow rules
+###
+
+# Receive or send uevent messages.
+neverallow autoplay_app domain:netlink_kobject_uevent_socket *;
+
+# Receive or send generic netlink messages
+neverallow autoplay_app domain:netlink_socket *;
+
+# Too much leaky information in debugfs. It's a security
+# best practice to ensure these files aren't readable.
+neverallow autoplay_app debugfs:file read;
+
+# execute gpu_device
+neverallow autoplay_app gpu_device:chr_file execute;
+
+# access files in /sys with the default sysfs label
+neverallow autoplay_app sysfs:file *;

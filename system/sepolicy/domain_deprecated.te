@@ -1,0 +1,74 @@
+# rules removed from the domain attribute
+
+# Read access to properties mapping.
+allow domain_deprecated kernel:fd use;
+allow domain_deprecated tmpfs:file { read getattr };
+allow domain_deprecated tmpfs:lnk_file { read getattr };
+
+# Search /storage/emulated tmpfs mount.
+allow domain_deprecated tmpfs:dir r_dir_perms;
+
+# Inherit or receive open files from others.
+allow domain_deprecated system_server:fd use;
+
+# Connect to adbd and use a socket transferred from it.
+# This is used for e.g. adb backup/restore.
+allow domain_deprecated adbd:unix_stream_socket connectto;
+allow domain_deprecated adbd:fd use;
+allow domain_deprecated adbd:unix_stream_socket { getattr getopt ioctl read write shutdown };
+
+# Root fs.
+allow domain_deprecated rootfs:dir r_dir_perms;
+allow domain_deprecated rootfs:file r_file_perms;
+allow domain_deprecated rootfs:lnk_file r_file_perms;
+
+# Device accesses.
+allow domain_deprecated device:file read;
+
+# System file accesses.
+allow domain_deprecated system_file:dir r_dir_perms;
+allow domain_deprecated system_file:file r_file_perms;
+allow domain_deprecated system_file:lnk_file r_file_perms;
+
+# Read files already opened under /data.
+allow domain_deprecated system_data_file:dir { search getattr };
+allow domain_deprecated system_data_file:file { getattr read };
+allow domain_deprecated system_data_file:lnk_file r_file_perms;
+
+# Read apk files under /data/app.
+allow domain_deprecated apk_data_file:dir { getattr search };
+allow domain_deprecated apk_data_file:file r_file_perms;
+allow domain_deprecated apk_data_file:lnk_file r_file_perms;
+
+# Read /data/dalvik-cache.
+allow domain_deprecated dalvikcache_data_file:dir { search getattr };
+allow domain_deprecated dalvikcache_data_file:file r_file_perms;
+
+# Read already opened /cache files.
+allow domain_deprecated cache_file:dir r_dir_perms;
+allow domain_deprecated cache_file:file { getattr read };
+allow domain_deprecated cache_file:lnk_file r_file_perms;
+
+#Allow access to ion memory allocation device
+allow domain_deprecated ion_device:chr_file rw_file_perms;
+
+# Read access to pseudo filesystems.
+r_dir_file(domain_deprecated, proc)
+r_dir_file({ domain_deprecated -isolated_app }, sysfs)
+r_dir_file(domain_deprecated, inotify)
+r_dir_file(domain_deprecated, cgroup)
+allow domain_deprecated proc_meminfo:file r_file_perms;
+r_dir_file(domain_deprecated, proc_net)
+
+# Get SELinux enforcing status.
+allow domain_deprecated selinuxfs:dir r_dir_perms;
+allow domain_deprecated selinuxfs:file r_file_perms;
+
+# /data/security files
+allow domain_deprecated security_file:dir { search getattr };
+allow domain_deprecated security_file:file getattr;
+allow domain_deprecated security_file:lnk_file r_file_perms;
+
+# World readable asec image contents
+allow domain_deprecated asec_public_file:file r_file_perms;
+allow domain_deprecated { asec_public_file asec_apk_file }:dir r_dir_perms;

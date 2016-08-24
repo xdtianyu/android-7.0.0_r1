@@ -1,0 +1,83 @@
+#
+# Copyright (C) 2014 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+gettid: 1
+getuid: 1
+geteuid: 1
+getgid: 1
+getegid: 1
+getresuid: 1
+getresgid: 1
+
+clock_getres: 1
+clock_gettime: 1
+gettimeofday: 1
+time: 1
+
+epoll_create: 1
+epoll_create1: 1
+epoll_wait: 1
+epoll_pwait: 1
+epoll_ctl: 1
+poll: 1
+
+openat: 1
+read: 1
+write: 1
+writev: 1
+close: 1
+fstat: 1
+stat: 1
+lseek: 1
+fcntl: 1
+readlinkat: 1
+faccessat: 1
+pipe2: 1
+socket: 1
+connect: 1
+
+futex: 1
+
+restart_syscall: 1
+exit: 1
+exit_group: 1
+rt_sigaction: 1
+rt_sigreturn: 1
+sigaltstack: 1
+personality: 1
+
+brk: 1
+mmap: 1
+munmap: 1
+madvise: 1
+
+# Allow thread creation.
+mprotect: 1
+clone: 1
+set_robust_list: 1
+# This is attempted but apparently not necessary; return EPERM.
+prctl: return 1
+set_thread_area: 1
+gettid: 1
+set_tid_address: 1
+
+rt_sigprocmask: 1
+signalfd4: 1
+ioctl: 1
+getpriority: 1
+exit: 1
+exit_group: 1
+chdir: 1

@@ -1,0 +1,104 @@
+IP Configuration Handling
+*************************
+
+
+IP basics
+=========
+
+Layer 3 configuration state is managed on a per-device basis.  When
+a device is connected, it will have an IPConifg record associated with
+it.  In addition, connected services will have an "IPConfig" property
+which will contain the path to this record.  These properties of the
+IPConfig record represent the current state of connectivity of the
+device.
+
+IPConfig hierarchy
+==================
+
+Service		org.chromium.flimflam
+Interface	org.chromium.flimflam.IPConfig
+Object path	[variable prefix]/{ipconfig0,ipconfig1,...}
+
+Methods		dict GetProperties()
+
+			Return properties for the IPConfig object. See
+			the properties section for available properties.
+
+		void Refresh()
+
+			Cause the IP configuration to be refreshed.  In
+			the case of DHCP configurations, the lease is
+			renewed, and any Static IP configuration from
+			the service is re-applied.
+
+Signals		PropertyChanged(string name, variant value)
+
+			This signal indicates a changed value of the given
+			property.
+
+Properties	string Address [readonly]
+
+			The Layer 3 address expressed in the dotted-quad format
+			for IPv4 and any allowed format for IPv6 (as specified
+			for inet_pton(3)).
+
+		string Broadcast [readonly]
+
+			The Layer 3 broadcast address specified as per Address.
+
+		string DomainName [readonly]
+
+			The DNS domain name to use in building FQDN queries.
+
+		string Gateway [readonly]
+
+			The Layer 3 address gateway address specified as
+			per Address.
+
+		string Method [readonly]
+
+			The method by which Layer 3 state is managed.
+
+			Possible methods are:
+			   "ipv4"       (fixed IPv4 network state)
+			   "ipv6"       (fixed IPv6 network state)
+			   "dhcp"       (IPv4 state setup using DHCP)
+			   "bootp"      (IPv4 state setup using BOOTP)
+			   "zeroconf"   (IPV4 state setup using ZeroConf)
+			   "dhcp6"      (IPv6 state setup using DHCP6)
+			   "ppp"        (IPv4 state setup using PPP)
+			   "vpn"        (IPv4 state setup using VPN)
+
+		int32 Mtu [readonly]
+
+			The maximum transmit unit (MTU) in bytes.
+
+		array{string} NameServers [readonly]
+
+			The Layer 3 addresses of DNS domain name servers to
+			use for DNS requests.
+
+		string PeerAddress [readonly]
+
+			The Layer 3 address associated with the destination
+			endpoint of a point-to-point link.  This value is
+			specified as per Address.
+
+		int32 Prefixlen [readonly]
+
+			The number of bits in a Layer 3 address that are
+			part of the network address.  For IPv4 networks this
+			corresponds to the length of the network mask; e.g.
+			a netmask of 255.255.255.0 has a prefixlen of 24
+			(note arbitrary CIDR masks are not supported.)
+
+		array{uint8} VendorEncapsulatedOptions [readonly]
+
+			Server-provided value for the DHCP option 43
+			value.  Its interpretation varies based on
+			the DHCP server.
+
+		string WebProxyAutoDiscoveryUrl [readonly]
+
+			The Web Proxy Auto-Discovery URL for this network
+			as reported over DHCP.

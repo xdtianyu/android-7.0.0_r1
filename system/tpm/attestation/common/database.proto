@@ -1,0 +1,113 @@
+// Copyright 2015 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+option optimize_for = LITE_RUNTIME;
+
+import "common.proto";
+
+package attestation;
+
+// Holds TPM credentials that the attestation server will need to see. These
+// credentials must be cleared once the attestation server has certified the
+// AIK.
+message TPMCredentials {
+  optional bytes endorsement_public_key = 1;
+  optional bytes endorsement_credential = 2;
+  optional bytes platform_credential = 3;
+  optional bytes conformance_credential = 4;
+  // The |endorsement_credential| encrypted with a public key associated with
+  // the default Chrome OS Privacy CA.
+  optional EncryptedData default_encrypted_endorsement_credential = 5;
+  optional EncryptedData alternate_encrypted_endorsement_credential = 6;
+}
+
+// Holds information relevant to a particular AIK.
+message IdentityKey {
+  // The DER encoded public key.
+  optional bytes identity_public_key = 1;
+  // The TPM-specific key blob that can be loaded back into the TPM.
+  optional bytes identity_key_blob = 2;
+  // A credential issued by the attestation server.
+  optional bytes identity_credential = 3;
+}
+
+// Holds information required to verify the binding of an AIK to an EK. This
+// information should be cleared once the attestation server has certified the
+// AIK.
+message IdentityBinding {
+  // The binding data, as output by the TPM_MakeIdentity operation.
+  optional bytes identity_binding = 1;
+  // The AIK public key, DER encoded.
+  optional bytes identity_public_key_der = 2;
+  // The AIK public key, in TPM_PUBKEY form.
+  optional bytes identity_public_key = 3;
+  // The label used during AIK creation.
+  optional bytes identity_label = 4;
+  // The PCA public key used during AIK creation, in TPM_PUBKEY form.
+  optional bytes pca_public_key = 5;
+}
+
+// Holds owner delegation information.
+message Delegation {
+  // The delegate owner blob.
+  optional bytes blob = 1;
+  // The authorization secret.
+  optional bytes secret = 2;
+  // Whether this delegate has permissions to call TPM_ResetLockValue.
+  optional bool has_reset_lock_permissions = 3;
+}
+
+// Holds information about a certified key.
+message CertifiedKey {
+  // The TPM-wrapped key blob.
+  optional bytes key_blob = 1;
+  // The public key in ASN.1 DER form.
+  optional bytes public_key = 2;
+  // The credential of the certified key in X.509 format.
+  optional bytes certified_key_credential = 3;
+  // The issuer intermediate CA certificate in X.509 format.
+  optional bytes intermediate_ca_cert = 4;
+  // A key name.  This is not necessarily a unique identifier.
+  optional bytes key_name = 5;
+  // An arbitrary payload associated with the key.
+  optional bytes payload = 6;
+  // Addtional intermediate CA certificates that helps chaining up to the root
+  // CA. See |AttestationCertificateResponse.additional_intermediate_ca_cert|
+  // for more detail.
+  repeated bytes additional_intermediate_ca_cert = 7;
+  // The public key in TPM_PUBKEY form.
+  optional bytes public_key_tpm_format = 8;
+  // The serialized TPM_CERTIFY_INFO for the certified key.
+  optional bytes certified_key_info = 9;
+  // The signature of the TPM_CERTIFY_INFO by the AIK.
+  optional bytes certified_key_proof = 10;
+  // The original key type specified when the key was created.
+  optional KeyType key_type = 11;
+  // The original key usage specified when the key was created.
+  optional KeyUsage key_usage = 12;
+}
+
+// Holds all information that a client stores locally.
+message AttestationDatabase {
+  optional TPMCredentials credentials = 2;
+  optional IdentityBinding identity_binding = 3;
+  optional IdentityKey identity_key = 4;
+  optional Quote pcr0_quote = 5;
+  optional Quote pcr1_quote = 12;
+  optional Delegation delegate = 6;
+  repeated CertifiedKey device_keys = 7;
+
+  message TemporalIndexRecord {
+    optional bytes user_hash = 1;
+    optional bytes origin_hash = 2;
+    optional int32 temporal_index = 3;
+  }
+  repeated TemporalIndexRecord temporal_index_record = 8;
+
+  optional IdentityBinding alternate_identity_binding = 9;
+  optional IdentityKey alternate_identity_key = 10;
+  optional Quote alternate_pcr0_quote = 11;
+  optional Quote alternate_pcr1_quote = 13;
+}
+

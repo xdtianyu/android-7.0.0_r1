@@ -1,0 +1,188 @@
+#!/bin/sh
+
+#
+# Copyright (C) 2012 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Set the APN to be used when making connections on a cellular service.
+
+PROGRAM=$(basename $0)
+FLAGS_HELP="Usage:
+
+  ${PROGRAM}
+
+or
+
+  ${PROGRAM} [-n <network_id>] [-u <username] [-p <password] <apn>
+
+or
+
+  ${PROGRAM} -c
+"
+
+. /usr/share/misc/shflags
+
+FLIMFLAM=org.chromium.flimflam
+IMANAGER=${FLIMFLAM}.Manager
+ISERVICE=${FLIMFLAM}.Service
+APN_PROPERTY=Cellular.APN
+LAST_GOOD_APN_PROPERTY=Cellular.LastGoodAPN
+
+SET_APN_HELPER=$(ls /usr/lib*/shill/shims/set-apn-helper | head -1)
+if [ -z "$SET_APN_HELPER" ] ; then
+  echo "set-apn-helper script was not found!"
+  exit 1
+fi
+
+usage() {
+  echo "$*"
+  echo
+  flags_help
+  exit 1
+}
+
+dbus() {
+  local object="$1"
+  local method="$2"
+  shift 2
+
+  dbus-send --system --print-reply --fixed --dest="${FLIMFLAM}" \
+    "${object}" "${method}" "$@"
+}
+
+get_apn_info() {
+  local service="$1"
+  local property="$2"
+
+  dbus "${service}" "${ISERVICE}.GetProperties" 2>/dev/null \
+    | sed -n "/${property}/s/.*\///p"
+}
+
+display_apn() {
+  local service="$1"
+  local apn="$(get_apn_info ${service} ${LAST_GOOD_APN_PROPERTY})"
+
+  if [ -n "${apn}" ]; then
+    echo "Last good APN: " ${apn}
+    exit 0
+  fi
+
+  apn="$(get_apn_info ${service} ${APN_PROPERTY})"
+  if [ -n "${apn}" ]; then
+    echo "User specified APN: " ${apn}
+    exit 0
+  fi
+
+  echo "No APN."
+  exit 0
+}
+
+set_apn() {
+  local service="$1"
+  local apn="$2"
+  local network_id="$3"
+  local username="$4"
+  local password="$5"
+  local args="apn,${apn},network_id,${network_id}"
+
+  if [ -n "${username}" ]; then
+    args="${args},username,${username}"
+  fi
+
+  if [ -n "${password}" ]; then
+    args="${args},password,${password}"
+  fi
+
+  echo "Setting APN \"${apn}\" for network ID ${network_id} for service ${service}"
+  ${SET_APN_HELPER} "${service}" "${APN_PROPERTY}" "${args}"
+}
+
+clear_apn() {
+  local service="$1"
+
+  echo "Clearing APN for service ${service}"
+  dbus "${service}" "${ISERVICE}.ClearProperty" "string:${APN_PROPERTY}"
+}
+
+get_services() {
+  dbus / "${IMANAGER}.GetProperties" 2>/dev/null \
+    | sed -n "/\/Services\//{s/.* //p}"
+}
+
+get_service_property() {
+  local service="$1"
+  local property="$2"
+
+  dbus "${service}" "${ISERVICE}.GetProperties" 2>/dev/null \
+    | sed -n "/\/${property}/{s/.* //p}"
+}
+
+get_first_cellular_service() {
+  local service
+  local service_type
+
+  for service in $(get_services); do
+    service_type="$(get_service_property ${service} Type)"
+    if [ "${service_type}" = "cellular" ]; then
+      echo "${service}"
+      break
+    fi
+  done
+}
+
+get_cellular_service_network_id() {
+  local service="$1"
+  get_service_property "${service}" "Cellular.ServingOperator\/[0-9]\/code"
+}
+
+service="$(get_first_cellular_service)"
+if [ -z "${service}" ]; then
+  echo "No cellular service exists."
+  exit 1
+fi
+
+if [ $# -lt 1 ]; then
+  display_apn "${service}"
+fi
+
+DEFINE_string 'network_id' "" 'network ID (MCCMNC) of the operator with which the APN should be used' 'n'
+DEFINE_string 'username' "" 'username to be used with the APN' 'u'
+DEFINE_string 'password' "" 'password to be used with the APN' 'p'
+DEFINE_boolean 'clear' false 'clear any APN that has been previously set' 'c'
+FLAGS "$@" || exit 1
+eval set -- "${FLAGS_ARGV}"
+
+network_id="${FLAGS_network_id}"
+if [ -z "${FLAGS_network_id}" ]; then
+  network_id="$(get_cellular_service_network_id ${service})"
+  if [ -z "${network_id}" ]; then
+    echo "Cannot determine network ID. Use the -n flag to specify it."
+    exit 1
+  fi
+fi
+
+if [ "${FLAGS_clear}" -ne 0 ]; then
+  if [ $# -lt 1 ]; then
+    usage "The APN must be specified."
+  elif [ $# -gt 1 ]; then
+    usage "Too many arguments."
+  fi
+  set_apn "${service}" "$1" "${network_id}" "${FLAGS_username}" "${FLAGS_password}"
+else
+  if [ $# -ne 0 ]; then
+    usage "Too many arguments."
+  fi
+  clear_apn "${service}"
+fi

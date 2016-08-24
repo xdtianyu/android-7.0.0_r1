@@ -1,0 +1,73 @@
+#!/bin/sh
+#
+# Copyright (C) 2011 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# Set the ARP gateway.
+
+FLAGS_HELP="Usage:
+
+  $(basename $0)
+
+or
+
+  $(basename $0) [true | false]
+"
+
+FLIMFLAM=org.chromium.flimflam
+IMANAGER=$FLIMFLAM.Manager
+
+usage() {
+  echo "$*"
+  echo
+  echo $FLAGS_HELP
+  exit 1
+}
+
+dbus () {
+  local obj=$1
+  local meth=$2
+  shift 2
+
+  dbus-send --system --print-reply --fixed --dest=$FLIMFLAM "$obj" "$meth" "$@"
+}
+
+get_manager () {
+  dbus / $IMANAGER.GetProperties | sed -n "/$1/s/.* //p"
+}
+
+display_arpgw () {
+  local arpgw=$(get_manager ArpGateway)
+
+  if [ -n "$arpgw" ] ; then
+    echo "Current Gateway ARP setting: " $arpgw
+    exit 0
+  fi
+
+  echo "This Flimflam instance does not support ArpGateway"
+  exit 0
+}
+
+if [ $# -lt 1 ]; then
+    display_arpgw
+fi
+
+set_arpgw=$1
+
+if [ $set_arpgw != false -a $set_arpgw != true ] ; then
+    usage "Argument must be 'true' or 'false'"
+fi
+
+dbus / $IMANAGER.SetProperty string:"ArpGateway" variant:boolean:$set_arpgw

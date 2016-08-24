@@ -1,0 +1,39 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+
+<node>
+	<interface name="org.chromium.flimflam.Service">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<method name="SetProperties">
+			<arg type="a{sv}" direction="in"/>
+		</method>
+		<method name="ClearProperty">
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="ClearProperties">
+			<arg type="as" direction="in"/>
+			<arg type="ab" direction="out"/>
+		</method>
+		<method name="Connect"/>
+		<method name="Disconnect"/>
+		<method name="Remove"/>
+		<method name="ActivateCellularModem">
+			<arg type="s" direction="in"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="CompleteCellularActivation"/>
+		<method name="GetLoadableProfileEntries">
+			<arg type="a{os}" direction="out"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+</node>

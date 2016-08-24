@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <interface name="org.chromium.apmanager.Service">
+    <method name="Start">
+      <tp:docstring>
+        Start the service.
+      </tp:docstring>
+      <annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+    </method>
+    <method name="Stop">
+      <tp:docstring>
+        Stop the service.
+      </tp:docstring>
+    </method>
+    <property name="Config" type="o" access="read"/>
+    <property name="State" type="s" access="read"/>
+  </interface>
+</node>

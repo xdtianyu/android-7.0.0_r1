@@ -1,0 +1,28 @@
+#!/usr/bin/python
+
+import pprint, sys, time
+import dbus, flimflam
+
+if (len(sys.argv) < 2):
+    print "Usage: %s <service_name>" % (sys.argv[0])
+    sys.exit(1)
+
+flim = flimflam.FlimFlam(dbus.SystemBus())
+
+timeout = time.time() + 30
+while time.time() < timeout:
+    service = flim.FindElementByPropertySubstring('Service',
+                                                  'Name',
+                                                  sys.argv[1])
+    if service:
+        break
+    time.sleep(.5)
+
+if service is None:
+    print "Unknown service %s" % sys.argv[1]
+    sys.exit(2)
+
+(success, diagnostics) = flim.ConnectService(service=service)
+
+print 'Success:', success
+pprint.pprint(diagnostics)

@@ -1,0 +1,139 @@
+
+Copyright (C) 2012 The Android Open Source Project
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+To keep the shill source code consistent, please follow the conventions below:
+
+- Use the Chromium Coding Style, as described at
+  http://www.chromium.org/developers/coding-style.
+
+  If you use Emacs, the Google C Style mode will help you with the formatting
+  aspects of style. (Chromium Style generally follows Google Style). Get the
+  Emacs mode at
+  http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el
+
+- When working with DBus::Variant:
+  - Read data via the appropriate named method, rather than depending on
+    implicit conversion. E.g.,
+
+       ::DBus::Variant var;
+       int8 data = var.reader().get_byte();
+
+    rather than
+
+       ::DBus::Variant var;
+       int8 data = var;
+
+    RATIONALE: The explicit version is only marginally longer than the
+    implicit version, and does not require the reader to understand C++
+    conversion rules.
+
+  - Where there is no named method, call the appropriate cast operator
+    explicitly. E.g.
+
+    ::DBus::Variant var;
+    vector<unsigned int> data = var.operator vector<unsigned int>();
+
+    RATIONALE: Calling the cast operator explicitly avoids conflicts with
+    constructors that might also be used to make the conversion. It also
+    avoids requiring that the reader understand C++ conversion rules.
+
+  - Write data via the appropriate named method. E.g.,
+
+       ::DBus::Variant var;
+       int16_t data;
+       var.writer().append_int16(data);
+
+    rather than
+
+       ::DBus::Variant var;
+       int16_t data;
+       var.writer() << data;
+
+    RATIONALE: Similarly as for reading, the explicit version is only
+    marginally longer, and does not require the reader to understand
+    overload resolution.
+
+  - Where there is no named method, write by using the stream
+    insertion operator. E.g.
+
+       ::DBus::Variant var;
+       ::DBus::MessageIter writer;
+       map<string, string> data;
+       writer = var.writer();
+       writer << data;
+
+    RATIONALE: This case is somewhat unfortunate, because it's not as
+    clear as its analogue for reading. However, the alternative is to
+    duplicate the code of the stream insertion operator overloads.
+
+    Note that the writer can't be omitted. E.g.
+
+       ::DBus::Variant var;
+       map<string, string> data;
+       var.writer() << data;
+
+    does not work. For an explanation of why the local variable
+    |writer| is needed, see the comment in
+    DBusAdaptor::ByteArraysToVariant.
+
+- When deferring work from a signal handler (e.g. a D-Bus callback) to
+  the event loop, name the deferred work function by adding "Task" to
+  the name of the function deferring the work. E.g.
+
+  void Modem::Init() {
+    dispatcher_->PostTask(task_factory_.NewRunnableMethod(&Modem::InitTask));
+  }
+
+  RATIONALE: The naming convention makes the relationship between the signal
+  handler and the task function obvious, at-a-glance.
+
+- C++ exceptions are not allowed in the code. An exception to this rule is
+  that try-catch blocks may be used in various D-Bus proxy classes to handle
+  DBus::Error exceptions thrown by the D-Bus C++ code. C++ exceptions should
+  be caught by const reference in general.
+
+- When adding verbose log messages for debug purposes, use the SLOG marco and
+  its variants (see logging.h for details).
+
+  - Choose the appropriate scope and verbose level for log messages. E.g.
+
+      SLOG(WiFi, 1) << message;  // for WiFi related code
+
+  - Before defining a new scope, check if any existing scope defined in
+    scope_logger.h already fulfills the needs.
+
+  - To add a new scope:
+    1. Add a new value to the Scope enumerated type in scope_logger.h.
+       Keep the values sorted as instructed in the header file.
+    2. Add the corresponding scope name to the kScopeNames array in
+       scope_logger.cc.
+    3. Update the GetAllScopeNames test in scope_logger_unittest.cc.
+
+- When adding externally visible (i.e. via RPC) properties to an object,
+  make sure that a) its setter emits any change notification required by
+  Chrome, and that b) its setter properly handles no-op changes.
+
+  Test that the property changes are handled correctly by adding test
+  cases similar to those in CellularServiceTest.PropertyChanges, and
+  CellularServiceTest.CustomSetterNoopChange.
+
+- When performing trivial iteration through a container, prefer using
+  range based for loops, preferably:
+
+     for (const auto& element : container) {
+
+  Remove "const" where necessary if the element will be modified during
+  the loop.  Removal of the "const" and reference for trivial types is
+  allowed but not necessary.

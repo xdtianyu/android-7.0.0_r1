@@ -1,0 +1,185 @@
+Background
+==========
+
+Profiles are containers for persistent storage of instantiated objects.
+When an object is created in memory we check if state from any previous
+instance was recorded and, if so, update the in-memory data structure
+accordingly.  Doing this depends on all object instances having a unique
+name; this is done using adhoc techniques based on object proprties such
+as WiFi SSID's, device addresses, and security settings.
+
+Multiple profiles may be active simultaneously.  Profiles are organized
+in a stack with the top-most entry termed the "active profile".
+
+When the connection manager starts up it pushes a "global profile" onto
+the profile stack.  Typically a per-user profile is then pushed at login
+and pop'd on logout.  Additional entries may be pushed and pop'd; e.g.
+automated tests push a "throw away profile" to capture state generated
+by tests and then pop the profile at the end to return the system to a
+pristine state.
+
+
+Object Handling
+===============
+Service objects go to the "ephemeral profile" by default, and do
+not report a "Profile" property.  When saved, by default they end
+up in the top-most profile on the stack.
+
+If the "Profile" property is set on a servie, it will be re-parented
+to the named profile (which must be in the profile stack at the time).
+
+Device and IPConfig objects go in the global profile (if any).
+This ensures that enable/disable state is maintained between users
+(and reboots); or possibly discarded (e.g. for testing).
+
+Likewise global state like Offline mode and any Country code are stored
+in the global profile (see above).
+
+
+Profile hierarchy
+=================
+
+Service		org.chromium.flimflam
+Interface	org.chromium.flimflam.Profile
+Object path	[variable prefix]/{profile0,profile1,...}
+
+Methods		dict GetProperties()
+
+			Return properties for the profile object. See
+			the properties section for available properties.
+
+			Possible Errors: [service].Error.InvalidArguments
+
+		void SetProperty(string name, variant value)
+
+			Change the value of the specified property. Only
+			properties that are listed as read-write are
+			changeable. On success a PropertyChanged signal
+			is emitted.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.InvalidProperty
+
+		dict GetEntry(object path)
+
+			Return properties for the specified profile
+			entry.  If the service is currently loaded into
+			memory or visible, the returned result will be
+			as if a "GetProperties" were called on the service.
+			Otherwise, a much more compact dict will be
+			returned:
+
+			string Name [readonly]
+				Name of this profile.
+
+			string GUID [readonly]
+				Globally Unique IDentifier for the service as
+				previously set by the client.
+
+			string Error [readonly]
+				Last error that occured with this service.
+
+			string Mode [readonly]
+				For WiFi services, the operating mode.
+
+			string Security [readonly]
+				For WiFi services, the security type.
+
+			string Type [readonly]
+				Type of this service entry (wifi, vpn, etc).
+
+			string UIData [readonly]
+				The UI data string (ignored by shill) that is
+				maintained for each service and can be used by
+				client code to store metadata.
+
+			string WiFi.HiddenSSID [readonly]
+				For WiFi services, whether or not the
+				network broadcasts it's SSID in beacon
+				frames.
+
+			Possible Errors: [service].Error.NotFound
+					 [service].Error.InvalidArguments
+
+		dict DeleteEntry(string entry_name)
+
+			Remove the entry from the profile.  Any associated
+			service has its security credentials revoked and
+			the service is disconnected.  The service is also
+			disassociated with the profile.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.NotFound
+
+Signals		PropertyChanged(string name, variant value)
+
+			This signal indicates a changed value of the given
+			property.
+
+Properties	string CheckPortalList [readonly]
+
+			The list of technologies for which captive portal
+			checking is enabled. This is a comma-separated
+			string; e.g. "wifi,wimax,vpn". To alter this
+			setting set the Manager.CheckPortalList property.
+
+			This setting is recorded only in the
+			default profile as it affects all users and is
+			used pre-login.
+
+		string Country [readonly]
+
+			The current ISO country code for WiFi operation.
+			This property exists only if the country code
+			was set via the Manager.Country property.
+
+			This setting is recorded only in the
+			default profile as it affects all users and is
+			used pre-login.
+
+		array{object} Entries [readonly]
+
+			List of profile Entry objects.  Use the GetEntry
+			method to retrieve an Entry's contents.
+
+		string Name [readonly]
+
+			Name of this profile.
+
+		boolean OfflineMode [readonly]
+
+			The setting for switching all radios on or
+			off. This setting is recorded only in the
+			default profile as it affects all users and is
+			used pre-login.  To alter this setting set the
+			Manager.OfflineMode property.
+
+		string PortalURL [readonly]
+
+			The URL to use when doing captive portal
+			checking.  To alter this setting set the
+			Manager.CheckPortalList property.
+
+			This setting is recorded only in the default
+			profile as it affects all users and is used
+			pre-login.
+
+		string PortalCheckInterval [readonly]
+
+			The interval in seconds between attempts to
+			check for portal.  To alter this setting set the
+			Manager.PortalCheckInterval property.
+
+			This setting is recorded only in the default
+			profile as it affects all users and is used
+			pre-login.
+
+		array{object} Services [readonly]
+
+			List of service objects.  This property is
+			provided only for the active profile.
+
+		string UserHash [readonly]
+
+			The hash of the username, provided by the
+			the libchromeos SanitizeUsername() method.

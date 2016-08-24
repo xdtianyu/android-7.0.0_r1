@@ -1,0 +1,25 @@
+#!/usr/bin/python
+
+import dbus, flimflam, sys
+
+if (len(sys.argv) < 4):
+    print "Usage: %s <service-name> <property> <value>" % (sys.argv[0])
+    sys.exit(1)
+
+(_, name, property_key, value) = sys.argv
+
+flim = flimflam.FlimFlam()
+service = flim.FindElementByPropertySubstring('Service', 'Name', name)
+
+if not service:
+    print "Could not find service: %s" % (sys.argv[1])
+    sys.exit(1)
+
+if property_key in ["Priority"]:
+    service.SetProperty(property_key, int(value))
+elif property_key in ["AutoConnect", "WiFi.HiddenSSID", "EAP.UseSystemCAs",
+  "SaveCredentials", "LinkMonitorDisable", "ManagedCredentials"]:
+    service.SetProperty(property_key,
+                        dbus.Boolean(value.lower() in ("true", "1")))
+else:
+    service.SetProperty(property_key, value)

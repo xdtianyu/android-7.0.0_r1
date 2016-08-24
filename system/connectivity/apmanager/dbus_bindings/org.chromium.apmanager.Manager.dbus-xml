@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node name="/org/chromium/apmanager/Manager"
+      xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <interface name="org.chromium.apmanager.Manager">
+    <method name="CreateService">
+      <tp:docstring>
+        Create an Access Point service instance.
+      </tp:docstring>
+      <arg name="service" type="o" direction="out">
+        <tp:docstring>
+          Service for managing an access point.
+        </tp:docstring>
+      </arg>
+      <annotation name="org.chromium.DBus.Method.IncludeDBusMessage"
+                  value="true"/>
+    </method>
+    <method name="RemoveService">
+      <tp:docstring>
+        Remove the given access point service.
+      </tp:docstring>
+      <arg name="service" type="o" direction="in">
+        <tp:docstring>
+          Service for managing an access point.
+        </tp:docstring>
+      </arg>
+      <annotation name="org.chromium.DBus.Method.IncludeDBusMessage"
+                  value="true"/>
+    </method>
+  </interface>
+</node>

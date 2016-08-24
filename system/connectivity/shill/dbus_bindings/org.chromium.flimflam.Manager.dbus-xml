@@ -1,0 +1,170 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+
+<node name="/">
+	<interface name="org.chromium.flimflam.Manager">
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<method name="GetState">
+			<arg type="s" direction="out"/>
+		</method>
+		<method name="CreateProfile">
+			<arg type="s" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="RemoveProfile">
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="PushProfile">
+			<arg type="s" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="InsertUserProfile">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="PopProfile">
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="PopAnyProfile"/>
+		<method name="PopAllUserProfiles"/>
+		<method name="RecheckPortal"/>
+		<method name="RequestScan">
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="EnableTechnology">
+			<arg type="s" direction="in"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="DisableTechnology">
+			<arg type="s" direction="in"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="GetService">
+			<arg type="a{sv}" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="GetWifiService">
+			<arg type="a{sv}" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="ConfigureService">
+			<arg type="a{sv}" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="ConfigureServiceForProfile">
+			<arg type="o" direction="in"/>
+			<arg type="a{sv}" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="FindMatchingService">
+			<arg type="a{sv}" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="GetVPNService">
+			<arg type="a{sv}" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="GetDebugLevel">
+			<arg type="i" direction="out"/>
+		</method>
+		<method name="SetDebugLevel">
+		        <!-- -N enables VLOG(N) and lower. -->
+			<arg type="i" direction="in"/>
+		</method>
+		<method name="GetServiceOrder">
+			<arg type="s" direction="out"/>
+		</method>
+		<method name="SetServiceOrder">
+			<arg type="s" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+		<signal name="StateChanged">
+			<arg type="s"/>
+		</signal>
+		<method name="GetDebugTags">
+			<arg type="s" direction="out"/>
+		</method>
+		<method name="SetDebugTags">
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="ListDebugTags">
+			<arg type="s" direction="out"/>
+		</method>
+		<method name="GetNetworksForGeolocation">
+		        <arg type="a{sv}" direction="out"/>
+		</method>
+		<method name="VerifyDestination">
+			<arg name="certificate" type="s" direction="in"/>
+			<arg name="public_key" type="s" direction="in"/>
+			<arg name="nonce" type="s" direction="in"/>
+			<arg name="signed_data" type="s" direction="in"/>
+			<arg name="destination_udn" type="s" direction="in"/>
+			<arg name="hotspot_ssid" type="s" direction="in"/>
+			<arg name="hotspot_bssid" type="s" direction="in"/>
+			<arg type="b" direction="out"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="VerifyAndEncryptCredentials">
+			<arg name="certificate" type="s" direction="in"/>
+			<arg name="public_key" type="s" direction="in"/>
+			<arg name="nonce" type="s" direction="in"/>
+			<arg name="signed_data" type="s" direction="in"/>
+			<arg name="destination_udn" type="s" direction="in"/>
+			<arg name="hotspot_ssid" type="s" direction="in"/>
+			<arg name="hotspot_bssid" type="s" direction="in"/>
+			<arg name="network" type="o" direction="in"/>
+			<arg type="s" direction="out"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="VerifyAndEncryptData">
+			<arg name="certificate" type="s" direction="in"/>
+			<arg name="public_key" type="s" direction="in"/>
+			<arg name="nonce" type="s" direction="in"/>
+			<arg name="signed_data" type="s" direction="in"/>
+			<arg name="destination_udn" type="s" direction="in"/>
+			<arg name="hotspot_ssid" type="s" direction="in"/>
+			<arg name="hotspot_bssid" type="s" direction="in"/>
+			<arg name="data" type="s" direction="in"/>
+			<arg type="s" direction="out"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="ConnectToBestServices"/>
+		<method name="CreateConnectivityReport"/>
+		<method name="ClaimInterface">
+			<arg name="claimer_name" type="s" direction="in"/>
+			<arg name="interface_name" type="s" direction="in"/>
+			<annotation name="org.chromium.DBus.Method.IncludeDBusMessage"
+		                value="true"/>
+		</method>
+		<method name="ReleaseInterface">
+			<arg name="claimer_name" type="s" direction="in"/>
+			<arg name="interface_name" type="s" direction="in"/>
+			<annotation name="org.chromium.DBus.Method.IncludeDBusMessage"
+		                value="true"/>
+		</method>
+		<method name="SetSchedScan">
+			<arg type="b" direction="in"/>
+		</method>
+		<method name="SetupApModeInterface">
+			<arg name="interface_name" type="s" direction="out"/>
+			<annotation name="org.chromium.DBus.Method.IncludeDBusMessage"
+		                value="true"/>
+		</method>
+		<method name="SetupStationModeInterface">
+			<arg name="interface_name" type="s" direction="out"/>
+		</method>
+	</interface>
+	<node name="device"/>
+	<node name="profile"/>
+	<node name="service"/>
+</node>

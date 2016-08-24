@@ -1,0 +1,3 @@
+# Reloads network device instance if it fails.
+SUBSYSTEM=="net", ACTION=="change", ENV{ID_BUS}=="pci", ENV{EVENT}=="device_hang", RUN+="/usr/sbin/reload_network_device"
+SUBSYSTEM=="net", ACTION=="change", ENV{ID_BUS}=="usb", ENV{EVENT}=="device_hang", RUN+="/usr/sbin/reload_network_device"

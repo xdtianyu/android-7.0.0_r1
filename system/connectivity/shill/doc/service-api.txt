@@ -1,0 +1,1700 @@
+Service hierarchy
+=================
+
+Service		org.chromium.flimflam
+Interface	org.chromium.flimflam.Service
+Object path	[variable prefix]/{service0,service1,...}
+
+Methods		dict GetProperties()
+
+			Return the properties for the service object. See
+			the Properties section for available properties.
+
+		void SetProperty(string name, variant value)
+
+			Change the value of the specified property. Only
+			properties that are listed as read-write are
+			changeable. On success a PropertyChanged signal
+			will be emitted.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.InvalidProperty
+					 [service].Error.InvalidService
+					 [service].Error.InvalidPassphrase
+
+		void SetProperties(dict properties)
+
+			Set multiple properties in a Service at once.
+			Each property from the dict is applied, excluding
+			the "Profile" property and all properties intrinsic
+			to the service including "Type" for all services,
+			as well as "Mode", "SSID" and "Security" for WiFi
+			services.  In the event of multiple errors while
+			applying properties to the service, the first error
+			code is returned by this call.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.InvalidProperty
+					 [service].Error.InvalidService
+					 [service].Error.InvalidPassphrase
+
+		void ClearProperty(string name)
+
+			Clear the value of the specified property. Only
+			properties that are listed as read-write are
+			changeable. On success a PropertyChanged signal
+			will be emitted.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.InvalidProperty
+
+		array{bool} ClearProperties(array{string} names)
+
+			Clear the value of the specified properties.  Calls
+			ClearProperty above on each of the property names
+			and returns an array of boolean values indicating
+			whether each ClearProperty attempt succeeded.
+
+		void Connect()
+
+			Initiate a connection for the specified service.
+
+			For Ethernet devices this method can only be used
+			if it has previously been disconnected. Otherwise
+			the plugging of a cable automatically triggers
+			a connection.  If no cable is plugged in this
+			method will fail.
+
+			If the requested service is already connected
+			then this request is ignored and AlreadyConnected
+			is returned.
+
+			If the requested service is in the process of
+			connecting then this request is ignored and
+			InProgress is returned.
+
+			If another service of the same type is connected or
+			connecting then it is terminated before this request
+			is handled.
+
+                        If the requested service cannot, for reasons not
+                        described above, be connected, OperationFailed is
+                        returned.
+
+			Possible Errors: [service].Error.AlreadyConnected
+					 [service].Error.InProgress
+					 [service].Error.OperationAborted
+					 [service].Error.InvalidService
+					 [service].Error.OperationFailed
+
+		void Disconnect()
+
+			Disconnect a service. If the service is not
+			connected or in the process of connecting an
+			error message will be generated.
+
+			For Ethernet devices this will remove all
+			Layer 3 state and mark the associated network
+			interface down.  If no cable is plugged in this
+			request will fail.
+
+			This method can also be used to abort a previous
+			connection attempt via the Connect method.
+
+			Possible Errors: [service].Error.InvalidArguments
+			                 [service].Error.OperationFailed
+
+		void Remove()
+
+			Disconnect and remove the configuration of a
+			service.  This disassociates the service from
+			its current profile.  If another profile supports
+			this service, it will be re-configured there.
+
+			This method is not permitted for Ethernet devices;
+			it will generate a NotSupported error response.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.NotSupported
+
+		void ActivateCellularModem(string carrier)
+
+			Activate a cellular modem on the provided carrier.
+
+			This method returns immediately.  The caller
+			can either poll the Cellular.ActivationState
+			property, or monitor the PropertyChanged
+			signal to know when and if the
+			ActivateCellularModem call succeeded.
+
+			The correct carrier specific modem firmware
+			must already be loaded before this method is
+			called.
+
+			If this method is called for a non-cellular
+			service or on a service associated with a
+			non-CDMA device, it will return a NotSupported
+			error.
+
+			If the device is already activated nothing is returned.
+			but if the device needs to be activated an InProgress
+			error is returned.
+
+			Expected Result: [service].Error.InProgress
+			Possible Errors: [service].Error.NotSupported
+
+		void CompleteCellularActivation()
+
+			Complete the activation of a cellular service that is
+			being activated over a non-cellular network.  This
+			method is called upon the completion of the online
+			payment portal and performs the necessary checks
+			to ensure the activation process has fully completed.
+
+			This method returns immediately.  The caller
+			can either poll the Cellular.ActivationState
+			property, or monitor the PropertyChanged
+			signal to know when and if the activation process
+			has completed.
+
+			If this method is called on a non-cellular service
+			or on a cellular service that is not being activated
+			over a non-cellular network, it will return a
+			NotSupported error.
+
+			If the cellular service is already activated or being
+			activated, nothing is returned.
+
+			Possible Errors: [service].Error.NotSupported
+
+		dict GetLoadableProfileEntries()
+
+			Return a dictionary of object_path -> string pairs
+			which refer to the profile entries from the loaded
+			profiles in the Manager that could possibly provide
+			configuration for this service.  Each entry contains
+			the DBus path of the profile and the string entry
+			name (within that profile) that contains configuration
+			for this service.  Callers can use each of these
+			argument pairs to do a "GetEntry" call on each profile
+			object.
+
+Signals		PropertyChanged(string name, variant value)
+
+			This signal indicates a changed value of the given
+			property.
+
+
+Properties	boolean AutoConnect [readwrite]
+
+			If set to true, this service will auto-connect
+			when no other connection is available.  If multiple
+			services are marked for auto-connect then the highest
+			priority available service will be selected.
+
+			On a successful connection, this property may be
+			set to true automatically, depending on the service
+			type and if this property was not explicitly set on
+			the service before.
+
+		boolean Cellular.ActivateOverNonCellularNetwork [readonly]
+
+			(Cellular only) If set to true, this service must be
+			activated over a non-cellular network instead of the
+			same cellular network.
+
+		string Cellular.ActivationState [readonly]
+
+			(Cellular only) The activate state of the device
+			on the cellular network.  Possible values for
+			activate_state are:
+			   "not-activated"
+			   "activating"
+			   "partially-activated"
+			   "activated"
+
+			A CDMA device can be activated by calling the
+			Activate method.
+
+			This property is relevant only for services
+			associated with a CDMA cellular device.
+
+		dict Cellular.ServingOperator [readonly] [GSM only]
+			(Cellular only) Description of the operator on whose
+			network the modem is currently registered, if any.
+			The dictionary may contain the following string-valued
+			properties:
+
+			"name"       The operator name
+			"country"    The two-letter country code.
+			"network_id" The MCC (Mobile Country Code)
+				     and MNC (Mobile Network Code) of the
+				     operator on whose network the device is
+				     registered. The value of the property is
+				     the simple concatenation of the MCC and
+				     the MNC, with no separator. The first
+				     three digits are always the MCC, and
+				     the following two or three digits are the
+				     MNC.
+
+		string Cellular.NetworkTechnology [readonly]
+
+			(Cellular only) If the modem is registered on a
+			network, then this property gives the data bearer
+			technology currently in use.  The following
+			table lists the values this property may have,
+			along with a rough indication of the "generation"
+			to which the technology is considered to belong.
+
+			Value          Generation
+			-----------------------------
+			"1xRTT" (CDMA) 2.5G
+			"EVDO" (CDMA)  3G to 3.5G
+			"GPRS"         2.5G
+			"EDGE"         2.75G
+			"UMTS"         3G
+			"HSPA"         3.5G
+			"HSPA+"        3.75G
+			"LTE"          3.9G
+			"LTE Advanced" 4G
+
+		string Cellular.RoamingState [readonly]
+
+			(Cellular only) The roaming status of the modem on
+			the current network. Possible values are "home",
+			"roaming", and "unknown".
+
+		string Cellular.Olp [readonly]
+
+			(Cellular only) A dictionary describing the
+			online payment portal (OLP) at which a user
+			can sign up for, or modify, a mobile data
+			plan.  The value of this property is a
+			string -> string dictionary, which includes
+			the following keys:
+
+			"url"      The URL for the portal
+			"method"   The HTTP method to use, "GET" or "POST"
+			"postdata" If the method is POST then this key is
+				   present and contains the postdata
+				   to send.
+
+		dict Cellular.APN [readwrite] [GSM only]
+
+			(Cellular only) The APN to be used with a GSM
+			carrier for making data connections. The value of
+			this property is a string -> string dictionary,
+			which must include at least the following key:
+
+			"apn"  The APN to use for making connections
+
+			There are three optional properties. The first is
+
+			"network_id" The network ID (MCC/MNC pair) of the
+			             network for which the APN should be used.
+				     If not specified, then the network ID of
+				     the currently registered network is used.
+
+			The other two optional properties are "username"
+			and "password", which, if specified, will be supplied
+			to the connect operation on the modem along with the
+			APN.
+
+			When the APN is set using this method, it overrides
+			any APN that may be associated with the specified
+			network ID in the APN database. The APN setting is
+			persistent across reboots.
+
+			A user-specified APN may be cleared by clearing this
+			property.
+
+			The algorithm for connecting to GSM networks is as
+			follows, stopping when a connection is succesfully
+			established:
+			1. Try the last APN that resulted in a successful
+			   connection.
+			2. Try the APN that was set from the Cellular.APN
+			   property (if any).
+			3. Try the list of APNs for the current provider one
+			   at a time. The list comes from the mobile broadband
+			   provider information database.
+			4. As a last resort, try connecting without specifying
+			   an APN.
+
+			If all these steps fail, then the connect attempt fails.
+			Whenever this property is set to establish a new APN to
+			use, the remembered last-good-APN is cleared. The
+			remembered last-good-APN is persistent across reboots.
+
+		dict Cellular.LastGoodAPN [readonly] [GSM only]
+
+			(Cellular only) The APN information used in the
+			last successful connection attempt.  If the last
+			attempt was unsuccesful, this property is unset.
+			The format of this property is the same as for
+			the Cellular.APN property.
+
+		boolean Cellular.OutOfCredits [readonly]
+
+			(Cellular only) Indicates whether a cellular service
+			has any remaining bandwidth credits with the carrier.
+
+		string Cellular.PPP.Username [readwrite]
+			(Cellular only) For cellular devices with a PPP
+			link-layer, the username for PPP authentication.
+
+		string Cellular.PPP.Password [writeonly]
+			(Cellular only) For cellular devices with a PPP
+			link-layer, the password for PPP authentication.
+
+		string CheckPortal [readwrite]
+
+			Control captive portal checking.  Possible values
+			are "true", "false", and "auto" (default).
+			When set to "auto" captive portal checking is
+			controlled by Manager.CheckPortalList (which
+			is a per-technology mask/list of which services
+			should do captive portal checking).
+
+		boolean Connectable [readonly]
+
+			Indicates whether a service is prepared for use
+			as an argument to the Connect method.  A service
+			will not be marked Connectable if, for example,
+			it is missing necessary security credentials.
+			Clients may use this property to not disable
+			services or to mark them in some way to indicate
+			they are present but not usable.
+
+		string Country [readonly]
+
+			(WiFi only) Indicates the 2-letter country code
+			reported by the representative endpoint for this
+			service.
+
+		object Device [readonly]
+
+			The object path of the associated device.
+			This value may be used to retrieve and manipulate
+			Layer 3 configuration state.
+
+			A value of "/" indicates that the service is
+			not bound to any device.
+
+		string DHCPProperty.Hostname [readwrite]
+
+			Optional setting to configure DHCP requests.  Some DHCP
+			servers may register a DNS entry on behalf of this
+			hostname; others may just make available a table for
+			administrators to tell what machines are on their
+			network.
+
+			The default for this name is empty, which means that the
+			system will not report a hostname.  When this property
+			is set it will be persisted in the default profile.
+
+		string DHCPProperty.VendorClass [readwrite]
+
+			Optional setting to configure DHCP requests.  This
+			setting can be used to identify the vendor that
+			manufactured the client hardware, the software in use,
+			or an industry consortium to which the vendor belongs.
+
+			The default for this property is empty, which means the
+			system will not report a Vendor Class.  When set, this
+			property will override the default setting and be
+			persisted in the default profile.
+
+		array{string} Diagnostics.Disconnects [readonly]
+
+			History (wall-clock timestamps) of connection drops.
+
+		array{string} Diagnostics.Misconnects [readonly]
+
+			History (wall-clock timestamps) of failed connection
+			attempts.
+
+		string EAP.Identity [readwrite]
+
+			The client identity string used in setting up
+			services of type "802_1x".
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.EAP [readwrite]
+
+			The EAP methods that will be accepted when setting
+			up services of type "802_1x".
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.InnerEAP [readwrite]
+
+			The authentication methods that will be on the
+			inside of a PEAP or EAP-TTLS tunnel.
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.AnonymousIdentity [readwrite]
+
+			The client identity string that will be used
+			for the outer EAP authentication for tunneled
+			methods such as PEAP and EAP-TTLS.
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.CertID [readwrite]
+
+			The PKCS#11 identifier of the client certificate
+			to use when setting up services of type "802_1x".
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.PrivateKey [readwrite]
+
+			The pathname of a file containing the private
+			key for setting up services of type "802_1x".
+			The private key file must be in PEM format.
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.PrivateKeyPassword [readwrite]
+
+			The password to decrypt a private key given
+			in EAP.PrivateKey.
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.KeyID [readwrite]
+
+			The PKCS#11 identifier of the private key to
+			use when setting up services of type "802_1x".
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.CACert [readwrite]
+
+			The pathname of a file containing the Certificate
+			Authority's certificate for validating server
+			certificates during the 802.1x authentication
+			process.
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.CACertID [readwrite]
+
+			The PKCS#11 ID of the EAP.CACert file for
+			validating server certificate recieved during
+			the 802.1x authentication process.
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.CACertPEM [readwrite]
+
+			An x509 CA certificate in PEM format; specifically
+			the base64 counterpart of the DER contents
+			surrounded by a "-----BEGIN CERTIFICATE-----" and
+			"-----END CERTIFICATE-----" line.  This certificate
+			will be used to authenticate the remote RADIUS
+			server in the 802.1x authentication process.
+
+		boolean EAP.UseSystemCAs [readwrite]
+
+			Control whether EAP operations are
+			configured to use the system's installed set
+			of certificate authorities when validating
+			server certificates. Note that if UseSystemCAs
+			is false and no CA is specified with EAP.CACert
+			or EAP.CaCertID - that is, no CAs are configured
+			at all - server certificates will not have their
+			signatures checked. Defaults to true.
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.PIN [readwrite]
+
+			The PIN used to authenticate to the PKCS#11 device
+			to retrieve a client certificate, private key,
+			or certificate authority certificate.
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.Password [readwrite]
+
+			The password to use in 802.1x authentication.
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		string EAP.KeyMgmt [readwrite]
+
+			(WiFi only) The key management algorithm to be
+			used in 802.1x authentication.	If this property
+			is not set then "WPA-EAP" is used for the key
+			management algorithm.
+
+			This property is included in get requests only
+			when the requester has sufficient privileges.
+
+		array{string} EAP.RemoteCertification [readonly]
+
+			(WiFi only) The list of certificate subject names
+			reported by the remote RADIUS server.  This
+			property is set during 802.1x negotiation and
+			persists after disconnection for later inspection,
+			but is not persisted between connection manager
+			restarts.  It is also cleared at the beginning of
+			the next connection.
+
+		string EAP.SubjectMatch [readwrite]
+
+			(WiFi only) A substring which the remote
+			RADIUS server certificate subject name must
+			contain.  If the subject does not contain this
+			substring, abort 802.1x negotiation.
+
+		string Error [readonly]
+
+			The service error status details.
+
+			When error occur during connection or disconnection
+			the detailed information are represented in this
+			property to help the user interface to present the
+			user with alternate options.
+
+			This property is only valid when the service is in a
+			failure state. Otherwise it might be empty or not
+			present at all.
+
+			Look for "Flimflam error options" in
+			system_api/dbus/shill/dbus-constants.h for the set of
+			defined error codes.
+
+		string ErrorDetails [readonly]
+
+			Free-style service error status details in addition to
+			the defined error codes presented through the
+			Service.Error property. For example, this property may
+			contain a server-supplied error description for a
+			rejected VPN connection attempt.
+
+			This property is only valid when the service is in a
+			failure state. Otherwise it might be empty or not
+			present at all.
+
+		string GUID [readwrite]
+
+			The Globally Unique IDentifier for the service.
+			This value may be set by a client and is
+			intended for cross-referencing Service objects
+			to externally-maintained data.
+
+		object IPConfig [readonly]
+
+			The object path of the associated IP configuration.
+			This value only exists when the service is connected,
+			and is used used to retrieve Layer 3 configuration
+			state.  A PropertyChanged signal for this object path
+			is emitted every time the IP address is configured
+			(for example during DHCP renewals), although the
+			actual value may not have changed.
+
+		boolean IsActive [readonly]
+
+			Will be true if this service has a default route;
+			i.e.  network traffic is being sent through it.
+
+		boolean LinkMonitorDisable [readwrite]
+
+			Specifies whether to disable or enable link monitoring
+			for this service. When link monitor is enabled, periodic
+			ARP to the gateway IP address will be performed.
+
+		boolean ManagedCredentials [readwrite]
+
+			Specifies whether the credentials for this service
+			are managed outside of shill, and are validated
+			in some manner other than by the user.  As such, these
+			credentials need not be validated via an initial
+			connection attempt.  Even without this validation,
+			the service will be considered of equal priority to
+			other services that have been connected before.
+
+		string Mode [readonly]
+
+			If the service type is "wifi", then this property is
+			present and contains the mode of the network. The
+			possible values are "managed" or "adhoc".
+
+			This property is present only for WiFi services.
+
+		string Name [readonly]
+
+			The service name (for example "Wireless" etc.)
+
+			This name can be used for directly displaying it in
+			the application. It has pure informational purpose.
+
+			For Ethernet devices and hidden WiFi networks it is
+			not guaranteed that this property is present. For
+			visible WiFi networks, this may contain the SSID.
+
+			See also the WiFi.HexSSID property.
+
+		string OpenVPN.Auth [writeonly]
+
+			(VPN services of type OpenVPN only) Specify the
+			authentication algorithm to OpenVPN.
+			See the "--auth" option in the OpenVPN documentation.
+			The current value of this property is readable
+			in the "Provider" property of this service.
+
+		string OpenVPN.AuthNoCache [writeonly]
+
+			(VPN services of type OpenVPN only) If this value
+			is set to anything, do not cache usernames or passwords
+			in the OpenVPN client.  See the "--auth" flag in the
+			OpenVPN documentation.  The current value of this
+			property is readable in the "Provider" property of this
+			service.
+
+		string OpenVPN.AuthRetry [writeonly]
+
+			(VPN services of type OpenVPN only) Specify how to
+			handle authentication failures.
+			See the "--auth-retry" option in the OpenVPN
+			documentation.  The current value of this property
+			is readable in the "Provider" property of this service.
+
+		string OpenVPN.AuthUserPass [writeonly]
+
+			(VPN services of type OpenVPN only) Authenticate
+			with username and password if this option is non-empty.
+			For this option to work, the "OpenVPN.User" property
+			must also be set.  The current value of this property
+			is readable in the "Provider" property of this service.
+
+		string OpenVPN.CACert [writeonly]
+
+			(VPN services of type OpenVPN only) Specify the
+			filename of the certificate to be used to verify the
+			OpenVPN server.  Only one of "OpenVPN.CACert" or
+			"OpenVPN.CACertPEM" can be specified.  The current
+			value of this property is readable in the "Provider"
+			property of this service.
+
+		string OpenVPN.CACertNSS [writeonly]
+
+			(VPN services of type OpenVPN only) [Deprecated]
+			This value is no longer honored in shill, but any
+			value stored here is persisted so that callers can
+			migrate this to the correct value of OpenVPN.CACertPEM.
+			The current value of this property is readable in the
+			"Provider" property of this service.
+
+		array{string} OpenVPN.CACertPEM [writeonly]
+
+			(VPN services of type OpenVPN only) The list of
+			x509 CA certificates to be used to verify the remote
+			server.  Any of these certificates can directly sign
+			the server certificate.  Each x509 CA certificate
+			must be in in PEM format; specifically
+			the base64 counterpart of the DER contents, optionally
+			surrounded by a "-----BEGIN CERTIFICATE-----" and
+			"-----END CERTIFICATE-----" line.  Only one of
+			"OpenVPN.CACert" or "OpenVPN.CACertPEM" can be
+			specified.  The current value of this property is
+			readable in the "Provider" property of this service.
+
+		string OpenVPN.Cert [writeonly]
+
+			(VPN services of type OpenVPN only) Specify a
+			filename of to use as the client certificate in
+			authentication.   See the "--cert" option in the
+			OpenVPN documentation.  The current value of this
+			property is readable in the "Provider" property of
+			this service.
+
+		string OpenVPN.Cipher [writeonly]
+
+			(VPN services of type OpenVPN only) Specify the
+			cipher algorithm for encrypted packets.  See the
+			"--cipher" option in the OpenVPN documentation.
+			The current value of this property is readable in
+			the "Provider" property of this service.
+
+		string OpenVPN.CompLZO [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			enable fast LZO compression.  See the
+			"--comp-lzo" option in the OpenVPN documentation.
+			The current value of this property is readable in
+			the "Provider" property of this service.
+
+		string OpenVPN.CompNoAdapt [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			don't use adaptive compression when fast LZO
+			is enabled compression.  See the "--comp-noadapt"
+			option in the OpenVPN documentation.  The current
+			value of this property is readable in the "Provider"
+			property of this service.
+
+		array{string} OpenVPN.ExtraCertPEM [writeonly]
+
+			(VPN services of type OpenVPN only) A list of
+			additonal x509 CA certificates to be used to complete
+			the certificate authentication chain from the CA
+			certificates.  Each x509 CA certificate must be in in
+			PEM format; specifically the base64 counterpart of
+			the DER contents, optionally surrounded by a
+			"-----BEGIN CERTIFICATE-----" and
+			"-----END CERTIFICATE-----" line.  The current
+			value of this property is readable in the "Provider"
+			property of this service.
+
+		string OpenVPN.IgnoreDefaultRoute [writeonly]
+
+			(VPN services of type OpenVPN only) If set, a
+			default route to the default gateway specified by
+			the server will not be configured.  This allows this
+			connection to operate as a "split tunnel" in
+			configurations where the server allows this.  Since
+			this option does not ignore routes explicitly pushed
+			from the server, this option does not allow split
+			tunnels when they are expressly forbidden in the
+			server configuration.  The server can directly
+			override this option by pushing a "redirect-gateway"
+			or "redirect-private" option to the client.  The
+			current value of this property is readable in the
+			"Provider" property of this service.
+
+		string OpenVPN.Key [writeonly]
+
+			(VPN services of type OpenVPN only) Specify the
+			filename of the private key the client uses to
+			verify itself to the OpenVPN server.  See the
+			"--key" option in the OpenVPN documentation.  The
+			current value of this property is readable in the
+			"Provider" property of this service.
+
+		string OpenVPN.KeyDirection [writeonly]
+
+			(VPN services of type OpenVPN only) [Deprecated]
+			This property is only provided for backwards
+			compatibility.
+
+		string OpenVPN.Mgmt.Enable [writeonly]
+
+			(VPN services of type OpenVPN only) [Deprecated]
+			This property is only provided for backwards
+			compatibility.
+
+		string OpenVPN.NsCertType [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			specifies that the peer certificate must be signed
+			with an explicit nsCertType designation.  The value
+			assigned to this property specified the role that
+			should be assigned to the certificate.  See the
+			"--ns-cert-type" option in the OpenVPN documentation.
+			The current value of this property is readable in the
+			"Provider" property of this service.
+
+		string OpenVPN.OTP [writeonly]
+
+			(VPN services of type OpenVPN only) Specifies a
+			one-time-password (OTP) to be used during the
+			authentication phase.  The connection manager only
+			stores this value for the duration of a connection
+			attempt and will never persist this to a stored
+			profile.
+
+		string OpenVPN.Password [writeonly]
+
+			(VPN services of type OpenVPN only) Specifies a
+			password to be used during the authentication phase.
+
+		string OpenVPN.Pkcs11.ID [writeonly]
+
+			(VPN services of type OpenVPN only) Specify the
+			PKCS11 certificate id when using a crypto token
+			to perform certificate authentication.
+
+		string OpenVPN.Pkcs11.PIN [writeonly]
+
+			(VPN services of type OpenVPN only) Specifies a
+			PIN used to gain access to the cryptographic token
+			when using the "OpenVPN.Pkcs11.ID" property.
+
+		string OpenVPN.Pkcs11.Provider [writeonly]
+
+			(VPN services of type OpenVPN only) Specifies a
+			the provider for the the cryptographic token
+			when using the "OpenVPN.Pkcs11.ID" property.
+			The current value of this property is readable in the
+			"Provider" property of this service.
+
+		string OpenVPN.Ping [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			this specifies the period in seconds between sending
+			pings to the OpenVPN server.  See the "--ping" option
+			in the OpenVPN documentation.  The current value of
+			this property is readable in the "Provider" property
+			of this service.
+
+		string OpenVPN.PingExit [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			exit if this many seconds pass without reception
+			of a ping reply from the OpenVPN server.  See the
+			"--ping-exit" option in the OpenVPN documentation.
+			The current value of this property is readable in the
+			"Provider" property of this service.
+
+		string OpenVPN.PingRestart [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			restart if this many seconds pass without reception
+			of a ping reply from the OpenVPN server.  See the
+			"--ping-restart" option in the OpenVPN documentation.
+			The current value of this property is readable in the
+			"Provider" property of this service.
+
+		string OpenVPN.Port [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			use this port for both the local and remote.
+			See the "--port" option in the OpenVPN documentation.
+			The current value of this property is readable in the
+			"Provider" property of this service.
+
+		string OpenVPN.Proto [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			sets the protocol ("udp", "tcp-client", "tcp-server)
+			for the OpenVPN connection.  See the "--proto" option
+			in the OpenVPN documentation.  The current value of
+			this property is readable in the "Provider" property
+			of this service.
+
+		string OpenVPN.PushPeerInfo [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			specifies that client information should be pushed
+			to the server.  See the "--push-peer-info" option
+			in the OpenVPN documentation.  The current value of
+			this property is readable in the "Provider" property
+			of this service.
+
+		string OpenVPN.RemoteCertEKU [writeonly]
+
+			(VPN services of type OpenVPN only) Require that
+			the remote peer certificate be signed with the
+			specified extended key usage OID.  See the
+			"--remote-cert-eku" option in the OpenVPN
+			documentation.  The current value of this property
+			is readable in the "Provider" property of this service.
+
+		string OpenVPN.RemoteCertKU [writeonly]
+
+			(VPN services of type OpenVPN only) Require that
+			the remote peer certificate be signed with the
+			specified key usage in hex format.  See the
+			"--remote-cert-ku" option in the OpenVPN
+			documentation.  The current value of this property
+			is readable in the "Provider" property of this service.
+
+		string OpenVPN.RemoteCertTLS [writeonly]
+
+			(VPN services of type OpenVPN only) Require that
+			the remote peer certificate be signed with the
+			specified key usage and extend key usage based on
+			RFC3280 TLS rules.  See the "--remote-cert-tls" option
+			in the OpenVPN documentation.  The current value of
+			this property is readable in the "Provider" property
+			of this service.
+
+		string OpenVPN.RenegSec [writeonly]
+
+			(VPN services of type OpenVPN only) Specifies the
+			period (in seconds) to re-negotiate the data channel
+			key.  See the "--reneg-sec" option in the OpenVPN
+			documentation.  The current value of this property is
+			readable in the "Provider" property of this service.
+
+		string OpenVPN.ServerPollTimeout [writeonly]
+
+			(VPN services of type OpenVPN only) Specifies the
+			period (in seconds) to wait to for a response from
+			the server.  See the "--server-poll-timeout" option
+			in the OpenVPN documentation.  The current value of
+			this property is readable in the "Provider" property
+			of this service.
+
+		string OpenVPN.Shaper [writeonly]
+
+			(VPN services of type OpenVPN only) Restricts the
+			number of bytes per second to be output to the peer.
+			See the "--shaper" option in the OpenVPN documentation.
+			The current value of this property is readable in the
+			"Provider" property of this service.
+
+		string OpenVPN.StaticChallenge [writeonly]
+
+			(VPN services of type OpenVPN only) Enable static
+			challenge/response protocol.  See the
+			"--static-challenge" option in the OpenVPN
+			documentation.  The current value of this property
+			is readable in the "Provider" property of this service.
+
+		string OpenVPN.TLSAuth [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			passes this as the "--tls-auth" argument to OpenVPN.
+			The current value of this property is readable in the
+			"Provider" property of this service.
+
+		string OpenVPN.TLSAuthContents [writeonly]
+
+			(VPN services of type OpenVPN only) Creates a
+			temporary file with the contents of this property
+			and passes it to OpenVPN using the "--tls-auth"
+			option.  The current value of this property
+			is readable in the "Provider" property of this service.
+
+		string OpenVPN.TLSRemote [writeonly]
+
+			(VPN services of type OpenVPN only) Specifies
+			the only X509 name that is allowed for the peer.  See
+			the" --tls-remote" option in the OpenVPN
+			documentation.  The current value of this property
+			is readable in the "Provider" property of this service.
+
+		string OpenVPN.Token [writeonly]
+
+			(VPN services of type OpenVPN only) Specifies a
+			single-use token to be used during the static challenge
+			phase of authentication.  This will be used instead of
+			the standard OpenVPN "SCRV1:" response containing the
+			password and OTP parameters.  This is useful in
+			installations where the default base64 encoding may be
+			too large to fit in the buffer size available, and
+			server implementations have been changed to avoid this.
+			The connection manager only stores this value for the
+			duration of a connection attempt and will never persist
+			this to a stored profile.
+
+		string OpenVPN.User [writeonly]
+
+			(VPN services of type OpenVPN only) Specifies
+			the username to be specified in authentication to
+			the OpenVPN server.  The current value of this property
+			is readable in the "Provider" property of this service.
+
+		string OpenVPN.Verb [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			passes this as the "--verb" argument to OpenVPN,
+			which sets the debug verbosity.  By default this
+			value is set based on shill's debugging level for VPN.
+			The current value of this property is readable in the
+			"Provider" property of this service.
+
+		string OpenVPN.VerifyHash [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			passes this as the "--verify-hash" argument to OpenVPN,
+			which specifies the SHA1 fingerprint for level-1
+			certificate.  The current value of this property is
+			readable in the "Provider" property of this service.
+
+		string OpenVPN.VerifyX509Name [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			passes this as the "--verify-x509-name" argument to
+			OpenVPN, which specifies the X509 subject distinguished
+			name we mandate the remote VPN server to have.  The
+			current value of this property is readable in the
+			"Provider" property of this service.
+
+		string OpenVPN.VerifyX509Type [writeonly]
+
+			(VPN services of type OpenVPN only) If non-empty,
+			this string is passed as a second parameter to the
+			"--verify-x509-name" flag sent to OpenVPN, which
+			qualifies the type of parameter specified in the
+			"OpenVPN.VerifyX509Name" property of this service.
+			If the "OpenVPN.VerifyX509Name" property is unset or
+			empty, setting this property has no effect during
+			connection.  Please see the documentation of the
+			"--verify-x509-name" flag in the OpenVPN documentation
+			to better understand how these two parameters interact.
+			The current value of this property is readable in the
+			"Provider" property of this service.
+
+		int PPPoE.LCPEchoFailure
+
+			(PPPoE only) If set, the number of LCP echo responses
+			that this service will tolerate missing from the PPP
+			peer before terminating the connection.
+
+		int PPPoE.LCPEchoInterval
+
+			(PPPoE only) If set, used as the number of seconds
+			between sending LCP echo requests to the PPP peer.
+
+		int PPPoE.MaxAuthFailure
+
+			(PPPoE only) The maximum number of authentication
+			failures to allow before terminating the connection.  A
+			value of 0 means no limit.  The default is 3.
+
+		string PPPoE.Password
+
+			(PPPoE only) This string is used as the password
+			during authentication with a PPPoE server.  If empty,
+			it will still be used during authentication if
+			requested.
+
+		string PPPoE.Username
+
+			(PPPoE only) If non-empty, this string is used as the
+			username during authentication with a PPPoE server.  If
+			empty, it will still be used during authentication if
+			requested.
+
+		string Passphrase [readwrite]
+
+			If the service type is "wifi", then this property
+			holds a passphrase used in setting up services of
+			type "wep", "wpa", "rsn", "psk", or a private
+			key password used in setting up services of
+			type "802_1x".
+
+			For "wep" services, this must contain the WEP
+			key and, optionally, a key index.  Only 40-bit
+			and 104-bit WEP keys are supported.  The WEP
+			key can be formatted either as an ASCII string
+			(5 or 13 characters), or as ASCII hex digits
+			(10 or 26). When using ASCII hex digits, the
+			key may optionally be preceded by "0x" or "0X".
+			To specify an optional WEP key index, prepend
+			the key with "0:", "1:", "2:" or "3:".  If no
+			index is specified, 0 is used.
+
+			By default this property is not included in get
+			requests.  It may be present if a non-default
+			security policy is configured and the client has
+			"read secret" privileges.
+
+			Note that no PropertyChanged signals are sent for
+			this property. The PassphraseRequired property
+			should be monitored instead.
+
+		boolean PassphraseRequired [readonly]
+
+			If the service type is "wifi", then this property
+			indicates if a passphrase or key (for WEP) is required.
+
+			If a passphrase has been set already or if no
+			passphrase is needed, then this property will
+			be set to false.
+
+			UI clients may monitor this property for a
+			PropertyChanged signals to prompt for a required
+			passphrase or key.
+
+                        [We will be supporting this soon for VPN]
+
+		string PhysicalTechnology [readonly, optional]
+
+			If the service type is "vpn" and the service is
+			connected, this property is present and exposes the
+			Type property of the underliying physical service used.
+			Otherwise the property is not present.
+
+		string PortalDetectionFailedPhase [readonly]
+
+			Indicates the phase that portal detection was in
+			when it last failed.
+
+			Possible values:
+
+				DNS - During DNS lookup
+				Connection - during the TCP connection setup
+				HTTP - during the HTTP connection setup
+				Content - The content of the HTTP response
+				Unknown - Failure in an unknown step
+
+		string PortalDetectionFailedStatus [readonly]
+
+			Indicates the portal detection failure reason when
+			it last failed.
+
+			Possible values:
+
+				Failure - The attempt failed at this phase
+				Success - The attempt succeeded at this phase
+				Timeout - The attempt timed out at this phase
+
+		string PreviousError [readonly]
+
+			The most recent service error status logged.  Even
+			after the service leaves the failed state, this
+			property retains the last value that the Error property
+			contained.
+
+			Note that no PropertyChanged signals are sent for
+			this property. The Error property should be monitored
+			instead.
+
+		int32 PreviousErrorSerialNumber [readonly]
+
+			This number increases by one every time a service
+			failure is logged.  It returns to zero if shill
+			restarts.
+
+			Note that no PropertyChanged signals are sent for
+			this property. The Error property should be monitored
+			instead.
+
+		int32 Priority [readwrite]
+
+			An optional value used to calculate the priority order
+			of this service.  Priorities are between 1 to 100.
+			Services with priorities are sorted ahead of services
+			without.  Services with the same priority are ordered
+			by other means such as service type signal strength
+			or technology.
+
+			By default services are not assigned a priority;
+			clients must set one if they desire.  To remove an
+			existing priority use the ClearProperty method.
+
+		int32 PriorityWithinTechnology [readwrite]
+
+			An optional value used to calculate the priority order
+			of this service.  Priorities are between 1 to 100.
+			Services with priorities are sorted ahead of services
+			without.  Services with the same priority are ordered
+			by other means such as service type and signal
+			strength, but notably not technology.  This property
+			can be used instead of the Priority property when
+			the intent is to rank the service relative to other
+			services of the same technology.
+
+			By default services are not assigned a priority;
+			clients must set one if they desire.  To remove an
+			existing priority use the ClearProperty method.
+
+		string Profile [readwrite]
+
+			The object path of the associated Profile object.
+			This may not be present or may be empty if the Service
+			object has not been written to a profile yet.
+
+		string ProxyConfig [readwrite]
+
+			An externalized json dictionary describing the proxy
+                        configuration that can be stored on the service, and
+                        modified by a user.
+			Flimflam does not use this information for anything,
+			but it is left available to the caller, and stored
+			persistently.
+			This property may be set by any client and will be
+                        adopted by chrome during run-time.  If syntax of the
+                        value is wrong, chrome will ignore this property during
+                        runtime.
+                        The value of this property is a string -> string
+                        dictionary that includes the following keys. The final
+                        string is a comma separated list of key-value pairs
+                        enclosed by "{" and "}"; syntax of a key-value pair is:
+                        <key>":"<value>. Example:
+                        {"mode":"fixed-servers","server":"http=foopy:80"}
+
+			"mode"
+                            type of proxy that can be one of:
+                            "direct" --
+                              direct connection to network, other preferences
+                              are ignored
+                            "auto_detect" --
+                              try to retrieve a PAC script from
+                              http://wpad/wpad.dat or fall back to direct
+                              connection
+                            "pac_script" --
+                              try to retrieve PAC script specified for "pac_url"
+                              (see below) or fall back to direct connection
+                            "fixed_servers" --
+                              manual configuration of one or more servers
+                              to be used as proxy
+
+			"pac_url"
+                            URL for proxy .pac file (meaningful only if mode=
+                            pac_script); scheme of URL must be specified
+
+			"pac_mandatory"
+                            indciate if a valid PAC script is mandatory
+                            (meaningful only if mode=pac_script);
+                            value is either true or false (without quotes), e.g.
+                            "pac_mandatory":true;
+                            if true, network traffic does not fall back to
+                            direct connections in case the PAC script is not
+                            available
+
+			"server"
+                            proxy server for manual configuration (meaningful
+                            only if mode=fixed-servers); syntax is
+                            [<proxy-scheme>"://"]<proxy-host>[":"<proxy-port>];
+                            if the proxy to use depends on the scheme of the
+                            URL, specify a semicolon separated list of :
+                            <url-scheme>"="<proxy-uri>
+                            for example:
+                            - "http=foopy:80;ftp=foopy2" --
+                              use HTTP proxy "foopy:80" for http:// URLs, and
+                              HTTP proxy "foopy2:80" for ftp:// URLS
+                            - "foopy:80" -- use HTTP proxy "foopy:80" for all
+                              URLs
+                            - "socks4://foopy" --
+                              use SOCKS v4 proxy "foopy:80" for all URLs
+
+			"bypass_list"
+                            proxy bypass rules for manual configuration
+                            (meaningful only if mode=fixed-servers); format
+                            can be any one of the following:
+                            1) [<url_scheme>"://"]<hostname_pattern>[":"<port>]
+                               Match all hostnames that match the pattern
+                               hostname_pattern which can be a substring of the
+                               hostname with asterisks.
+                               Examples: "foobar.com", "*foobar.com",
+                               "*.foobar.com", "*foobar.com:99",
+                               "https://x.*.y.com:99"
+                            2) "."<hostname_suffix_pattern>[":"<port>]
+                               Match a particular domain suffix.
+                               Examples: ".google.com", ".com",
+                               "http://.google.com"
+                            3) [<scheme>"://"]<ip_literal>[":"<port>]
+                               Match URLs that are IP address literals.
+                               Conceptually this is the similar to (1), but with
+                               special cases to handle IP literal
+                               canonicalization. For example matching on
+                               "[0:0:0::1]" would be the same as matching on
+                               "[::1]" since the IPv6 canonicalization is done
+                               internally.
+                               Examples: "127.0.1", "[0:0::1]", "[::1]",
+                               "http://[::1]:99"
+                            4) <ip_literal>"/"<prefix_length_in_bits>
+                               Match any URL that is to an IP literal that falls
+                               in the given range. IP range is specified using
+                               CIDR notation.
+                               Examples: "192.168.1.1/16", "fefe:13::abc/33".
+                            5)  "<local>"
+                                Match local addresses; this is a literal string.
+                                "<local>" matches one of: "127.0.0.1", "::1",
+                                "localhost".
+
+		dict Provider [readonly]
+
+			(VPN only) Provider data.  The Provider is a container
+			which reports all of the VPN-specific properties of a
+			service.
+
+			string Host [readonly]
+				VPN host IP address.
+			string Type [readonly]
+				VPN provider type (e.g. openvpn).
+
+		string Provider.Host [writeonly]
+
+			(VPN only) Host name of the VPN server.  The current
+			value of this property is readable in the "Provider"
+			property of this service.
+
+		string Provider.Name [writeonly]
+
+			(VPN only) The name assigned to this VPN service.  The
+			current value of this property is readable in the
+			"Provider" property of this service.
+
+		string Provider.Type [writeonly]
+
+			(VPN only) The type of VPN service.  This value is
+			only settable when creating this service (via the
+			Manager GetService or ConfigureService methods).  The
+			current value of this property is readable in the
+			"Provider" property of this service.
+
+		boolean SaveCredentials [readwrite]
+
+			This property indicates if security credentials
+			should be reused and/or written to stable storage.
+			Setting this property to FALSE ensures nothing is
+			recorded and the client must supply credentials
+			for each Connect request.
+
+			The following credentials are not recorded when
+			this property is set to FALSE:
+
+			Passphrase
+			EAP.Identity
+			EAP.AnonymousIdentity
+			EAP.ClientCert
+			EAP.CertID
+			EAP.PrivateKey
+			EAP.PrivateKeyPassword
+			EAP.KeyID
+			EAP.PIN
+			EAP.Password
+
+			Note that no PropertyChanged signals are sent for
+			this property.
+
+		string Security [readonly]
+
+			If the service type is "wifi", then this property is
+			present and contains the security method or key
+			management setting.
+
+			Possible values are: "none" (no privacy),
+			"wep" (fixed key WEP), "wpa" (WPA-PSK), "rsn"
+			(IEEE 802.11i-PSK), "psk" (either "wpa" or "rsn"),
+			and "802_1x" (IEEE 802.11i with 802.1x authentication).
+
+			This property is only present for WiFi services.
+
+		string SecurityClass [readonly]
+
+			If the service type is "wifi", then this property is
+			present and contains the security class of the service.
+			The security class groups together WPA and WPA-2 networks,
+			to allow for seamless roaming between them.
+
+			Possible values are: "none" (no privacy),
+			"wep" (fixed key WEP), "psk" (WPA-PSK or IEEE 802.11i-PSK),
+			and "802_1x" (IEEE 802.11i with 802.1x authentication).
+
+			This property is only present for WiFi services.
+
+		string State [readonly]
+
+			The state of the service; one of:
+
+			"idle"		The service is not enabled or otherwise
+					operational.
+
+			"association"	Intermediate states associated with
+					connection-based devices such as WiFi
+					and Cellular.  These are exposed for
+					UI applications to provide more
+					fine-grained status.
+
+			"configuration"	Layer 2 is setup but Layer 3 setup
+					has yet to completed.
+
+			"ready"		Layer 3 setup is complete; ready to
+					transit and receive data.
+
+			"portal"	Layer 3 setup is complete but
+					connectivity to the Internet may be
+					limited or unavailable.
+
+			"online"	Layer 3 setup is complete and an
+					Internet connection has been checked
+					to support HTTP access to the
+					Manager.PortalURL site.
+
+			"failure"	An error occurred while trying to
+					reach the "ready" state. Consult the
+					Error propery for details.
+
+		string StaticIP.Address [readwrite]
+		string StaticIP.Gateway [readwrite]
+		int32 StaticIP.Mtu [readwrite]
+		string StaticIP.NameServers [readwrite]
+		string StaticIP.PeerAddress [readwrite]
+		int32 StaticIP.Prefixlen [readwrite]
+
+			[Deprecated] The properties above are deprecated in
+			favor of StaticIPConfig property.
+
+			The properties above can be set on a service to
+			selectively override individual parameters received
+			over DHCP or whatever default IP aquisition technique
+			is used by the service.  The "StaticIP.NameServers"
+			property should be a comma-separated list of IP
+			addresses.
+
+			Additionally, in services that use DHCP, if the
+			"StaticIP.Address" and "StaticIP.Prefixlen"
+			parameters are both set on a service, the service
+			will be configured as soon as a link is established,
+			in order to allow full static IP configuration.  A
+			DHCP client will be launched in parallel, which, if
+			successful, will provide values for any parameters
+			that were not set statically.
+
+			The IPConfig associated with the service (object
+			path supplied in the "IPConfig" property above)
+			will display the result of the merged network
+			parameters.
+
+		string SavedIP.Address [readonly]
+		string SavedIP.Gateway [readonly]
+		int32 SavedIP.Mtu [readonly]
+		string SavedIP.NameServers [readonly]
+		string SavedIP.PeerAddress [readonly]
+		int32 SavedIP.Prefixlen [readonly]
+
+			[Deprecated] The properties above are deprecated in
+			favor of SavedIPConfig property.
+
+			The properties above are set on a service to present
+			the configuration that was recieved from the DHCP
+			server prior to applying any "StaticIP.*" parameters
+			during the most recent connection attempt.  All
+			parameters are saved regardless of whether they were
+			overridden.
+
+			Note that if a "StaticIP.*" parameter is set on
+			a service, but the service has not been re-connected,
+			the IPConfig object will still contain the true
+			value that the interface is set to.
+
+		dict StaticIPConfig [readwrite]
+
+			A dictionary of static IP configuration parameters
+			used to selectively override individual parameters
+			received over DHCP or whatever default IP aquisition
+			technique is used by the service.
+
+			Additionally, in services that use DHCP, if the
+			"Address" and "Prefixlen" fields are both set in the
+			dictionary, the service will be configured as soon as
+			a link is established, in order to allow full static
+			IP configuration.  A DHCP client will be launched in
+			parallel, which, if successful, will provide values for
+			any parameters that were not set statically.
+
+			The IPConfig associated with the service (object
+			path supplied in the "IPConfig" property above)
+			will display the result of the merged network
+			parameters.
+
+			Here are the expected keys within the dict:
+				string Address
+				string Gateway
+				int32 Mtu
+				array{string} NameServers
+				string PeerAddress
+				int32 Prefixlen
+
+		dict SavedIPConfig [readonly]
+
+			This property present a dictionary of the IP config
+			that was received from the DHCP server prior to
+			applying any static IP parameters during the most
+			recent connection attempt. All parameters are saved
+			regardless of whether they were overridden.
+
+			Note that if a static IP parameter is set on
+			a service, but the service has not been re-connected,
+			the IPConfig object will still contain the true
+			value that the interface is set to.
+
+			Here are the expected keys within the dict:
+				string Address
+				string Gateway
+				int32 Mtu
+				array{string} NameServers
+				string PeerAddress
+				int32 Prefixlen
+
+		uint8 Strength [readonly]
+
+			Indicates the signal strength of the service. This
+			is a normalized value between 0 and 100.
+
+			This property will not be present for Ethernet
+			devices.
+
+		string Tethering [readonly]
+
+			Returns a string that indicates an estimate of
+			whether the service is likely to be providing
+			internet connectivity over a mobile network backhaul.
+			The possible values of this string are:
+
+				NotDetected: Tethering is not detected.
+				Suspected: Something in the network scan
+					provides circumstantial evidence
+					that this service is tethered.
+				Confirmed: Some definitive evidence has
+					been discovered that indicates
+					either this service is tethered
+					or the server is overtly pretending
+					to be tethered.
+
+			This property is only visible in service types
+			which can support tethering.  Currently only
+			Ethernet and WiFi services support this property
+			directly.  VPN services make this property visible
+			if the service they're using for connectivity does
+			(i.e., if VPN connectivity is gained via Ethernet
+			or WiFi).
+
+		string Type [readonly]
+
+			The service type; one of:
+			  "ethernet"    (802.3 wired Ethernet),
+			  "wifi"        (IEEE 802.11),
+			  "wimax"       (IEEE 802.16),
+			  "bluetooth"   (Bluetooth PAN),
+			  "cellular"    (3G Cellular), or
+			  "vpn"         (Virtual Private Network).
+
+			This information should only be used to determine
+			advanced properties or showing the correct icon
+			to the user.
+
+		string UIData [readwrite]
+
+			This is additional data available about this service
+			for use by the user interface.  This value is opaque
+			and not used by shill.
+
+		bool Visible [readonly]
+
+			WiMax and WiFi services list all services for which
+			configuration exists in the manager's
+			ServiceCompleteList.  Those service types have this
+			property set to false if such a configured service
+			is not actually in range.  For all other services
+			(including all other service types) this property
+			is always true.
+
+		string WiFi.AuthMode [readonly]
+
+			(WiFi only) If the service state is
+			"configuration" or "ready", then this property
+			will be present and contains the negotiated
+			authentication method.
+
+			There are too many possible values to enumerate here.
+			The complete set depends on the capabilities of the
+			associated WiFi supplicant.
+
+		string WiFi.BSSID [readonly]
+
+			(WiFi only) The BSSID of the associated AP.
+			One can monitor this property for PropertyChanged
+			signals to identify when roaming changes the
+			current AP.
+
+			The BSSID is formatted as colon-separated octets.
+			E.g. "00:01:02:03:04:05".
+
+		boolean WiFi.HiddenSSID [readwrite]
+
+			(WiFi only) If true, the associated WiFi network
+			does not broadcast its SSID in beacon frames.
+			This property instructs shill to actively scan
+			for this SSID.  This value is cleared when this
+			service is removed from all active profiles.
+
+		uint16 WiFi.Frequency [readonly]
+
+			(WiFi only) The operating frequency in MHz of
+			the Service. If the Service is connected, this
+			is the frequency on which it is connected.
+			Otherwise, this is the frequency of the best
+			available BSS (roughly, AP) for this Service.
+
+		array{uint16} WiFi.FrequencyList [readonly]
+
+			(WiFi only) The operating frequencies in MHz of
+			the Service. This lists all of the frequencies
+			where this Service has recently been seen.
+
+			This list is not necessarily complete, as:
+			a) not all scans check every channel,
+			b) an AP may not have responded in time, and
+			c) some scan results may have expired from the
+                           cache.
+
+		string WiFi.PhyMode [readonly]
+
+			(WiFi only) If the service state is
+			"configuration" or "ready", then this property
+			will be present and contains the negotiated
+			operating mode for the channel.  Possible values
+			include "802.11a", "802.11b", "802.11g",
+			"802.11n".  This value is for informational
+			purposes only.
+
+		string WiFi.HexSSID [readonly]
+
+			(WiFi only) This property holds a hex-encoded copy
+			of the SSID.  Since the Name property is enforced
+			by the D-Bus protocol to be a valid UTF-8 string
+			but SSIDs can be an abitrary sequence of bytes, this
+			property will always contain the true value of the
+			SSID, while the Name property may differ from the
+			true representation.
+
+			See also the Name property. (Note that there is
+			no SSID property for reasons explained above.)
+
+		string WiFi.SSID [readonly]
+
+			(WiFi only) The service's SSID. Must have a non-zero
+			length less than or equal to 32.
+
+		bool WiFi.ProtectedManagementFrameRequired [readonly]
+
+			(WiFi only) This property indicates whether an AP for
+			this service has been seen that requires 802.11w
+			(Protected Management Frame) support.
+
+		dict WiFi.VendorInformation [readonly]
+
+			(WiFi only) Information about the vendor of the
+			AP, gleaned from WPS and vendor-specific information
+			elements in the beacon and probe respondss.
+
+			string Manufacturer [readonly]
+				Device manufacturer name as supplied by WPS IE.
+			string ModelName [readonly]
+				Device model name as supplied by WPS IE.
+			string ModelNumber [readonly]
+				Device model number as supplied by WPS IE.
+			string DeviceName [readonly]
+				Device name as supplied by WPS IE.
+			string OUIList [readonly]
+				Space separated list of OUI identifiers for
+				vendor-specific IEs that were neither the
+				Microsoft nor Epigram identifiers (the former
+				two are used for platform-neutral information).
+
+		uint16 WiFi.RoamThreshold [readwrite]
+
+			(WiFi only) The roam threshold is the AP
+			signal-to-noise value (in dB) below which
+			wpa_supplicant will attempt to roam to a new AP.
+			This per-service RoamThreshold property overrides
+			the WiFi device-wide RoamThreshold set through the
+			device DBus API. Changes to this property will only
+			take effect on the next time the WiFi device connects
+			to this service.

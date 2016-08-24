@@ -1,0 +1,7 @@
+apply from: "$rootDir/buildSrc/base/baseJava.gradle"
+
+apply plugin: 'maven'
+apply plugin: 'sdk-java-lib'
+
+group = "com.android.tools.build"
+archivesBaseName = 'fat32lib'

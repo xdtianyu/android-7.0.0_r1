@@ -1,0 +1,93 @@
+#!/bin/sh
+#
+#
+# Copyright (C) 2014 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# UDEV event helper script that restarts a hung network device.
+
+POWER_DOWN_TIME_SECONDS=1
+WLAN_POWER_UP_TIME_SECONDS=1
+WLAN_REINITIALIZE_TIME_SECONDS=5
+
+set -e
+
+error () {
+  logger -t $0 "Error: $1"
+  exit 1
+}
+
+if [ -n "${1}" ] ; then
+  eval $(udevadm info --query=property --path="/sys/class/net/${1}" |
+         egrep '^(DEVPATH|DEVTYPE|ID_BUS|INTERFACE|SUBSYSTEM)')
+  EVENT=device_hang
+fi
+
+if [ "${SUBSYSTEM}" != "net" -o \
+     "${EVENT}" != "device_hang" -o \
+     -z "${DEVPATH}" ] ; then
+  exit 0
+fi
+
+logger -t $0 "Restarting network interface ${INTERFACE}"
+
+# The DEVPATH for a network interface should look something like:
+#   /devices/pci0000:00/0000:00:1c.0/0000:01:00.0/net/wlan0
+if [ $(basename $(dirname "${DEVPATH}")) != 'net' ] ; then
+  error "Device path for ${INTERFACE} (${DEVPATH}) is invalid."
+fi
+
+device_path=$(readlink -f "/sys${DEVPATH}/../..")
+module_name=$(basename $(readlink -f "/sys${DEVPATH}/device/driver/module"))
+
+rmmod "${module_name}"
+
+if [ "${ID_BUS}" = "pci" ] ; then
+  device_remove_path="${device_path}/remove"
+  bus_rescan_path=$(readlink -f  "${device_path}/../rescan")
+
+  if [ ! -e "${device_remove_path}" ] ; then
+    error "Device remove path ${device_remove_path} does not exist"
+  fi
+
+  if [ ! -e "${bus_rescan_path}" ] ; then
+    error "Bus rescan path ${bus_rescan_path} does not exist"
+  fi
+
+  echo 1 > "${device_remove_path}"
+  if [ "${DEVTYPE}" = "wlan" ] ; then
+    ectool wireless 0xe  # Disable wireless lan.
+    ectool wireless 0x6  # Power down wireless lan.
+  fi
+
+  sleep ${POWER_DOWN_TIME_SECONDS}
+
+  if [ "${DEVTYPE}" = "wlan" ] ; then
+    ectool wireless 0xe  # Power up wireless lan.
+    sleep ${WLAN_POWER_UP_TIME_SECONDS}
+    ectool wireless 0xf  # Enable wireless lan.
+
+    sleep ${WLAN_REINITIALIZE_TIME_SECONDS}
+  fi
+
+  echo 1 > "${bus_rescan_path}"
+elif [ "${ID_BUS}" = "usb" ] ; then
+  device_authorize_path=$(readlink -f "${device_path}/../authorized")
+  echo 0 > "${device_authorize_path}"
+  sleep ${POWER_DOWN_TIME_SECONDS}
+  echo 1 > "${device_authorize_path}"
+else
+  error "Bus type ${ID_BUS} is unknown"
+fi

@@ -1,0 +1,67 @@
+# android user-space log manager
+type logd, domain, domain_deprecated, mlstrustedsubject;
+type logd_exec, exec_type, file_type;
+
+init_daemon_domain(logd)
+
+# Read access to pseudo filesystems.
+r_dir_file(logd, proc)
+r_dir_file(logd, proc_net)
+
+allow logd self:capability { setuid setgid sys_nice audit_control };
+allow logd self:capability2 syslog;
+allow logd self:netlink_audit_socket { create_socket_perms nlmsg_write };
+allow logd kernel:system syslog_read;
+allow logd kmsg_device:chr_file w_file_perms;
+allow logd system_data_file:file r_file_perms;
+# logpersist is only allowed on userdebug and eng builds
+userdebug_or_eng(`
+  allow logd misc_logd_file:file create_file_perms;
+  allow logd misc_logd_file:dir rw_dir_perms;
+')
+allow logd pstorefs:dir search;
+allow logd pstorefs:file r_file_perms;
+
+# Set persist.sys. and sys.powerctl
+set_prop(logd, safemode_prop)
+set_prop(logd, powerctl_prop)
+
+# Access device logging gating property
+get_prop(logd, device_logging_prop)
+
+r_dir_file(logd, domain)
+
+allow logd kernel:system syslog_mod;
+
+control_logd(logd)
+
+# case where logpersistd is actually logcat -f in logd context (nee: logcatd)
+userdebug_or_eng(`
+  unix_socket_connect(logd, logdr, logd)
+')
+
+###
+### Neverallow rules
+###
+### logd should NEVER do any of this
+
+# Block device access.
+neverallow logd dev_type:blk_file { read write };
+
+# ptrace any other app
+neverallow logd domain:process ptrace;
+
+# Write to /system.
+neverallow logd system_file:dir_file_class_set write;
+
+# Write to files in /data/data or system files on /data
+neverallow logd { app_data_file system_data_file }:dir_file_class_set write;
+
+# logd is not allowed to write anywhere other than /data/misc/logd, and then
+# only on userdebug or eng builds
+neverallow logd { file_type -logd_tmpfs userdebug_or_eng(` -misc_logd_file -coredump_file ') }:file { create write append };
+
+# logpersist is only allowed on userdebug/eng builds
+neverallow { domain userdebug_or_eng(`-logd -shell -dumpstate') } misc_logd_file:file no_rw_file_perms;
+neverallow { domain userdebug_or_eng(`-logd') } misc_logd_file:dir { add_name link relabelfrom remove_name rename reparent rmdir write };
+neverallow { domain -init } misc_logd_file:dir create;

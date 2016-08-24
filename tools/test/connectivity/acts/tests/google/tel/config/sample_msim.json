@@ -1,0 +1,22 @@
+{   "_description": "Sample config file for Multi-SIM basic testbed.",
+    "testbed":
+    [
+        {
+            "_description": "2 android devices with Live SIM. Device 1 is MSIM device.",
+            "name": "live M-SIM basic testbed",
+            "AndroidDevice": [
+                    {"serial": "<MSIM_device_serial>",
+                     "default_voice_sim_slot_index": 1,
+                     "default_data_sim_slot_index": 0,
+                     "default_message_sim_slot_index": 0,
+                     "incoming_voice_sim_slot_index": 1,
+                     "incoming_message_sim_slot_index": 1},
+                    {"serial": "<Single_SIM_device_serial>"}]
+        }
+    ],
+    "logpath": "/tmp/logs",
+    "testpaths": ["../tests/sample"],
+    "sim_conf_file": "../simcard_list.json",
+    "adb_logcat_param" : "-b all"
+
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Payment Failed Page</title>
+
+<style>
+body {
+  background: -webkit-gradient(linear, left top, left bottom,
+              from(#EBEBEB), to(#CFCFCF));
+  font-family: 'Lucida Grande', Helvetica, sans-serif;
+  font-size: 10px;
+  height: 300px;
+  overflow: hidden;
+}
+</style>
+
+<script src="connection_manager.js"></script>
+<script>
+function $(id) {
+  return document.getElementById(id);
+}
+
+chromeos.connectionManager.getDeviceInfo(function(device) {
+  $('device-info').innerHTML =
+    'carrier = ' + device.carrier + '<br>' +
+    'MEID = ' + device.MEID + '<br>' +
+    'IMEI = ' + device.IMEI + '<br>' +
+    'IMSI = ' + device.IMSI + '<br>' +
+    'ESN = ' + device.ESN + '<br>' +
+    'MDN = ' + device.MDN;
+});
+
+function sendStatus(status) {
+  chromeos.connectionManager.setTransactionStatus(status,
+      function() {});
+}
+
+</script>
+
+</head>
+<body>
+<h2>Payment Failed Page<h2>
+Your payment was not received.
+
+<script>
+// The carrier should invoke this to inform Chrome OS that the payment
+// failed.  In practice the carrier does not, so the sendStatus function
+// call is commented out.  It is left as a reminder of what should happen.
+// sendStatus('FAILED')
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+    "testbed":
+    [
+        {
+            "_description": "ACTS sniffer sanity test bed, no device needed.",
+            "name": "SnifferSanity",
+            "Sniffer": [ {"Type": "local",
+                          "SubType": "tcpdump",
+                          "Interface": "wlan0",
+                          "BaseConfigs": {
+                              "channel": 6
+                          }}
+                       ]
+
+        }
+    ],
+    "logpath": "/tmp/logs",
+    "testpaths": ["./"]
+}
+

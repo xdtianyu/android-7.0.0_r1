@@ -1,0 +1,78 @@
+###
+### Services with isolatedProcess=true in their manifest.
+###
+### This file defines the rules for isolated apps. An "isolated
+### app" is an APP with UID between AID_ISOLATED_START (99000)
+### and AID_ISOLATED_END (99999).
+###
+### isolated_app includes all the appdomain rules, plus the
+### additional following rules:
+###
+
+type isolated_app, domain, domain_deprecated;
+app_domain(isolated_app)
+
+# Access already open app data files received over Binder or local socket IPC.
+allow isolated_app app_data_file:file { read write getattr lock };
+
+allow isolated_app activity_service:service_manager find;
+allow isolated_app display_service:service_manager find;
+allow isolated_app webviewupdate_service:service_manager find;
+
+# Google Breakpad (crash reporter for Chrome) relies on ptrace
+# functionality. Without the ability to ptrace, the crash reporter
+# tool is broken.
+# b/20150694
+# https://code.google.com/p/chromium/issues/detail?id=475270
+allow isolated_app self:process ptrace;
+
+#####
+##### Neverallow
+#####
+
+# Do not allow isolated_app to directly open tun_device
+neverallow isolated_app tun_device:chr_file open;
+
+# Do not allow isolated_app to set system properties.
+neverallow isolated_app property_socket:sock_file write;
+neverallow isolated_app property_type:property_service set;
+
+# Isolated apps should not directly open app data files themselves.
+neverallow isolated_app app_data_file:file open;
+
+# Only allow appending to /data/anr/traces.txt (b/27853304, b/18340553)
+# TODO: are there situations where isolated_apps write to this file?
+# TODO: should we tighten these restrictions further?
+neverallow isolated_app anr_data_file:file ~{ open append };
+neverallow isolated_app anr_data_file:dir ~search;
+
+# b/17487348
+# Isolated apps can only access three services,
+# activity_service, display_service and webviewupdate_service.
+neverallow isolated_app {
+    service_manager_type
+    -activity_service
+    -display_service
+    -webviewupdate_service
+}:service_manager find;
+
+# Isolated apps shouldn't be able to access the driver directly.
+neverallow isolated_app gpu_device:chr_file { rw_file_perms execute };
+
+# Do not allow isolated_app access to /cache
+neverallow isolated_app cache_file:dir ~{ r_dir_perms };
+neverallow isolated_app cache_file:file ~{ read getattr };
+
+# Restrict socket ioctls. Either 1. disallow privileged ioctls, 2. disallow the
+# ioctl permission, or 3. disallow the socket class.
+neverallowxperm isolated_app domain:{ rawip_socket tcp_socket udp_socket } ioctl priv_sock_ioctls;
+neverallow isolated_app *:{ netlink_route_socket netlink_selinux_socket } ioctl;
+neverallow isolated_app *:{
+  socket netlink_socket packet_socket key_socket appletalk_socket
+  netlink_firewall_socket netlink_tcpdiag_socket netlink_nflog_socket
+  netlink_xfrm_socket netlink_audit_socket netlink_ip6fw_socket
+  netlink_dnrt_socket netlink_kobject_uevent_socket tun_socket
+  netlink_iscsi_socket netlink_fib_lookup_socket netlink_connector_socket
+  netlink_netfilter_socket netlink_generic_socket netlink_scsitransport_socket
+  netlink_rdma_socket netlink_crypto_socket
+} *;

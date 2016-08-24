@@ -1,0 +1,141 @@
+#!/usr/bin/python
+
+#
+# Copyright (C) 2011 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+
+import logging
+import logging.handlers
+import optparse
+import sys
+import syslog
+import time
+
+import dbus
+import flimflam
+
+options = None
+
+
+def SetupSyslog():
+    syslog_handler = logging.handlers.SysLogHandler(address='/dev/log')
+    formatter = logging.Formatter('%(pathname)s: %(message)s')
+    syslog_handler.setFormatter(formatter)
+    syslog_handler.setLevel(syslog.LOG_WARNING)
+    logging.getLogger().addHandler(syslog_handler)
+    logging.getLogger().addHandler(logging.StreamHandler())
+
+
+def GetService(service_name):
+    flim = flimflam.FlimFlam(dbus.SystemBus())
+    service = flim.FindElementByNameSubstring('Service', service_name)
+    if not service:
+        logging.error('Could not find service %s' % service_name)
+        sys.exit(1)
+    return (flim, service)
+
+
+def Cycle(service_name, iteration):
+    try:
+        (flim, service) = GetService(service_name)
+
+        (connect_success, _) = flim.ConnectService(service=service,
+                                                   retry=False,
+                                                   assoc_timeout=30)
+        time.sleep(options.sleep_after_connect)
+
+        (disconnect_state, _) = flim.DisconnectService(service)
+        time.sleep(options.sleep_after_disconnect)
+
+        disconnect_success = (disconnect_state == 'idle')
+        to_return = connect_success and disconnect_success
+
+        if not to_return:
+            logging.error('Failure at iteration %d: Connect:%-6s   '
+                          'Disconnect:%-6s' %
+                          (iteration, connect_success, disconnect_success))
+        return to_return
+
+    except dbus.exceptions.DBusException, e:
+        logging.error('Unexpected DBus exception: %s' % e)
+        return False
+
+
+def main():
+    SetupSyslog()
+
+    parser = optparse.OptionParser(usage='usage: %prog [options] service-name')
+    parser.set_defaults(keep_going=False)
+
+    parser.add_option('--continue', action='store_true', dest='keep_going',
+                      help='continue after an error')
+
+    parser.add_option('--sleep_after_connect', default=0.5, type='float',
+                      help='Time (in seconds) to sleep after connect')
+
+    parser.add_option('--sleep_after_disconnect', default=0, type='float',
+                      help='Time (in seconds) to sleep after connect')
+
+    parser.add_option('--limit', default=0, type='int',
+                      help='Number of iterations to run (0 for infinite)')
+
+
+    global options
+    (options, remaining) = parser.parse_args()
+
+    if len(remaining) < 1:
+        parser.error('Must supply a service name')
+
+    (service_name, ) = remaining
+
+    (flim, service) = GetService(service_name)
+    flim.DisconnectService(service)
+
+    total = 0
+    success = 0
+    while options.limit == 0 or total < options.limit:
+        rc = Cycle(service_name, total)
+        total += 1
+        if rc:
+            success += 1
+
+        message = (
+            'Fail rate %1.3f   Pass %-5d  Fail %-5d   Total %-5d' %
+            (float(total - success) / total, success, total - success, total))
+
+        if (total % 10) == 0:
+            # Not really a warning, but we want to get this into syslog
+            logging.warning(message)
+        else:
+            print message
+
+        if not rc:
+            if options.keep_going:
+                # Don't want to run in a tight loop for a persistent failure
+                sleep_time = 10
+                logging.warning('Sleeping %d seconds' % sleep_time)
+                time.sleep(sleep_time)
+            else:
+                logging.error('Exiting on failure')
+                sys.exit(1)
+    print 'connect-disconnect: Success'
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(1)

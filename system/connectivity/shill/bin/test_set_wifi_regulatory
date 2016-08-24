@@ -1,0 +1,132 @@
+#!/bin/sh
+#
+#
+# Copyright (C) 2015 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# UDEV event helper script that sets the system's WiFi regulatory domain
+# from VPD data.
+
+# Assertion helpers.
+assert_equal() {
+  local actual="$1"
+  local expected="$2"
+
+  if [ "${actual}" != "${expected}" ]; then
+    echo "FAIL: expected |${expected}|, got |${actual}|"
+    exit 1
+  fi
+}
+
+assert_regdomain_is() {
+  local expected_code="$1"
+  g_vpd_data="$(cat)"
+  g_country_code=""
+
+  . $(dirname $0)/set_wifi_regulatory
+  assert_equal "${g_country_code}" "${expected_code}"
+}
+
+# Fake out the commands that are called by set_wifi_regulatory.
+dump_vpd_log() {
+  assert_equal "$1" "--stdout"
+  echo "${g_vpd_data}"
+}
+
+iw() {
+  assert_equal "$1" "reg"
+  assert_equal "$2" "set"
+  g_country_code="$3"
+}
+
+# Simplest input.
+assert_regdomain_is US <<-"EOF"
+	"region"="US"
+EOF
+
+# Properly handle lower-case region.
+assert_regdomain_is US <<-"EOF"
+	"region"="us"
+EOF
+
+# If region exists multiple times, take the first one.
+assert_regdomain_is JP <<-"EOF"
+	"region"="JP"
+	"region"="US"
+EOF
+
+# Other fields can come before.
+assert_regdomain_is US <<-"EOF"
+	"initial_timezone"="America/Los_Angeles"
+	"region"="us"
+EOF
+
+# Other fields can come after.
+assert_regdomain_is US <<-"EOF"
+	"region"="us"
+	"initial_timezone"="America/Los_Angeles"
+EOF
+
+# Region may include additional data after country code (1/2).
+assert_regdomain_is CA <<-"EOF"
+	"region"="ca.hybrid"
+EOF
+
+# Region may include additional data after country code (2/2).
+assert_regdomain_is BR <<-"EOF"
+	"region"="br.abnt"
+EOF
+
+# Virtual regions work correctly (1/2).
+assert_regdomain_is SE <<-"EOF"
+	"region"="nordic"
+EOF
+
+# Virtual regions work correctly (2/2).
+assert_regdomain_is "MX" <<-"EOF"
+	"region"="latam-es-419"
+EOF
+
+# End quote is required.
+assert_regdomain_is "" <<-"EOF"
+	"region"="us
+EOF
+
+# Quotes are required.
+assert_regdomain_is "" <<-"EOF"
+	region=us
+EOF
+
+# No junk allowed at end.
+assert_regdomain_is "" <<-"EOF"
+	"region"="us"andmorestuff
+EOF
+
+# No junk allowed at beginning.
+assert_regdomain_is "" <<-"EOF"
+	junk"region"="us"
+EOF
+
+# Must match "region" exactly.
+assert_regdomain_is "" <<-"EOF"
+	"jregion"="us"
+EOF
+
+# Random shell meta-characters are not allowed.
+assert_regdomain_is "" <<-"EOF"
+	"region"="ca>>/var/log/junk"
+EOF
+
+echo "PASS"

@@ -1,0 +1,11 @@
+#!/usr/bin/python
+
+import sys, dbus, flimflam
+
+flim = flimflam.FlimFlam(dbus.SystemBus())
+
+if (len(sys.argv) < 2):
+    print "Service order is %s" % flim.GetServiceOrder()
+else:
+    orders = flim.SetServiceOrder(sys.argv[1])
+    print "Service order %s => %s" % orders

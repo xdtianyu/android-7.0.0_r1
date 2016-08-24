@@ -1,0 +1,156 @@
+//
+// Copyright (C) 2014 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto2";
+option optimize_for = LITE_RUNTIME;
+
+package shill.mobile_operator_db;
+
+message Filter {
+  // A filter can be one of the following types.
+  enum Type {
+    IMSI = 1;
+    ICCID = 2;
+    SID = 3;
+    OPERATOR_NAME = 4;
+    MCCMNC = 5;
+  };
+  required Type type = 1;
+  // A regular expression specifying the values that are *accepted* by this
+  // filter. The field to be tested is chosen by the |type|.
+  // The regular expression should be specified as an extended POSIX regular
+  // expression.
+  required string regex = 2;
+}
+
+message LocalizedName {
+  required string name = 1;
+  // Language is specified with two letter language codes. See xml:lang.
+  // If missing, language is assumed to be "en".
+  optional string language = 2;
+}
+
+message MobileAPN {
+  required string apn = 1;
+
+  enum Plan {
+    PREPAID = 1;
+    POSTPAID = 2;
+  }
+  repeated Plan plan = 2;
+
+  repeated LocalizedName localized_name = 3;
+  optional string gateway = 4;
+  optional string username = 5;
+  optional string password = 6;
+  repeated string dns = 7;
+}
+
+message OnlinePortal {
+  enum Method {
+    GET = 1;
+    POST = 2;
+  }
+  // Some OnlinePortals are only valid for a restricted set of SIDs/MCCMNCs etc.
+  // Use this filter to restrict when the OnlinePortal is valid.
+  // The OnlinePortal is assumed to be valid if the filter is not provided.
+  optional Filter olp_filter = 1;
+  required Method method = 2;
+  required string url = 3;
+  optional string post_data = 4;
+}
+
+message Data {
+  // A unique identifier for this M[V]NO.
+  required string uuid = 1;
+
+  enum ProviderType {
+    GSM = 1;
+    CDMA = 2;
+  }
+  optional ProviderType provider_type = 2;
+
+  optional string country = 3;
+  // List of localized names for this provider.
+  // If provided, the first is chosen as the default.
+  repeated LocalizedName localized_name = 4;
+  // Indicates that this provider requires roaming and the customer is not
+  // charged additional for roaming. This is particularly useful for some MVNOs.
+  optional bool requires_roaming = 5 [default = false];
+  repeated OnlinePortal olp = 6;
+
+  // ///////////////////////////////////////////////////////////////////////////
+  // GSM specific properties [21 - 40]
+
+  // MCCMNC is the concatenation of MCC and MNC.
+  // MCC is a three digit ITU E.212 Mobile Country Code (e.g. '310' or '409')
+  // and MNC is a two or three digit GSM Mobile Network Code.
+  repeated string mccmnc = 21;
+  repeated MobileAPN mobile_apn = 22;
+
+  // ///////////////////////////////////////////////////////////////////////////
+  // CDMA specific properties [41-60]
+
+  repeated string sid = 41;
+  repeated string nid = 42;
+  optional string activation_code = 43;
+}
+
+message MobileVirtualNetworkOperator {
+  repeated Filter mvno_filter = 1;
+  // The data provided in an MVNO is used to augment the data provided by its
+  // MNO.
+  // - All provided top-level fields in |MobileVirtualNetworkOperator::data|
+  //   *replace* the corresponding top-level fields in
+  //   |MobileNetworkOperator::data|. No attempt is made to merge lists etc.
+  // - |international_mvno| is handled in the same way. The base MNO is
+  //   determined by the particular mccmnc value.
+  required Data data = 2;
+}
+
+message MobileNetworkOperator {
+  required Data data = 1;
+  repeated MobileVirtualNetworkOperator mvno = 2;
+  // The database inevitably contains some duplicate MobileNetworkOperators that
+  // are impossible to distinguish using MCCMNC/name. In such a case, this bool
+  // may be set to pick out one of the duplicates as the intended operator.
+  // Note that if you're using this property, you should DTRT, and find out why
+  // there is an ambiguous entry in the database.
+  // TODO(pprabhu): Add a presubmit-hook to ensure that no more than one of the
+  // duplicates is earmarked.
+  optional bool earmarked = 3;
+}
+
+message InternationalMobileVirtualNetworkOperator {
+  // An InternationalMobileVirtualNetworkOperator is provided for mere
+  // convenience. When the database is loaded, an MVNO is added to each of the
+  // MNO this international MVNO belongs to.
+  // - |mccmnc| values are used to add the MVNO under corresponding MNOs.
+  // - Additionally, the |mccmnc| value is used to create a Filter that is
+  // applied *before* any other filters in the MVNOs.
+  //
+  // Currently, we do not support associating the IMVNO with different MNOs
+  // through any other data (like the operator name).
+  repeated string mccmnc = 1;
+  required MobileVirtualNetworkOperator mvno = 15;
+}
+
+// Top-level message.
+// The Database is a single message of type |MobileOperatorDB|.
+message MobileOperatorDB {
+  repeated MobileNetworkOperator mno = 1;
+  repeated InternationalMobileVirtualNetworkOperator imvno = 2;
+}

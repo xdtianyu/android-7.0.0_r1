@@ -1,0 +1,75 @@
+#!/usr/bin/python
+
+import dbus
+
+def print_sub_properties(key, value):
+    if key == "Profiles":
+        interface = "org.chromium.flimflam.Profile"
+    elif key == "Devices":
+        interface = "org.chromium.flimflam.Device"
+    elif key == "Services":
+        interface = "org.chromium.flimflam.Service"
+    else:
+        return
+
+    print "%s" % (key)
+    for path in value:
+        print "    %s" % (path)
+        obj = dbus.Interface(bus.get_object("org.chromium.flimflam", path),
+                             interface)
+
+        properties = obj.GetProperties(utf8_strings = True)
+
+        for key in properties.keys():
+            if key in ["Networks", "Services"]:
+                continue
+
+            if key in ["Powered", "Scanning", "Connected",
+                       "Available", "Remember", "Default"]:
+                if properties[key] == dbus.Boolean(1):
+                    val = "true"
+                else:
+                    val = "false"
+            elif key in ["Strength", "Priority"]:
+                val = int(properties[key])
+            else:
+                val = str(properties[key])
+
+            print "        %s = %s" % (key, val)
+
+        if "Services" in properties.keys():
+            remove_prefix = lambda x: x[x.rfind("/") + 1]
+            services = [" ".join(
+                map(remove_prefix, map(str, properties["Services"])))]
+            print "        Services = [ %s]" % (services)
+
+def print_properties(properties):
+    for key in properties.keys():
+        if key in ["Profiles", "Devices", "Services"]:
+            print_sub_properties(key, properties[key])
+        elif key in ["AvailableTechnologies", "EnabledTechnologies",
+                     "ConnectedTechnologies"]:
+            print "%s" % (key)
+            print "    [ %s]" % (" ".join(properties[key]))
+        elif key in ["OfflineMode"]:
+            print "%s" % (key)
+            if properties[key] == dbus.Boolean(1):
+                print "    true"
+            else:
+                print "    false"
+        elif key in ["DefaultTechnology"]:
+            print "%s" % (key)
+            if properties[key] == "":
+                print "    <none>"
+            else:
+                print "    %s" % (properties[key])
+        else:
+            print "%s" % (key)
+            print "    %s" % (properties[key])
+
+bus = dbus.SystemBus()
+
+manager = dbus.Interface(bus.get_object("org.chromium.flimflam", "/"),
+                                        "org.chromium.flimflam.Manager")
+
+print_properties(manager.GetProperties(utf8_strings = True))

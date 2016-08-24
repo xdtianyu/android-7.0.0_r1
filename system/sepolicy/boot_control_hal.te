@@ -1,0 +1,2 @@
+# Allow read/write bootctrl block device, if one is defined.
+allow boot_control_hal bootctrl_block_device:blk_file rw_file_perms;

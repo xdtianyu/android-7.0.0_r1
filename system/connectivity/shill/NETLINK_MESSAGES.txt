@@ -1,0 +1,308 @@
+Netlink message handling in Shill.
+
+
+1.0 INTRODUCTION.
+
+Shill uses netlink sockets (described in RFC 3549) to communicate with
+software in kernel space.  Messages that are passed across netlink sockets take
+a specific format that includes a netlink header, a sub-domain-specific header,
+and attributes.
+
+Shill defines a NetlinkManager class for dealing with the netlink sockets and
+NetlinkMessage (and its children such as ControlNetlinkMessage and
+Nl80211Message) and NetlinkAttribute (and its children) classes for dealing
+with the messages passed across the netlink sockets.
+
+
+2.0 SENDING A MESSAGE.
+
+This section describes how to send a netlink message in Shill.  The steps,
+described below, are:
+
+  o Create a message.
+  o Make Response and Error Handlers.
+  o Send the Message.
+
+
+2.1 Create the message.
+
+Start by declaring a message object.  This will be a message-specific child
+class of the NetlinkMessage type.  For example:
+
+  TriggerScanMessage trigger_scan;
+
+2.1.1 Add attributes to the message.
+
+You'll want to set values for all the message's attributes.  The message
+object should have all of its legal attributes pre-instantiated so all
+you should have to do is set their values (if an attribute is optional,
+don't set the value -- only the attibutes that have been explicitly
+set will be sent in the message).
+
+A message's attributes are accessed through the message's |attributes|
+or |const_attributes| methods.
+
+
+2.1.1.1 Regular attributes.
+
+Netlink attributes are typed (e.g., String, U32, etc.).  In order to
+set the value of an attribute you use the SetXxxAttributeValue method
+(where Xxx is the type of the attribute.  For example, you may want
+to set the value of the NL80211_ATTR_IFINDEX attribute:
+
+  if (trigger_scan.attributes()->SetU32AttributeValue(
+         NL80211_ATTR_IFINDEX, wifi_interface_index_)) {
+    // ...
+
+If the message hasn't pre-instantiated the attribute you want to use, the
+'SetXxxAttributeValue' call will return false.  This can be for one of
+three reasons:
+
+  a) a message of this type may not be expecting this kind of attribute,
+  b) the data type of the attribute may not agree with the setter you
+     used, or
+  c) the definition of the specific message class is incomplete (that
+     is, the attribute hasn't been, but should be, added to the message
+     type).
+
+You can check the kernel code to determine the attributes each message is
+expecting and the type of those attributes.
+
+  a) Find the command (NL80211_CMD_TRIGGER_SCAN, in the case of
+     TriggerScanMessage) in the |nl80211_ops| array in the kernel sources
+     (.../src/third_party/kernel/files/net/wireless/nl80211.c in the ChromeOS
+     sources).
+  b) Find the name of the command handler (in the |.doit| structure member)
+     in that structure.  Find that handler.  In the case of
+     NL80211_CMD_TRIGGER_SCAN, the handler is |nl80211_trigtger_scan|.
+  c) Look for handling of the attribute in question.  It will be an offset
+     into the |info->attrs[]| array.  You can also see the data type expected
+     for the attribute.
+
+If the kernel expects the attribute, modify the message's constructor
+(probably in one of the message handling source files, like
+nl80211_message.cc) to create the attribute:
+
+  attributes()->CreateAttribute(
+      NL80211_ATTR_IFINDEX, Bind(&NetlinkAttribute::NewNl80211AttributeFromId));
+
+
+2.1.1.2  Nested attributes.
+
+So, this is all fun and games until someone needs a nested attribute.
+A nested attribute contains a number of other attributes (like a structure)
+or a list of identically-typed attributes (like an array).  To set a nested
+attribute, declare an AttributeListRefPtr, and fill it with the attribute
+in question:
+
+  AttributeListRefPtr nested;
+  if (!trigger_scan.attributes()->GetNestedAttributeList(
+      NL80211_ATTR_SCAN_FREQUENCIES, &nested) || !nested) {
+    LOG(FATAL) << "Couldn't get NL80211_ATTR_SCAN_FREQUENCIES.";
+  }
+
+Set the 'has a value' trait of the nested attribute:
+
+  trigger_scan.attributes()->SetNestedAttributeHasAValue(
+      NL80211_ATTR_SCAN_FREQUENCIES);
+
+Now, create and set the nested attributes within AttributeList.  You can
+create an array:
+
+  int i = 0;
+  for (const auto freq : scan_frequencies) {
+    nested->CreateU32Attribute(i, StringPrintf("Frequency-%d", i).c_str());
+    nested->SetU32AttributeValue(i, freq);
+    ++i;
+  }
+
+Or you can just create and add ordinary named attributes:
+
+  nested->CreateStringAttribute(type, kSsidString);
+  nested->SetStringAttributeValue(type, "Foo");
+
+You can even nest nested attributes inside nested attributes:
+
+  nested->CreateNestedAttribute(type, kRatesString);
+  AttributeListRefPtr nested_nested;
+  if (!nested->GetNestedAttributeList(type, &nested_nested) ||
+      !nested_nested) {
+    LOG(ERROR) << "Couldn't get attribute " << attribute_name
+               << " which we just created.";
+    return;
+  }
+  for (size_t i = 0; i < payload_bytes; ++i) {
+    string rate_name = StringPrintf("Rate-%zu", i);
+    nested_nested->CreateU8Attribute(i, rate_name.c_str());
+    nested_nested->SetU8AttributeValue(i, payload[i]);
+  }
+  nested->SetNestedAttributeHasAValue(type);
+
+
+2.2 Make Response and Error Handlers.
+
+Make some sort of handler for the response message.
+
+  class Foo {
+   // ...
+   private:
+    // More on this, later.
+    void OnTriggerScanResponse(const Nl80211Message& response) {
+      // Do whatever you want with the response.
+      return;
+    }
+
+    void OnTriggerScanErrorResponse(
+        NetlinkManager::AuxilliaryMessageType type,
+        const NetlinkMessage* netlink_message) {
+      switch (type) {
+        case NetlinkManager::kErrorFromKernel: {
+            if (!netlink_message) {
+              LOG(ERROR) << __func__ << ": Message failed: NetlinkManager Error.";
+              break;
+            }
+            if (netlink_message->message_type() !=
+                ErrorAckMessage::GetMessageType()) {
+              LOG(ERROR) << __func__ << ": Message failed: Not an error.";
+              break;
+            }
+            const ErrorAckMessage* error_ack_message =
+                static_cast<const ErrorAckMessage*>(netlink_message);
+            if (error_ack_message->error()) {
+              LOG(ERROR) << __func__ << ": Message failed: "
+                         << error_ack_message->ToString();
+            } else {
+              SLOG(WiFi, 6) << __func__ << ": Message ACKed";
+            }
+          }
+          break;
+
+        case NetlinkManager::kUnexpectedResponseType:
+          LOG(ERROR) << "Message not handled by regular message handler:";
+          if (netlink_message) {
+            netlink_message->Print(0, 0);
+          }
+          found_error_ = true;
+          on_scan_failed_.Run();
+          break;
+
+        case NetlinkManager::kTimeoutWaitingForResponse:
+          // Handle this one.
+          break;
+
+        default:
+          LOG(ERROR) << "Unexpected auxiliary message type: " << type;
+          found_error_ = true;
+          on_scan_failed_.Run();
+          break;
+      }
+    }
+  }
+
+
+2.3 Send the Message.
+
+Send the message with the handlers for the various cases.
+
+  NetlinkManager::GetInstance()->SendNl80211Message(
+      &trigger_scan,
+      Bind(&Foo::OnTriggerScanResponse,
+           weak_ptr_factory_.GetWeakPtr()),
+      Bind(&Foo::OnTriggerScanErrorResponse,
+           weak_ptr_factory_.GetWeakPtr()));
+
+
+3.0 RECEIVING A NETLINK MESSAGE.
+
+3.1 Build a Message Handler (to which I've alluded, above).
+
+The message handler should take a single parameter of the type of message you
+want to handle.  For example:
+
+  void NetlinkManager::OnNewFamilyMessage(const ControlNetlinkMessage& message) {
+
+You'll probably want to look for some attributes:
+
+  uint16_t family_id;
+  if (!message.const_attributes()->GetU16AttributeValue(CTRL_ATTR_FAMILY_ID,
+                                                         &family_id)) {
+    LOG(ERROR) << __func__ << ": Couldn't get family_id attribute";
+    return;
+  }
+
+  string family_name;
+  if (!message.const_attributes()->GetStringAttributeValue(
+      CTRL_ATTR_FAMILY_NAME, &family_name)) {
+    LOG(ERROR) << __func__ << ": Couldn't get family_name attribute";
+    return;
+  }
+
+And, some of these attributes may be nested.  In this example, we've got an
+array of structures that looks sort-of like (this isn't the way the data is
+stored, it just _logically_ looks like this):
+
+  struct {
+    u32 ignored;  // CTRL_ATTR_MCAST_GRP_UNSPEC;
+    string group_name;  // CTRL_ATTR_MCAST_GRP_NAME;
+    u32 group_id;  // CTRL_ATTR_MCAST_GRP_ID;
+  } multicast_groups[];
+
+But the actual code for reading this array is as follows:
+
+  AttributeListConstRefPtr multicast_groups;
+  if (message.const_attributes()->ConstGetNestedAttributeList(
+      CTRL_ATTR_MCAST_GROUPS, &multicast_groups)) {
+    AttributeListConstRefPtr current_group;
+
+    for (int i = 1;
+         multicast_groups->ConstGetNestedAttributeList(i, &current_group);
+         ++i) {
+
+      string group_name;
+      if (!current_group->GetStringAttributeValue(CTRL_ATTR_MCAST_GRP_NAME,
+                                                  &group_name)) {
+        LOG(WARNING) << "Expected CTRL_ATTR_MCAST_GRP_NAME, found none";
+        continue;
+      }
+
+      uint32_t group_id;
+      if (!current_group->GetU32AttributeValue(CTRL_ATTR_MCAST_GRP_ID,
+                                               &group_id)) {
+        LOG(WARNING) << "Expected CTRL_ATTR_MCAST_GRP_ID, found none";
+        continue;
+      }
+
+      SLOG(WiFi, 3) << "  Adding group '" << group_name << "' = " << group_id;
+      message_types_[family_name].groups[group_name] = group_id;
+    }
+  }
+
+
+3.2 Install the Message Handler.
+
+The message you're handling can either be a broadcast message or a response
+(I've not seen a case where the kernel sends a message directly to us but, I'd
+imagine it's possible.  This case could be handled as a broadcast message
+followed by a hasty name change fot that method).
+
+3.2.1 Install a Broadcast Message Handler.
+
+Broadcast handlers are installed to the NetlinkManager as follows:
+
+  NetlinkManager::GetInstance()->AddBroadcastHandler(handler);
+
+Where 'handler' is the handler described, above.  Broadcast messaes just
+handle generic NetlinkMessages rather than a specific kind.
+
+3.2.2 Install a Unicast (i.e., a Response) Message Handler.
+
+Otherwise, the handler is installed as the response handler for a message.
+For example:
+
+  ControlNetlinkMessage message;
+  // Build the message.
+
+  NetlinkManager::GetInstance()->SendControlMessage(&message,
+                                                    &message_handler,
+						    &error_handler);
+

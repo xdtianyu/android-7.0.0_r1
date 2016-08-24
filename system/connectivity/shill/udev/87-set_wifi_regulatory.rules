@@ -1,0 +1,3 @@
+# Configure initial regulatory domain from VPD, for devices that don't
+# follow CRDA.
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="brcmfmac*", RUN+="/usr/sbin/set_wifi_regulatory"

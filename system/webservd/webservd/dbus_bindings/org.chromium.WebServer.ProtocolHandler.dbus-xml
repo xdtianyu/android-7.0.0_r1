@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <interface name="org.chromium.WebServer.ProtocolHandler">
+    <!-- Methods -->
+    <method name="AddRequestHandler">
+      <tp:docstring>
+        Adds a handler for the given |url|, and optionally request |method|.
+        On success returns a handler ID.
+      </tp:docstring>
+      <arg name="url" type="s" direction="in"/>
+      <arg name="method" type="s" direction="in"/>
+      <arg name="service_name" type="s" direction="in"/>
+      <arg name="request_handler_id" type="s" direction="out"/>
+      <annotation name="org.chromium.DBus.Method.Kind" value="normal"/>
+      <annotation name="org.chromium.DBus.Method.IncludeDBusMessage"
+                  value="true"/>
+    </method>
+    <method name="RemoveRequestHandler">
+      <tp:docstring>
+        Removes a previously registered request handler.
+        The |handler_id| is the ID returned from AddHanlder() method.
+      </tp:docstring>
+      <arg name="request_handler_id" type="s" direction="in"/>
+      <annotation name="org.chromium.DBus.Method.Kind" value="normal"/>
+    </method>
+    <method name="GetRequestFileData">
+      <tp:docstring>
+        Returns the contents of the given uploaded file. The |file_id| parameter
+        must correspond to the file_id member of FileInfo structure returned
+        by |Files| property for the given |request_id|.
+      </tp:docstring>
+      <arg name="request_id" type="s" direction="in"/>
+      <arg name="file_id" type="i" direction="in"/>
+      <arg name="contents" type="h" direction="out"/>
+      <annotation name="org.chromium.DBus.Method.Kind" value="normal"/>
+    </method>
+    <method name="CompleteRequest">
+      <tp:docstring>
+        Fulfills the request with specified |request_id| and provides response.
+        |data_size| if the size of the data is known. Otherwise should be set to
+        a value of -1. The actual data is to be written to the pipe provided
+        in |response_stream| file descriptor.
+      </tp:docstring>
+      <arg name="request_id" type="s" direction="in"/>
+      <arg name="status_code" type="i" direction="in"/>
+      <arg name="headers" type="a(ss)" direction="in"/>
+      <arg name="data_size" type="x" direction="in"/>
+      <arg name="response_stream" type="h" direction="out"/>
+      <annotation name="org.chromium.DBus.Method.Kind" value="normal"/>
+    </method>
+    <!-- Properties -->
+    <property name="Id" type="s" access="read">
+      <tp:docstring>
+        Returns a unique ID of this instance.
+      </tp:docstring>
+    </property>
+    <property name="Name" type="s" access="read">
+      <tp:docstring>
+        Returns the name of the handler. Multiple related protocol handler
+        could share the same name so that clients don't have to register
+        request handlers for each of them separately.
+      </tp:docstring>
+    </property>
+    <property name="Port" type="q" access="read">
+      <tp:docstring>
+        Returns the port number this instance is serving requests on.
+      </tp:docstring>
+    </property>
+    <property name="Protocol" type="s" access="read">
+      <tp:docstring>
+        Returns the protocol name of this instance ("http" or "https").
+      </tp:docstring>
+    </property>
+    <property name="CertificateFingerprint" type="ay" access="read">
+      <tp:docstring>
+        Returns the TLS certificate fingerprint used for HTTPS instance or
+        empty array if this is an unsecured HTTP instance.
+      </tp:docstring>
+    </property>
+  </interface>
+</node>

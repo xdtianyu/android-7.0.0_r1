@@ -1,0 +1,202 @@
+###
+### Untrusted apps.
+###
+### This file defines the rules for untrusted apps.
+### Apps are labeled based on mac_permissions.xml (maps signer and
+### optionally package name to seinfo value) and seapp_contexts (maps UID
+### and optionally seinfo value to domain for process and type for data
+### directory).  The untrusted_app domain is the default assignment in
+### seapp_contexts for any app with UID between APP_AID (10000)
+### and AID_ISOLATED_START (99000) if the app has no specific seinfo
+### value as determined from mac_permissions.xml.  In current AOSP, this
+### domain is assigned to all non-system apps as well as to any system apps
+### that are not signed by the platform key.  To move
+### a system app into a specific domain, add a signer entry for it to
+### mac_permissions.xml and assign it one of the pre-existing seinfo values
+### or define and use a new seinfo value in both mac_permissions.xml and
+### seapp_contexts.
+###
+### untrusted_app includes all the appdomain rules, plus the
+### additional following rules:
+###
+
+type untrusted_app, domain;
+app_domain(untrusted_app)
+net_domain(untrusted_app)
+bluetooth_domain(untrusted_app)
+
+# Some apps ship with shared libraries and binaries that they write out
+# to their sandbox directory and then execute.
+allow untrusted_app app_data_file:file { rx_file_perms execmod };
+
+# ASEC
+allow untrusted_app asec_apk_file:file r_file_perms;
+# Execute libs in asec containers.
+allow untrusted_app asec_public_file:file { execute execmod };
+
+# Allow the allocation and use of ptys
+# Used by: https://play.google.com/store/apps/details?id=jackpal.androidterm
+create_pty(untrusted_app)
+
+# Used by Finsky / Android "Verify Apps" functionality when
+# running "adb install foo.apk".
+# TODO: Long term, we don't want apps probing into shell data files.
+# Figure out a way to remove these rules.
+allow untrusted_app shell_data_file:file r_file_perms;
+allow untrusted_app shell_data_file:dir r_dir_perms;
+
+# Read and write system app data files passed over Binder.
+# Motivating case was /data/data/com.android.settings/cache/*.jpg for
+# cropping or taking user photos.
+allow untrusted_app system_app_data_file:file { read write getattr };
+
+#
+# Rules migrated from old app domains coalesced into untrusted_app.
+# This includes what used to be media_app, shared_app, and release_app.
+#
+
+# Access to /data/media.
+allow untrusted_app media_rw_data_file:dir create_dir_perms;
+allow untrusted_app media_rw_data_file:file create_file_perms;
+
+# Traverse into /mnt/media_rw for bypassing FUSE daemon
+# TODO: narrow this to just MediaProvider
+allow untrusted_app mnt_media_rw_file:dir search;
+
+# allow cts to query all services
+allow untrusted_app servicemanager:service_manager list;
+
+allow untrusted_app audioserver_service:service_manager find;
+allow untrusted_app cameraserver_service:service_manager find;
+allow untrusted_app drmserver_service:service_manager find;
+allow untrusted_app mediaserver_service:service_manager find;
+allow untrusted_app mediaextractor_service:service_manager find;
+allow untrusted_app mediacodec_service:service_manager find;
+allow untrusted_app mediadrmserver_service:service_manager find;
+allow untrusted_app nfc_service:service_manager find;
+allow untrusted_app radio_service:service_manager find;
+allow untrusted_app surfaceflinger_service:service_manager find;
+allow untrusted_app app_api_service:service_manager find;
+
+# Allow GMS core to access perfprofd output, which is stored
+# in /data/misc/perfprofd/. GMS core will need to list all
+# data stored in that directory to process them one by one.
+userdebug_or_eng(`
+  allow untrusted_app perfprofd_data_file:file r_file_perms;
+  allow untrusted_app perfprofd_data_file:dir r_dir_perms;
+')
+
+# gdbserver for ndk-gdb ptrace attaches to app process.
+allow untrusted_app self:process ptrace;
+
+# Programs routinely attempt to scan through /system, looking
+# for files. Suppress the denials when they occur.
+dontaudit untrusted_app exec_type:file getattr;
+
+# TODO: switch to meminfo service
+allow untrusted_app proc_meminfo:file r_file_perms;
+
+# https://code.google.com/p/chromium/issues/detail?id=586021
+allow untrusted_app proc:file r_file_perms;
+# access /proc/net/xt_qtguid/stats
+r_dir_file(untrusted_app, proc_net)
+
+# Cts: HwRngTest
+allow untrusted_app sysfs_hwrandom:dir search;
+allow untrusted_app sysfs_hwrandom:file r_file_perms;
+
+###
+### neverallow rules
+###
+
+# Receive or send uevent messages.
+neverallow untrusted_app domain:netlink_kobject_uevent_socket *;
+
+# Receive or send generic netlink messages
+neverallow untrusted_app domain:netlink_socket *;
+
+# Too much leaky information in debugfs. It's a security
+# best practice to ensure these files aren't readable.
+neverallow untrusted_app debugfs_type:file read;
+
+# Do not allow untrusted apps to register services.
+# Only trusted components of Android should be registering
+# services.
+neverallow untrusted_app service_manager_type:service_manager add;
+
+# Do not allow untrusted_apps to connect to the property service
+# or set properties. b/10243159
+neverallow untrusted_app property_socket:sock_file write;
+neverallow untrusted_app init:unix_stream_socket connectto;
+neverallow untrusted_app property_type:property_service set;
+
+# Do not allow untrusted_app to be assigned mlstrustedsubject.
+# This would undermine the per-user isolation model being
+# enforced via levelFrom=user in seapp_contexts and the mls
+# constraints.  As there is no direct way to specify a neverallow
+# on attribute assignment, this relies on the fact that fork
+# permission only makes sense within a domain (hence should
+# never be granted to any other domain within mlstrustedsubject)
+# and untrusted_app is allowed fork permission to itself.
+neverallow untrusted_app mlstrustedsubject:process fork;
+
+# Do not allow untrusted_app to hard link to any files.
+# In particular, if untrusted_app links to other app data
+# files, installd will not be able to guarantee the deletion
+# of the linked to file. Hard links also contribute to security
+# bugs, so we want to ensure untrusted_app never has this
+# capability.
+neverallow untrusted_app file_type:file link;
+
+# Do not allow untrusted_app to access network MAC address file
+neverallow untrusted_app sysfs_mac_address:file no_rw_file_perms;
+
+# Restrict socket ioctls. Either 1. disallow privileged ioctls, 2. disallow the
+# ioctl permission, or 3. disallow the socket class.
+neverallowxperm untrusted_app domain:{ rawip_socket tcp_socket udp_socket } ioctl priv_sock_ioctls;
+neverallow untrusted_app *:{ netlink_route_socket netlink_selinux_socket } ioctl;
+neverallow untrusted_app *:{
+  socket netlink_socket packet_socket key_socket appletalk_socket
+  netlink_firewall_socket netlink_tcpdiag_socket netlink_nflog_socket
+  netlink_xfrm_socket netlink_audit_socket netlink_ip6fw_socket
+  netlink_dnrt_socket netlink_kobject_uevent_socket tun_socket
+  netlink_iscsi_socket netlink_fib_lookup_socket netlink_connector_socket
+  netlink_netfilter_socket netlink_generic_socket netlink_scsitransport_socket
+  netlink_rdma_socket netlink_crypto_socket
+} *;
+
+# Do not allow untrusted_app access to /cache
+neverallow untrusted_app { cache_file cache_recovery_file }:dir ~{ r_dir_perms };
+neverallow untrusted_app { cache_file cache_recovery_file }:file ~{ read getattr };
+
+# Do not allow untrusted_app to set system properties.
+neverallow untrusted_app property_socket:sock_file write;
+neverallow untrusted_app property_type:property_service set;
+
+# Do not allow untrusted_app to create/unlink files outside of its sandbox,
+# internal storage or sdcard.
+# World accessible data locations allow application to fill the device
+# with unaccounted for data. This data will not get removed during
+# application un-installation.
+neverallow untrusted_app {
+  fs_type
+  -fuse                     # sdcard
+  -sdcardfs                 # sdcard
+  file_type
+  -app_data_file            # The apps sandbox itself
+  -media_rw_data_file       # Internal storage. Known that apps can
+                            # leave artfacts here after uninstall.
+  -user_profile_data_file   # Access to profile files
+  -user_profile_foreign_dex_data_file   # Access to profile files
+  userdebug_or_eng(`
+    -method_trace_data_file # only on ro.debuggable=1
+    -coredump_file          # userdebug/eng only
+  ')
+}:dir_file_class_set { create unlink };
+
+# Do not allow untrusted_app to directly open tun_device
+neverallow untrusted_app tun_device:chr_file open;
+
+# Only allow appending to /data/anr/traces.txt (b/27853304, b/18340553)
+neverallow untrusted_app anr_data_file:file ~{ open append };
+neverallow untrusted_app anr_data_file:dir ~search;

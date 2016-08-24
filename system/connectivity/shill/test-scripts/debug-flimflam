@@ -1,0 +1,41 @@
+#!/usr/bin/python
+
+import gobject
+
+import dbus
+import dbus.mainloop.glib
+
+def element_signal(path, member):
+    if member == "ElementAdded":
+        action = "Add   "
+    elif member == "ElementRemoved":
+        action = "Remove"
+    elif member == "ElementUpdated":
+        action = "Update"
+    else:
+        return
+    print "%s  [ %s ]" % (action, path)
+
+if __name__ == '__main__':
+    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+
+    bus = dbus.SystemBus()
+
+    bus.add_signal_receiver(element_signal,
+                            bus_name="org.chromium.flimflam",
+                            signal_name = "ElementAdded",
+                            path_keyword="path",
+                            member_keyword="member")
+    bus.add_signal_receiver(element_signal,
+                            bus_name="org.chromium.flimflam",
+                            signal_name = "ElementRemoved",
+                            path_keyword="path",
+                            member_keyword="member")
+    bus.add_signal_receiver(element_signal,
+                            bus_name="org.chromium.flimflam",
+                            signal_name = "ElementUpdated",
+                            path_keyword="path",
+                            member_keyword="member")
+
+    mainloop = gobject.MainLoop()
+    mainloop.run()

@@ -1,0 +1,89 @@
+# Tested on stumpy board
+getegid: 1
+geteuid: 1
+getgid: 1
+getpid: 1
+getresgid: 1
+getresuid: 1
+gettid: 1
+getuid: 1
+setgroups: 1
+setresgid: 1
+setresuid: 1
+
+clock_getres: 1
+clock_gettime: 1
+nanosleep: 1
+alarm: 1
+
+connect: 1
+bind: 1
+getsockname: 1
+pipe: 1
+recvfrom: 1
+recvmsg: 1
+sendmsg: 1
+select: 1
+sendto: 1
+setsockopt: 1
+socket: 1
+socketpair: 1
+
+close: 1
+creat: 1
+ioctl: 1
+open: 1
+prctl: 1
+read: 1
+write: 1
+arch_prctl: 1
+capget: 1
+
+brk: 1
+dup2: 1
+clone: 1
+fork: 1
+mmap: 1
+munmap: 1
+
+fcntl: 1
+fstat: 1
+fsync: 1
+ftruncate: 1
+lseek: 1
+stat: 1
+
+futex: 1
+
+exit: 1
+exit_group: 1
+kill: 1
+rt_sigaction: 1
+rt_sigprocmask: 1
+rt_sigreturn: 1
+signalfd4: 1
+tkill: 1
+
+epoll_create: 1
+epoll_ctl: 1
+epoll_wait: 1
+poll: 1
+wait4: 1
+
+chdir: 1
+readlink: 1
+umask: 1
+
+set_robust_list: 1
+set_tid_address: 1
+
+execve: 1
+mprotect: 1
+access: 1
+getrlimit: 1
+unlink: 1
+mkdir: 1
+rmdir: 1
+chown: 1
+chmod: 1
+writev: 1

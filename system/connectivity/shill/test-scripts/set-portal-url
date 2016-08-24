@@ -1,0 +1,12 @@
+#!/usr/bin/python
+
+import dbus, flimflam, sys
+
+if (len(sys.argv) < 2):
+    print "Usage: %s portal-url" % (sys.argv[0])
+    sys.exit(1)
+
+(_, url) = sys.argv
+
+flim = flimflam.FlimFlam(dbus.SystemBus())
+flim.SetPortalURL(url)

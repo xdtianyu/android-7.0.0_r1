@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <interface name="org.chromium.apmanager.Config">
+    <property name="Ssid" type="s" access="readwrite"/>
+    <property name="InterfaceName" type="s" access="readwrite"/>
+    <property name="SecurityMode" type="s" access="readwrite"/>
+    <property name="Passphrase" type="s" access="write"/>
+    <property name="HwMode" type="s" access="readwrite"/>
+    <property name="OperationMode" type="s" access="readwrite"/>
+    <property name="Channel" type="q" access="readwrite"/>
+    <property name="HiddenNetwork" type="b" access="readwrite"/>
+    <property name="BridgeInterface" type="s" access="readwrite"/>
+    <property name="ServerAddressIndex" type="q" access="readwrite"/>
+    <property name="FullDeviceControl" type="b" access="readwrite"/>
+  </interface>
+</node>

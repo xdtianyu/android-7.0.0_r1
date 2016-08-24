@@ -1,0 +1,742 @@
+Manager hierarchy
+=================
+
+Service		org.chromium.flimflam
+Interface	org.chromium.flimflam.Manager
+Object path	/
+
+Methods
+		dict GetProperties()
+
+			Return the global system properties specified
+			in the Properties section.
+
+		void SetProperty(string name, variant value)
+
+			Changes the value of the specified property. Only
+			properties that are listed as read-write are
+			changeable. On success a PropertyChanged signal
+			will be emitted.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.InvalidProperty
+
+		string GetState()
+
+			Return the connection state of a system. The
+			same value is return via the State property.
+
+		object CreateProfile(string name)
+
+			Create and add new profile with the specified
+			identifier name.  The name should either be in the
+			form ``name'' or ``~user/name'' where where ``user''
+			is the login name of a user suitable for finding
+			their home directory.  Both strings must contain
+			only alpha-numeric ASCII characters.
+
+			Profiles created without a user name are stored in
+			a system directory readable only by the connection
+			mananger.  Profiles created with a user name are
+			stored in the user's home directory but readable
+			only by the connection manager.
+
+			If any existing profile is specified its contents
+			are reset to a default (minimal) contents.  If the
+			profile is already registered with a CreateProfile
+			or PushProfile request then an error is returned.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.AlreadyExists
+
+		object PushProfile(string name)
+
+			Push the profile with the specified identifier
+			onto the profile stack.  The profile must have
+			previously been created with CreateProfile.
+			The profile becomes the ``active profile'' that
+			is searched first when loading data and to which
+			updates are stored.
+
+			A profile may be pushed only once.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.AlreadyExists
+
+		object InsertUserProfile(string name, string user_hash)
+
+			Add the profile with the specified identifier
+			to the profile stack.  The profile must have
+			previously been created with CreateProfile.
+			The |user_hash| provided is assigned to the
+			profile and is made visible as a property of
+			the profile.
+
+			A profile may be inserted or pushed only once.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.AlreadyExists
+
+		object PopProfile(string name)
+
+			Pop the top-most profile on the profile stack.
+			Any profile beneath this profile becomes the
+			``active profile''.  Any services using configuration
+			from the popped profile are disconnected and the
+                        credentials invalidated (the next time
+			credentials are needed they are loaded from the
+			(new) active profile).
+
+			The name must match the identifer of the active
+			profile.  This is a safeguard against accidentally
+			removing the wrong profile.
+
+			Note it is valid to pop all profiles from the
+			stack; in this state the connection manager does
+			not write any state to persistent storage.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.NotFound
+
+		object PopAnyProfile()
+
+			Like PopProfile but do not check the profile on
+			the top of the stack; pop anything.
+
+			Possible Errors: [service].Error.InvalidArguments
+
+		object PopAllUserProfiles()
+
+			Remove all user profiles from the stack of managed
+			profiles leaving only default profiles if any exist.
+
+		void RemoveProfile(string name)
+
+			Remove the profile with specified identifier.
+
+			The profile may not be resident on the stack.
+			The default profile may not be removed.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.AlreadyExists
+
+		void RequestScan(string type)
+
+			Request a scan for the specified technology. If
+			type is the string "" then a scan request is
+			made for each technology.
+
+			Possible Errors: [service].Error.InvalidArguments
+
+		void EnableTechnology(string type)
+
+			Enable all technologies of the specified type.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.InProgress
+					 [service].Error.AlreadyEnabled
+					 [service].Error.PermissionDenied
+
+		void DisableTechnology(string type)
+
+			Disable all technologies of the specified type.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.InProgress
+					 [service].Error.AlreadyDisabled
+
+		object ConfigureService(dict properties)
+
+			Update the configuration of a service in memory
+			and in the profile.  If no matching service exists
+			in memory it is temporarily created to carry out
+			this work and may be removed later.  The object
+			path of the created service is returned.
+
+			If a GUID property is specified in properties
+			it is used to find the service; otherwise Type,
+			Security, and type-specific properties such as
+			WiFi.SSID are used to find any existing service.
+			If no service is located in memory a new one is
+			created with the supplied properties.
+
+			All provided parameters are applied to the in
+			memory service regardless of errors.  But if an
+			error occurs while setting a property and the
+			service object was created as a result of this
+			call it is removed.  In the event of multiple
+			errors the first error code is returned by
+			this call.
+
+			See the Service Properties section for a list of
+			properties and constraints on property values.
+			See also GetService.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.NotSupported
+
+		object ConfigureServiceForProfile(object profile,
+						  dict properties)
+
+			Create or update the configuration of a WiFi
+			service within a specific profile.  This is
+			similar to "ConfigureService" above, except
+			that this might not change the state of the
+			current service.  A matching service is found
+			by first looking for a service with matching
+			"GUID" property if specified, then by using
+			the "Mode", "SSID", and "Security" properties
+			from |properties|.
+
+			If a matching service is found but its current
+			profile supersedes the specified profile, a new
+			profile entry is written with the specified
+			properties.  This method can be used for
+			configuring a service in the default profile
+			while a separate configuration exists in the
+			user profile.  In this scenario, no configured
+			properties in the user profile entry will be
+			copied to the default profile, and the user
+			profile remains unchanged.  Moreover, the
+			matching service will still refer to the user
+			profile.
+
+			A second example usage for this method is creating
+			a copy of the current service from the default
+			profile into the user profile.  If a matching
+			service exists but its current profile antecedes
+			the specified profile, the configuration of the
+			current service is first copied to the new profile
+			without removing the entry in the default profile.
+			The service is then assigned to the new profile
+			and the specified properties are then applied to
+			the service and saved to the new profile, leaving
+			the original profile intact.  This differs from the
+			behavior of setting the "Profile" property on the
+			service via the SetProperty or ConfigureService
+			methods, which remove the configuration from the
+			old profile.
+
+			In situations where a matching service is not found,
+			the service isn't associated with a profile, or the
+			specified profile is already associated with the
+			matched service, the behavior of this method mimics
+			that of ConfigureService.
+
+			Currently this method is only supported for WiFi
+			services.  The specified profile must already
+			be loaded and on the Manager's profile stack.
+			If the "Profile" parameter is set in the properties
+			dictionary, it must match the profile parameter.
+
+			This method returns the object path of the created
+			or modified service, in cases where a matching
+			service will refer to the specified profile.
+			Otherwise it returns the special path "/" to signify
+			that although the operation succeeded, there is
+			no matching service that refers to this profile.
+
+			Possible Errors: [service].Error.InternalError
+					 [service].Error.InvalidArguments
+					 [service].Error.NotFound
+					 [service].Error.NotSupported
+
+		void FindMatchingService(dict properties)
+
+			Find a service that matches all the properties
+			and returns the object identifier associated
+			with it.  If no service exists in memory that
+			matches these arguments, an error is returned.
+
+			See also GetService and ConfgiureService.
+
+			Possible Errors: [service].Error.NotFound
+
+		object GetService(dict properties)
+
+			Return the object path of a service after
+			applying any requested configuration changes.
+			If no service exists it is created.
+
+			If a GUID property is specified in properties
+			it is used to find the service; otherwise Type,
+			Security, and type-specific properties such as
+			WiFi.SSID are used to find any existing service.
+			If no service is located in memory a new one is
+			created with the supplied properties.
+
+			All provided parameters are applied to the service
+			regardless of errors.  But if an error occurs
+			while setting a property and the service was
+			created as a result of this call it is removed.
+			In the event of multiple errors the first error
+			code is returned by this call.
+
+			See the Service Properties section for a list of
+			properties and constraints on property values.
+			See also ConfigureService.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.NotSupported
+					 [service].Error.PermissionDenied
+					 [service].Error.InternalError
+					 [service].Error.InvalidNetworkName
+					 [service].Error.InvalidPassphrase
+
+		object GetVPNService(dict properties) --DEPRECATED--
+
+			Like GetService, but only for "vpn" services and
+			without using the GUID property to lookup a service.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.NotSupported
+					 [service].Error.PermissionDenied
+					 [service].Error.InternalError
+
+		object GetWifiService(dict properties) --DEPRECATED--
+
+			Like GetService, but only for "wifi" services and
+			without using the GUID property to lookup a service.
+
+			Possible Errors: [service].Error.InvalidArguments
+					 [service].Error.NotSupported
+					 [service].Error.PermissionDenied
+					 [service].Error.InternalError
+					 [service].Error.InvalidNetworkName
+					 [service].Error.InvalidPassphrase
+
+		void SetDebugTags(string taglist)
+
+			Set the debug tags that are enabled for logging to
+			syslog. "taglist" is a list of valid tag names
+			separated by "+".  Shill silently ignores
+			invalid flags.
+
+		string GetDebugTags()
+			Get the list of enabled debug tags. The list is
+			represented as a string of tag names separated
+			by "+".
+
+		string ListDebugTags()
+			Get the list of all debug tags that can be enabled.
+			The list is represented as a string of tag names
+			separated by "+".
+
+		string GetServiceOrder()
+
+			Return a ','-separated string listing known technologies
+			in priority ordering.
+
+			For example, the default ordering would be returned as:
+				"ethernet,bluetooth,wifi,wimax,cellular"
+
+		void SetServiceOrder(string mask)
+
+			Set the technology priority based on a provided
+			','-separated list of technologies, sorted from highest
+			priority to lowest.
+
+			The list may contain the following services:
+				{ ethernet, wifi, wimax, bluetooth, cellular }
+			Technologies not included are assigned the lowest
+			priority.
+
+			Technology priority changes occur immediately.
+
+			Possible Errors: [service].Error.InvalidArguments
+
+		void RecheckPortal()
+
+			Retest the portal state of the active service
+			if a check is not currently in progress.  This
+			will only have an effect if the active service
+			is currently in the portal state.
+
+		dict GetNetworksForGeolocation()
+
+		        Returns an array of dictionaries containing information
+			about visible cellular and WiFi networks which may be
+			then used for Geolocation.
+			Each key is a string, and the value itself is an array
+			of dictionaries mapping string key-value pairs. Each of
+			these (sub) dictionaries contains information about
+			one single network for Geolocation.
+			For more details, see:
+			https://developers.google.com/maps/documentation/business/geolocation/
+
+		boolean VerifyDestination(string certificate,
+					  string public_key
+					  string nonce,
+					  string signed_data,
+					  string destination_udn,
+					  string hotspot_ssid,
+					  string hotspot_bssid)
+
+			Verify that the given |certificate| refers to a valid
+			destination with attributes as described in
+			|signed_data|.  |certificate| is a x509 certificate in
+			PEM format.  |public_key| is the base64 encoded public
+			half of a 1024 bit RSA key in DER format.  |nonce| is
+			random string of characters.  |destination_udn| is the
+			unique device number for the given destination.
+			|hotspot_ssid| and |hotspot_bssid| are self explanatory,
+			but indicate that shill should not require itself to
+			be connected to the destination in question, but instead
+			use the specified values.
+
+			|signed_data| formed as follows:
+
+				Suppose we're connected to a destination with
+				an SSID of ChromeDest1123, a BSSID of
+				00:11::22:33:44:55, a serial number of
+				ABCDEFG-1234-5678, a public key of "MIGJAoGB+",
+				and a nonce like "2ldg8".  The device takes
+				that information and joins it together with
+				commas like so:
+
+				"ChromeDest1123,ABCDEFG-1234-5678,00:11:22:33:44:55,MIGJAoGB+,2ldg8"
+
+				The device then takes the SHA-1 hash of that
+				string, and encrypts that hash with its private
+				key.  The resulting byte string is base64
+				encoded and passed as |signed_data|.
+
+			This function verifies that the device described by all
+			these pieces of data is a real device by checking that:
+
+			1) The |certificate| is signed by a trusted CA.
+			2) The public key signed by the CA matches to the
+			   private key used to encrypt |signed_data|.
+			3) The public key given is tied to the certificate by
+			   being included in the |signed_data|.
+			4) A WiFi service is currently connected to the SSID
+			   and BSSID in |signed_data|.  This check will be
+			   skipped if |hotspot_bssid| and |hotspot_ssid| are
+			   of non-zero length.
+
+			If all properties hold, this function will return true,
+			otherwise false.
+
+
+		string VerifyAndEncryptCredentials(string certificate,
+						   string public_key
+						   string nonce,
+						   string signed_data,
+						   string destination_udn,
+						   string hotspot_ssid,
+						   string hotspot_bssid,
+						   object service)
+
+			Verifies the given credentials as in VerifyDestination,
+			and then uses |public_key| to encrypt the psk for the
+			service identified by |service|.  The psk is padded
+			with PKCS#1 v1.5.  Returns the base64 encoded,
+			encrypted psk, or an empty string on error.
+
+		string VerifyAndEncryptData(string certificate,
+					    string public_key
+					    string nonce,
+					    string signed_data,
+					    string destination_udn,
+					    string hotspot_ssid,
+					    string hotspot_bssid,
+					    string data_to_encrypt)
+
+			Verifies the given credentials as in VerifyDestination,
+			and then uses |public_key| to encrypt
+			|data_to_encrypt|.  The data to encrypt is padded as in
+			VerifyAndEncryptCredentials.  Returns the base64 encoded,
+			encrypted data, or an empty string on error.
+
+		void ConnectToBestServices()
+
+			For each technology present, connect to the "best"
+			service available, as determined by sorting all
+			services independent of their current connectivity
+			state.  As a general rule, shill does not disrupt
+			current connectivity even if "better" connectivity
+			options appear.  This method allows this rule to be
+			violated for a single instance for each technology
+			type.
+
+		void CreateConnectivityReport()
+
+			For each connected service, perform a single
+			connectivity trial and report the results to the log.
+			This connectivity test does not affect Service state.
+
+		void ClaimInterface(string claimer_name, string interface_name)
+
+			Assign the ownership of a device |interface_name| to the
+			claimer |claimer_name|. The specified device will be
+			added to the blacklist. Any current connection on that device
+			will be terminated, and shill will stop managing that device.
+
+		void ReleaseInterface(string claimer_name, string interface_name)
+
+			Take the ownership of a device |interface_name| from
+			claimer |claimer_name| back to shill. The specified device
+			will be removed from the blacklist and managed by shill.
+
+		string SetupApModeInterface()
+
+			(Brillo only) Ask WiFi driver to setup an AP mode interface.
+			The driver might teardown the station mode interface as a result
+			of this call. Shill will revert to station mode if the remote
+			service that called this method vanishes. Return an interface name
+			on success, or an empty string on error.
+
+		string SetupStationModeInterface()
+
+			(Brillo only) Ask WiFi driver to setup a station mode interface.
+			The driver might teardown the AP mode interface as a result
+			of this call. Return an interface name on success, or an empty
+			string on error.
+
+		void SetSchedScan(boolean enable)
+
+			Enable/disable scheduled scan for wifi devices.
+			This will also stop any ongoing scheduled scan
+			in wpa_supplicant.
+
+Signals		PropertyChanged(string name, variant value)
+
+			This signal indicates a changed value of the given
+			property.
+
+		StateChanged(string state)
+
+			This signal is similar to the PropertyChanged signal
+			for the State property.
+
+			It exists for application state only care about the
+			current state and so can avoid to be woken up when
+			other details changes.
+
+Properties 	string ActiveProfile [readwrite]
+
+			Object path of the current active profile.
+
+		boolean ArpGateway [readwrite]
+
+			Specifies whether the DHCP client should be
+			configured to perform the extra step of performing
+			an ARP of the gateway IP address.  This provides
+			a level of assurance that the issued IP address is
+			valid and not blocked in some manner unknown by the
+			DHCP server.
+
+		array{string} AvailableTechnologies [readonly]
+
+			The list of available technologies. The strings
+			are the same as the ones from the service types.
+
+		string CheckPortalList [readwrite]
+
+			The list of technologies for which captive portal
+			checking is enabled.  This is a comma-separated
+			string; e.g. "wifi,wimax,vpn".
+
+		array{string} ClaimedDevices [readonly]
+
+			The list of devices that have been claimed by
+			the current DeviceClaimer (if it exists).
+
+		array{string} ConnectedTechnologies [readonly]
+
+			The list of connected technologies. The strings
+			are the same as the ones from the service type.
+
+		string ConnectionState [readonly]
+
+			The state of the highest ranked connected service.
+			The value of this property is "idle" if there are
+			no connected services.  Otherwise this can be any
+			of the connected service states, e.g, "portal" or
+			"online".
+
+		string Country [readwrite]
+
+			The ISO 3166 country code.  This may not be defined;
+			it is defined if manually set or if it is discovered
+			through a service such as WiFi, Celluar, or GPS.
+
+		string DefaultService [readonly]
+
+			The current connected service with the default route.
+
+		string DefaultTechnology [readonly]
+
+			The current connected technology which holds the
+			default route.
+
+		array{object} Devices [readonly]
+
+			List of device object paths.
+
+                string DHCPProperty.Hostname [readwrite]
+
+                        Optional setting to configure DHCP requests.  Some DHCP
+			servers may register a DNS entry on behalf of this
+			hostname; others may just make available a table for
+			administrators to tell what machines are on their
+			network.
+
+			The default for this name is empty, which means that the
+			system will not report a hostname.  When this property
+			is set it will be persisted in the default profile.
+
+                string DHCPProperty.VendorClass [readwrite]
+
+                        Optional setting to configure DHCP requests.  This
+			setting can be used to identify the vendor that
+			manufactured the client hardware, the software in use,
+			or an industry consortium to which the vendor belongs.
+
+			The default for this property is empty, which means the
+			system will not report a Vendor Class.  When set, this
+			property will override the default setting and be
+			persisted in the default profile.
+
+		bool DisableVHT [readwrite]
+
+			Disables 802.11ac Very High Throughput (VHT)
+			connections, reverting to 802.11n.
+
+		array{string} EnabledTechnologies [readonly]
+
+			The list of enabled technologies. The strings
+			are the same as the ones from the service types.
+
+		string IgnoredDNSSearchPaths [readwrite]
+
+			A comma-separated list of DNS domain suffixes
+			which should be ignored when creating a DNS
+			search list from DHCP-provided parameters.
+			This list will be consulted every time DHCP
+			information is updated (while connecting to
+			a network, or when a DHCP lease is renewed).
+
+		string LinkMonitorTechnologies [readwrite]
+
+			The list of technologies for which thie Link
+			Monitor will be enabled.  The Link monitor
+			periodically checks for connectivity to the
+			default gateway using ARP requests.
+
+		string NoAutoConnectTechnologies [readwrite]
+
+			The list of technologies for which auto-connect is
+			disabled.  This is a comma-separated string, e.g.
+			"cellular,wimax".
+
+		boolean OfflineMode [readwrite]
+
+			The offline mode indicates the global setting for
+			switching all radios on or off. Changing offline mode
+			to true results in powering down all devices. When
+			leaving offline mode the individual policy of each
+			device decides to switch the radio back on or not.
+
+			During offline mode, it is still possible to switch
+			certain technologies manually back on. For example
+			the limited usage of WiFi or Bluetooth devices might
+			be allowed in some situations.
+
+		string PortalURL [readwrite]
+
+			The URL to use when doing captive portal checking.
+			When a service reaches the "ready" state and
+			captive portal checking is enabled for it; an
+			HTTP GET of this URL is done.  If this fails
+			with a 204 error then the service is moved
+			to the "online" state.  Otherwise the service
+			is assumed to be not online and marked in a
+			"portal" state.  Note that this check may fail
+			for multiple reasons that are indicated in the
+			Error property of the service.
+
+		string ProhibitedTechnologies [readwrite]
+
+			The list of technologies that should be disabled
+			and prohibited from being enabled.  This is a
+			comma-separated string, e.g.  "cellular,wimax".  All
+			devices that are one of these technology types will be
+			immediately disabled persistently, and when a new device
+			of this type appears, it will be disabled by default.
+			Attempts to enable such a device using the
+			EnableTechnology will fail.  The strings are the same
+			as the ones from the service types.
+
+		int32 PortalCheckInterval [readwrite]
+
+			The interval in seconds between re-checking a
+			service in the portal state.
+
+		array{string} Profiles [readonly]
+
+			List of profile object paths.
+
+		array{object} Services [readonly]
+
+			List of service object paths that are visible. The
+			list is sorted internally to have the service with
+			the default route always first and then the favorite
+			services followed by scan results.
+
+			This list represents the available services for the
+			current selected profile. If the profile gets changed
+			then this list will be updated.
+
+			The same list is available via the profile object
+			itself. It is just provided here for convenience of
+			applications only dealing with the current active
+			profile.
+
+		array{object} ServiceCompleteList [readonly]
+
+			Complete list of service object paths, including those
+			that are not currently visible.  For example, WiFi
+			services that are stored in a loaded profile but
+			cannot currently be connected are presented in this
+			list.
+
+			The services are listed in the same service sorting
+			order as the "Services" property above.  Change
+			events for this property are not emitted.
+
+		array{object} ServiceWatchList [readonly]
+
+			List of service object paths that are in a
+			'non-idle' state.  This indicates the set of services
+			which are currently listed as associating, configuring,
+			or some other state other than idle, failure or
+			unknown.  This allows a caller to use this property
+			indication to track which services should be monitored
+			for state changes.
+
+			The services are listed in the same service sorting
+			order as the "Services" property above, and a change
+			event for this property is emitted every time the
+			Service list is reordered, even if this list has not
+			changed.
+
+		string State [readonly]
+
+			The global connection state of a system. Possible
+			values are "online" if at least one connection exists
+			and "offline" if no device is connected.
+
+		array{string} UninitializedTechnologies [readonly]
+
+			The list of uninitialized technologies. An
+			uninitialized technology is a technology that has at
+			least one device that is not initialized yet (i.e.
+			the Device object is not created yet). The strings
+			are the same as the ones from the service types.
+
+		bool WakeOnLanEnabled [readwrite]
+
+			Specifies whether the Wake on LAN feature should be
+			enabled on new Ethernet links.  Currently connected
+			links are un-affected.

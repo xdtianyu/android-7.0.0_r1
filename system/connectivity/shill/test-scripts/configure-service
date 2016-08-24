@@ -1,0 +1,30 @@
+#!/usr/bin/python
+
+import dbus
+import flimflam
+import sys
+
+if len(sys.argv) < 2:
+    print "Usage: %s <GUID> [<property> <value>]" % (sys.argv[0])
+    sys.exit(1)
+
+print "Attempting to configure service %s" % (sys.argv[1])
+
+flim = flimflam.FlimFlam(dbus.SystemBus())
+
+params = { "GUID" : sys.argv[1] }
+argv = sys.argv[2:]
+while argv:
+    property_key = argv[0]
+    value = argv[1]
+    if property_key in ["Priority"]:
+        params[property_key] = int(value)
+    elif property_key in ["AutoConnect", "WiFi.HiddenSSID", "EAP.UseSystemCAS",
+      "SaveCredentials"]:
+        params[property_key] = dbus.Boolean(value.lower() in ("true", "1"))
+    else:
+        params[property_key] = value
+
+    argv = argv[2:]
+
+flim.manager.ConfigureService(params)

@@ -1,0 +1,52 @@
+{
+  "_updater": {
+    "commands": {
+      "checkForUpdates": {
+        "minimalRole": "manager",
+        "parameters": {}
+      },
+      "trackChannel": {
+        "minimalRole": "manager",
+        "parameters": {
+          "channel": {
+            "type": "string",
+            "enum": ["stable-channel", "beta-channel", "dev-channel", "canary-channel"]
+          }
+        }
+      }
+    },
+    "state": {
+      "currentChannel": {
+        "type": "string",
+        "enum": ["stable-channel", "beta-channel", "dev-channel", "canary-channel"]
+      },
+      "trackingChannel": {
+        "type": "string",
+        "enum": ["stable-channel", "beta-channel", "dev-channel", "canary-channel"]
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "idle",
+          "checkingForUpdate",
+          "updateAvailable",
+          "downloading",
+          "verifying",
+          "finalizing",
+          "updatedNeedReboot",
+          "reportingErrorEvent",
+          "attemptingRollback",
+          "disabled"
+        ]
+      },
+      "progress": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "lastUpdateCheckTimestamp": {
+        "type": "number"
+      }
+    }
+  }
+}

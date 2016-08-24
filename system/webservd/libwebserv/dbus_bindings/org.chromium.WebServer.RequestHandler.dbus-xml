@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node name="/org/chromium/WebServer/RequestHandler"
+      xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <interface name="org.chromium.WebServer.RequestHandler">
+    <!-- Methods -->
+    <method name="ProcessRequest">
+      <tp:docstring>
+        Sends a new HTTP request to the handler.
+        Parameters:
+        - request_info - request metadata. Due to limitation of base::Callback
+                       on the number of parameters, we have to collapse a couple
+                       of distinct parameters into a larger struct, containing:
+                       - (s) protocol_handler_id - ID of the protocol handler.
+                       - (s) request_handler_id - ID of the registered request
+                                                  handler.
+                       - (s) request_id - unique ID of this request within the
+                                          protocol handler.
+                       - (s) url - The request URL (e.g. "/path/object").
+                       - (s) method - Request method (e.g. "GET", "POST", ...).
+        - headers - Request headers (key-value pairs)
+        - params - an array of request parameters which could be either
+                   URL params (specified after "?" in the request URL), or
+                   form fields in a POST request. Elements have the following
+                   structure:
+                   - (b) true = form field, false = URL param
+                   - (s) field_name
+                   - (s) field_value
+        - files - Information about uploaded files.
+                  The data is an array of FileInfo structures containing the
+                  following fields:
+                  - (i) file_id
+                  - (s) field_name
+                  - (s) file_name
+                  - (s) content_type
+                  - (s) transfer_encoding
+                  The actual contents of the file is obtained by calling
+                  GetFileData() on the request object
+        - body - Raw unparsed request data. Could be empty for POST requests
+                 that have form data/uploaded files already parsed into
+                 form_fields/files parameters.
+                 The data is sent over D-Bus as a file descriptor representing
+                 the read end of a pipe.
+      </tp:docstring>
+      <arg name="request_info" type="(sssss)" direction="in"/>
+      <arg name="headers" type="a(ss)" direction="in"/>
+      <arg name="params" type="a(bss)" direction="in"/>
+      <arg name="files" type="a(issss)" direction="in"/>
+      <arg name="body" type="h" direction="in"/>
+      <annotation name="org.chromium.DBus.Method.Kind" value="normal"/>
+    </method>
+  </interface>
+</node>

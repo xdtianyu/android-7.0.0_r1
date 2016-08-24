@@ -1,0 +1,79 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+
+<node>
+	<interface name="org.chromium.flimflam.Device">
+		<method name="AddWakeOnPacketConnection">
+			<arg name="ip_endpoint" type="s" direction="in"/>
+		</method>
+		<method name="RemoveWakeOnPacketConnection">
+			<arg name="ip_endpoint" type="s" direction="in"/>
+		</method>
+		<method name="RemoveAllWakeOnPacketConnections">
+		</method>
+		<method name="GetProperties">
+			<arg type="a{sv}" direction="out"/>
+		</method>
+		<method name="SetProperty">
+			<arg type="s" direction="in"/>
+			<arg type="v" direction="in"/>
+		</method>
+		<method name="ClearProperty">
+			<arg type="s" direction="in"/>
+		</method>
+		<method name="Enable">
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="Disable">
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="ProposeScan"/>
+		<method name="AddIPConfig">
+			<arg type="s" direction="in"/>
+			<arg type="o" direction="out"/>
+		</method>
+		<method name="Register">
+			<arg type="s" direction="in"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="RequirePin">
+			<arg type="s" direction="in"/>
+			<arg type="b" direction="in"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="EnterPin">
+			<arg type="s" direction="in"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="UnblockPin">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="ChangePin">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="PerformTDLSOperation">
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="in"/>
+			<arg type="s" direction="out"/>
+		</method>
+		<method name="Reset">
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="ResetByteCounters"/>
+		<method name="SetCarrier">
+			<arg type="s" direction="in"/>
+			<annotation name="org.chromium.DBus.Method.Kind" value="async"/>
+		</method>
+		<method name="RequestRoam">
+			<arg type="s" direction="in"/>
+		</method>
+		<signal name="PropertyChanged">
+			<arg type="s"/>
+			<arg type="v"/>
+		</signal>
+	</interface>
+</node>

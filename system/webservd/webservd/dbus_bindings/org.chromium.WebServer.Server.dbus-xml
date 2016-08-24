@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node name="/org/chromium/WebServer/Server"
+      xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <interface name="org.chromium.WebServer.Server">
+    <!-- Methods -->
+    <method name="Ping">
+      <arg name="message" type="s" direction="out"/>
+      <annotation name="org.chromium.DBus.Method.Kind" value="simple"/>
+    </method>
+    <property name="DefaultRequestTimeout" type="i" access="read">
+      <tp:docstring>
+        Default timeout (in seconds) for request.
+      </tp:docstring>
+    </property>
+  </interface>
+</node>

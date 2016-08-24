@@ -1,0 +1,16 @@
+{   "_description": "Sample config file for tests require WiFi AP",
+    "testbed":
+    [
+        {
+            "_description": "2 android devices, 1 WiFi AP. For tests requires WiFi AP, such as WiFi Calling, WiFi-Cellular Data Switch.",
+            "name": "testbed with WiFi AP",
+            "AndroidDevice": ["<serial_1>", "<serial_2>"]
+        }
+    ],
+    "logpath": "/tmp/logs",
+    "testpaths": ["../tests/sample"],
+    "sim_conf_file": "../simcard_list.json",
+    "adb_logcat_param" : "-b all",
+    "wifi_network_ssid" : "wifi_ssid",
+    "wifi_network_pass" : "wifi_password"
+}

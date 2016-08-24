@@ -1,0 +1,101 @@
+#!/bin/sh
+
+#
+# Copyright (C) 2012 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Backchannel control script - sets up and tears down backchannel network
+# interfaces. Backchannel interfaces are hidden from flimflam and will never be
+# the default route.
+#
+# A backchannel interface can also be used to simulate a cellular
+# modem used by fake-cromo if the new interface name is set to
+# pseudo-modem0
+#
+
+test_if=eth_test
+
+usage () {
+  echo "Usage: $0 <command> [args...]"
+  echo "  setup <iface> [new_iface_name]    Set <iface> as backchannel device"
+  echo "  teardown <iface> [new_iface_name] Return backchannel device to normal"
+  echo "  reach <ip> <gw> [new_iface_name]  Route <ip> via gateway <gw>"
+}
+
+macaddr() {
+  ip addr show "$1" | awk '/link\/ether/ { print $2 }'
+}
+
+ipaddr_with_subnet_mask() {
+  ip addr show "$1" | awk '/inet / { print $2 }'
+}
+
+# We need to down the interface (and therefore stop flimflam) across the
+# invocation of nameif, according to nameif(1).
+renameif() {
+  old="$1" ; shift
+  new="$1" ; shift
+  initctl stop shill
+  ip link set "$old" down
+  nameif "$new" $(macaddr "$old")
+  ip link set "$new" up
+  initctl start shill
+}
+
+setup() {
+  oldip=$(ipaddr_with_subnet_mask "$1")
+  if [ ! -z $2 ] ; then
+    test_if="$2"
+  fi
+  renameif "$1" "$test_if"
+  ip addr add "$oldip" dev "$test_if"
+}
+
+teardown() {
+  if [ ! -z $2 ] ; then
+    test_if="$2"
+  fi
+  renameif "$test_if" "$1"
+}
+
+reach() {
+  ip="$1" ; shift
+  gw="$1" ; shift
+  if [ ! -z $1 ] ; then
+    test_if="$1"
+  fi
+  ip route add "$ip" via "$gw" dev "$test_if"
+}
+
+if [ -z "$1" ]; then
+  usage
+  exit 1
+fi
+
+command="$1" ; shift
+case "$command" in
+  setup)
+    setup "$@"
+    ;;
+  teardown)
+    teardown "$@"
+    ;;
+  reach)
+    reach "$@"
+    ;;
+  *)
+    usage
+    ;;
+esac

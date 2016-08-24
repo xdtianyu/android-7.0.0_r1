@@ -1,0 +1,55 @@
+# audioserver - audio services daemon
+type audioserver, domain;
+type audioserver_exec, exec_type, file_type;
+
+init_daemon_domain(audioserver)
+
+r_dir_file(audioserver, sdcard_type)
+
+binder_use(audioserver)
+binder_call(audioserver, binderservicedomain)
+binder_call(audioserver, { appdomain autoplay_app })
+binder_service(audioserver)
+
+r_dir_file(audioserver, proc)
+allow audioserver ion_device:chr_file r_file_perms;
+allow audioserver system_file:dir r_dir_perms;
+
+userdebug_or_eng(`
+  # used for TEE sink - pcm capture for debug.
+  allow audioserver media_data_file:dir create_dir_perms;
+  allow audioserver audioserver_data_file:dir create_dir_perms;
+  allow audioserver audioserver_data_file:file create_file_perms;
+
+  # ptrace to processes in the same domain for memory leak detection
+  allow audioserver self:process ptrace;
+')
+
+allow audioserver audio_device:dir r_dir_perms;
+allow audioserver audio_device:chr_file rw_file_perms;
+
+allow audioserver audioserver_service:service_manager { add find };
+allow audioserver appops_service:service_manager find;
+allow audioserver batterystats_service:service_manager find;
+allow audioserver permission_service:service_manager find;
+allow audioserver power_service:service_manager find;
+allow audioserver scheduling_policy_service:service_manager find;
+
+# Grant access to audio files to audioserver
+allow audioserver audio_data_file:dir ra_dir_perms;
+allow audioserver audio_data_file:file create_file_perms;
+
+# Needed on some devices for playing audio on paired BT device,
+# but seems appropriate for all devices.
+unix_socket_connect(audioserver, bluetooth, bluetooth)
+
+###
+### neverallow rules
+###
+
+# audioserver should never execute any executable without a
+# domain transition
+neverallow audioserver { file_type fs_type }:file execute_no_trans;
+
+# audioserver should never need network access. Disallow network sockets.
+neverallow audioserver domain:{ tcp_socket udp_socket rawip_socket } *;

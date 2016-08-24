@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <interface name="org.chromium.apmanager.Device">
+    <property name="DeviceName" type="s" access="read"/>
+    <property name="InUse" type="b" access="read"/>
+    <property name="PreferredApInterface" type="s" access="read"/>
+  </interface>
+</node>

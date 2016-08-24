@@ -1,0 +1,30 @@
+# mediacodec - audio and video codecs live here
+type mediacodec, domain;
+type mediacodec_exec, exec_type, file_type;
+
+typeattribute mediacodec mlstrustedsubject;
+
+init_daemon_domain(mediacodec)
+
+binder_use(mediacodec)
+binder_call(mediacodec, binderservicedomain)
+binder_call(mediacodec, appdomain)
+binder_service(mediacodec)
+
+allow mediacodec mediacodec_service:service_manager add;
+allow mediacodec surfaceflinger_service:service_manager find;
+allow mediacodec gpu_device:chr_file rw_file_perms;
+allow mediacodec video_device:chr_file rw_file_perms;
+allow mediacodec video_device:dir search;
+allow mediacodec ion_device:chr_file rw_file_perms;
+
+###
+### neverallow rules
+###
+
+# mediacodec should never execute any executable without a
+# domain transition
+neverallow mediacodec { file_type fs_type }:file execute_no_trans;
+
+# mediacodec should never need network access. Disallow network sockets.
+neverallow mediacodec domain:{ tcp_socket udp_socket rawip_socket } *;

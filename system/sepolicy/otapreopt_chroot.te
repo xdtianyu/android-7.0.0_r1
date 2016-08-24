@@ -1,0 +1,14 @@
+# otapreopt_chroot executable
+type otapreopt_chroot, domain;
+type otapreopt_chroot_exec, exec_type, file_type;
+
+# Chroot preparation and execution.
+# We need to create an unshared mount namespace, and then mount /data.
+allow otapreopt_chroot postinstall_file:dir { search mounton };
+allow otapreopt_chroot self:capability { sys_admin sys_chroot };
+
+# Allow to transition to postinstall_ota, to run otapreopt in its own sandbox.
+domain_auto_trans(otapreopt_chroot, postinstall_file, postinstall_dexopt)
+
+# Allow otapreopt to use file descriptors from installd.
+allow otapreopt_chroot installd:fd use;

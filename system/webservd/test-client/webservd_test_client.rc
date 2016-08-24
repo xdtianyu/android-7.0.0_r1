@@ -1,0 +1,6 @@
+service webservd_tclient /system/bin/webservd_test_client
+    class late_start
+    oneshot
+    disabled
+    user system
+    group system dbus

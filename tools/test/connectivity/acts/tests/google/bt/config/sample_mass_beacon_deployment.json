@@ -1,0 +1,14 @@
+{   "_description": "Sample config file for simulating mass beacon deployments.",
+    "testbed":
+    [
+        {
+            "_description": "A testbed with N number of Android devices. This testbed is for specifically BeaconSwarmTest.py. The first Android device represents the device under test. The next N devices will be represented in beacon_devices that will act as BLE beacons. The beacon_count config line will contain the max number of advertisements the device concurrently supports.",
+            "name": "mass beacon deployment testbed",
+            "AndroidDevice": ["<dut_serial>", "<serial_1>", "<serial_2>", "<serial_n>"]
+        }
+    ],
+    "logpath": "/tmp/logs",
+    "beacon_devices":["<serial_1>", "<serial_2", "<serial_n>"],
+    "beacon_count":10,
+    "testpaths": ["../tests/samples"]
+}

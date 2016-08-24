@@ -1,0 +1,173 @@
+//
+// Copyright (C) 2015 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+option optimize_for = LITE_RUNTIME;
+
+import "common.proto";
+
+package attestation;
+
+enum AttestationStatus {
+  STATUS_SUCCESS = 0;
+  STATUS_UNEXPECTED_DEVICE_ERROR = 1;
+  STATUS_NOT_AVAILABLE = 2;
+  STATUS_NOT_READY = 3;
+  STATUS_NOT_ALLOWED = 4;
+  STATUS_INVALID_PARAMETER = 5;
+  STATUS_REQUEST_DENIED_BY_CA = 6;
+  STATUS_CA_NOT_AVAILABLE = 7;
+}
+
+message CreateGoogleAttestedKeyRequest {
+  // An arbitrary label which can be used to reference the key later.
+  optional string key_label = 1;
+  optional KeyType key_type = 2;
+  optional KeyUsage key_usage = 3;
+  // Describes the certificate to be requested of the CA.
+  optional CertificateProfile certificate_profile = 4;
+  // Provided if the new key should be accessible only by a particular user. If
+  // this field is not set or is the empty string, the key will be accessible
+  // system-wide.
+  optional string username = 5;
+  // If the |certificate_profile| is intended to be bound to a particular origin
+  // this field specifies the origin. For most profiles this is not required.
+  optional string origin = 6;
+}
+
+message CreateGoogleAttestedKeyReply {
+  optional AttestationStatus status = 1;
+  // More information about a server-side error. This only exists
+  // if status=REQUEST_DENIED_BY_CA.
+  optional string server_error = 2;
+  // A PEM-encoded list of X.509 certificates starting with the requested
+  // certificate issued by the CA and followed by certificates for any
+  // intermediate authorities, in order. The Google Attestation CA root
+  // certificate is well-known and not included.
+  optional string certificate_chain = 3;
+}
+
+message GetKeyInfoRequest {
+  optional string key_label = 1;
+  optional string username = 2;
+}
+
+message GetKeyInfoReply {
+  optional AttestationStatus status = 1;
+  optional KeyType key_type = 2;
+  optional KeyUsage key_usage = 3;
+  // The public key (X.509/DER SubjectPublicKeyInfo).
+  optional bytes public_key = 4;
+  // The serialized TPM_CERTIFY_INFO or TPM2B_ATTEST for the new key.
+  optional bytes certify_info = 5;
+  // The signature of certify_info by the Attestation Key.
+  optional bytes certify_info_signature = 6;
+  // The certificate data associated with the key (if any).
+  optional bytes certificate = 7;
+}
+
+message GetEndorsementInfoRequest {
+  optional KeyType key_type = 1;
+}
+
+message GetEndorsementInfoReply {
+  optional AttestationStatus status = 1;
+  // The endorsement public key (X.509/DER SubjectPublicKeyInfo).
+  optional bytes ek_public_key = 2;
+  // The endorsement certificate (X.509/DER).
+  optional bytes ek_certificate = 3;
+}
+
+message GetAttestationKeyInfoRequest {
+  optional KeyType key_type = 1;
+}
+
+message GetAttestationKeyInfoReply {
+  optional AttestationStatus status = 1;
+  // The attestation public key (X.509/DER SubjectPublicKeyInfo).
+  optional bytes public_key = 2;
+  // The attestation public key in TPM_PUBKEY form.
+  optional bytes public_key_tpm_format = 3;
+  // The attestation key certificate.
+  optional bytes certificate = 4;
+  // A quote of PCR0 at the time of attestation key creation.
+  optional Quote pcr0_quote = 5;
+  // A quote of PCR1 at the time of attestation key creation.
+  optional Quote pcr1_quote = 6;
+}
+
+message ActivateAttestationKeyRequest {
+  optional KeyType key_type = 1;
+  optional EncryptedIdentityCredential encrypted_certificate = 2;
+  optional bool save_certificate = 3;
+}
+
+message ActivateAttestationKeyReply {
+  optional AttestationStatus status = 1;
+  // The decrypted attestation key certificate.
+  optional bytes certificate = 2;
+}
+
+message CreateCertifiableKeyRequest {
+  // An arbitrary label which can be used to reference the key later.
+  optional string key_label = 1;
+  // Provided if the new key should be accessible only by a
+  // particular user. If this field is not set or is the empty
+  // string, the key will be accessible system-wide.
+  optional string username = 2;
+  optional KeyType key_type = 3;
+  optional KeyUsage key_usage = 4;
+}
+
+message CreateCertifiableKeyReply {
+  optional AttestationStatus status = 1;
+  // The new public key (X.509/DER SubjectPublicKeyInfo).
+  optional bytes public_key = 2;
+  // The serialized TPM_CERTIFY_INFO or TPM2B_ATTEST for the new key.
+  optional bytes certify_info = 3;
+  // The signature of certify_info by the Attestation Key.
+  optional bytes certify_info_signature = 4;
+}
+
+message DecryptRequest {
+  optional string key_label = 1;
+  optional string username = 2;
+  optional bytes encrypted_data = 3;
+}
+
+message DecryptReply {
+  optional AttestationStatus status = 1;
+  optional bytes decrypted_data = 2;
+}
+
+message SignRequest {
+  optional string key_label = 1;
+  optional string username = 2;
+  optional bytes data_to_sign = 3;
+}
+
+message SignReply {
+  optional AttestationStatus status = 1;
+  optional bytes signature = 2;
+}
+
+message RegisterKeyWithChapsTokenRequest {
+  optional string key_label = 1;
+  optional string username = 2;
+}
+
+message RegisterKeyWithChapsTokenReply {
+  optional AttestationStatus status = 1;
+}

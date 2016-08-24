@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+	  "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+
+<node name="/org/chromium/PowerManager">
+  <interface name="org.chromium.PowerManager">
+    <method name="RegisterSuspendDelay">
+      <arg name="serialized_request_proto" direction="in" type="ay"/>
+      <arg name="serialized_reply_proto" direction="out" type="ay"/>
+    </method>
+    <method name="UnregisterSuspendDelay">
+      <arg name="serialized_proto" direction="in" type="ay"/>
+    </method>
+    <method name="HandleSuspendReadiness">
+      <arg name="serialized_proto" direction="in" type="ay"/>
+    </method>
+    <signal name="SuspendImminent">
+      <arg name="serialized_proto" type="ay"/>
+    </signal>
+    <signal name="SuspendDone">
+      <arg name="serialized_proto" type="ay"/>
+    </signal>
+    <method name="RegisterDarkSuspendDelay">
+      <arg name="serialized_request_proto" direction="in" type="ay"/>
+      <arg name="serialized_reply_proto" direction="out" type="ay"/>
+    </method>
+    <method name="UnregisterDarkSuspendDelay">
+      <arg name="serialized_proto" direction="in" type="ay"/>
+    </method>
+    <method name="HandleDarkSuspendReadiness">
+      <arg name="serialized_proto" direction="in" type="ay"/>
+    </method>
+    <method name="RecordDarkResumeWakeReason">
+      <arg name="serialized_proto" direction="in" type="ay"/>
+    </method>
+    <signal name="DarkSuspendImminent">
+      <arg name="serialized_proto" type="ay"/>
+    </signal>
+  </interface>
+</node>

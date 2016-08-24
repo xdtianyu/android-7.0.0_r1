@@ -1,0 +1,8 @@
+# update_verifier
+# update_verifier uses the boot_control_hal.
+type update_verifier, domain, boot_control_hal;
+type update_verifier_exec, exec_type, file_type;
+
+init_daemon_domain(update_verifier)
+
+# TODO: Add rules to allow update_verifier to read system_block_device.

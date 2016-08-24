@@ -1,0 +1,12 @@
+{   "_description": "Sample config file for a Bluetooth testbed.",
+    "testbed":
+    [
+        {
+            "_description": "2 Android devices. This testbed can run tests that require two devices such as BLE, GATT, and SPP tests.",
+            "name": "bluetooth testbed",
+            "AndroidDevice": ["<serial_1>", "<serial_2>"]
+        }
+    ],
+    "logpath": "/tmp/logs",
+    "testpaths": ["../tests/sample"]
+}

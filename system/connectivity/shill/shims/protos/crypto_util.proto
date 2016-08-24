@@ -1,0 +1,72 @@
+//
+// Copyright (C) 2013 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+option optimize_for = LITE_RUNTIME;
+package shill_protos;
+
+// Return codes describing calls to the shim.  We could optionally use the
+// process return code instead, or use definitions from elsewhere, but this
+// way we have a self contained protocol.
+enum ReturnCode {
+  OK = 0;
+  ERROR_UNKNOWN = 1;
+  ERROR_OUT_OF_MEMORY = 2;
+  ERROR_CRYPTO_OPERATION_FAILED = 3;
+  ERROR_INVALID_ARGUMENTS = 4;
+}
+
+// This protobuf is for sending credential information from shill to the
+// credential verification shim.  The call will fail if public_key is empty
+// or otherwise invalid.
+message EncryptDataMessage {
+  // DER encoded public key.
+  optional bytes public_key = 1;
+
+  // Data to be encrypted under the public key.
+  required bytes data = 2;
+}
+
+// The returned response from an EncryptData call.
+message EncryptDataResponse {
+  // Will be OK iff the operation is successful.
+  required ReturnCode ret = 1;
+
+  // Data after being encrypted under the public_key, or an empty string.
+  optional bytes encrypted_data = 2;
+}
+
+// This protobuf gives the parameters for the shim the verify credentials.
+// The operation will fail if any argument is empty or badly formatted.
+message VerifyCredentialsMessage {
+  // PEM encoded certificate.
+  optional bytes certificate = 1;
+
+  // Data string hashed with SHA-1 before being encrypted with the private key
+  // corresponding to the public key in certificate.
+  optional bytes signed_data = 2;
+
+  // Data string built up by shill.  Needs to be hashed with SHA-1 for
+  // comparison with the decrypted version of signed_data.
+  optional bytes unsigned_data = 3;
+
+  // Mac address in human readable format like 00:11:22:33:44:55.
+  optional bytes mac_address = 4;
+}
+
+// The response from a call to VerifyCredentials.
+message VerifyCredentialsResponse {
+  required ReturnCode ret = 1;
+}

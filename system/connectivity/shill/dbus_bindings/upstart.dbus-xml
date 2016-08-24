@@ -1,0 +1,28 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="/com/ubuntu/Upstart">
+  <interface name="com.ubuntu.Upstart0_6">
+    <method name="ReloadConfiguration">
+    </method>
+    <method name="GetJobByName">
+      <arg name="name" type="s" direction="in"/>
+      <arg name="job" type="o" direction="out"/>
+    </method>
+    <method name="GetAllJobs">
+      <arg name="jobs" type="ao" direction="out"/>
+    </method>
+    <method name="EmitEvent">
+      <arg name="name" type="s" direction="in"/>
+      <arg name="env" type="as" direction="in"/>
+      <arg name="wait" type="b" direction="in"/>
+    </method>
+    <signal name="JobAdded">
+      <arg name="job" type="o"/>
+    </signal>
+    <signal name="JobRemoved">
+      <arg name="job" type="o"/>
+    </signal>
+    <property name="version" type="s" access="read"/>
+    <property name="log_priority" type="s" access="readwrite"/>
+  </interface>
+</node>

@@ -1,0 +1,20 @@
+#!/usr/bin/python
+
+import pprint, sys
+import flimflam
+
+flim = flimflam.FlimFlam()
+
+if (len(sys.argv) < 2):
+    print "Usage: %s <service_name>" % (sys.argv[0])
+    sys.exit(1)
+
+service = flim.FindElementByPropertySubstring('Service',
+                                              'Name',
+                                              sys.argv[1])
+
+if not service:
+    print "Could not find service: %s" % (sys.argv[1])
+    sys.exit(1)
+
+pprint.pprint(flim.DisconnectService(service))

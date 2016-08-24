@@ -1,0 +1,156 @@
+#!/usr/bin/env python
+
+#
+# Copyright (C) 2010 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+import math
+import optparse
+import sched
+import subprocess
+import sys
+import time
+
+
+def fxrange(start, finish, increment=1.0):
+    """Like xrange, but with float arguments."""
+    steps = int(math.ceil(float(finish - start) / increment))
+
+    if steps < 0:
+        raise ValueError
+
+    for i in xrange(steps):
+        yield start + i * increment
+
+
+def hms(seconds):
+    hours = int(seconds / (60 * 60))
+    seconds -= hours * 60 * 60
+    minutes = int(seconds / 60)
+    seconds -= minutes * 60
+    return '%d:%02d:%02d' % (hours, minutes, seconds)
+
+
+class PeriodicExperiment(object):
+    """Uses the scheduler to run the specified function repeatedly."""
+    def __init__(self,
+                 scheduler=None,
+                 total_duration=8 * 60 * 60,
+                 test_interval=60,
+                 test_function=None):
+        self._scheduler = scheduler
+        self._total_duration = total_duration
+        self._test_interval = test_interval
+        self._test_function = test_function
+        self._start = self._scheduler.timefunc()
+        self._finish = self._start + self._total_duration
+
+    def Run(self):
+        for start_one in fxrange(self._start,
+                                 self._finish,
+                                 self._test_interval):
+            time_remaining = self._finish - start_one
+            self._scheduler.enterabs(start_one,
+                                     1,     # Priority
+                                     self._test_function,
+                                     [time_remaining])
+        self._scheduler.run()
+
+
+class ManualExperiment(object):
+    """Runs the experiment repeatedly, prompting for input each time."""
+    def __init__(self, test_function):
+        self._test_function = test_function
+
+    def Run(self):
+        try:
+            while True:
+                self._test_function(0)    # Pass in a fake time remaining
+                _ = raw_input('Press return to run the test again.  '
+                              'Control-c to exit.')
+        except KeyboardInterrupt:
+            return
+
+class IperfTest(object):
+    def __init__(self, filename, servername, individual_length):
+        self._file = file(filename, 'a')
+        self._servername = servername
+        self._individual_length = individual_length
+
+    def Run(self, remaining):
+        """Run iperf, log output to file, and print."""
+        iperf = ['iperf',
+                 '--client', self._servername,
+                 # Transfer time in seconds.
+                 '--time', str(self._individual_length),
+                 '--reportstyle', 'c' # CSV output
+                 ]
+        print '%s remaining.  Running %s' % (hms(remaining), ' '.join(iperf))
+        result = subprocess.Popen(iperf,
+                                  stdout=subprocess.PIPE).communicate()[0]
+        print result.rstrip()
+        sys.stdout.flush()
+        self._file.write(result)
+        self._file.flush()
+
+    def teardown(self):
+        self._file.close()
+
+def main():
+    default_output = 'stability-' + time.strftime('%Y-%m-%d-%H-%M-%S')
+
+    parser = optparse.OptionParser()
+    parser.add_option('--server', default=None,
+                      help='Machine running the iperf server')
+    parser.add_option('--test_interval', default=60 * 5, type='int',
+                      help='Interval (in seconds) between tests')
+    parser.add_option('--individual_length', default=10, type='int',
+                      help='length (in seconds) of each individual test')
+    parser.add_option('--total_duration', default=8 * 60 * 60, type='int',
+                      help='length (in seconds) for entire test')
+    parser.add_option('--output', default=default_output,
+                      help='Output file')
+    parser.add_option('--manual', default=False, action='store_true',
+                      help='Manual mode; wait for input between every test')
+
+    (options, _) = parser.parse_args()
+
+    if not options.server:
+        print 'No server specified.  Specify a server with --server=SERVER.'
+        exit(2)
+
+    if options.individual_length > options.test_interval:
+        print ('The length of a given bandwidth test must be lower than the '
+               'interval between tests')
+        exit(2)
+
+    s = sched.scheduler(time.time, time.sleep)
+
+    iperf = IperfTest(filename=options.output,
+                      servername=options.server,
+                      individual_length=options.individual_length)
+
+    if options.manual:
+        e = ManualExperiment(test_function=iperf.Run)
+    else:
+        e = PeriodicExperiment(scheduler=s,
+                               total_duration=options.total_duration,
+                               test_interval=options.test_interval,
+                               test_function=iperf.Run)
+    e.Run()
+    iperf.teardown()
+
+if __name__ == '__main__':
+    main()

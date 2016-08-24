@@ -1,0 +1,15 @@
+{   "_description": "Sample config file for power testbed",
+    "testbed":
+    [
+        {
+            "_description": "Sample testbed with 1 android devices and 1 monsoon device for power test.",
+            "name": "power testbed",
+            "AndroidDevice": ["<serial>"],
+            "Monsoon": ["<monsoon serial>"]
+        }
+    ],
+    "logpath": "/tmp/logs",
+    "testpaths": ["../tests/sample"],
+    "sim_conf_file": "../simcard_list.json",
+    "adb_logcat_param" : "-b all"
+}

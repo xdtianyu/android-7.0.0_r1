@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<node name="/org/chromium/Firewalld/Firewall">
+  <interface name="org.chromium.Firewalld">
+    <method name="PunchTcpHole">
+      <arg type="q" name="port" direction="in" />
+      <arg type="s" name="interface" direction="in"/>
+      <arg type="b" name="success" direction="out" />
+      <annotation name="org.chromium.DBus.Method.Kind" value="simple"/>
+    </method>
+    <method name="PunchUdpHole">
+      <arg type="q" name="port" direction="in" />
+      <arg type="s" name="interface" direction="in"/>
+      <arg type="b" name="success" direction="out" />
+      <annotation name="org.chromium.DBus.Method.Kind" value="simple"/>
+    </method>
+    <method name="PlugTcpHole">
+      <arg type="q" name="port" direction="in" />
+      <arg type="s" name="interface" direction="in"/>
+      <arg type="b" name="success" direction="out" />
+      <annotation name="org.chromium.DBus.Method.Kind" value="simple"/>
+    </method>
+    <method name="PlugUdpHole">
+      <arg type="q" name="port" direction="in" />
+      <arg type="s" name="interface" direction="in"/>
+      <arg type="b" name="success" direction="out" />
+      <annotation name="org.chromium.DBus.Method.Kind" value="simple"/>
+    </method>
+    <method name="RequestVpnSetup">
+      <arg type="as" name="usernames" direction="in" />
+      <arg type="s" name="interface" direction="in" />
+      <arg type="b" name="success" direction="out" />
+      <annotation name="org.chromium.DBus.Method.Kind" value="simple"/>
+    </method>
+    <method name="RemoveVpnSetup">
+      <arg type="as" name="usernames" direction="in" />
+      <arg type="s" name="interface" direction="in" />
+      <arg type="b" name="success" direction="out" />
+      <annotation name="org.chromium.DBus.Method.Kind" value="simple"/>
+    </method>
+  </interface>
+</node>

@@ -1,0 +1,189 @@
+#
+#
+# Copyright (C) 2012 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# Script that turns on useful logging for flimflam
+
+FLIMFLAM="org.chromium.flimflam"
+MANAGER="${FLIMFLAM}.Manager"
+SEND_FF_CMD="dbus-send --system --dest=${FLIMFLAM} --print-reply / $MANAGER"
+
+FF_TAGLIST=`${SEND_FF_CMD}.ListDebugTags | sed -e '/string/!d; s/[[:space:]]\+/ /g' | cut -d "\"" -f 2 | tr "+" " "`
+
+usage(){
+  echo "
+Usage: ff_debug [<tag_expression>]|[--reset]|[--help]|[--list_valid_tags]|[--level <level>]
+
+  ff_debug adds and removes debug tags for flimflam.
+  Current debug settings are displayed if no parameters are provided
+
+  <tag_expression> is defined in boolean notation using <debug_tag> separated
+    by an operator [+-], where + and - imply adding and removing of the tag immediately
+    following the operator. An expression beginning with either operators [+-]
+    takes the existing tags and modifies them appropriately.  Otherwise, the existing tags
+    are replaced by those specified in the command.
+
+    <debug_tag> can be listed using the --list_valid_tags
+
+    e.g.: ff_debug network+wifi
+      Sets debug tags to network and wifi
+    e.g.: ff_debug +network-service
+      Adds network and removes service tags from the existing debug settings
+
+  --list_valid_tags : Displays all valid tags
+
+  --level: Displays or sets current debug level for logging
+    All messages at, or above, the current log level are logged. Normal log
+    levels range from 4 (LOG_FATAL) to 0 (LOG_INFO). In addition VERBOSE log
+    levels are available starting at -1.
+
+    e.g.: ff_debug --level 4
+      Logs only FATAL messages.
+    e.g.: ff_debug --level 0
+      Logs INFO, WARNING, ERROR, ERROR_REPORT, and FATAL messages.
+    e.g.: ff_debug --level -4
+      Logs everything that "--level 0" does, plus SLOG(<tag>, <n>) messages,
+      where <tag> has been enabled for logging, and <n> <= 4. (NOTE: you must
+      negate SLOG levels for use with ff_debug. In this example, SLOG(<tag>, 4)
+      maps to "--level -4".)
+
+  --reset : Removes all tagging
+
+  --help : Displays this output
+"
+}
+
+get_ff_debug_tags() {
+  ${SEND_FF_CMD}.GetDebugTags 2>/dev/null | sed -e '/string/!d; s/[[:space:]]\+/ /g' | cut -d "\"" -f 2
+}
+
+set_ff_debug_tags() {
+  ${SEND_FF_CMD}.SetDebugTags string:"$1" > /dev/null 2>&1
+}
+
+get_ff_debug_level() {
+  ${SEND_FF_CMD}.GetDebugLevel 2>/dev/null | sed -e '/int32/!d; s/[[:space:]]\+/ /g' | cut -d " " -f 3
+}
+
+set_ff_debug_level() {
+  ${SEND_FF_CMD}.SetDebugLevel int32:"$1" > /dev/null 2>&1
+}
+
+starting_ff_tags=`get_ff_debug_tags`
+# Global strings
+ff_tags_to_set=$starting_ff_tags
+
+# Returns whether or not $2 exists in $1 where $1 is a space
+# separated list of tags
+is_valid_tag(){
+  expr " $1 " : ".* $2 .*"> /dev/null
+}
+
+# Takes a boolean expression and changes
+# flimflam string appropriately
+modify_flimflam_tag_string(){
+  if [ -n "$1" ]; then
+    for tag in `echo "$1" | sed 's/[+-]/ &/g'`; do
+
+      # Skip the tag if it's not in the list of valid tags
+      if ! is_valid_tag "$FF_TAGLIST" "`echo $tag | sed 's/^[+-]//'`"; then
+        continue
+      fi
+
+      case $tag in
+        -*)
+          tag=`echo $tag | sed 's/-//'`
+          if [ -n "$tag" ]; then
+            # First check/remove instances where it lies between +'s
+            # Then check/remove instances where it lies at the ends
+            ff_tags_to_set=`echo $ff_tags_to_set \
+                            | sed 's/+'$tag'+/+/g' \
+                            | sed 's/\(^\|+\)'$tag'\(+\|$\)//g'`
+          fi
+          ;;
+        +*)
+          tag=`echo $tag | sed 's/+//'`
+          if [ -z "$tag" ]; then
+            continue
+          # Check if exact tag is between + symbols, or at the ends of expression
+          elif [ -n "`echo "$ff_tags_to_set" | egrep "\+$tag\+|\+$tag$|^$tag\+"`" ]; then
+            continue
+          elif [ -n "$ff_tags_to_set" ]; then
+            ff_tags_to_set="${ff_tags_to_set}+${tag}"
+          else
+            ff_tags_to_set="$tag"
+          fi
+          ;;
+        *)
+          ff_tags_to_set="$tag"
+          ;;
+      esac
+    done
+    ff_tags_to_set=`echo "$ff_tags_to_set" | sed 's/^+//'`
+  else
+    ff_tags_to_set=""
+  fi
+}
+
+get_or_set_debug_level() {
+  local ff_debug_level=`get_ff_debug_level`
+  if [ -z "$ff_debug_level" ]; then
+    # flimflam does not implement GetDebugLevel / SetDebugLevel, simply return
+    return
+  fi
+
+  if [ $# -gt 0 ]; then
+    echo "Old flimflam debug level: $ff_debug_level"
+    set_ff_debug_level "$1"
+    ff_debug_level=`get_ff_debug_level`
+  fi
+  echo "Current flimflam debug level: $ff_debug_level"
+}
+
+if [ $# -gt 0 ]; then
+  while [ $# -gt 0 ]; do
+    case "$1" in
+    --reset)
+      ff_tags_to_set=""
+      break
+      ;;
+    --level)
+      shift  # move forward to the <level> argument if specified
+      get_or_set_debug_level "$@"
+      exit 0
+      ;;
+    --list*)
+      echo "Valid Tags: [`echo $FF_TAGLIST | sed 's/ /, /g'`]"
+      exit 0
+      ;;
+    --help|--*)
+      usage
+      exit 0
+      ;;
+    *)
+      modify_flimflam_tag_string "$1"
+      ;;
+    esac
+    shift
+  done
+
+  # set tags only when the starting and ending are different
+  if [ "$ff_tags_to_set" != "$starting_ff_tags" ]; then
+    set_ff_debug_tags "$ff_tags_to_set"
+  fi
+  echo "Old flimflam tags: [$starting_ff_tags]"
+fi
+echo "Current flimflam tags: [`get_ff_debug_tags`]"

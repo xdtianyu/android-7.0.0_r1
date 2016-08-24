@@ -1,0 +1,65 @@
+#!/bin/sh
+# Virtual ethernet interface control script
+# Sometimes, we need a virtual interface of arbitrary name and configuration
+# that we can do dhcp on. This script is for those times.
+
+# Basically,
+# $ veth setup foo 127.0.1
+# $ dhclient foo
+# ...
+# $ veth teardown foo
+# Would set up an ethernet interface called 'foo' whose dhcpd is at 127.0.1.1
+# and which will allocate addresses from 127.0.1.0/24. Note that using anything
+# inside 127.0.0.0/8 is a bad idea here, since lo already handles those.
+
+usage () {
+	echo "Usage: $0 <command> [args...]"
+	echo "  setup <iface> <base>     Sets up <iface> for <base>.0/24"
+	echo "  teardown <iface>         Tears down <iface>"
+}
+
+setup () {
+	iface="$1"
+	base="$2"
+	peer_iface="${iface}p"
+	lease_file="/tmp/dnsmasq.${iface}.leases"
+	pid_file="/tmp/dnsmasq.${iface}.pid"
+	ip link add name "$iface" type veth peer name "$peer_iface"
+	ifconfig "$peer_iface" "${base}.0/32"
+	ifconfig "$peer_iface" up
+	ifconfig "$iface" up
+	route add -host 255.255.255.255 dev "$peer_iface"
+	truncate -s 0 "$lease_file"
+	dnsmasq --pid-file="$pid_file" \
+		--dhcp-leasefile="$lease_file" \
+		--dhcp-range="${base}.2,${base}.254" \
+		--port=0 \
+		--interface="$peer_iface" \
+		--bind-interfaces
+}
+
+teardown () {
+	iface="$1"
+	pid_file="/tmp/dnsmasq.${iface}.pid"
+	[ -f "$pid_file" ] && kill -TERM $(cat "$pid_file")
+	route del -host 255.255.255.255
+	ip link del "$iface"
+}
+
+if [ -z "$1" ]; then
+	usage
+	exit 1
+fi
+
+command="$1" ; shift
+case "$command" in
+	setup)
+		setup "$@"
+		;;
+	teardown)
+		teardown "$@"
+		;;
+	*)
+		usage
+		;;
+esac

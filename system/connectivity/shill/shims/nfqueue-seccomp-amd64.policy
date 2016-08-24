@@ -1,0 +1,50 @@
+#
+# Copyright (C) 2013 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+open: return 1
+recvfrom: 1
+mmap: 1
+sendmsg: 1
+mprotect: 1
+close: 1
+fstat: 1
+read: 1
+stat: 1
+sendto: 1
+# socket: arg0 == PF_FILE || arg0 == PF_INET || arg0 == PF_NETLINK
+socket: arg0 == 1 || arg0 == 2 || arg0 == 16
+futex: 1
+brk: 1
+access: 1
+rt_sigaction: 1
+getsockname: 1
+bind: 1
+# ioctl: arg1 == SIOCGIFNAME || arg1 == SIOCGIFNETMASK
+ioctl: arg1 == 0x8910 || arg1 == 0x891b
+munmap: 1
+restart_syscall: 1
+exit: 1
+exit_group: 1
+rt_sigreturn: 1
+lseek: 1
+connect: 1
+rt_sigprocmask: 1
+arch_prctl: 1
+getrlimit: 1
+set_tid_address: 1
+fcntl: 1
+set_robust_list: 1
+# execve: return EPERM
+execve: return 1

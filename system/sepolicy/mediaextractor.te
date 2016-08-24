@@ -1,0 +1,25 @@
+# mediaextractor - multimedia daemon
+type mediaextractor, domain, domain_deprecated;
+type mediaextractor_exec, exec_type, file_type;
+
+typeattribute mediaextractor mlstrustedsubject;
+
+init_daemon_domain(mediaextractor)
+
+binder_use(mediaextractor)
+binder_call(mediaextractor, binderservicedomain)
+binder_call(mediaextractor, appdomain)
+binder_service(mediaextractor)
+
+allow mediaextractor mediaextractor_service:service_manager add;
+
+###
+### neverallow rules
+###
+
+# mediaextractor should never execute any executable without a
+# domain transition
+neverallow mediaextractor { file_type fs_type }:file execute_no_trans;
+
+# mediaextractor should never need network access. Disallow network sockets.
+neverallow mediaextractor domain:{ tcp_socket udp_socket rawip_socket } *;

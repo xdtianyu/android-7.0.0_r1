@@ -1,0 +1,25 @@
+{   "_description": "Sample config file for mobility testbed.",
+    "testbed":
+    [
+        {
+            "_description": "2 android devices, 2 attenuators (control DUT's WiFi or Cellular RSSI). For mobility test, such as WiFi Calling Mobility and Cellular-WiFi switch.",
+            "name": "mobility testbed",
+            "AndroidDevice": ["<serial_1>", "<serial_2>"],
+            "Attenuator": [ {"Model": "<attenuator model name>",
+                             "InstrumentCount": "<number of instrument>",
+                             "Address":"<attenuator IP address>",
+                             "Port":"<attenuator port number>",
+                             "Paths":["<attenuator paths>"]},
+                            {"Model": "<attenuator model name>",
+                             "InstrumentCount": "<number of instrument>",
+                             "Address":"<attenuator IP address>",
+                             "Port":"<attenuator port number>",
+                             "Paths":["<attenuator paths>"]}
+                          ]
+        }
+    ],
+    "logpath": "/tmp/logs",
+    "testpaths": ["../tests/sample"],
+    "sim_conf_file": "../simcard_list.json",
+    "adb_logcat_param" : "-b all"
+}

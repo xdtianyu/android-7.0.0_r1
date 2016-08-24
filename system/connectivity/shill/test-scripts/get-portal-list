@@ -1,0 +1,7 @@
+#!/usr/bin/python
+
+import dbus, flimflam
+
+flim = flimflam.FlimFlam(dbus.SystemBus())
+
+print "Check portal list is %s" % flim.GetCheckPortalList()

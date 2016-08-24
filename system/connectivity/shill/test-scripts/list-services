@@ -1,0 +1,16 @@
+#!/usr/bin/python
+
+import dbus, flimflam
+
+flim = flimflam.FlimFlam(dbus.SystemBus())
+
+for service in flim.GetObjectList("Service"):
+    properties = service.GetProperties(utf8_strings = True)
+
+    print "[ %s ]" % (service.object_path)
+
+    for key in properties.keys():
+        print "    %s = %s" % \
+            (key, flimflam.convert_dbus_value(properties[key], 4))
+
+    print

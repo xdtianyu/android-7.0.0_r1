@@ -1,0 +1,7 @@
+bslot=@BSLOT@
+
+Name: libshill-net
+Description: Shill networking component interface library
+Version: ${bslot}
+Requires.private: @PRIVATE_PC@
+Libs: -lshill-net-${bslot}

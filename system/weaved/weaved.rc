@@ -1,0 +1,7 @@
+on post-fs-data
+    mkdir /data/misc/weaved 0700 system system
+
+service weaved /system/bin/weaved
+    class late_start
+    user system
+    group system dbus inet

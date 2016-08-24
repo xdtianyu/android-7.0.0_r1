@@ -1,0 +1,74 @@
+#!/bin/sh
+#
+# Copyright (C) 2014 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# Set the Wake on LAN behavior.
+
+FLAGS_HELP="Usage:
+
+  $(basename $0)
+
+or
+
+  $(basename $0) [true | false] "
+
+FLIMFLAM=org.chromium.flimflam
+IMANAGER="${FLIMFLAM}.Manager"
+PROPERTY_NAME=WakeOnLanEnabled
+PROPERTY_DESC="Wake on LAN"
+
+usage() {
+  echo "Invalid invocation: $*"
+  echo
+  echo $FLAGS_HELP
+  exit 1
+}
+
+dbus () {
+  local obj="$1"
+  local meth="$2"
+  shift 2
+
+  dbus-send --system --print-reply --fixed --dest="${FLIMFLAM}" "${obj}" "${meth}" "$@"
+}
+
+get_manager_property () {
+  dbus / "${IMANAGER}.GetProperties" | sed -n "/$1/s/.* //p"
+}
+
+display_value () {
+  local value=$(get_manager_property "${PROPERTY_NAME}")
+
+  if [ -n "${value}" ] ; then
+    echo "Current ${PROPERTY_DESC} setting: " $value
+    exit 0
+  fi
+
+  echo "This connection manager instance does not support ${PROPERTY_DESC}"
+  exit 0
+}
+
+if [ $# -lt 1 ]; then
+    display_value
+fi
+
+set_value="$1"
+
+if [ "${set_value}" != "false" -a "${set_value}" != "true" ] ; then
+    usage "Argument must be 'true' or 'false'"
+fi
+
+dbus / "${IMANAGER}.SetProperty" string:"${PROPERTY_NAME}" "variant:boolean:${set_value}"

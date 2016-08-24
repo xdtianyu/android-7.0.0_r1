@@ -1,0 +1,23 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+
+<node>
+	<interface name="org.chromium.flimflam.ThirdPartyVpn">
+		<method name="SetParameters">
+			<arg type="a{ss}" name="parameters" direction="in"/>
+			<arg type="s" name="warning" direction="out"/>
+		</method>
+		<method name="UpdateConnectionState">
+			<arg type="u" name="connection_state" direction="in"/>
+		</method>
+		<method name="SendPacket">
+			<arg type="ay" name="ip_packet" direction="in"/>
+		</method>
+		<signal name="OnPacketReceived">
+			<arg type="ay" name="ip_packet"/>
+		</signal>
+		<signal name="OnPlatformMessage">
+			<arg type="u" name="platform_message"/>
+		</signal>
+	</interface>
+</node>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC
+ "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+
+<node name="/org/freedesktop/DBus">
+  <interface name="org.freedesktop.DBus">
+    <method name="GetNameOwner">
+      <arg name="name" direction="in" type="s" />
+      <arg name="unique_name" direction="out" type="s" />
+    </method>
+    <signal name="NameOwnerChanged">
+      <arg name="name" type="s" />
+      <arg name="old_owner" type="s" />
+      <arg name="new_owner" type="s" />
+    </signal>
+  </interface>
+</node>

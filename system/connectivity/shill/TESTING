@@ -1,0 +1,159 @@
+
+Copyright (C) 2012 The Android Open Source Project
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Intro
+-----
+We test shill using two sets of tests: unit tests, and integration
+tests. The unit tests are built using Google Test [1] and Google Mock
+[2]; the integration tests use autotest [3].
+
+Running unit tests for Chrome OS
+--------------------------------
+Here ${BOARD} is a valid board name, like link or x86-generic.
+- build the shill_unittest target
+- run the resulting shill_unittest binary
+- run the unit tests from your host machine under gdb
+  (chroot)$ FEATURES=test emerge-${BOARD} shill
+  (chroot)$ gdb_x86_local --board ${BOARD} \
+                /build/${BOARD}/var/cache/portage/chromeos-base/platform2/out/Default/shill_unittest
+  (Of course if the unit tests segfaulted, you wouldn't need the emerge
+  step since the build directory would have been retained in the course
+  of the test failing.)
+- The emerge workflow given above is incremental. It uses ninja to rebuild only
+  relevant objects in the shill target.
+- You can restrict the test runs to only shill unittests by using
+  (chroot)$ P2_TEST_FILTER="shill::*" FEATURES=test emerge-${BOARD} shill
+  The filter can be made more specific to include googletest filters like
+  "shill::CellularTest.StartGSMRegister"
+- if you want to set a breakpoint in gdb, make sure to include the shill
+  namespace. e.g., run
+    (cros-gdb) b shill::EthernetService::GetStorageIdentifier
+    Breakpoint 2 at 0x5555563cc270: file ethernet_service.cc, line 63.
+  rather than
+    (cros-gdb) b EthernetService::GetStorageIdentifier
+    Function "EthernetService::GetStorageIdentifier" not defined.
+    Make breakpoint pending on future shared library load? (y or [n]) n
+
+- alternate build command:
+  - Another way to build which uses the emerge command behind the scenes:
+    (chroot)$ cros_workon_make --board ${BOARD} shill
+  - to see the actual compiler commands that are run:
+    (chroot)$ CFLAGS="-print-cmdline" cros_workon_make --reconf \
+                --board=${BOARD} shill
+  - to abort compilation on the first error
+    (chroot)$ MAKEFLAGS="--stop" cros_workon_make --test --board=${BOARD} \
+                --reconf shill
+
+Running unit tests for Chrome OS with the address sanitizer
+-----------------------------------------------------------
+USE="asan clang wimax" TEST_FILTER="shill::*" emerge-${BOARD} shill
+
+This also turns on "wimax" and its tests, since this is disabled on most
+platforms.
+
+Running unit tests for Android
+------------------------------
+Currently, only native unit tests are supported on Android, meaning that unit tests
+can only be run on the target device.
+
+The test binary is located at /data/nativetest/shill_test/shill_test.
+By default, it does not have the execute permissions due to inherited
+directory security policy. Consequently, before running the unit tests,
+you will need to grant execute permissions to the test binary using
+the following command:
+  chmod +x /data/nativetest/shill_test/shill_test
+
+To run all unit tests:
+  /data/nativetest/shill_test/shill_test
+
+To run specific unit tests using filter:
+  /data/nativetest/shill_test/shill_test --gtest_filter=<TestClassName>.<TestName>
+
+For example:
+  /data/nativetest/shill_test/shill_test --gtest_filter=WiFiMainTest.OnNewWiphy
+  /data/nativetest/shill_test/shill_test --gtest_filter=WiFiMainTest.*
+
+Running integration tests
+-------------------------
+- build a test image, suitable for a VM:
+  (chroot) src/scripts$ ./build_packages --board=${BOARD}
+  (chroot) src/scripts$ ./build_image --board=${BOARD} \
+                            --noenable_rootfs_verification test
+  (chroot) src/scripts$ ./image_to_vm.sh --board=${BOARD} --test_image
+
+- start the VM
+  (host)$ sudo kvm -m 2048 -vga std -pidfile /tmp/kvm.pid \
+              -net nic,model=virtio -net user,hostfwd=tcp::9222-:22 \
+              -hda <path to chroot>/src/build/images/${BOARD}/latest/chromiumos_qemu_image.bin
+
+- DO NOT log in on the console.
+  (doing so will load a user profile onto shill's profile stack; this
+  interferes with the test profile that we use in the autotests)
+
+- if you've modified the source after building the image, update shill on
+  the image, and then restart shill:
+  (chroot) src/scripts$ ./start_devserver
+  (chroot) src/scripts$ ssh-keygen -R '[127.0.0.1]:9222'
+  (chroot) src/scripts$ emerge-${BOARD} platform2
+  (chroot) src/scripts$ cros deploy 127.0.0.1:9222 platform2
+
+  (chroot) src/scripts$ ssh -p 9222 root@127.0.0.1
+  localhost / # restart shill
+
+- run the tests
+  (chroot) src/scripts$ test_that 127.0.0.1 WiFiManager
+                                  --args="config_file=wifi_vm_config"
+                                  --ssh_options="-p 9222"
+
+  To run a specific test out of the test suite, use test_pat option to --args.
+  # Example: To just run the 035CheckWEPKeySyntax test:
+  (chroot) src/scripts$ test_that 127.0.0.1 WiFiManager
+                                  --args="config_file=wifi_vm_config test_pat=035CheckWEPKeySyntax"
+                                  --ssh_options="-p 9222"
+
+- configuration note: if you use a different port
+  (e.g. hostfwd=tcp::9223-:22), you'll need to change:
+    - the ssh_port argument to test_that
+    - the port numbers in
+      <chroot>/third_party/autotest/files/client/config/wifi_vm_config
+
+- debugging test failures
+  - "grep shill /var/log/messages" for log messages
+  - "grep wpa_supplicant /var/log/messages" for supplicant log messages
+  - "wpa_debug debug" to increase supplicant log level
+  - try resetting the test infrastructure
+    - rmmod mac80211_hwsim mac80211 cfg80211
+    - restart wpasupplicant
+    - rm /tmp/hostapd-test.control/*
+  - examine autotest log files
+    - check how far the test got before it failed
+      $ grep -a ': step ' <test output>/<suite name>/<suite name>.<test name>/debug/<suite name>.<test name>.INFO
+      e.g.
+      (chroot) $ grep -a ': step ' /tmp/test_that_latest/network_WiFiRoaming/network_WiFiRoaming.002Suspend/debug/network_WiFiRoaming.002Suspend.INFO
+    - read the log file
+      (chroot) $ LESSOPEN= less /tmp/test_that_latest/network_WiFiRoaming/network_WiFiRoaming.002Suspend/debug/network_WiFiRoaming.002Suspend.INFO
+
+      (LESSOPEN= prevents less from misinterpreting the logs as binary files,
+       and piping them through hexdump.)
+
+- additional test suites: we have a number of other WiFi test suites
+  (in addition to WiFiManager). these are: WiFiMatFunc, WiFiPerf,
+  WiFiRoaming, WiFiSecMat. the WiFiPerf tests are probably not too
+  relevant to shill (just yet), but the rest probably are.
+
+[1] http://code.google.com/p/googletest/
+[2] http://code.google.com/p/googlemock/
+[3] http://autotest.kernel.org/,
+    http://www.chromium.org/chromium-os/testing/testing-faq

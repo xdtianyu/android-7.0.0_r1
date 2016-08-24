@@ -1,0 +1,14 @@
+{   "_description": "Sample config file for Live SIM basic testbed.",
+    "testbed":
+    [
+        {
+            "_description": "2 android devices with Live SIM. This testbed can run tests requires 2 devices or less, such as voice, message, data tests.",
+            "name": "live SIM basic testbed",
+            "AndroidDevice": ["<serial_1>", "<serial_2>"]
+        }
+    ],
+    "logpath": "/tmp/logs",
+    "testpaths": ["../tests/sample"],
+    "sim_conf_file": "../simcard_list.json",
+    "adb_logcat_param" : "-b all"
+}
