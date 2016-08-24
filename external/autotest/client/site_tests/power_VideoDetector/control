@@ -1,0 +1,23 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "sque"
+NAME = "power_VideoDetector"
+PURPOSE = "Verify the backlight does not get dimmed while playing video."
+CRITERIA = """
+Fail if the brightness changes between start and end.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+ATTRIBUTES = "suite:kernel_daily_regression"
+SUITE = "kernel_daily_regression"
+
+DOC = """
+This test verifies that the backlight does not get dimmed during video playback.
+"""
+
+job.run_test("power_VideoDetector")

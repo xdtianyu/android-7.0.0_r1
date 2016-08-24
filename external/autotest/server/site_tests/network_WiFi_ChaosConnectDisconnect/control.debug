@@ -1,0 +1,31 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'krisr, wiley, jabele'
+NAME = 'network_WiFi_ChaosConnectDisconnect.debug'
+TIME = 'LONG'
+TEST_TYPE = 'server'
+
+DOC = """
+This script iterates through all of the access points in the AP compatibility
+lab and has a chrome device connect to each in series. This test must be
+performed in the AP compatibility lab.
+"""
+
+from autotest_lib.server.cros.ap_configurators import ap_spec
+from autotest_lib.server.cros.chaos_lib import chaos_runner
+
+def run_chaos_debug(machine):
+    host = hosts.create_host(machine)
+    # Test with these two APs
+    debug_aps = ['chromeos3-row2-rack1-host2', 'chromeos3-row2-rack1-host3']
+    ap_specs = [ap_spec.APSpec(band=ap_spec.BAND_2GHZ, hostnames=debug_aps),
+                ap_spec.APSpec(band=ap_spec.BAND_5GHZ, hostnames=debug_aps)]
+    for spec in ap_specs:
+        runner = chaos_runner.ChaosRunner(
+                'network_WiFi_ChaosConnectDisconnect', host, spec)
+        runner.run(job, batch_size=15, tries=2)
+
+
+parallel_simple(run_chaos_debug, machines)

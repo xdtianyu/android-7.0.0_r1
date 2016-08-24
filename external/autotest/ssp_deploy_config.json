@@ -1,0 +1,26 @@
+[
+    {
+        "source": "/etc/resolv.conf",
+        "target": "/etc/resolv.conf",
+        "append": true,
+        "permission": 400
+    },
+    {
+        "source": "~/.ssh",
+        "target": "/root/.ssh",
+        "append": false,
+        "permission": 400
+    },
+    {
+        "source": "shadow_config.ini",
+        "target": "/usr/local/autotest/shadow_config.ini",
+        "append": false,
+        "permission": 644
+    },
+    {
+        "source": "moblab_config.ini",
+        "target": "/usr/local/autotest/moblab_config.ini",
+        "append": false,
+        "permission": 644
+    }
+]

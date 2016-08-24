@@ -1,0 +1,43 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "chromeos-chameleon"
+NAME = "display_LidCloseOpen.extended_plug_close_unplug_open_plug"
+PURPOSE = "Remotely controlled close and open lid test."
+CRITERIA = "This test will fail if checks mentioned below fail."
+ATTRIBUTES = "suite:chameleon_dp, suite:chameleon_hdmi, suite:chameleon_hdmi_nightly"
+SUITE = "chameleon_dp, chameleon_hdmi, chameleon_hdmi_nightly"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "display"
+TEST_TYPE = "server"
+DEPENDENCIES = 'chameleon,servo'
+JOB_RETRIES = 2
+
+DOC = """
+This test remotely emulates external display lid close/open scenario.
+This test will fail if DUT doesn't
+ - go to docked mode
+ - return to the original mode
+ - suspend after unplug in docked mode
+ - resume after open
+ - pass image test
+"""
+
+args_dict = utils.args_to_dict(args)
+chameleon_args = hosts.CrosHost.get_chameleon_arguments(args_dict)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+# Plugged status (before_close, after_close, before_open)
+plug_status=[(True, False, False)]
+
+def run(machine):
+    host = hosts.create_host(machine, chameleon_args=chameleon_args,
+                             servo_args=servo_args)
+    job.run_test("display_LidCloseOpen", host=host, plug_status=plug_status,
+                 tag="extended_plug_close_unplug_open_plug")
+
+parallel_simple(run, machines)

@@ -1,0 +1,15 @@
+AUTHOR = 'Ricky Benitez (rickyb@google.com)'
+NAME = 'ddtest'
+DOC = '''
+Spawn multiple threads to write sequentially to the same disk and time
+the entire operation. Intended to detect basic performance regressions
+in disk writes.
+'''
+ATTRIBUTES = "suite:kernel_daily_benchmarks"
+SUITE = "kernel_daily_benchmarks"
+TIME = 'SHORT'
+TEST_CLASS = 'kernel'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'client'
+
+job.run_test('ddtest')

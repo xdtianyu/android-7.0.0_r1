@@ -1,0 +1,29 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "dummy"
+PURPOSE = "To be run while testing the infrastructure and test harness."
+CRITERIA = "None."
+
+TIME = "SHORT"
+TEST_CATEGORY = "Dummy"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This is a dummy test suite.  It runs dummy tests that always pass or always fail
+so that we can test result gathering and reporting mechanisms.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+args_dict['add_experimental'] = True
+args_dict['name'] = 'dummy'
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['job'] = job
+
+dynamic_suite.reimage_and_run(**args_dict)

@@ -1,0 +1,16 @@
+<LocationMatch "^/(afe|new_tko|loginz).*">
+    AuthType google-sso
+    AuthName ChromeOSAutotest
+    TicketSigningKey /usr/local/autotest/apache/conf/sso_login_server_cert.crt
+    ServiceRoot /
+    LoginServer https://login.corp.google.com
+    Require group eng eng-intern nonconf
+    Order allow,deny
+    allow from all
+</LocationMatch>
+
+<LocationMatch "^/(afe|new_tko)/server/noauth/">
+    Order allow,deny
+    Allow from all
+    Satisfy any
+</LocationMatch>

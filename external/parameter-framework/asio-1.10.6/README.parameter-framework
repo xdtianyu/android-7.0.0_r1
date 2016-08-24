@@ -1,0 +1,8 @@
+This version of ASIO has been minified for lower disk footprint for Android
+integraton by support/android/asio/asio_shrinker.sh.
+
+Although unlikely (thanks to having been tested on all AOSP lunch targets), if
+the Parameter Framework fails to compile on your lunch target because of a
+missing ASIO header, you may download a vanilla ASIO version from
+'http://sourceforge.net/projects/asio/files/asio/1.10.6%20%28Stable%29/' and
+run that script anew.

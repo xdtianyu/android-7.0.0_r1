@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""Create a JSON file containing PCI ID-to-name mappings for Intel GPUs.
+
+This script uses upstream Mesa to get the latest PCI ID list.
+The list is used by get_gpu_family() in site_utils.py.
+This script should be run occasionally to keep the list up-to-date.
+"""
+
+import json
+import shutil
+import subprocess as sp
+import tempfile
+
+
+def map_gpu_name(mesa_name):
+    """Map Mesa GPU names to autotest names.
+    """
+    family_name_map = {
+        'Pineview': 'pinetrail',
+        'Ironlake': 'ironlake',
+        'Sandybridge': 'sandybridge',
+        'Ivybridge': 'ivybridge',
+        'Haswell': 'haswell',
+        'Bay Trail': 'baytrail',
+        'Broadwell': 'broadwell',
+        'Cherryview': 'braswell',
+        'Skylake': 'skylake',
+        'Broxton': 'broxton',
+        'Kabylake': 'kabylake'
+    }
+
+    for name in family_name_map:
+        if name in mesa_name:
+            return family_name_map[name]
+    return ''
+
+
+def main():
+    """Extract Intel GPU PCI IDs from upstream Mesa and write to JSON file.
+    """
+
+    in_files = ['i915_pci_ids.h', 'i965_pci_ids.h']
+    out_file = 'intel_pci_ids.json'
+    remote_repo = 'http://anongit.freedesktop.org/git/mesa/mesa.git'
+    local_repo = tempfile.mkdtemp()
+
+    pci_ids = {}
+
+    cmd = 'git clone --no-checkout --depth 1 %s %s' % (remote_repo, local_repo)
+
+    try:
+        sp.check_call(cmd, shell=True)
+    except sp.CalledProcessError as err:
+        print 'Cannot clone Mesa repo (%d)' % err.returncode
+        exit()
+
+    chipsets = []
+    cmd = 'cd %s; git show HEAD:include/pci_ids/' % local_repo
+    for id_file in in_files:
+        chipsets.extend(sp.check_output(cmd + id_file,
+                                        shell=True).splitlines())
+    shutil.rmtree(local_repo)
+
+    for cset in chipsets:
+        cset_attr = cset[len('CHIPSET('):-2].split(',')
+
+        # Remove leading and trailing spaces and double quotes.
+        for i in range(0, len(cset_attr)):
+            cset_attr[i] = cset_attr[i].strip(' "').rstrip(' "')
+
+        pci_id = cset_attr[0].lower()
+        family_name = map_gpu_name(cset_attr[2])
+
+        # Ignore GPU families not in family_name_map.
+        if family_name:
+            pci_ids[pci_id] = family_name
+
+    with open(out_file, 'w') as out_f:
+        json.dump(pci_ids, out_f, sort_keys=True, indent=4,
+                  separators=(',', ': '))
+
+
+if __name__ == '__main__':
+    main()

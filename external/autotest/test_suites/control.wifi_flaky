@@ -1,0 +1,31 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "wiley@chromium.org"
+NAME = "wifi_flaky"
+PURPOSE = "Track and monitor flaky WiFi tests."
+CRITERIA = "All tests with SUITE=wifi_flaky must pass."
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+Test suites are great, but if people get used to seeing 2-3 failures per run,
+they stop looking.  Move flaky tests from elsewhere and into this suite until
+they can be made stable again.  Even flaky tests need to run once in a while.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+args_dict['add_experimental'] = True
+args_dict['max_runtime_mins'] = 60
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['name'] = NAME
+args_dict['job'] = job
+
+dynamic_suite.reimage_and_run(**args_dict)

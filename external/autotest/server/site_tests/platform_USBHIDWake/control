@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_USBHIDWake"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = '''This test checks to see whether a USB HID Device is capable of waking
+a DUT in the S3 state. It requires user interaction (to press a button
+on an attached HID device), and also that a HID device is plugged into
+the DUT. The openvt binary (emerge emerge sys-apps/kbd) should be available
+so that the user prompting code can work'''
+
+
+def run(machine):
+    job.run_test('platform_USBHIDWake', client_ip=machine)
+
+
+parallel_simple(run, machines)

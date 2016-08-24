@@ -1,0 +1,21 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'drewry, gauravsh'
+NAME = 'platform_CheckTLSDateProcesses'
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = 'bvt-cq'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+DOC = """
+This test has a static list of process names that should be running
+on a good Chrome OS Core image running with network time support. It
+fails if any of these are not running at the time of the test.
+"""
+
+TLSDATE_PROCESSES = ['tlsdated']
+
+job.run_test('platform_CheckCriticalProcesses', process_list=TLSDATE_PROCESSES)

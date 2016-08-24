@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GStressEnable"
+PURPOSE = "Stress-test Connman enable/disable"
+CRITERIA = """
+This test fails if flimflam ever fails to respond to a DBus message or crashes.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Stress-tests enabling and disabling a technology at short intervals.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+test_env = test_environment.CellularOTATestEnvironment()
+job.run_test('network_3GStressEnable', test_env=test_env)

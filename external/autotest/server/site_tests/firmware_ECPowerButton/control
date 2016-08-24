@@ -1,0 +1,37 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_ECPowerButton"
+PURPOSE = "Servo based EC power button functional test"
+CRITERIA = "This test will fail if EC power button misbehalved."
+ATTRIBUTES = "suite:faft, suite:faft_ec, suite:faft_ec3po"
+SUITE = "faft,faft_ec,faft_ec3po"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+JOB_RETRIES = 4
+
+DOC = """
+This test check the functionality of EC power button handling. This includes:
+    - Short press wake system from G3 (shutdown for more than 10 sec)
+    - Short press wake system from S5 (shutdown for less than 10 sec)
+    - Long press wake system from G3 (shutdown for more than 10 sec)
+    - Long press wake system from S5 (shutdown for less than 10 sec)
+    - Long press (6s) to shut down system
+    - Longer press (10s) to shut down system when kernel 'powerd' is disabled
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_ecpowerbutton(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("firmware_ECPowerButton", host=host, cmdline_args=args,
+                 disable_sysinfo=True)
+
+parallel_simple(run_ecpowerbutton, machines)

@@ -1,0 +1,48 @@
+Used to analyze the chaos logs & packet captures and produce a consolidated analysis of each test attempt in a text file.
+Look at the "Sample output" below for a sample output.
+Requirements: Needs tshark/wireshark installed on the host machine.
+
+1. Install pyshark python module on the host machine. There are couple of bug fixes that are yet to be accepted upstream for us to use the vanilla version.
+Download the source tarball from here: https://drive.google.com/a/google.com/file/d/0B-W7uZuGgJr6QldhZm5ManROODA/view?usp=sharing
+
+tar xvzf pyshark.tgz
+cd pyshark-master/src
+python setup.py build
+python setup.py install
+
+2. Run the analyzer script from the collected log directory.
+cd <Log Dir>
+./chaos_analyzer.py
+
+3. The analysis output for each attempt is stored in the same folder as the packet captures with the name: chaos_analyzer_try_[0-9].log.
+
+Sample Output:
+  --------------------------------------
+  Packet Capture File: connect_try_4_fail.trc
+  --------------------------------------
+  AP Beacon count: 274, BSSIDs: ['00:1b:2f:d3:fb:18']
+  DUT packet count Tx : 4, Rx : 0, DUT: 14:7d:c5:e6:41:24
+  --------------------------------------
+  WLAN Protocol Verification
+  --------------------------------------
+  Current state: INIT. Next state: WLAN PROBE REQUEST.
+  Current state: WLAN PROBE REQUEST. Next state: WLAN PROBE RESPONSE. Packet number: 74, Data rate: 1Mbps.
+  Missing ACK for state: WLAN PROBE REQUEST!  
+  State Machine halted at WLAN PROBE RESPONSE state!
+  --------------------------------------
+  Filtered Packet Capture Summary
+  --------------------------------------
+  74 0.319619 14:7d:c5:e6:41:24 ff:ff:ff:ff:ff:ff 802.11 121 Probe Request, SN=218, FN=0, Flags=........C, SSID=wnr854t_g_ch5_wpa2
+  99 0.377054 14:7d:c5:e6:41:24 ff:ff:ff:ff:ff:ff 802.11 121 Probe Request, SN=219, FN=0, Flags=........C, SSID=wnr854t_g_ch5_wpa2
+  102 0.387697 14:7d:c5:e6:41:24 ff:ff:ff:ff:ff:ff 802.11 121 Probe Request, SN=220, FN=0, Flags=........C, SSID=wnr854t_g_ch5_wpa2
+  141 0.557165 14:7d:c5:e6:41:24 ff:ff:ff:ff:ff:ff 802.11 121 Probe Request, SN=225, FN=0, Flags=........C, SSID=wnr854t_g_ch5_wpa2
+  --------------------------------------
+  Extracted Messages Log
+  --------------------------------------
+  2015-04-06T19:35:07.151703-07:00 NOTICE autotest[12338]: Connection attempt 4
+  2015-04-06T19:35:08.767978-07:00 WARNING kernel: [  481.248389] mwifiex_sdio mmc2:0001:1: assoc: requested bss not found in scan results
+
+  --------------------------------------
+  Extracted Net Log
+  --------------------------------------
+  2015-04-06T19:35:06.963021-07:00 INFO shill[1214]: [INFO:manager.cc(471)] PushProfileInternal finished; 2 profile(s) now present.

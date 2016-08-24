@@ -1,0 +1,50 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_SimpleConnect.wifi_check1x_WEP'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = ('suite:wifi_matfunc, suite:wifi_matfunc_bcm4371, '
+              'suite:wifi_release')
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371, wifi_release'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test attempts to verify that we can connect to a router while using
+dynamic WEP encryption.
+"""
+
+
+from autotest_lib.client.common_lib.cros import site_eap_certs
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.client.common_lib.cros.network import xmlrpc_security_types
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    sec_config = xmlrpc_security_types.DynamicWEPConfig(
+            wep_rekey_period=20,
+            server_ca_cert=site_eap_certs.ca_cert_1,
+            server_cert=site_eap_certs.server_cert_1,
+            server_key=site_eap_certs.server_private_key_1,
+            client_ca_cert=site_eap_certs.ca_cert_1,
+            client_cert=site_eap_certs.client_cert_1,
+            client_key=site_eap_certs.client_private_key_1)
+    assoc_params = xmlrpc_datatypes.AssociationParameters()
+    assoc_params.security_config = sec_config
+    ap_config = hostap_config.HostapConfig(
+            frequency=2412,
+            mode=hostap_config.HostapConfig.MODE_11G,
+            security_config=sec_config)
+    configurations = [(ap_config, assoc_params)]
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_SimpleConnect',
+                 tag=NAME.split('.')[1],
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=configurations)
+
+
+parallel_simple(run, machines)

@@ -1,0 +1,8 @@
+option optimize_for = LITE_RUNTIME;
+
+package dbus_utils_test;
+
+message TestMessage {
+  optional int32 foo = 1;
+  optional string bar = 2;
+}

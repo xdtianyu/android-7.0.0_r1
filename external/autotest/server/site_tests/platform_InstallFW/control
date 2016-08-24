@@ -1,0 +1,64 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "InstallFW"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Install"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test install the BIOS/EC on a specified device.
+This is useful for testing firmware.
+Here is the command to install a given firmware, which is either a raw binary
+or a shellball:
+  test_that --args='fw_path=<PATH_TO_FW_FILE>
+                    fw_name=<NAME_OF_THE_FILE>'
+                    fw_type=<TYPE_OF_FW>
+            --board=<board name>
+            <IP addres>
+            platform_InstallFW
+or install the local shellball (/usr/sbin/chromeos-firmwareupdate) in the
+current client image:
+  test_that --args='fw_path=local
+                    fw_type=<bios/ec>'
+            --board=<board name>
+            <IP addres>
+            platform_InstallFW
+"""
+
+import os
+from autotest_lib.client.common_lib import error
+
+# Convert autoserv args to something usable.
+opts = dict([[k, v] for (k, _, v) in [x.partition('=') for x in args]])
+
+def run_installfw(machine):
+    # Verify FW type in arg.
+    if 'fw_type' not in opts:
+        raise error.TestFail('No --fw_type specified')
+    # Verify fw_type value either 'bios' or 'ec'.
+    if not (opts['fw_type'] == 'bios' or opts['fw_type'] == 'ec'):
+        raise error.TestFail('Wrong --fw_type specified.  '
+                             'Correct FW Options are bios or ec.')
+    # Verify FW path arg.
+    if 'fw_path' not in opts:
+        raise error.TestFail('No --fw_path specified')
+    # Verify fw_name.
+    if 'fw_name' not in opts:
+        if opts['fw_path'] == 'local':
+            opts['fw_name'] = None
+        elif os.path.isfile(opts['fw_path']):
+            opts['fw_name'] = os.path.basename(opts['fw_path'])
+            opts['fw_path'] = os.path.dirname(opts['fw_path'])
+        else:
+            raise error.TestFail('No --fw_name specified')
+    # Setup the client machine.
+    host = hosts.create_host(machine)
+    job.run_test("platform_InstallFW", host=host, fw_path=opts['fw_path'],
+                 fw_type=opts['fw_type'], fw_name=opts['fw_name'],
+                 disable_sysinfo=True)
+
+parallel_simple(run_installfw, machines)

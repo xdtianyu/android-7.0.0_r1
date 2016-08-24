@@ -1,0 +1,53 @@
+MockFtpServer Change Log
+-------------------------------------------------------------------------------
+
+Changes in version 1.2.4 (01 Sep 2008)
+------------------------------------------
+- BUG FIX: StubFtpServer: Only execute serverSocket.close() if serverSocket != null.
+- BUG FIX: Terminate replies with <CRLF> (\r\n).
+- DOCS: Fix Getting Started Guide code example: setOverrideFinalReplyCode() to setFinalReplyCode().
+- DOCS: Add note to Getting Started Guide about calling setServerControlPort() if on Unix system.
+
+
+Changes in version 1.2.3 (13 Aug 2008)
+------------------------------------------
+- BUG FIX: Tracker item #2047355. Parse host IP numbers as unsigned bytes.
+  See https://sourceforge.net/tracker/index.php?func=detail&aid=2047355&group_id=208647&atid=1006533 
+
+
+Changes in version 1.2.2 (27 May 2008)
+------------------------------------------
+- BUG FIX: Move serverThread.start() into synchronized block to avoid server hang if 
+  server thread runs faster than main thread. 
+  See https://sourceforge.net/tracker/?func=detail&atid=1006533&aid=1925590&group_id=208647
+
+
+Changes in version 1.2.1 (10 Mar 2008)
+------------------------------------------
+- Change Maven POM (pom.xml) to enable sync-ing with central Maven repository (ibiblio).
+
+Changes in version 1.2 (29 Feb 2008)
+------------------------------------------
+- BUG FIX: StubFtpServer: Add wait/notify to ensure that the server starts up and opens the server 
+  control port before the start() method returns. This fixes a potential race condition, which
+  shows up on some Linux systems. (Thanks to Aasman Bajaj for identifying the problem and providing the fix)
+- Modify tests to make server port configurable (through "ftp.server.port" system property), allowing 
+  tests to run on non-Windows systems. 
+
+
+Changes in version 1.1 (20 Feb 2008)
+------------------------------------------
+- StubFtpServer: Allow configuring server control connection port other than the default (21).
+- AbstractTest: Add some test convenience methods.
+
+
+Changes in version 1.0 final (11 Dec 2007)
+------------------------------------------
+- Implement default CommandHandlers for NLST, REIN, SMNT, SITE, ABOR and ALLO commands.
+- Handle command names in any case.
+- CwdCommandHandler: Fix PATHNAME_KEY constant value; change to "pathname".
+
+
+Changes in version 1.0-RC1 (1 Nov 2007)
+---------------------------------------
+Initial release.

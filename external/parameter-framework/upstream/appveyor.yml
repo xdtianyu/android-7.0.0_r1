@@ -1,0 +1,97 @@
+version: 3.0.0-{build}
+
+# Only download the 50 first commits like travis to speedup clone
+clone_depth: 50
+
+os: Visual Studio 2015
+
+init:
+  # Disable popups as they hang the build as there is nobody to click on the OK button...
+  # Hanging the build is a lot less user friendly than reporting a build failure.
+  #
+  # Disable of system hard error popup
+  # See: https://msdn.microsoft.com/en-us/library/bb513638%28VS.85%29.aspx
+  - reg add "HKLM\SYSTEM\CurrentControlSet\Control\Windows" /f /v ErrorMode /d 2
+  # Disable the following popup on program failure:
+  #     |       ** <program name> has stopped working **        |
+  #     | Windows can check online for a solution to the problem|
+  #     |  - Check online for a solution and close the program  |
+  #     |  - Close the program                                  |
+  # See: https://msdn.microsoft.com/en-us/library/bb513638%28VS.85%29.aspx
+  - reg add "HKLM\Software\Microsoft\Windows\Windows Error Reporting" /f /v DontShowUI /d 1
+
+  # Instruct cmake were to find external dependencies
+  - set PREFIX_PATH=%APPVEYOR_BUILD_FOLDER%\asio-1.10.6;%APPVEYOR_BUILD_FOLDER%\catch
+  # Tell CMake where to install
+  - set INSTALL=%HOMEPATH%\install
+  # legacy functional tests are bash specific
+  - set CTEST_PARAMS=--output-on-failure
+
+install:
+  - cinst cmake.portable wget 7zip.commandline
+  # Install Windows Installer XML (WiX) to create installer with cpack
+  - cinst wixtoolset
+
+  # Download and install external dependancy if they are not in the cache
+  - if not exist libxml2-x86_64 (
+      wget --no-check-certificate https://01.org/sites/default/files/libxml2-x86_64-3eaedba1b64180668fdab7ad2eba549586017bf3.zip &&
+      7z x libxml2-x86_64-3eaedba1b64180668fdab7ad2eba549586017bf3.zip)
+  - if not exist libxml2-x86_64-debug (
+      wget --no-check-certificate https://01.org/sites/default/files/libxml2-x86_64-debug-3eaedba1b64180668fdab7ad2eba549586017bf3.zip &&
+      7z x libxml2-x86_64-debug-3eaedba1b64180668fdab7ad2eba549586017bf3.zip)
+  - if not exist asio-1.10.6 (
+      wget --no-check-certificate https://01.org/sites/default/files/asio-1.10.6.tar.gz &&
+      7z x asio-1.10.6.tar.gz &&
+      7z x -i"!asio*/include" asio-1.10.6.tar)
+  # This version of catch is known to work.
+  - if not exist catch (
+      wget --no-check-certificate https://raw.github.com/philsquared/Catch/v1.2.1/single_include/catch.hpp --directory-prefix catch )
+  - set DEBUG_LIBXML2_PATH=%APPVEYOR_BUILD_FOLDER%\libxml2-x86_64-debug
+  - set RELEASE_LIBXML2_PATH=%APPVEYOR_BUILD_FOLDER%\libxml2-x86_64
+
+  # Setup Visual studio build environement
+  - '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64'
+
+cache:
+  - C:\ProgramData\chocolatey\bin -> appveyor.yml
+  - C:\ProgramData\chocolatey\lib -> appveyor.yml
+  - libxml2-x86_64                -> appveyor.yml
+  - libxml2-x86_64-debug          -> appveyor.yml
+  - asio-1.10.6                   -> appveyor.yml
+  - catch                         -> appveyor.yml
+
+build_script:
+  - mkdir build && cd build
+
+  - mkdir 64bits-debug && cd 64bits-debug
+  # Add debug libxml2.dll in the path so that tests can find it
+  - set TEST_PATH=%DEBUG_LIBXML2_PATH%\bin
+  - cmake -G "NMake Makefiles" -DPYTHON_BINDINGS=OFF -DCMAKE_PREFIX_PATH="%PREFIX_PATH%;%DEBUG_LIBXML2_PATH%" ..\..
+  - cmake --build . --config debug
+  - ctest --build-config debug %CTEST_PARAMS%
+  - cd ..
+
+  - mkdir 64bits-release & cd 64bits-release
+  # Add debug libxml2.dll in the path so that tests can find it
+  - set TEST_PATH=%RELEASE_LIBXML2_PATH%\bin
+  - cmake -G "Visual Studio 14 2015 Win64" -DPYTHON_BINDINGS=OFF -DCMAKE_PREFIX_PATH="%PREFIX_PATH%;%RELEASE_LIBXML2_PATH%" -DCMAKE_INSTALL_PREFIX=%INSTALL% ..\..
+  # Build, test and install
+  - cmake --build . --config release
+  - ctest --build-config release %CTEST_PARAMS%
+  - cmake --build . --config release --target install
+  - cpack --verbose -G WIX
+  - cd ..
+
+  # build and test the skeleton plugin against the previously-installed build; this serves as a smoke test of the whole stack
+  - mkdir skeleton && cd skeleton
+  # %INSTALL%\lib is where the skeleton plugin is installed (see comment below)
+  # %INSTALL%\bin is where parameter.dll is installed
+  # Also add the path where the release libxml2.dll has been extracted
+  - set TEST_PATH=%RELEASE_LIBXML2_PATH%\bin;%INSTALL%\lib;%INSTALL%\bin
+  - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=%INSTALL% -DCMAKE_PREFIX_PATH=%INSTALL% %APPVEYOR_BUILD_FOLDER%\skeleton-subsystem
+  # Unfortunately, the skeleton test currently doesn't work on
+  # multi-configuration build systems (Visual Studio is one of those) without
+  # installing the plugin
+  - cmake --build . --config release --target install
+  - ctest --build-config release %CTEST_PARAMS%
+  - cd ..

@@ -1,0 +1,36 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "sontis"
+NAME = "platform_CompromisedStatefulPartition"
+PURPOSE = "Compromised stateful partition test."
+CRITERIA = "This test will fail if unable to get OOBE with corrupted stateful partition."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+
+DOC = """
+This test:
+1. Remove files from /mnt/stateful_partion directory.
+2. Checks for OOBE screen after rebooting the device with
+   corrupted stateful partition.
+3. Checks that sign in is possible after OOBE.
+
+The test fails if
+-Did not get OOBE after rebooting the device with corrupted stateful partition.
+Example usage:
+test_that -b <board> --args "servo_host=<servo_ip>" <dut_ip> platform_CompromisedStatefulPartition
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test("platform_CompromisedStatefulPartition", host=host,
+                 disable_sysinfo=True, client_autotest="desktopui_SimpleLogin")
+
+parallel_simple(run, machines)

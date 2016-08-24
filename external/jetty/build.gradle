@@ -1,0 +1,48 @@
+apply plugin: 'com.android.library'
+
+def nonAndroidSrc = [
+    "org/eclipse/jetty/jmx/ConnectorServer.java",
+    "org/eclipse/jetty/jmx/MBeanContainer.java",
+    "org/eclipse/jetty/jmx/ObjectMBean.java",
+    "org/eclipse/jetty/servlet/jmx/ServletMappingMBean.java",
+    "org/eclipse/jetty/servlet/jmx/FilterMappingMBean.java",
+    "org/eclipse/jetty/servlet/jmx/HolderMBean.java",
+    "org/eclipse/jetty/util/log/jmx/LogMBean.java",
+    "org/eclipse/jetty/server/jmx/ServerMBean.java",
+    "org/eclipse/jetty/server/handler/jmx/AbstractHandlerMBean.java",
+    "org/eclipse/jetty/server/handler/jmx/ContextHandlerMBean.java",
+    "org/eclipse/jetty/servlet/StatisticsServlet.java",
+    "org/eclipse/jetty/server/session/jmx/AbstractSessionManagerMBean.java",
+    "org/eclipse/jetty/security/SpnegoUserIdentity.java",
+    "org/eclipse/jetty/security/SpnegoUserPrincipal.java",
+    "org/eclipse/jetty/security/SpnegoLoginService.java",
+    "org/eclipse/jetty/server/session/JDBCSessionIdManager.java",
+    "org/eclipse/jetty/util/preventers/AppContextLeakPreventer.java",
+    "org/eclipse/jetty/util/preventers/AWTLeakPreventer.java",
+    "org/eclipse/jetty/servlet/listener/IntrospectorCleaner.java",
+    "org/eclipse/jetty/util/preventers/AppContextLeakPreventer.java",
+    "org/eclipse/jetty/util/preventers/AWTLeakPreventer.java",
+    "org/eclipse/jetty/server/session/JDBCSessionManager.java"
+]
+
+android {
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ["src/java"]
+            java.exclude nonAndroidSrc
+        }
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_7
+            targetCompatibility JavaVersion.VERSION_1_7
+        }
+    }
+}
+
+dependencies {
+    compile files(
+        "lib/javax.servlet-3.0.0.v201112011016.jar",
+        "lib/jetty-util-6.1.26.jar",
+        "lib/slf4j-api-1.6.1.jar",
+        "lib/slf4j-jdk14-1.6.1.jar")
+}

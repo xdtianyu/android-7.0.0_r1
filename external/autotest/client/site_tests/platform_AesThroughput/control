@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "platform_AesThroughput"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Benchmark processor performance using OpenSSL using AES options."
+CRITERIA = """
+This test is a benchmark.
+
+This test will fail if the output of openssl cannot be parsed.
+"""
+ATTRIBUTES = "suite:hwqual, suite:kernel_per-build_benchmarks"
+SUITE = "kernel_per-build_benchmarks, hwqual"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This test uses the openssl program with AES options.
+"""
+job.run_test('platform_AesThroughput')

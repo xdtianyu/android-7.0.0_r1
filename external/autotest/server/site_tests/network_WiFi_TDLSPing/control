@@ -1,0 +1,26 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, wiley, quiche'
+NAME = 'network_WiFi_TDLSPing'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:wifi_matfunc, suite:wifi_matfunc_bcm4371'
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test attempts to verify that we can enable TDLS on a client that
+supports it.  We do so by analyzing a packet capture to make sure that
+pings between TDLS connected hosts are sent directly without relaying
+through AP.
+
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_TDLSPing', host=host, raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

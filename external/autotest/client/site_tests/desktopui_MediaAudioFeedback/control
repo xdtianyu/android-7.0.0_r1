@@ -1,0 +1,44 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Project"
+NAME = "desktopui_MediaAudioFeedback"
+PURPOSE = "Verify sound from media files is audible"
+CRITERIA = """
+This test will fail if media files sound is not audible.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+DEPENDENCIES = 'audio_loopback_dongle'
+
+DOC = """
+Test that the sound from media files can be heard by recording from mic in.
+Each audio channel is tested independently and currently there is no accurate
+comparison with the input data. Instead the test passes when
+a) the silent signal is sufficiently weak and (TODO: rohitbm@chromium.org)
+b) the captured audio from each media replay is sufficiently loud.
+
+NOTE: For this test to pass you need to have the line out looped back to mic-in.
+This can be through a 3.5mm male-to-male cable or a loopback dongle depending on
+your device.
+"""
+
+# Media formats to be tested. The length of these audio are all 5 seconds.
+TEST_DURATION = 5
+TEST_FILES = ['sine440.mp3',
+              'sine440.mp4',
+              'sine440.wav',
+              'sine440.ogv',
+              'sine440.webm']
+
+constraints = ['%s_rms_value > 0.05' % s.replace('.', '_') for s in TEST_FILES]
+
+job.run_test('desktopui_MediaAudioFeedback',
+             test_files=TEST_FILES,
+             test_duration=TEST_DURATION,
+             constraints=constraints)

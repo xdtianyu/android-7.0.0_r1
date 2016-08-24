@@ -1,0 +1,34 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "logging_UserCrash"
+PURPOSE = "Verify user space crashes are handled appropriately."
+CRITERIA = """
+Fails if any of the following conditions occur:
+  - expected core pattern is not output
+  - user space crash handling is not running
+  - forced crash does not occur
+  - forced segv message is not found
+  - core pattern is not recognized as as 'core'
+  - crash is sent without user consent
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:smoke"
+SUITE = "bvt-perbuild, smoke"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "logging"
+TEST_TYPE = "client"
+
+DOC = """
+Test that user space crashes are detected and handled appropriately.
+"""
+
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'Cr-Internals-Logging', 'Cr-OS-Systems'],
+    'owner': 'vapier@chromium.org',
+    'cc': ['vapier@chromium.org', 'benchan@chromium.org'],
+}
+
+job.run_test('logging_UserCrash')

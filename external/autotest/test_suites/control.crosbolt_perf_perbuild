@@ -1,0 +1,49 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "rohitbm@chromium.org, chromeos-performance@google.com"
+NAME = "crosbolt_perf_perbuild"
+PURPOSE = "Performance tests"
+CRITERIA = "All tests with SUITE=performance must pass."
+
+TIME = "LONG"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+ChromeOS performance tests including telemetry tests.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on. Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+
+# Values specified in this bug template will override default values when
+# filing bugs on tests that are a part of this suite. If left unspecified
+# the bug filer will fallback to its defaults.
+_BUG_TEMPLATE = {
+    'labels': ['Type-Bug', 'Cros-Perf-Test'],
+    'owner': 'rohitbm@chromium.org',
+    'ccs': ['lafeenstra@chromium.org']
+}
+
+args_dict['timeout_mins'] = 480
+args_dict['file_bugs'] = False
+args_dict['name'] = 'crosbolt_perf_perbuild'
+args_dict['job'] = job
+args_dict['add_experimental'] = True
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['bug_template'] = _BUG_TEMPLATE
+
+dynamic_suite.reimage_and_run(**args_dict)

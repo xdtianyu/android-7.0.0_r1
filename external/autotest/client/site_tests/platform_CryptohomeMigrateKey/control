@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_CryptohomeMigrateKey"
+PURPOSE = "Verify that password changes work."
+CRITERIA = "This test will fail if password changes fail."
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test checks that cryptohome can migrate cryptohomes from old keys to new
+keys. It first mounts and unmounts a vault using an old key, then migrates from
+an old key to a new key, and finally mounts and unmounts using the new key.
+"""
+
+job.run_test('platform_CryptohomeMigrateKey')

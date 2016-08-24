@@ -1,0 +1,35 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved 2014.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "helenzhang, kalin"
+NAME = "platform_TotalMemory"
+PURPOSE = "Reboot and memory total size test"
+CRITERIA = "This test will fail if memory stats vary"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+
+
+DOC = """
+This test reboots the DUT, logins and check the
+memory total size and free memory size.
+
+The test fails if memory total size changed for each reboot,
+or free memory diff is bigger than 1/4 of total memory.
+"""
+
+args_dict = utils.args_to_dict(args)
+
+def run(machine):
+    host = hosts.create_host(machine)
+    reboot_counts = int(args_dict.get("reboot_counts", 3))
+    job.run_test("platform_TotalMemory", host=host,
+                 disable_sysinfo=True, reboot_counts=reboot_counts)
+
+parallel_simple(run, machines)

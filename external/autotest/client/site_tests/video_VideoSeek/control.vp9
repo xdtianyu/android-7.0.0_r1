@@ -1,0 +1,28 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_VideoSeek.vp9"
+PURPOSE = "Verify that VP9 non-resolution-changing video seek works in Chrome"
+CRITERIA = """
+This test will fail if a non-resolution-changing VP9 video fails to seek in Chrome HTML5 page.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES = "hw_video_acc_vp9"
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This test verifies VP9 non-resolution-changing video can seek on machines with VDA.
+"""
+
+video = 'http://commondatastorage.googleapis.com/chromiumos-test-assets-public/Shaka-Dash/720.webm'
+job.run_test('video_VideoSeek', video=video)

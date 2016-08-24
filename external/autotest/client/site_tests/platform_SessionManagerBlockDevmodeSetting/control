@@ -1,0 +1,17 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'mnissler, pastarmovj'
+NAME = 'platform_SessionManagerBlockDevmodeSetting'
+ATTRIBUTES = "suite:experimental"
+SUITE = 'experimental'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+This test checks whether session_manager correctly updates the block_devmode
+crossystem flag according to the value stored in device settings.
+"""
+
+job.run_test('platform_SessionManagerBlockDevmodeSetting')

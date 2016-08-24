@@ -1,0 +1,39 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_Draw"
+PURPOSE = "Measure how much power is drawn over a given amount of time."
+CRITERIA = "This test is a benchmark."
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+This test will run for 200 seconds.
+
+This test depends upon power_status.py from AutoTest to provide battery
+state updates. This test requires that AC power is off.
+"""
+
+tag = 'PowerDraw'
+seconds = 200
+
+
+def run_power_draw():
+    job.run_test('power_Draw', seconds=seconds, tag=tag)
+
+
+def run_sat():
+    job.run_test('hardware_SAT', seconds=seconds, tag=tag)
+
+
+def run_gpu():
+    job.run_test('graphics_GLBench',
+                 options='-tests fill:triangle -duration %d' % seconds,
+                 tag=tag)
+
+
+job.parallel([run_power_draw], [run_sat], [run_gpu])

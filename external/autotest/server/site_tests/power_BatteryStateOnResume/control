@@ -1,0 +1,43 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_BatteryStateOnResume"
+PURPOSE = "Servo based ChromeOS functional tests."
+CRITERIA = """
+This test will fail if:
+1. Not logged In.
+2. Battery charge state reports "Discharging" on Resume when AC is plugged to
+   DUT in Suspend(S3) state.
+3. Battery charge state reports "Charging" on Resume when AC is plugged to
+   DUT in Suspend(S3) state.
+
+The Command line args to run this test is as follow:
+1. If DUT is connected to RPM(default), No need to pass any command line args.
+2. If DUT is connected to USB powerstrip(servoj10), Need to pass
+   --args=power_control="servoj10".
+3. If DUT is not connected to either RPM or Servo and to run Manual, Need to
+   pass --args=power_control="manual".
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Power"
+TEST_CLASS = "power"
+TEST_TYPE = "server"
+
+DOC = """
+This test is used to verify the battery charge state of the DUT on resume after
+the AC charger gets plugged and unplugged in its suspend state.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_batstateonresume(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("power_BatteryStateOnResume", host=host, disable_sysinfo=True,
+                 cmdline_args=args, client_ip=machine)
+
+parallel_simple(run_batstateonresume, machines)

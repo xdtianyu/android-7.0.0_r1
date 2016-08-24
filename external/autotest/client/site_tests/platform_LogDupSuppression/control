@@ -1,0 +1,19 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.  Use of
+# this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'quiche'
+NAME = 'platform_LogDupSuppression'
+ATTRIBUTES = "suite:experimental"
+SUITE = 'experimental'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Test that we suppress duplicate messages from one process to syslog.
+
+  Directs log messages for the 'spam' process to a new file, then
+  checks that repeated messages from that process are suppressed.
+"""
+
+job.run_test('platform_LogDupSuppression')

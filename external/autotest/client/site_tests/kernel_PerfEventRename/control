@@ -1,0 +1,28 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+DOC = """
+Test to determine if the kernel's perf event architecture can handle
+a process changing its name and still attribute the samples to a binary.
+
+A test program which changes its name using prctl runs under perf and runs
+through a computational crc loop in order to ensure it gets some samples.
+Perf produces a data file from that run, and that data file is run through
+perf again to produce a report.  The report is checked to see that the samples
+were not marked "unknown".
+"""
+NAME = "kernel_PerfEventRename"
+PURPOSE = "Checks that /dev/chromeos-low-mem reports low-memory conditions."
+CRITERIA = """
+Fails if perf report doesn't contain the correct executable name
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+
+job.run_test('kernel_PerfEventRename')

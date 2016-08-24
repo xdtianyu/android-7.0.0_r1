@@ -1,0 +1,21 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "security_AltSyscall"
+TIME = "SHORT"
+AUTHOR = "abrestic"
+DOC = """
+Tests alt_syscall functionality using minijail.
+"""
+PURPOSE = "Verify that alt_syscall allows/blocks syscalls as expected"
+CRITERIA = """
+Syscalls which are allowed by the alt_syscall table should succeed, syscalls
+blocked by the alt_syscall table should fail, and attempts to change the
+alt_syscall table once it has been set should fail.
+"""
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+
+job.run_test("security_AltSyscall")

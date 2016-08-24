@@ -1,0 +1,21 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "cmasone, nkostylev"
+NAME = "login_RetrieveActiveSessions"
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME = "FAST"
+TEST_CLASS = "login"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test is intended to ensure that the session manager correctly
+records which sessions are active and returns them upon request.
+It will call session_manager.StartSession() over DBus more than once,
+with different user names, and query the active sessions each time.
+"""
+
+job.run_test('login_RetrieveActiveSessions')

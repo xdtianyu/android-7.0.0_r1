@@ -1,0 +1,53 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "network_ui"
+PURPOSE = "Software-only network UI tests for shill and Chrome integration."
+CRITERIA = "All tests with SUITE=network_ui must pass."
+
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+
+DOC = """
+Run automated tests backed up by a fake hardware simulator (e.g. pseudomodem)
+to test the Chrome OS network UI and the chrome.networkingPrivate extension
+API layer.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on.  Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+# Values specified in this bug template will override default values when
+# filing bugs on tests that are a part of this suite. If left unspecified
+# the bug filer will fallback to it's defaults.
+_BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Systems-Mobile'],
+    'owner': 'armansito@chromium.org',
+    'status': None,
+    'summary': None,
+    'title': None,
+    'cc': ['armansito@chromium.org', 'benchan@chromium.org',
+           'pneubeck@chromium.org', 'stevenjb@chromium.org']
+}
+
+args_dict['file_bugs'] = True
+args_dict['job'] = job
+args_dict['add_experimental'] = True
+args_dict['bug_template'] = _BUG_TEMPLATE
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['name'] = 'network_ui'
+
+dynamic_suite.reimage_and_run(**args_dict)

@@ -1,0 +1,22 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_FilePerms"
+PURPOSE = "Verify permissions are correct on system files and directories."
+CRITERIA = """
+This test will fail if it finds unexpected permissions on system files or
+directories.
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = "Verifies permissions on various file systems."
+
+job.run_test('platform_FilePerms')

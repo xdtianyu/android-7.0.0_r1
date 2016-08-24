@@ -1,0 +1,23 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME='SHORT'
+AUTHOR = 'The Chromium OS Authors'
+DOC = """
+Ensures that the built-in Root CAs matches the whitelist for CrOS.
+"""
+NAME = 'security_RootCA'
+PURPOSE = 'Ensures that the built-in Root CAs matches the whitelist for CrOS.'
+CRITERIA = """
+Fail if the nss/openssl databases fail to match each other or the whitelist.
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CLASS = 'security'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+job.run_test('security_RootCA', opts=args)
+

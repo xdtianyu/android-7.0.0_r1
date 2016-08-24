@@ -1,0 +1,22 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_TrimIntegrity.full_disk'
+AUTHOR = 'puthik'
+PURPOSE = 'Perform data integrity trim test on internal disk.'
+TIME = 'LENGTHY'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:mmc_qual"
+SUITE = 'mmc_qual'
+
+DOC = """
+Performs data integrity trim test on an internal disk while booting from usb.
+
+This test will fill the internal disk and verify that trimmed data are gone and
+untrimmed data are unaffected. The verification will be run in 5 passes with
+0%, 25%, 50%, 75%, and 100% of data trimmed.
+
+"""
+
+job.run_test('hardware_TrimIntegrity', file_size=0)

@@ -1,0 +1,23 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME='SHORT'
+AUTHOR = 'The Chromium OS Authors'
+DOC = """
+Ensures that certificate blacklisting works.
+"""
+NAME = 'security_OpenSSLBlacklist'
+PURPOSE = 'Ensure that certificate blacklisting works.'
+CRITERIA = """
+Fail if a blacklisted cert verifies or a non-blacklisted cert fails to verify.
+"""
+TEST_CLASS = 'security'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = 'bvt-inline, smoke'
+
+job.run_test('security_OpenSSLBlacklist', opts=args)
+

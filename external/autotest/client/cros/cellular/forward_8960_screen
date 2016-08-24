@@ -1,0 +1,114 @@
+#!/usr/bin/python
+
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# A local web server that sets up SSH port-forwarding to display the
+# front-panel display of an 8960
+
+import BaseHTTPServer
+import subprocess
+import sys
+
+import labconfig
+
+DOCUMENTATION="""
+This will start up an SSH to port-forward connections to the 8960.
+and then a web server to offer a simple UI to fetch images of the
+8960 front panel display. It will print a localhost URL to visit.
+When you visit that URL, you'll see the front-panel display from
+the instrument. If the image is stale, the display greys out.
+"""
+
+PAGE="""
+<html>
+  <head>
+  </head>
+  <script type="text/javascript">
+    var port = %(ssh_tunnel_port)s;
+    var lastTimestamp = 0;
+    function onTimer() {
+      var imageSpan = document.getElementById('image_span');
+      var newImage = document.createElement('image');
+      var tag = new Date().getTime();
+
+      if (tag - lastTimestamp > 3000) {
+        imageSpan.style.opacity=0.3;
+      }
+
+      newImage.src = 'http://localhost:' + port + '/screen.gif?' + tag;
+      newImage.onload = function () {
+        imageSpan.replaceChild(newImage, imageSpan.children[0]);
+        lastTimestamp = tag;
+        imageSpan.style.opacity=1;
+      }
+      t = setTimeout("onTimer()", 1000);
+    }
+
+    setTimeout("onTimer()", 0);
+  </script>
+
+  <body>
+    <div>8960 in test cell <strong>%(cell)s</strong></div>
+    <span id="image_span">
+      <span>
+        <!-- Placeholder -->
+        8960 screen should go here. <br>
+      </span>
+    </span>
+  </body>
+</html>
+"""
+
+
+try:
+    [cell] = sys.argv[1:]
+except ValueError:
+    print 'Usage: %s [cell-name]' % sys.argv[0]
+    print DOCUMENTATION
+    exit(1)
+
+ssh_tunnel_port = 1839
+http_server_port = 8192
+
+c = labconfig.Configuration(['--cell=%s' % (cell)])
+
+basestation_ip = c.cell['basestations'][0]['bs_addresses'][0]
+bastion_ip = c.cell['perfserver']['address']
+
+ssh_forwarding_configuration = 'localhost:%s:%s:80' % (
+    ssh_tunnel_port, basestation_ip)
+
+
+class PopenContext(object):
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+    def __enter__(self):
+        self.process = subprocess.Popen(*self.args, **self.kwargs)
+        return self.process
+
+    def __exit__(self, exception, value, traceback):
+        self.process.kill()
+
+
+class PageHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(PAGE % {'ssh_tunnel_port': ssh_tunnel_port,
+                                 'cell': cell})
+
+with PopenContext(
+    ['/usr/bin/ssh',
+     '-N',                  # Forward ports only
+     '-l','root',
+     '-L', ssh_forwarding_configuration,
+     bastion_ip,]) as ssh:
+
+    httpd = BaseHTTPServer.HTTPServer(('', http_server_port), PageHandler)
+    print DOCUMENTATION
+    print 'http://localhost:%s/8960.html' % http_server_port
+    httpd.serve_forever()

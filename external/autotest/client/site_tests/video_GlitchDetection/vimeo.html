@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+ <body>
+    <div class="vimeoFrame">
+        <iframe class="vimeo" id="player" src="http://player.vimeo.com/video/71174245?api=1&player_id=player" frameborder="0"></iframe>
+        <!--<iframe class="vimeo" id="player" src="http://player.vimeo.com/video/82095744?api=1&player_id=player" width="854" height="480" frameborder="0"></iframe>-->
+        </div>
+        <!--Use CSS to hide video controls. Vimeo provides no known way of
+        doing this. Numbers were obtained by trial and error. -->
+        <style>
+            .vimeo {display:block; width:854px; height:720px; margin:0;}
+            .vimeoFrame {width:854px; height:480px; overflow:hidden; margin:0;}
+            .vimeoFrame .vimeo {margin-top:-120px;}
+        </style>
+</body>
+    <head>
+        <script src="jquery-2.1.1.min.js"></script>
+        <script src="froogaloop.js"></script>
+        <script>
+            $(function() {
+                video = $f('player').addEvent('ready', ready);
+
+                function ready(player_id) {
+                    video.isready = true;
+                    $f(player_id).addEvent('seek', onSeek);
+                }
+
+                video.seekTo = function(seconds) {
+                    video.seeked = false;
+                    $f('player').api('seekTo', seconds);
+                }
+
+                video.play = function() {
+                    $f('player').api('play');
+                }
+
+                function onSeek(data, id) {
+                    video.seeked = true;
+                    $f('player').api('getCurrentTime', currentTime);
+                }
+
+                function currentTime(value, player_id) {
+                    var timeElement = document.getElementById('currentTime');
+                    timeElement.textContent = value;
+                    video.currentTime = value;
+                }
+
+                video.seeked = function() {
+                    return video.currentTime == video.expectedTime;
+                }
+
+            })();
+
+        </script>
+
+    </head>
+</html>

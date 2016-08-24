@@ -1,0 +1,22 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GNoGobi"
+PURPOSE = "Verify no gobi related files are on the system."
+CRITERIA = """
+This test will fail if one of the following conditions occur:
+  - gobi firmware files are found
+  - gobi sdk files are found
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Tests that there are no gobi related files on the system
+"""
+
+job.run_test('network_3GNoGobi')

@@ -1,0 +1,27 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_WebRtcMediaRecorder"
+PURPOSE = "Check WebRTC MediaRecorder on local and remote streams"
+CRITERIA = "This test will fail if WebRTC MediaRecorder cannot record"
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "MEDIUM"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    "labels": ["OS-Chrome", "Cr-OS-Kernel-Video"],
+}
+
+DOC = """
+This test makes sure the MediaRecorder is able to record a local stream or a
+peer connection remote stream. It also checks the basic Media Recorder
+functions as start, stop, pause, resume. The test fails if the media recorder
+cannot exercise its basic functions or if there is no recording or associated
+events.
+"""
+
+job.run_test("video_WebRtcMediaRecorder")

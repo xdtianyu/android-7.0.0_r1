@@ -1,0 +1,55 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import logging
+
+from autotest_lib.client.common_lib import error
+from autotest_lib.client.common_lib import utils
+
+NAME = "provision_FactoryImage"
+AUTHOR = "beeps@google.com, chromeos-lab-infrastructure@google.com"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Install"
+TEST_CLASS = "provision"
+TEST_TYPE = "server"
+
+DOC = """
+This test installs a specified factory image onto a servo-connected DUT.
+It will attempt to retrieve the factory image from the canary branch, and
+as such, the image_name must correspond to the name on that branch. For
+example, to install the daisy_spring image from the canary-channel, one
+would specify an image_name like: "daisy-spring/4262.320.0".
+
+Here is the command to install a recovery image with a locally attached
+servo:
+    test_that <remote_ip> provision_FactoryImage --board=<board> \
+    --args="image_name=<board>/<build> servo_host=<ip of servo_host>"
+
+where servo_host is the ip of beagle board running servod. If a servo_host
+is not specified and the DUT is in .cros, we will construct the right name
+for its servo, and if the DUT isn't in .cros we will attempt to use localhost
+as the servohost.
+"""
+
+args_dict = utils.args_to_dict(args)
+
+image_name = args_dict.get('image_name')
+servo_host = args_dict.get('servo_host')
+if not image_name:
+    raise error.AutoservError('Please specify --args="image_name=<board>/'
+                              '<build> servo_host=<ip of servo_host>" when '
+                              'invoking test_that. Make sure the DUT you are '
+                              'trying to reimage has a beagle-board/servo '
+                              'attached.')
+
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    """Create a host stage a factory image and reimage through servo."""
+    host = hosts.create_host(machine, servo_args=servo_args)
+    image_url = host.stage_factory_image_for_servo(image_name=image_name)
+    job.run_test('provision_FactoryImage', host=host,
+                 disable_sysinfo=True, image_url=image_url)
+
+parallel_simple(run, machines)

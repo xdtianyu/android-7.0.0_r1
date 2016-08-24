@@ -1,0 +1,29 @@
+#!/usr/bin/env python2.7
+
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""Runs the unit test suite for systrace."""
+
+import os
+import sys
+import unittest
+
+_SYSTRACE_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), os.path.pardir))
+
+def main():
+  systrace_package_path = os.path.join(_SYSTRACE_DIR, 'systrace')
+  suite = unittest.TestLoader().discover(
+      systrace_package_path,
+      pattern = '*_unittest.py',
+      top_level_dir=_SYSTRACE_DIR)
+  result = unittest.TextTestRunner(verbosity=2).run(suite)
+  if result.wasSuccessful():
+    sys.exit(0)
+  else:
+    sys.exit(1)
+
+if __name__ == '__main__':
+  main()

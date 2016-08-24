@@ -1,0 +1,24 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Aviv Keshet"
+NAME = "dummy_Fail.retry_alwaysflake"
+PURPOSE = "Demonstrate failure methods of autotests."
+CRITERIA = "This test will never succeed."
+ATTRIBUTES = "suite:dummyflake, suite:push_to_prod"
+SUITE = "dummyflake, push_to_prod"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "dummy"
+TEST_TYPE = "client"
+RETRIES = 5
+
+DOC = """
+This is a dummy test that will be attempted 6 times, but always fail
+with TestFailRetry.
+"""
+
+job.run_test('dummy_Fail', tag='RetryFail', to_throw='TestFailRetry')
+job.run_test('dummy_Fail', tag='RetrySuccess', to_throw='TestFailRetry',
+             retry_success_count=RETRIES)

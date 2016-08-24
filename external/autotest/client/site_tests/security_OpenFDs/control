@@ -1,0 +1,19 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME = "SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = "Enforces a whitelist of open file descriptors expected in key processes."
+NAME = "security_OpenFDs"
+PURPOSE = ("To ensure unnecessary open file descriptors don't undermine"
+           "sandboxing or create other security weaknesses.")
+CRITERIA = "Fail if the list of open fds seen doesn't match the expected set."
+ATTRIBUTES = "suite:bvt-inline"
+SUITE = "bvt-inline"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+job.run_test("security_OpenFDs")

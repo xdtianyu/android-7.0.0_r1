@@ -1,0 +1,19 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, avakulenko, keybuk'
+NAME = 'peerd_MonitorsDBusConnections'
+TIME = 'FAST'
+TEST_TYPE = 'client'
+
+DOC = """
+This test:
+
+1) adds a service to peerd
+2) terminates the DBus connection
+3) verifies that peerd notices this and removes the service
+
+"""
+
+job.run_test('peerd_MonitorsDBusConnections')

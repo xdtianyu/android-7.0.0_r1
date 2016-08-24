@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:include schemaLocation="ConfigurableDomain.xsd"/>
+	<xs:element name="ConfigurableDomains">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" name="ConfigurableDomain" type="ConfigurableDomainType">
+					<xs:key name="ConfigurableElementKey">
+						<xs:selector xpath="ConfigurableElements/ConfigurableElement"/>
+						<xs:field xpath="@Path"/>
+					</xs:key>
+					<xs:keyref refer="ConfigurableElementKey" name="ConfigurableDomainReference">
+						<xs:selector xpath="Settings/Configuration/ConfigurableElement"/>
+						<xs:field xpath="@Path"/>
+					</xs:keyref>
+					<xs:key name="ConfigurationKey">
+						<xs:selector xpath="Configurations/Configuration"/>
+						<xs:field xpath="@Name"/>
+					</xs:key>
+					<xs:keyref refer="ConfigurationKey" name="ConfigurationReference2">
+						<xs:selector xpath="ConfigurableElements/ConfigurableElement/Configuration"/>
+						<xs:field xpath="@Name"/>
+					</xs:keyref>
+					<xs:keyref refer="ConfigurationKey" name="ConfigurationReference">
+						<xs:selector xpath="Settings/Configuration"/>
+						<xs:field xpath="@Name"/>
+					</xs:keyref>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="SystemClassName" use="required" type="xs:NCName"/>
+		</xs:complexType>
+		<xs:unique name="ConfigurableDomainUniqueness">
+			<xs:selector xpath="ConfigurableDomain"/>
+			<xs:field xpath="@Name"/>
+		</xs:unique>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,21 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "desktopui_FontCache"
+PURPOSE = "Test font cache freshness."
+CRITERIA = """
+Fails if the newly generated font cache is not identical to the existing cache.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+
+DOC = """
+Runs fc-cache to generate a new font cache and compares it to the existing
+cache.
+"""
+
+job.run_test('desktopui_FontCache')

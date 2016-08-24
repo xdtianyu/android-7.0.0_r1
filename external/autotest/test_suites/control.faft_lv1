@@ -1,0 +1,61 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "faft_lv1"
+PURPOSE = "Test hard-to-automate 'normal' mode firmware scenarios."
+CRITERIA = "All tests with SUITE=faft_lv1 must pass."
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+
+This test suite runs FAFT (Fully Automated Firmware Test) for BIOS that should
+all pass and that verifies the BIOS fit Chrome OS verified-boot requirements.
+
+All BIOS tests are categorized into 5 test levels:
+  Level-1: Basic BIOS tests which verify basic vboot functions.
+  Level-2: Recovery BIOS tests which need external USB disk.
+  Level-3: Corruption BIOS tests which modify firmware/kernel image.
+           These tests may corrupt the system if any failure happens.
+  Level-4: Advanced BIOS tests which verify not-so-critical features.
+  Level-5: Firmware update tests which update firmware/kernel image.
+
+This suite runs all Level-1 tests.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on.  Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+# Values specified in this bug template will override default values when
+# filing bugs on tests that are a part of this suite. If left unspecified
+# the bug filer will fallback to it's defaults.
+_BUG_TEMPLATE = {
+    'labels': ['FW-labblocker', 'Restrict-View-Google'],
+    'owner': '',
+    'status': None,
+    'summary': None,
+    'title': None,
+}
+
+args_dict['name'] = 'faft_lv1'
+args_dict['file_bugs'] = False
+args_dict['job'] = job
+args_dict['add_experimental'] = True
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['bug_template'] = _BUG_TEMPLATE
+
+dynamic_suite.reimage_and_run(**args_dict)

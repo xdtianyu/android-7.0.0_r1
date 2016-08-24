@@ -1,0 +1,28 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_PlaybackPerf.vp9.4k"
+PURPOSE = "Test the cpu usage and dropped frame count of VP9 4K video playback"
+CRITERIA = """
+The test outputs the cpu usage and dropped frame count of VP9 4K video playback.
+"""
+ATTRIBUTES = "suite:crosbolt_perf_nightly"
+SUITE = "crosbolt_perf_nightly"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES = '4k_video'
+
+DOC = """
+This test measures the CPU usage and dropped frame count of VP9 4K video
+playback for hardware decode and software decode.
+"""
+
+VIDEO_NAME = 'traffic-3840x2160-cbcdda7d7143b3e9f8efbeed0c4157b5.vp9.webm'
+VIDEO_DESCRIPTION = 'vp9_4k'
+job.run_test('video_PlaybackPerf', video_name=VIDEO_NAME,
+             video_description=VIDEO_DESCRIPTION)
+

@@ -1,0 +1,37 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_CorruptBothKernelAB.dev"
+PURPOSE = "Servo based both kernel A and B corruption test"
+CRITERIA = "This test will fail if firmware does not enter recovery mode"
+ATTRIBUTES = "suite:faft, suite:faft_bios, suite:faft_dev, suite:faft_lv3, suite:faft_bios_ec3po"
+SUITE = "faft,faft_bios,faft_dev,faft_lv3,faft_bios_ec3po"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+JOB_RETRIES = 4
+
+DOC = """
+This test corrupts both kernel A and B and and checks for recovery boot.
+
+This test requires a USB disk plugged-in, which contains a Chrome OS test
+image (built by "build_image --test"). On runtime, this test corrupts
+both kernel A and B. On next reboot, the kernel verification fails
+and enters recovery mode. This test then checks the success of the
+recovery boot.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_corruptbothkernelab(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("firmware_CorruptBothKernelAB", host=host, cmdline_args=args,
+                 disable_sysinfo=True, dev_mode=True, tag="dev")
+
+parallel_simple(run_corruptbothkernelab, machines)

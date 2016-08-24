@@ -1,0 +1,44 @@
+Installation Instructions
+*************************
+
+PREREQUISITES
+=============
+
+* Protobuf 2.4.1
+      http://code.google.com/p/protobuf/
+
+* OpenSSL 1.0.1
+      http://openssl.org/source
+
+* glog 0.3.2
+      http://code.google.com/p/google-glog/
+
+* Google Test 1.6.0
+      http://code.google.com/p/googletest/
+
+* Google Mock 1.6.0
+      http://code.google.com/p/googlemock
+
+
+BUILDING
+========
+
+* Build the required prerequisite libraries.
+
+* Build and install the OpenSSL library:
+  $ ./config shared
+  $ make
+  $ make install
+
+* Build and install the Google TV Pairing library:
+  $ ./configure --with-gtest=/path/to/gtest --with-gmock=/path/to/gmock
+  $ make
+  $ make install
+
+
+TESTING
+=======
+
+* Build and run the tests:
+  $ make check
+

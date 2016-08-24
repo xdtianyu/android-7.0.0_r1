@@ -1,0 +1,27 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "kernel_ltp"
+AUTHOR = "The Chromium OS Authors,chromeos-kernel-test@google.com"
+TIME = "MEDIUM"
+TEST_CATEGORY = "FUNCTIONAL"
+TEST_CLASS = "KERNEL"
+TEST_TYPE = "CLIENT"
+DOC = """
+Convenience control file for running one kernel test.
+Pass the --args to test_that as follows:
+
+test_that ${MACHINE_IP} 
+     -args "test_names=cros_unittest_sample,cros_sample_getcwd02" \
+     'f:.*control.select_tests'
+"""
+
+kwargs = utils.args_to_dict(args)
+test_names = kwargs.get('test_names', None)
+if not test_names:
+    raise error.TestFail('You are required to supply '
+                         '--args "test_names=xxxx" when calling '
+                         'test_that with control.select_tests')
+
+job.run_test('kernel_LTP', select_tests=test_names)

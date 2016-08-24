@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head><title>Loopback test</title></head>
+<body>
+  <video id="localVideo" width="1280" height="720" autoplay muted></video>
+<script src="ssim.js"></script>
+<script src="blackframe.js"></script>
+<script>
+
+var resolutions = [[640, 480],
+                   [1280, 720]];
+var results = {};
+var testProgress = 0;
+var durationMs = 20000;
+
+function testNextResolution() {
+  var nextResolution = resolutions.shift();
+  if (nextResolution == undefined) {
+    reportTestDone();
+    return;
+  }
+  var test = new CameraTest(nextResolution);
+  test.start();
+  setTimeout(
+    function() {
+      test.stop();
+      testNextResolution();
+    },
+    durationMs);
+}
+
+
+function reportTestDone() {
+  console.log('tests completed');
+  testProgress = 1;
+}
+
+function getResults() {
+  return results;
+}
+
+function saveResult(resolution, verdict) {
+  results[resolution] = verdict;
+}
+
+function CameraTest(resolution) {
+  this.resolution = resolution;
+  this.localVideo = document.getElementById("localVideo");
+  this.localVideo.width = this.resolution[0].toString();
+  this.localVideo.height = this.resolution[1].toString();
+  this.localStream = null;
+  this.video = document.querySelector('video');
+  this.canvas = document.createElement('canvas');
+  this.canvas.width = this.localVideo.width;
+  this.canvas.height = this.localVideo.height;
+  this.context = this.canvas.getContext('2d');
+  this.previousFrame = [];
+  this.identicalFrameSsimThreshold = 0.985;
+  this.frameComparator = new Ssim();
+  this.results = {cameraErrors: [],
+      frameStats: {numBlackFrames: 0, numFrozenFrames:0, numFrames: 0}};
+  this.constraints = {
+    "audio": false,
+    "video": {
+      "mandatory" : {
+     	  "maxWidth": this.resolution[0].toString(),
+     	  "maxHeight": this.resolution[1].toString()
+      },
+    }
+  };
+}
+
+CameraTest.prototype = {
+
+  start: function() {
+    this.localVideo.addEventListener('play',
+        this.startCheckingVideoFrames.bind(this), false);
+    navigator.getUserMedia = navigator.getUserMedia ||
+        navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+    navigator.getUserMedia(this.constraints, this.gotLocalStream.bind(this),
+        this.gotUserMediaError.bind(this));
+  },
+
+  gotLocalStream: function(stream) {
+    this.localStream = stream;
+    this.localVideo.src = window.URL.createObjectURL(stream);
+  },
+
+  gotUserMediaError: function(error) {
+    console.log('navigator.getUserMedia error: ', error);
+    this.results.cameraErrors.push('GetUserMedia error: ' + error.toString());
+  },
+
+  startCheckingVideoFrames: function() {
+    this.videoFrameChecker = setInterval(this.checkVideoFrame.bind(this), 20);
+  },
+
+  checkVideoFrame: function() {
+    this.context.drawImage(this.localVideo, 0, 0, this.canvas.width,
+      this.canvas.height);
+    var imageData = this.context.getImageData(0, 0, this.canvas.width,
+      this.canvas.height);
+
+    if (isBlackFrame(imageData.data, imageData.data.length)) {
+      this.results.frameStats.numBlackFrames++;
+    }
+
+    if (this.frameComparator.calculate(this.previousFrame, imageData.data) >
+      this.identicalFrameSsimThreshold) {
+      this.results.frameStats.numFrozenFrames++;
+    }
+
+    this.previousFrame = imageData.data;
+    this.results.frameStats.numFrames++;
+  },
+
+  stop: function() {
+    clearInterval(this.videoFrameChecker);
+    saveResult(this.resolution, this.results);
+    this.localStream.getTracks().forEach(function(track) {
+      track.stop();
+    });
+    this.localVideo.src = null;
+  },
+}
+
+window.onload = testNextResolution;
+window.onerror = function (message, filename, lineno, colno, error) {
+  console.log("Something went wrong, here is the stack trace --> %s",
+      error.stack);
+};
+</script>
+</body>
+</html>

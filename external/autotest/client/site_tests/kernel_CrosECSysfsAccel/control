@@ -1,0 +1,19 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'kernel_CrosECSysfsAccel'
+AUTHOR = 'alecaberg'
+PURPOSE = 'Test cros_ec_accel driver and sysfs interface'
+CRITERIA = 'Fails if sysfs accel interface is not present or data is invalid'
+TIME = 'SHORT'
+ATTRIBUTES = "suite:kernel_daily_regression"
+SUITE = 'kernel_daily_regression'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'kernel'
+TEST_TYPE = 'client'
+DEPENDENCIES = 'accel:cros-ec'
+
+DOC = 'Checks that the sysfs interface to the EC accels is present and working.'
+
+job.run_test('kernel_CrosECSysfsAccel')

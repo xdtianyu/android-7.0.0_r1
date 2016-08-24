@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "The Chromium OS Authors"
+NAME = "power_CheckAfterSuspend.TPMCheckStress"
+ATTRIBUTES = "suite:kernel_weekly_regression"
+SUITE = "kernel_weekly_regression"
+PURPOSE = "Check of the TPM state after S3"
+CRITERIA = "Check that the TPM is in the expected state after many S3 Resumes."
+TIME = "LONG"
+TEST_CATEGORY = "Stress,Reliability"
+TEST_CLASS = "Hardware"
+TEST_TYPE = "Client"
+
+DOC = """
+    A check of the state of the TPM (Trusted Platform Module) after S3 Resume
+"""
+
+# Comma-separated list of test names to run before and after the suspend.
+tests = ['hardware_TPMCheck']
+
+
+dict_args = utils.args_to_dict(args)
+iterations = int(dict_args.get('iterations', 100))
+
+
+job.run_test('power_CheckAfterSuspend', tests=tests, iterations=iterations,
+             disable_sysinfo=True)

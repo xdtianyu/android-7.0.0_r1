@@ -1,0 +1,78 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Harpreet Grewal <harpreet@chromium.org>"
+NAME = "cellular_StaleModemReboot"
+PURPOSE = "Verify modem is available for testing."
+CRITERIA = """
+This test will fail if either there is no response to modem status command or
+modem is in a non testable state after two or more tries.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:cellular_modem_repair"
+SUITE = "cellular_modem_repair"
+DEPENDENCIES = "servo"
+
+DOC = """
+  Tests that a cellular modem is available for testing.
+
+  The test attempts to detect the modem state by running the modem status
+  command on the DUT and strips the state from its output. The test saves the
+  original modem state and reboots the DUT regardless of what state the modem
+  is in. After the reboot, it tries to get the modem state again and if the
+  modem does not respond or the state is one of the following as listed below,
+  it tries to reboot the DUT for a maximum of two tries by default. User can
+  override the number of tries by passing a tries flag with a desired value.
+
+  REBOOT STATES (If modem is in any of these states, DUT is cold rebooted using
+  the servo.):
+  MODEM STATE FAILED = -1
+  MODEM STATE UNKNOWN = 0
+  MODEM STATE DISABLED = 3
+  MODEM STATE DISABLING = 4
+  MODEM STATE DISCONNECTING = 9
+  GOBI MODEM STATE UNKNOWN = 0
+  GOBI MODEM STATE DISABLED = 10
+  GOBI MODEM STATE DISABLING = 20
+  GOBI MODEM STATE DISCONNECTING = 70
+
+  WAIT DELAY STATES (Waits for a maximum of 120 seconds for the modem to get
+  into a testable state. If the modem is still not in a stable state after the
+  first try, DUT will be rebooted.):
+  MODEM STATE INITIALIZING = 1
+  MODEM STATE ENABLING = 5
+  MODEM STATE ENABLED = 6
+  MODEM STATE SEARCHING = 7
+  GOBI MODEM STATE ENABLING = 30
+  GOBI MODEM STATE ENABLED = 40
+  GOBI MODEM STATE SEARCHING = 50
+
+  STABLE STATES (Test does nothing.):
+  MODEM STATE REGISTERED = 8
+  MODEM STATE CONNECTING = 10
+  MODEM STATE CONNECTED = 11
+  GOBI MODEM STATE REGISTERED = 60
+  GOBI MODEM STATE CONNECTING = 80
+  GOBI MODEM STATE CONNECTED = 90
+
+  LOCKED STATE (Test fails, the device should never be in this state unless
+  the SIM is locked):
+  MODEM STATE LOCKED = 2
+
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_StaleModemReboot(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    tries = int(args_dict.get('tries', 2))
+    job.run_test('cellular_StaleModemReboot', host=host, tries=tries)
+
+parallel_simple(run_StaleModemReboot, machines)

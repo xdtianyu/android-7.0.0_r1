@@ -1,0 +1,23 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "login_Cryptohome"
+PURPOSE = "Verify the cryptohome is mounted only after login."
+CRITERIA = """
+This test will fail if cryptohome is mounted when not logged in, or vice versa.
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "login"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test checks that a cryptohome was mounted only after logging in.
+"""
+
+job.run_test('login_Cryptohome')

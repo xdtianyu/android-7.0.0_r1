@@ -1,0 +1,18 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, avakulenko, keybuk'
+NAME = 'peerd_AdvertiseServices'
+TIME = 'FAST'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:smoke, suite:tendo_experimental"
+SUITE = 'tendo_experimental, smoke'
+
+DOC = """
+This test starts up Avahi inside a network chroot, then watches for
+service advertisements from Avahi as services are exposed through peerd.
+
+"""
+
+job.run_test('peerd_AdvertiseServices')

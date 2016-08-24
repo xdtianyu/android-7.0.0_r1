@@ -1,0 +1,17 @@
+; Copyright (c) 2014 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; 4k random write with queue depth = 32
+;
+
+[4k_write_qd32]
+filename=${FILENAME}
+size=${FILESIZE}
+
+ioengine=libaio
+readwrite=randwrite
+iodepth=32
+direct=1
+bs=4k
+randrepeat=0

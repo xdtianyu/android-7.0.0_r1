@@ -1,0 +1,25 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'michaelpg, alemate'
+NAME = 'login_OobeLocalization'
+PURPOSE = 'Tests different region configurations at OOBE.'
+CRITERIA = """
+Fails if the language or keyboard dropdowns in OOBE under a supported region
+configuration do not include the desired values.
+"""
+ATTRIBUTES = "suite:experimental"
+SUITE = 'experimental'
+TIME = 'MEDIUM'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'login'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+DOC = """
+This test verifies the locale and keyboard options present at OOBE under
+supported region configurations.
+"""
+
+job.run_test('login_OobeLocalization')

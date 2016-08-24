@@ -1,0 +1,17 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'zeuthen, wiley, avakulenko'
+NAME = 'buffet_IntermittentConnectivity'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:tendo_experimental"
+SUITE = 'tendo_experimental'
+
+DOC = """
+Test that buffet reconnects if it loses connectivity.
+"""
+
+
+job.run_test('buffet_IntermittentConnectivity')

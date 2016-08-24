@@ -1,0 +1,26 @@
+Vagrant.configure("2") do |config|
+  config.puppet_install.puppet_version = "3.8.4"
+  config.ssh.insert_key = false
+
+  # Base machine config
+  config.vm.provider :virtualbox do |virtualbox|
+    virtualbox.customize ["modifyvm", :id, "--memory", "8048"]
+    virtualbox.customize ["modifyvm", :id, "--cpuexecutioncap", "100"]
+    virtualbox.customize ["modifyvm", :id, "--cpus", "10"]
+  end
+
+  config.vm.box = "base"
+  config.vm.synced_folder "/usr/local/autotest", "/usr/local/autotest", type: "rsync",
+    owner: "chromoes-test", group: "root",
+    rsync__exclude: ["site-packages/", "logs/", "results/", "containers/", "shadow_config.ini", "LICENSE", "NOTICE", ".git/", "chromeos-admin/", "*.box"]
+  config.vm.provision :puppet do |puppet|
+    puppet.manifests_path = "%(manifest_path)s"
+    puppet.manifest_file = "nodes.pp"
+    puppet.module_path = "%(module_path)s"
+    puppet.options = "--verbose --debug "
+    puppet.facter = {
+      "is_vagrant" => "1",
+      "server_type" => "core-cluster",
+    }
+  end
+end

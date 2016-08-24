@@ -1,0 +1,27 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "sque"
+NAME = "power_BacklightControl"
+PURPOSE = "Verify the backlight controller functions properly."
+CRITERIA = """
+Fail if any of the following occur:
+  - The backlight cannot be turned all the way to max using powerd.
+  - The backlight cannot be turned all the way down to minimum and zero using
+    powerd.
+  - The screen cannot be turned on/off by setting backlight to 0 and nonzero,
+    respectively, using powerd.
+  - There are too many steps (> 16) between min and max brightness.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+This test verifies that the backlight controller can adjust brightness up and
+down over the full range, as well as turn screen on/off.
+"""
+
+job.run_test("power_BacklightControl")

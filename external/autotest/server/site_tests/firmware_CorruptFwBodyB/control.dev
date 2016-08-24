@@ -1,0 +1,37 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_CorruptFwBodyB.dev"
+PURPOSE = "Servo based firmware B body corruption test"
+CRITERIA = "This test will fail if firmware verification mis-behaved"
+ATTRIBUTES = "suite:faft, suite:faft_bios, suite:faft_dev, suite:faft_lv3, suite:faft_dev_ryu, suite:faft_bios_ec3po"
+SUITE = "faft,faft_bios,faft_dev,faft_lv3,faft_dev_ryu,faft_bios_ec3po"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+JOB_RETRIES = 4
+
+DOC = """
+This test corrupts firmware body B and checks the next boot results.
+
+The expected behavior is different if the firmware preamble USE_RO_NORMAL
+flag is enabled. In the case USE_RO_NORMAL ON, the firmware corruption
+doesn't hurt the boot results since it boots the RO path directly and does
+not load and verify the RW firmware body. In the case USE_RO_NORMAL OFF,
+the RW firwmare B corruption will result booting the firmware A.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_corruptfwbodyb(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("firmware_CorruptFwBodyB", host=host, cmdline_args=args,
+                 disable_sysinfo=True, dev_mode=True, tag="dev")
+
+parallel_simple(run_corruptfwbodyb, machines)

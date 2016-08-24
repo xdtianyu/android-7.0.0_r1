@@ -1,0 +1,28 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, wiley, quiche'
+NAME = 'network_VPNConnect.l2tpipsec_psk'
+ATTRIBUTES = "suite:bvt-perbuild, suite:network_nightly"
+SUITE = 'bvt-perbuild, network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that we can complete L2TP/IPSec PSK VPN authentication.
+  This is a client-only test which verifies function of the L2TP/IPSec
+  client.  Since the server it is testing against is itself, this test
+  is best suited for verifying that the connection manager and VPN
+  manager are correctly passing parameters to the underlying VPN client
+  to have it properly connect.
+
+  This test fails if the DUT cannot authenticate to a locally running
+  L2TP/IPSec PSK VPN server runing at the other end of a virtual Ethernet
+  interface.
+
+"""
+
+job.run_test('network_VPNConnect',
+             vpn_types=[ 'l2tpipsec-psk' ],
+             tag=NAME.split('.')[1])

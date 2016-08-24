@@ -1,0 +1,74 @@
+#
+# NOTE! Please use 'git ls-files -i --exclude-standard'
+# command after changing this file, to see if there are
+# any tracked files which get ignored after the change.
+#
+
+# Standard ignores
+*.[aod]
+*.la
+*.lo
+*.pyc
+*.so
+*~
+
+# Anything created as a result of running a test
+results.*/
+tmp/
+
+# This file is meant only for local testing
+private_host_attributes_config.py
+
+# default svn:ignore property:
+*.o
+#*#
+.*.rej
+*.rej
+.*~
+*~
+.*.swp
+.#*
+.DS_Store.
+# additional patterns:
+*.pyc
+client/control
+client/results/
+client/tests/kvm/images
+client/tests/kvm/env
+client/tmp
+client/tests/kvm/*.cfg
+logs/*
+results-*
+results/*
+server/tmp
+tko/parsers/test/site_scenarios
+ExternalSource
+/frontend/client/www/
+/shadow_config.ini
+/site-packages/
+monitor_db.pid
+server/cros/chaos_shadow_ap_list.conf
+server/site_tests/network_WiFiChaosPSK/control.local
+
+# These exist on the production servers.
+bug_filing_oauth_credentials.dat
+gmail_api_credentials.dat
+creds/
+site_utils/autotest_private/
+site_utils/autotest_tools/
+site_utils/devserver/
+site_utils/buildbot_src/
+
+# Pupplylab files
+puppylab/Vagrantfile
+puppylab/chromeos_lab_core_cluster.box
+puppylab/.vagrant
+
+# Container directory
+containers/
+
+# Shadow config for ssp deploy
+ssp_deploy_shadow_config.json
+
+# Shadow config for perf dashboard
+tko/perf_upload/perf_dashboard_shadow_config.json

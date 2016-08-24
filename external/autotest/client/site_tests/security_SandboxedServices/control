@@ -1,0 +1,18 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = "Enforces sandboxing of system services."
+NAME = "security_SandboxedServices"
+PURPOSE = "To maintain sensitive system services correctly sandboxed."
+CRITERIA = "Fail if any running service does not match the baseline."
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+job.run_test("security_SandboxedServices")

@@ -1,0 +1,19 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'mnissler, pastarmovj'
+NAME = 'platform_SessionManagerStateKeyGeneration'
+ATTRIBUTES = "suite:experimental"
+SUITE = 'experimental'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+This test invokes session_manager's GetSeverBackedStateKeys DBus method and
+checks whether the returned state keys look sane. This ensures that any
+hardware identifiers required to generate state keys (such as machine and disk
+serial numbers) can be extracted successfully from the device.
+"""
+
+job.run_test('platform_SessionManagerStateKeyGeneration')

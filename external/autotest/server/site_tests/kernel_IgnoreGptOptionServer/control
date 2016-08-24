@@ -1,0 +1,20 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'kernel_IgnoreGptOptionServer'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Test that the kernel ignores the "gpt" cmd line option.'
+TIME = 'SHORT'
+TEST_CLASS = 'kernel'
+TEST_TYPE = 'server'
+
+DOC = '''
+    Checks that kernel is ignoring the command line option "gpt".
+'''
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test("kernel_IgnoreGptOptionServer", host=host)
+
+parallel_simple(run, machines)

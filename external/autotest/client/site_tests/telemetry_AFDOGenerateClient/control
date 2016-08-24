@@ -1,0 +1,31 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "llozano@chromium.org cmtice@chromium.org bjanakiraman@chromium.org"
+NAME = "telemetry_AFDOGenerateClient"
+PURPOSE = "Navigate a set of pages so that a Chrome profile can be captured"
+ATTRIBUTES = "suite:AFDO_page_replay"
+SUITE = "AFDO_page_replay"
+TIME = "LONG"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "Chrome AFDO"
+TEST_TYPE = "client"
+RETRIES = 1
+
+DOC = """
+Run a pre-defined set of pages for the DUT for Chrome profile collection.
+
+The purpose of this test is to exercise chrome with a meaningful set
+of pages while a profile of Chrome is captured. It also aims at using
+the minimum set of functionality from Telemetry since Telemetry is not
+very stable on ChromeOS at this point.
+
+This test is designed to be called from the telemetry_AFDOGenerate
+server test. The server test will start the "perf" profiling tool on
+the DUT before starting this test. It will also capture the chrome
+profile and upload it to Google Storage to be used for an optimized
+build of Chrome.
+"""
+
+job.run_test('telemetry_AFDOGenerateClient')

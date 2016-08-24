@@ -1,0 +1,24 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "platform_Crossystem"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Ensure crossystem works"
+CRITERIA = "Fails if any basic functionality of crossystem is missing"
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"  # TODO(semenzato) promote to bvt-inline after testing
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+    Checks that the "crossystem" command basic functionality is present.
+    This includes commands that rely on the presence and correct
+    initialization of the chromeos driver (drivers/platform/chromeos.c)
+    in the kernel.
+"""
+
+job.run_test('platform_Crossystem')

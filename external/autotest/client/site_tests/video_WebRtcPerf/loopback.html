@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head><title>Loopback test</title></head>
+<body>
+  <video id="remoteVideo" width="1280" height="720" autoplay muted></video>
+<script>
+var localStream, localPeerConnection, remotePeerConnection;
+var remoteVideo = document.getElementById("remoteVideo");
+
+function start() {
+  navigator.getUserMedia = navigator.getUserMedia ||
+    navigator.webkitGetUserMedia;
+  navigator.getUserMedia(
+    {
+      audio:false,
+      video:{
+        "mandatory": {
+          "minWidth": "1280",
+          "minHeight": "720",
+        }
+      }
+    },
+    gotLocalStream,
+    gotError);
+}
+
+function gotLocalStream(stream) {
+  localStream = stream;
+  var servers = null;
+
+  localPeerConnection = new webkitRTCPeerConnection(servers);
+  localPeerConnection.onicecandidate = gotLocalIceCandidate;
+
+  remotePeerConnection = new webkitRTCPeerConnection(servers);
+  remotePeerConnection.onicecandidate = gotRemoteIceCandidate;
+  remotePeerConnection.onaddstream = gotRemoteStream;
+
+  localPeerConnection.addStream(localStream);
+  localPeerConnection.createOffer(gotLocalDescription);
+}
+
+function gotError(error) {
+  console.log("navigator.getUserMedia error: ", error);
+}
+
+function gotRemoteStream(event) {
+  remoteVideo.src = URL.createObjectURL(event.stream);
+}
+
+function gotLocalDescription(description) {
+  localPeerConnection.setLocalDescription(description);
+  remotePeerConnection.setRemoteDescription(description);
+  remotePeerConnection.createAnswer(gotRemoteDescription);
+}
+
+function gotRemoteDescription(description) {
+  remotePeerConnection.setLocalDescription(description);
+  localPeerConnection.setRemoteDescription(description);
+}
+
+function gotLocalIceCandidate(event) {
+  if (event.candidate)
+    remotePeerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
+}
+
+function gotRemoteIceCandidate(event) {
+  if (event.candidate)
+    localPeerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
+}
+
+window.onload=start;
+</script>
+</body>
+</html>

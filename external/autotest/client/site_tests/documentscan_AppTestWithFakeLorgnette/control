@@ -1,0 +1,44 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, kathrelkeld'
+NAME = 'documentscan_AppTestWithFakeLorgnette'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+
+DOC = """
+This test verifies that the Chrome APIs work correctly to acquire
+image data from a mocked version of the lorgnette document image
+capture daemon.  This test fails if:
+
+  - The test extension cannot be installed
+  - The extension is unable to interact with the Chrome scanning API
+  - The Chrome scanning API cannot interact with the mock lorgnette
+
+This test is built up out of a number of interlocking components:
+
+  - A chrome app that accesses the Document Scan API (in the
+    "document_scan_test_app" directory).  The test launches this
+    app in fullscreen mode.
+
+  - An emulated mouse, implemented by subclassing touch_playback_test_base
+    and using the "amazon_mouse.prop" file.
+
+  - A mouse move and button click event stream stored in the
+    "button_click.event" file.  The pair of this and the emulated mouse
+    allows us to provide a gesture when clicking on the "Scan" button
+    within the App.  Since the Chrome document scan API requires a user
+    gesture, this method provides a viable option as opposed to
+    triggering the scan from javascript.
+
+  - The "mock_lorgnette" module that provides a fake lorgnette daemon
+    that the Chrome process will communicate with for the purposes of
+    this test.  It will accept the D-Bus RPC calls that Chrome makes
+    and provide the "lorgnette-test.png" image in response to a scan
+    request.
+
+"""
+
+job.run_test('documentscan_AppTestWithFakeLorgnette', iface_name='all', tag='all')

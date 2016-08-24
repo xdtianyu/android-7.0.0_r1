@@ -1,0 +1,26 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GGobiPorts.gobi2k"
+PURPOSE = "Verify that Gobi serial ports are present."
+CRITERIA = """
+This test will fail if the gobi serial ports for QXDM, AT commands and
+GPS are not present.
+"""
+ATTRIBUTES = "suite:network3g"
+SUITE = "network3g"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "modem:gobi2k"
+
+DOC = """
+  Tests that the Gobi serial ports are present.
+
+  Make sure that the serial ports for the gobi modem are present.
+"""
+
+job.run_test('network_3GGobiPorts', tag='gobi2k')

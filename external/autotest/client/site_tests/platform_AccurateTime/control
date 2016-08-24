@@ -1,0 +1,24 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_AccurateTime"
+PURPOSE = "Ensure system time is set correctly."
+CRITERIA = """
+This test will fail under any of the following conditions:
+  - NTP daemon is not running
+  - the NTP offset is not found
+  - if seconds_offset constraint is exceeded
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This test tests whether the system time is set within allowable drift from
+the configured NTP server's time.
+"""
+
+job.run_test('platform_AccurateTime', constraints=['seconds_offset < 60'])

@@ -1,0 +1,33 @@
+[
+  {
+    "description": "VFAT filesystem with label (read)",
+    "block_size": 1024,
+    "block_count": 65536,
+    "filesystem_type": "vfat",
+    "mkfs_options": [ "-F", "32", "-n", "MYDISK" ],
+    "test_mount_options": [ "ro", "nodev", "noexec", "nosuid", "sync" ],
+    "expected_mount_status": 0,
+    "expected_mount_path": "/media/removable/MYDISK"
+  },
+  {
+    "description": "VFAT filesystem with UUID (read)",
+    "block_size": 1024,
+    "block_count": 65536,
+    "filesystem_type": "vfat",
+    "mkfs_options": [ "-F", "32", "-i", "deadbeef" ],
+    "test_mount_options": [ "ro", "nodev", "noexec", "nosuid", "sync" ],
+    "expected_mount_status": 0,
+    "expected_mount_path": "/media/removable/External Drive"
+  },
+  {
+    "description": "VFAT filesystem (write)",
+    "is_write_test": true,
+    "block_size": 1024,
+    "block_count": 65536,
+    "filesystem_type": "vfat",
+    "mkfs_options": [ "-F", "32", "-n", "MYDISK" ],
+    "test_mount_options": [ "rw", "nodev", "noexec", "nosuid", "sync" ],
+    "expected_mount_status": 0,
+    "expected_mount_path": "/media/removable/MYDISK"
+  }
+]

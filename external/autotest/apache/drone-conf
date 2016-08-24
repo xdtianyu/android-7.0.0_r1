@@ -1,0 +1,11 @@
+NameVirtualHost *
+<VirtualHost *>
+    ErrorLog /var/log/apache2/error.log
+    LogLevel warn
+
+    CustomLog /var/log/apache2/access.log combined
+    ServerSignature On
+
+    Include "/usr/local/autotest/apache/conf/tko-directives"
+
+</VirtualHost>

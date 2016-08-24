@@ -1,0 +1,21 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_RamFio'
+AUTHOR = 'puthik'
+PURPOSE = 'test ram speed'
+TIME = 'SHORT'
+TEST_CLASS = 'hardware'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = 'bvt-cq'
+JOB_RETRIES = 2
+
+DOC = """
+Create ram disk and use hardware_StorageFio to test for ram throughput
+"""
+
+job.run_test('hardware_RamFio', requirements=[('ram_suite', [])])
+
+

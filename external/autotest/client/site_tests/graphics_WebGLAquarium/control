@@ -1,0 +1,23 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'chromeos-gfx'
+NAME = "graphics_WebGLAquarium"
+PURPOSE = "Execute the WebGL aquarium test suite."
+CRITERIA = "All suite tests must not crash/hang."
+ATTRIBUTES = "suite:crosbolt_perf_perbuild, suite:graphics, suite:graphics_browser, suite:graphics_per-day, suite:partners"
+SUITE = 'crosbolt_perf_perbuild, graphics, graphics_browser, graphics_per-day, partners'
+TIME = "medium"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "graphics"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+This runs the WebGL aquarium test.
+"""
+
+job.run_test('graphics_WebGLAquarium')

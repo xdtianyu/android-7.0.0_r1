@@ -1,0 +1,193 @@
+; Copyright (c) 2014 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; Test for new storage vendor with the following workload
+; - Trim the drive
+; - QD32 16K random write 1st pass
+; - QD32 16K random read 1st pass
+; - QD32 16K random write 2nd pass
+; - QD32 16K random read 2nd pass
+; - QD32 16K random write 3rd pass
+; - QD32 16K random read 3rd pass
+; - Trim the drive
+; - QD1 512K seq write 1st pass
+; - QD1 512K seq read 1st pass
+; - QD1 512K seq write 2nd pass
+; - QD1 512K seq read 2nd pass
+; - QD1 512K seq write 3rd pass
+; - QD1 512K seq read 3rd pass
+; - Trim the drive
+; - QD4 1M read 15% random read write 1st pass
+; - QD4 1M read 15% random read write 2nd pass
+; - QD4 1M read 15% random read write 3rd pass
+; - Trim the drive
+;
+
+[global]
+filename=${FILENAME}
+size=${FILESIZE}
+ioengine=libaio
+log_avg_msec=1000
+direct=1
+
+[trim_p1]
+stonewall
+readwrite=trim
+bs=1m
+
+
+[randwrite_p1]
+stonewall
+readwrite=randwrite
+bs=16k
+iodepth=32
+write_bw_log=randwrite_p1
+write_iops_log=randwrite_p1
+write_lat_log=randwrite_p1
+
+[randread_p1]
+stonewall
+readwrite=randread
+bs=16k
+iodepth=32
+write_bw_log=randread_p1
+write_iops_log=randread_p1
+write_lat_log=randread_p1
+
+
+[randwrite_p2]
+stonewall
+readwrite=randwrite
+bs=16k
+iodepth=32
+write_bw_log=randwrite_p2
+write_iops_log=randwrite_p2
+write_lat_log=randwrite_p2
+
+[randread_p2]
+stonewall
+readwrite=randread
+bs=16k
+iodepth=32
+write_bw_log=randread_p2
+write_iops_log=randread_p2
+write_lat_log=randread_p2
+
+[randwrite_p3]
+stonewall
+readwrite=randwrite
+bs=16k
+iodepth=32
+write_bw_log=randwrite_p3
+write_iops_log=randwrite_p3
+write_lat_log=randwrite_p3
+
+[randread_p3]
+stonewall
+readwrite=randread
+bs=16k
+iodepth=32
+write_bw_log=randread_p3
+write_iops_log=randread_p3
+write_lat_log=randread_p3
+
+[trim_p2]
+stonewall
+readwrite=trim
+bs=1m
+
+[seqwrite_p1]
+stonewall
+readwrite=write
+bs=512k
+iodepth=1
+write_bw_log=seqwrite_p1
+write_iops_log=seqwrite_p1
+write_lat_log=seqwrite_p1
+
+[seqread_p1]
+stonewall
+readwrite=read
+bs=512k
+iodepth=1
+write_bw_log=seqread_p1
+write_iops_log=seqread_p1
+write_lat_log=seqread_p1
+
+[seqwrite_p2]
+stonewall
+readwrite=write
+bs=512k
+iodepth=1
+write_bw_log=seqwrite_p2
+write_iops_log=seqwrite_p2
+write_lat_log=seqwrite_p2
+
+[seqread_p2]
+stonewall
+readwrite=read
+bs=512k
+iodepth=1
+write_bw_log=seqread_p2
+write_iops_log=seqread_p2
+write_lat_log=seqread_p2
+
+[seqwrite_p3]
+stonewall
+readwrite=write
+bs=512k
+iodepth=1
+write_bw_log=seqwrite_p3
+write_iops_log=seqwrite_p3
+write_lat_log=seqwrite_p3
+
+[seqread_p3]
+stonewall
+readwrite=read
+bs=512k
+iodepth=1
+write_bw_log=seqread_p3
+write_iops_log=seqread_p3
+write_lat_log=seqread_p3
+
+[trim_p3]
+stonewall
+readwrite=trim
+bs=1m
+
+[randrw_p1]
+stonewall
+readwrite=randrw
+rwmixread=15
+bs=1m
+iodepth=4
+write_bw_log=randrw_p1
+write_iops_log=randrw_p1
+write_lat_log=randrw_p1
+
+[randrw_p2]
+stonewall
+readwrite=randrw
+rwmixread=15
+bs=1m
+iodepth=4
+write_bw_log=randrw_p2
+write_iops_log=randrw_p2
+write_lat_log=randrw_p2
+
+[randrw_p3]
+stonewall
+readwrite=randrw
+rwmixread=15
+bs=1m
+iodepth=4
+write_bw_log=randrw_p3
+write_iops_log=randrw_p3
+write_lat_log=randrw_p3
+
+[trim_p4]
+stonewall
+readwrite=trim
+bs=1m
+

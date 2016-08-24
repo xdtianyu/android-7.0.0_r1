@@ -1,0 +1,29 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "platform_CrosDisksArchive"
+PURPOSE = "Verify that cros-disks can mount supported archive files correctly"
+
+CRITERIA = """
+"""
+ATTRIBUTES = "suite:regression"
+SUITE = "regression"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+Calls cros-disks to mount supported archive files
+"""
+
+job.run_test('platform_CrosDisksArchive', timeout_s=10,
+             archive_types=['zip'], tag='zip')
+job.run_test('platform_CrosDisksArchive', timeout_s=10,
+             archive_types=['tar'], tag='tar')
+job.run_test('platform_CrosDisksArchive', timeout_s=10,
+             archive_types=['tar.gz', 'tgz'], tag='tar.gz')
+job.run_test('platform_CrosDisksArchive', timeout_s=10,
+             archive_types=['tar.bz2', 'tbz', 'tbz2'], tag='tar.bz2')

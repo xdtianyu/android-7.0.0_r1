@@ -1,0 +1,20 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "cmasone, achuith"
+NAME = "login_CryptohomeIncognito"
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "login"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test will fail if guest cryptohome is not mounted when logged in as guest,
+or if it is mounted when not logged in as guest.
+"""
+
+job.run_test('login_CryptohomeIncognito')

@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+: ${TOOL_SED:=sed}
+CONF=${1:-dhcpcd-definitions.conf}
+
+cat dhcpcd-embedded.c.in
+$TOOL_SED \
+	-e 's/#.*$//' \
+	-e '/^$/d' \
+	-e 's/^/"/g' \
+	-e 's/$/\",/g' \
+	-e 's/ [ ]*/ /g' \
+	-e 's/	[	]*/ /g' \
+	$CONF
+printf "%s\n%s\n" "NULL" "};"

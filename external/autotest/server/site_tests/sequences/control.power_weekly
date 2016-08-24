@@ -1,0 +1,78 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "Power Requirements tests"
+ATTRIBUTES = "suite:power_requirements"
+SUITE = "power_requirements"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+DEPENDENCIES = "rpm"
+
+DOC = """
+This test suite runs automated power tests that should all pass. These tests
+take a long time (several hours) to run and are intended to ensure that the DUT
+complies with the power subsection of our CrOS Requirements doc.
+
+Current tests with runtimes are:
+  power_BatteryCharge : <= 3 hours
+  power_Standby       : 12 hours
+
+"""
+# TODO(tbroch) Deprecate this control file when SUITES= mechanism detailed @
+#    https://sites.google.com/a/chromium.org/dev/chromium-os/testing/test-suites
+#    has ability to assure power states pre/post conditions.
+from autotest_lib.server import site_host_attributes
+from autotest_lib.client.common_lib import error
+
+def _run_client_test(machine):
+    client = hosts.create_host(machine)
+    client_attributes = site_host_attributes.HostAttributes(machine)
+    client_at = autotest.Autotest(client)
+    if client.has_power():
+        client.power_on()
+    else:
+        raise error.TestNAError("No power switch configured")
+
+    # TODO(tbroch): Add power_Standby here once there's a mechanism to postpone
+    # autotest server from checking that DUT is still alive via network
+
+    # Run the full 60/20/10/10 load test, draining a full battery
+    client_at.run_test('power_BatteryCharge', percent_target_charge=100,
+                       max_run_time=60*60*6, tag='CHARGE_100')
+    client.power_off()
+    try:
+        if hasattr(client_attributes, 'wifi'):
+            ap, sec, pw = client_attributes.wifi.split(',')
+            client_at.run_test('power_LoadTest', loop_count=12, loop_time=3600,
+                               force_wifi=True, wifi_ap=ap, wifi_sec=sec,
+                               wifi_pw=pw, tag='WIFI_full')
+        else:
+            client_at.run_test('power_LoadTest', loop_count=12, loop_time=3600,
+                               check_network=False, tag='WIRED_full')
+    finally:
+        client.power_on()
+
+    # From client/site_tests/suite_HWQual/control.battery_charge_time
+    max_hours = 3
+    percent_charge_delta = 94.0
+    time_limit = max_hours * 60 * 60 * percent_charge_delta / 100.0
+    # battery must be at least 80% of design capacity
+    percent_battery_wear_allowed = .20
+
+    client_at.run_test('power_BatteryCharge', tag='full',
+                 max_run_time=time_limit,
+                 percent_charge_to_add=100,
+                 percent_initial_charge_max=5,
+                 use_design_charge_capacity=False,
+                 constraints=[
+                     '1.0 - ah_charge_full / ah_charge_full_design <= %f' %
+                         percent_battery_wear_allowed,
+                     'percent_final_charge - percent_initial_charge >= %f' %
+                         percent_charge_delta,
+                 ])
+
+job.parallel_on_machines(_run_client_test, machines)

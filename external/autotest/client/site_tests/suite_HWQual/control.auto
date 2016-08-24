@@ -1,0 +1,97 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "HWQualAuto"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "client"
+
+DOC = """
+This test suite runs fully automated client-side hardware qualification tests.
+"""
+
+job.run_test('power_Resume',
+             constraints=['seconds_system_resume <= 1.0'])
+
+# Kernel Support
+job.run_test('platform_HighResTimers')
+job.run_test('platform_KernelVersion')
+
+# CPU
+job.run_test('platform_AesThroughput')
+
+# Firmware
+job.run_test('firmware_RomSize',
+             constraints=['kb_system_rom_size >= 4096',
+                          'kb_ec_rom_size >= 128'])
+# TODO(gauravsh): firmware_VbootCrypto is disabled until there is a way of
+# running the auto test in 64-bit mode.
+#
+# This is tracked at http://crosbug.com/3792
+#
+# job.run_test('firmware_VbootCrypto', suite='benchmarks', tag='benchmarks')
+
+# System Memory
+job.run_test('hardware_MemoryTotalSize')
+job.run_test('hardware_MemoryThroughput', num_iteration=2500, test_list='21')
+
+# Storage
+job.run_test('hardware_StorageFio',
+             requirements = [
+                 ('surfing', []),
+		 ('boot', []),
+		 ('seq_read', []),
+		 ('seq_write', []),
+		 ('4k_read', []),
+		 ('4k_write', [])
+             ],
+             constraints=[
+                 '_seq_read_read_bw_mean >= 50 * 1024',
+                 '_seq_write_write_bw_mean >= 15 * 1024',
+                 '_4k_write_write_iops >= 10',
+             ])
+job.run_test('hardware_DiskSize',
+             constraints=['gb_main_disk_size >= 8'])
+job.run_test('hardware_SsdDetection')
+
+# Display
+job.run_test('hardware_Backlight')
+job.run_test('hardware_LightSensor')
+job.run_test('hardware_Resolution')
+
+# Graphics
+job.run_test('graphics_GLAPICheck')
+job.run_test('graphics_GLBench',
+             constraints=[
+                 'mpixels_sec_fill_solid >= 190',
+                 'mpixels_sec_fill_tex_nearest >= 190',
+                 'mpixels_sec_fill_tex_bilinear >= 190',
+             ])
+job.run_test('graphics_SanAngeles', creds='$backdoor')
+
+# Video
+job.run_test('camera_V4L2')
+
+# Communications
+job.run_test('network_DisableInterface',
+             iface_name='wlan0', tag='wlan0')  # WiFi
+job.run_test('network_DisableInterface',
+             iface_name='eth0', tag='eth0')  # Ethernet
+job.run_test('network_DisableInterface',
+             iface_name='hci0', tag='hci0')  # Bluetooth
+job.run_test('network_WiFiCaps')
+
+# Extra Requirements
+job.run_test('compilebench')
+job.run_test('disktest')
+job.run_test('hardware_SAT', seconds=600)
+job.run_test('power_CPUFreq')
+job.run_test('power_CPUIdle')
+job.run_test('unixbench')
+
+###  Local Variables:
+###  mode: python
+###  End:

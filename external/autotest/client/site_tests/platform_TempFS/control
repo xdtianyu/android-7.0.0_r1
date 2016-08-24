@@ -1,0 +1,23 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kdlucas@chromium.org (Kelly Lucas)"
+DOC = "Verifies temp filesystems have enough available space."
+NAME = "platform_TempFS"
+PURPOSE = "Verify Temp file systems are set up correctly."
+CRITERIA = """
+Fail if the following file systems are less than our threshhold size:
+  - /dev
+  - /tmp
+  - /dev/shm
+  - /var/tmp
+  - /var/run
+  - /var/lock
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+job.run_test('platform_TempFS')

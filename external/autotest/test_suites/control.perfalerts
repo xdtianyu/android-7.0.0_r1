@@ -1,0 +1,38 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "perfalerts"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+
+DOC = """
+Run platform_BootPerfServer 100 times across 3 machines for testing boot
+performance.
+This checks for two things:
+1) check that the average time is in range
+2) check that if you boot repeatedly, the average time doesn't increase each
+boot.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on.  Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+args_dict['name'] = 'perfalerts'
+args_dict['add_experimental'] = True
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['job'] = job
+
+dynamic_suite.reimage_and_run(**args_dict)

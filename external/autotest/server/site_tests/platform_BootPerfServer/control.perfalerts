@@ -1,0 +1,39 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Perf/jrbarnette"
+NAME = "BootPerf"
+ATTRIBUTES = "suite:link_perf, suite:perfalerts"
+SUITE = "perfalerts,link_perf"
+TIME = "LONG"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test suite runs automated tests that record measurements for various
+system metrics.  In many cases a single test is repeated for a reasonable
+sample such as completing 50 reboots in one test.  The values recorded
+will be used to identify performance/resource regressions and to alert
+contributing (and previously unaware) developers of the impact.
+Ideally these are run for each build in order to make blame easier.
+
+To invoke this from the command line use syntax from the following examples:
+  --To modify the iteration count:
+    test_that -b ${BOARD} --iterations=10 'f:.*control.perfalerts'
+"""
+
+from autotest_lib.client.common_lib import utils
+
+dict_args = utils.args_to_dict(args)
+iterations = int(dict_args.get('iterations', 100))
+
+
+def run_bootperf(machine):
+    host = hosts.create_host(machine)
+    job.run_test('platform_BootPerfServer', host=host,
+                 iterations=iterations, upload_perf=True)
+
+
+parallel_simple(run_bootperf, machines)

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Popup Status</title>
+<script type="text/javascript">
+var pageReady = false;
+
+function onLoad() {
+  pageReady = true;
+  if (isPopupBlocked()) {
+    document.getElementById('status').innerHTML = 'Blocked.';
+  } else {
+    document.getElementById('status').innerHTML = 'Allowed.';
+  }
+}
+
+function isPopupBlocked() {
+  var popup_window = window.open(null, "", "width=100,height=100");
+  try {
+    popup_window.close();
+    return false;
+  }
+  catch (e) {
+    return true;
+  }
+}
+</script>
+</head>
+<body onload="onLoad()">
+<div>Pop-ups Status: <span id="status"></span></div>
+</body>
+</html>

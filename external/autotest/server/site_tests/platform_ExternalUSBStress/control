@@ -1,0 +1,37 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_ExternalUSBStress"
+PURPOSE = "Servo based USB stress test"
+CRITERIA = "This test will fail if the device fails to detect USB changes."
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:stress_experimental"
+SUITE = "stress_experimental"
+DEPENDENCIES = "servo"
+
+DOC = """
+This test uses servo to simulate USB connect/removal,
+and lid close/open events.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+
+    repeat = int(args_dict.get('repeat', 10))
+    network_debug = bool(args_dict.get('network_debug', True))
+
+    job.run_test("platform_ExternalUSBStress", host=host, disable_sysinfo=True,
+                 client_autotest='desktopui_SimpleLogin', repeat=repeat,
+                 network_debug=network_debug)
+
+parallel_simple(run, machines)

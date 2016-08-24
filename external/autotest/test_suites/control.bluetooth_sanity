@@ -1,0 +1,30 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "bluetooth_sanity"
+PURPOSE = "Automated sanity testing of Bluetooth."
+CRITERIA = "All tests with SUITE=bluetooth_sanity must pass."
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This suite runs a series of basic sanity tests against our Bluetooth hardware
+and software. It is the minimum necessary to ensure Bluetooth works on a
+particular build or board.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+args_dict['add_experimental'] = True
+args_dict['name'] = 'bluetooth_sanity'
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['job'] = job
+
+dynamic_suite.reimage_and_run(**args_dict)

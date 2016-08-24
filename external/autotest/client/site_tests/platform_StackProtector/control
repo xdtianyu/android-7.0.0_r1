@@ -1,0 +1,20 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="MEDIUM"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Tests for evidence that all system executables were compiled with
+-fstack-protector
+"""
+NAME = "platform_StackProtector"
+PURPOSE = "Verify that system executables were compiled with -fstack-protector."
+CRITERIA = """
+Fail if we find any executable files compiled without -fstack-protector.
+"""
+TEST_CLASS = "platform"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+
+job.run_test("platform_StackProtector")

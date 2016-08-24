@@ -1,0 +1,23 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "jwerner, chromeos-power"
+NAME = "power_SuspendStress.video"
+#SUITE = "jailed_build"
+ATTRIBUTES = "suite:stress_experimental"
+SUITE = "stress_experimental"
+PURPOSE = "Run repeated iterations of suspend/resume while rendering a video."
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+Runs eight minutes of suspend/resume cycles in the background of an OpenGL video.
+"""
+
+job.parallel([lambda: job.run_test('power_SuspendStress', tag='video',
+                                   duration=480, init_delay=20, min_suspend=7)],
+             [lambda: job.run_test('graphics_SanAngeles', creds='$default',
+                                   tag='power_SuspendStress', iterations=4)])

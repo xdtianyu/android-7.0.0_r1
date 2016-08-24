@@ -1,0 +1,28 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, wiley, quiche'
+NAME = 'network_WiFi_MaskedBSSID.wifi_masked_bssid'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:wifi_matfunc, suite:wifi_matfunc_bcm4371'
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test is designed to check that we can successfully scan for two
+different SSIDs which respond with the same BSSID.  Some client
+firmwares may hold only one scan entry per BSSID and will foil attempts
+to connect to certain types of APs.
+"""
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_MaskedBSSID',
+                 host=host,
+                 raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

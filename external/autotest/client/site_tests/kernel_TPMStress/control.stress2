@@ -1,0 +1,23 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "kernel_TPMStress"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Stress test of communication with the TPM"
+CRITERIA = "Fails if there are communication errors with the TPM"
+ATTRIBUTES = "suite:stress2"
+SUITE = "stress2"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+
+DOC = """
+    Sends commands to the TPM in a tight loop for some length of time, in
+    an attempt to reproduce possible communication errors, either over LPC
+    or I2C bus depending on platform.  Uses the "tpmc" command, so tcsd
+    is stopped during execution of this test.
+"""
+
+job.run_test('kernel_TPMStress')

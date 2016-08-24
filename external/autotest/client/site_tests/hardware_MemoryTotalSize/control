@@ -1,0 +1,21 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_MemoryTotalSize'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Verify there is enough memory to run Chrome OS.'
+CRITERIA = 'Fails if memory size >= 1G.'
+ATTRIBUTES = "suite:bvt-cq, suite:hwqual"
+SUITE = "bvt-cq, hwqual"
+TIME='SHORT'
+TEST_CATEGORY = 'Performance'
+TEST_CLASS = "hardware"
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+DOC = """
+This test uses AutoTest's utils.memtotal().
+"""
+
+job.run_test('hardware_MemoryTotalSize')

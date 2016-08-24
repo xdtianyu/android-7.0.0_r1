@@ -1,0 +1,17 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Team"
+NAME = "CryptohomeSyncStress"
+PURPOSE = "Login in and verify that cryptohome is mounted successfully."
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This test is intended to be used from platform_CryptohomeSyncStressServer.
+"""
+
+job.run_test('platform_CryptohomeSyncStress')

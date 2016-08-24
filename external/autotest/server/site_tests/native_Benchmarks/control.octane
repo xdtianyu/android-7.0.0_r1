@@ -1,0 +1,42 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.common_lib import utils
+
+AUTHOR = "c-compiler-chrome@google.com"
+NAME = "native_Benchmarks.octane"
+TIME = "LONG"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "performance"
+TEST_TYPE = "server"
+
+DOC = """
+Build v8 and run octane.
+"""
+
+profiler = None
+p_args = []
+
+# Put the args into the args_dict.
+args_dict = utils.args_to_dict(args)
+
+if 'profiler' in args_dict:
+   profiler = args_dict['profiler']
+   if 'profiler_args' in args_dict:
+      p_args   = args_dict['profiler_args']
+
+if profiler:
+   job.default_profile_only = True
+   job.profilers.add(profiler, p_args)
+
+def run_native_Benchmarks(machine):
+    client = hosts.create_host(machine)
+    job.run_test('native_Benchmarks', client=client, name='octane', args=args)
+
+# run the test in multiple machines
+
+job.parallel_simple(run_native_Benchmarks, machines)
+
+if profiler:
+   job.profilers.delete (profiler)

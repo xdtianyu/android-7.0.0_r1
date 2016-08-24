@@ -1,0 +1,9 @@
+AUTHOR = "Gregory Smith <gps@google.com>"
+NAME = "error test for setup phase exception"
+TEST_TYPE = "client"
+TEST_CLASS = "General"
+TEST_CATEGORY = "Functional"
+TIME = "SHORT"
+DOC = """Raise an exception during setup().  This tests Autotest itself."""
+
+job.run_test('error_setup')

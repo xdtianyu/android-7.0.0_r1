@@ -1,0 +1,33 @@
+[
+  {
+    "description": "ext4 filesystem with label (read)",
+    "block_size": 1024,
+    "block_count": 65536,
+    "filesystem_type": "ext4",
+    "mkfs_options": [ "-L", "MyDisk" ],
+    "test_mount_options": [ "ro", "nodev", "noexec", "nosuid", "sync" ],
+    "expected_mount_status": 0,
+    "expected_mount_path": "/media/removable/MyDisk"
+  },
+  {
+    "description": "ext4 filesystem with UUID (read)",
+    "block_size": 1024,
+    "block_count": 65536,
+    "filesystem_type": "ext4",
+    "mkfs_options": [ "-U", "01234567-89ab-cdef-0123-456789abcdef" ],
+    "test_mount_options": [ "ro", "nodev", "noexec", "nosuid", "sync" ],
+    "expected_mount_status": 0,
+    "expected_mount_path": "/media/removable/External Drive"
+  },
+  {
+    "description": "ext4 filesystem (write)",
+    "is_write_test": true,
+    "block_size": 1024,
+    "block_count": 65536,
+    "filesystem_type": "ext4",
+    "mkfs_options": [ "-L", "MyDisk" ],
+    "test_mount_options": [ "rw", "nodev", "noexec", "nosuid", "sync" ],
+    "expected_mount_status": 0,
+    "expected_mount_path": "/media/removable/MyDisk"
+  }
+]

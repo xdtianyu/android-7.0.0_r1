@@ -1,0 +1,21 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_KernelVersion"
+PURPOSE = "Ensure the running kernel is supported."
+CRITERIA = "Fails if the running kernel version is older than kernel_version."
+ATTRIBUTES = "suite:hwqual, suite:regression"
+SUITE = "regression, hwqual"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This test uses a function to compare kernels, and will rasie a test error if
+the running kernel version is older than the variable kernel_version.
+"""
+
+job.run_test('platform_KernelVersion')

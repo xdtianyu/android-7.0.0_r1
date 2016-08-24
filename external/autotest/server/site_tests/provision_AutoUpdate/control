@@ -1,0 +1,50 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+
+AUTHOR = "milleral, chromeos-lab-infrastructure"
+NAME = "provision_AutoUpdate"
+PURPOSE = "Provision a system to the correct OS version."
+TIME = "MEDIUM"
+TEST_CATEGORY = "System"
+TEST_CLASS = "provision"
+TEST_TYPE = "Server"
+
+DOC = """
+This is a test used by the provision control segment in autoserv to set the
+cros-version label of a host to the desired setting.
+"""
+
+
+from autotest_lib.client.common_lib import error, utils
+from autotest_lib.client.cros import constants
+
+
+# Uncomment the below line, and change it to the correct value if you are
+# running this from the AFE.
+# value = 'lumpy-release/R28-3993.0.0'
+
+
+if not locals().get('value'):
+    args = utils.args_to_dict(args)
+    if not args.get('value'):
+        raise error.TestError("No provision value!")
+    value = args['value']
+
+
+def run(machine):
+    # Save preserved log after autoupdate is completed.
+    job.sysinfo.add_logdir(constants.AUTOUPDATE_PRESERVE_LOG)
+
+    host = hosts.create_host(machine, initialize=False)
+    # Only collect pre-test sysinfo to save time.
+    job.run_test('provision_AutoUpdate', host=host, value=value,
+                 disable_sysinfo=False,
+                 disable_before_test_sysinfo=False,
+                 disable_before_iteration_sysinfo=True,
+                 disable_after_test_sysinfo=True,
+                 disable_after_iteration_sysinfo=True)
+
+
+job.parallel_simple(run, machines)

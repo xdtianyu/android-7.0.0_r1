@@ -1,0 +1,39 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "krishnargv"
+NAME = "policy_URLBlacklist"
+ATTRIBUTES = "suite:regression"
+SUITE = "regression"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "enterprise"
+TEST_TYPE = "client"
+
+DOC = """
+Verify effects of policy_URLBlacklist policy on client behavior & appearance.
+
+This test verifies the effect of the URLBlacklist user policy on
+Chrome OS client behavior and appearance. It exercises a range of policy values using three
+unique test cases, named: NotSet, SingleBlacklistedFile and MultipleBlacklistedFiles. See the test file for a
+full description of what each test case does.
+
+A test case shall pass if the URLs that are not part of the URLBlacklist policy value
+are not blocked.
+The test case shall also pass if the URLs that are part of the URLBlacklist policy value
+are blocked.
+A test case shall fail if the above behavior is not enforced.
+
+Usage example:
+$ test_that <IPAddress> policy_URLBlacklist --args="mode=single case=MultipleBlacklistedFiles
+env=dm-test dms_name=xot-dmst username=test@crosprqa1.com password=test1234"
+
+Runs a single test case (e.g., MultipleBlacklistedFiles) using the specified test DM Server
+environment, signing in with the specified username and password. Expectation
+is that the page will be blocked.
+
+"""
+
+job.run_test("policy_URLBlacklist", args=args)
+

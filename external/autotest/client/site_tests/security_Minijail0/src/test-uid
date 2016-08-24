@@ -1,0 +1,10 @@
+#!/bin/sh
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+# args: -u 1000
+
+. "$(dirname "$0")"/common.sh
+
+needreuid 1000
+exit 0

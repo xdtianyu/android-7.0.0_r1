@@ -1,0 +1,28 @@
+<!--
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This html file is used by Semi-Auto Tests.  Scripts are to capture button
+# clicks from users or user input from a text box.
+-->
+<html>
+    <head>
+        <title>Bluetooth Dialog</title>
+        <script language="Javascript">
+            window.__ready = 0;
+            window.__result = null;
+            function submit_button(value) {
+                window.__result = value;
+                window.__ready = 1;
+            };
+            function get_text() {
+                window.__result = document.getElementById("textinput").value;
+                window.__ready = 1;
+            }
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

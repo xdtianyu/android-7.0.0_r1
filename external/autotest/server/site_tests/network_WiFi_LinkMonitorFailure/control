@@ -1,0 +1,25 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'zqiu, wiley, pstew, quiche'
+NAME = 'network_WiFi_LinkMonitorFailure'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = "suite:wifi_matfunc"
+SUITE = 'wifi_matfunc'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test checks how fast the DUT detects the link failure when an AP changes
+its DHCP configuration, and how fast the DUT reconnects after the failure.
+"""
+
+
+def run(machine):
+    job.run_test('network_WiFi_LinkMonitorFailure',
+                 host=hosts.create_host(machine),
+                 raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

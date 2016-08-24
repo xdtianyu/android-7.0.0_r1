@@ -1,0 +1,19 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'tienchang'
+TIME = 'SHORT'
+NAME = 'network_RackWiFiConnect.proxyNonAuth'
+TEST_TYPE = 'Client'
+
+DOC = """
+network_RackWiFiConnect test uses enterprise managed users on the crostest.tv
+domain to connect to preconfigured network services on our WiFi rack, in this
+case a non authenticated proxy network.
+"""
+
+from autotest_lib.client.common_lib.cros.network import wifi_rack_constants
+
+job.run_test('network_RackWiFiConnect',
+             test=wifi_rack_constants.PROXY_NON_AUTH.testname)

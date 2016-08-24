@@ -1,0 +1,8 @@
+bslot=@BSLOT@
+
+Name: libbrillo-test
+Description: brillo test library
+Version: ${bslot}
+# Because libbrillo-test is static, we have to depend directly on everything.
+Requires: @PRIVATE_PC@
+Libs: -lbrillo-test-${bslot}

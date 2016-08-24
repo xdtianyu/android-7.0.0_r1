@@ -1,0 +1,18 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_Badblocks'
+AUTHOR = 'jcasse, grundler'
+PURPOSE = 'Check for unusable blocks in unmounted partition in SSD storage.'
+TIME = 'LENGTHY'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:storagequal"
+SUITE = 'storagequal'
+
+DOC = """
+This test checks for unusable blocks in an unmounted partition of SSD by
+running the badblocks Linux utility.
+"""
+
+job.run_test('hardware_Badblocks', iters=24, timeout=60 * 60 * 24)

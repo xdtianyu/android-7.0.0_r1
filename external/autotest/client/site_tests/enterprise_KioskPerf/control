@@ -1,0 +1,22 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "rohitbm"
+NAME = "enterprise_KioskPerf"
+PURPOSE = 'Records cpu and memory usage for demo running in Kiosk mode.'
+TIME = "SHORT"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "enterprise"
+TEST_TYPE = "client"
+
+DOC = """
+This test does enterprise enrollment on a ChromeOS device and launches Kiosk
+mode and records cpu/memory usage for the given time.
+
+You need a credentials.txt file with user_id:password in this directory for
+this test to succeed. The credentials are used to enroll the device as a Remora
+device.
+"""
+
+job.run_test('enterprise_KioskPerf')

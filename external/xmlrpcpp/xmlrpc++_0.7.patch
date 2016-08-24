@@ -1,0 +1,97 @@
+diff -ruN /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/Android.mk /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/Android.mk
+--- /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/Android.mk	1969-12-31 16:00:00.000000000 -0800
++++ /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/Android.mk	2015-09-23 10:50:40.634298728 -0700
+@@ -0,0 +1,20 @@
++LOCAL_PATH:= $(call my-dir)
++ifeq ($(HOST_OS),linux)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE:= libxmlrpc++
++
++LOCAL_CPP_FEATURES := exceptions
++LOCAL_CPPFLAGS := -Wall -fexceptions
++LOCAL_C_INCLUDES:= $(LOCAL_PATH)/src
++
++LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/src
++
++xmlrpc_src_files := \
++	$(wildcard $(LOCAL_PATH)/src/*.cpp)
++LOCAL_SRC_FILES := \
++	$(xmlrpc_src_files:$(LOCAL_PATH)/%=%)
++
++include $(BUILD_SHARED_LIBRARY)
++
++endif # HOST_OS == linux
+diff -ruN /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/src/base64.h /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/src/base64.h
+--- /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/src/base64.h	2003-03-06 09:25:37.000000000 -0800
++++ /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/src/base64.h	2015-09-23 10:47:07.524143202 -0700
+@@ -10,6 +10,7 @@
+ #define __BASE64_H_INCLUDED__ 1
+ 
+ #ifndef MAKEDEPEND
++# include <iostream>
+ # include <iterator>
+ #endif
+ 
+diff -ruN /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/src/XmlRpcClient.cpp /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/src/XmlRpcClient.cpp
+--- /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/src/XmlRpcClient.cpp	2003-03-06 09:25:37.000000000 -0800
++++ /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/src/XmlRpcClient.cpp	2015-09-23 10:52:47.679583068 -0700
+@@ -394,7 +394,7 @@
+   // Expect either <params><param>... or <fault>...
+   if ((XmlRpcUtil::nextTagIs(PARAMS_TAG,_response,&offset) &&
+        XmlRpcUtil::nextTagIs(PARAM_TAG,_response,&offset)) ||
+-      XmlRpcUtil::nextTagIs(FAULT_TAG,_response,&offset) && (_isFault = true))
++      (XmlRpcUtil::nextTagIs(FAULT_TAG,_response,&offset) && (_isFault = true)))
+   {
+     if ( ! result.fromXml(_response, &offset)) {
+       XmlRpcUtil::error("Error in XmlRpcClient::parseResponse: Invalid response value. Response:\n%s", _response.c_str());
+diff -ruN /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/src/XmlRpcDispatch.cpp /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/src/XmlRpcDispatch.cpp
+--- /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/src/XmlRpcDispatch.cpp	2003-03-06 09:25:37.000000000 -0800
++++ /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/src/XmlRpcDispatch.cpp	2015-09-23 10:39:23.463444193 -0700
+@@ -4,7 +4,6 @@
+ #include "XmlRpcUtil.h"
+ 
+ #include <math.h>
+-#include <sys/timeb.h>
+ 
+ #if defined(_WINDOWS)
+ # include <winsock2.h>
+diff -ruN /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/src/XmlRpc.h /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/src/XmlRpc.h
+--- /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/src/XmlRpc.h	2003-03-06 09:25:37.000000000 -0800
++++ /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/src/XmlRpc.h	2015-09-23 10:48:22.088897560 -0700
+@@ -49,6 +49,7 @@
+     //! Report an error. Custom error handlers should define this method.
+     virtual void error(const char* msg) = 0;
+ 
++    virtual ~XmlRpcErrorHandler() {}
+   protected:
+     static XmlRpcErrorHandler* _errorHandler;
+   };
+@@ -75,6 +76,7 @@
+     //! Output a message. Custom error handlers should define this method.
+     virtual void log(int level, const char* msg) = 0;
+ 
++    virtual ~XmlRpcLogHandler() {}
+   protected:
+     static XmlRpcLogHandler* _logHandler;
+     static int _verbosity;
+diff -ruN /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/src/XmlRpcUtil.cpp /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/src/XmlRpcUtil.cpp
+--- /usr/local/google/home/rpius/Downloads/xmlrpc++0.7/src/XmlRpcUtil.cpp	2003-03-06 09:25:37.000000000 -0800
++++ /usr/local/google/home/rpius/Work/android/internal/mnc-brillo-dev/external/xmlrpc++0.7/src/XmlRpcUtil.cpp	2015-09-23 10:40:13.263948827 -0700
+@@ -38,6 +38,7 @@
+ #endif  
+   }
+ 
++  ~DefaultLogHandler() {}
+ } defaultLogHandler;
+ 
+ // Message log singleton
+@@ -55,6 +56,8 @@
+     std::cerr << msg << std::endl; 
+ #endif  
+   }
++
++  ~DefaultErrorHandler() {}
+ } defaultErrorHandler;
+ 
+ 

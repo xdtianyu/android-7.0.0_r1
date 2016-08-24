@@ -1,0 +1,28 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GRecoverFromGobiDesync.gobi2k"
+PURPOSE = "Verify that gobi-cromo-plugin recovers from driver failures"
+ATTRIBUTES = "suite:network3g"
+SUITE = "network3g"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "modem:gobi2k"
+
+DOC = """
+  Tests that a Gobi modem recovers from driver failures
+
+  This test uses fault injection to make gobi-cromo-plugin act as if
+  the userspace has lost sync with the driver.  The correct behavior
+  is for cromo to exit.
+
+ """
+
+from autotest_lib.client.cros.cellular import test_environment
+
+test_env = test_environment.CellularOTATestEnvironment(modem_pattern='Gobi')
+job.run_test('network_3GRecoverFromGobiDesync', test_env=test_env, tag='gobi2k')

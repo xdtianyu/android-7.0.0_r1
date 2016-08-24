@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# this script is to be installed in /www/cgi-bin on the OpenWRT
+# test AP as per the DOC section of the control file
+
+echo "Content-Type: text-plain"
+echo "Status: 200 Ok"
+echo
+
+iwconfig 2>/dev/null | grep '^[a-z]' | \
+while read IF DATA;
+do
+    iwinfo $IF assoclist 2>/dev/null | grep -i '^[0-9a-f]\{2\}:';
+done;
+
+echo --;

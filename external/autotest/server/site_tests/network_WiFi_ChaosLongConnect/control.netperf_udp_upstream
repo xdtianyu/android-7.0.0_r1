@@ -1,0 +1,44 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'asnagarajan, wiley, jabele'
+NAME = 'network_WiFi_ChaosLongConnect.netperf_udp_upstream'
+TIME = 'LONG'
+TEST_TYPE = 'server'
+
+DOC = """
+This script iterates through all of the access points in the AP compatibility
+lab and has a chrome device connect to each in series. This test must be
+performed in the AP compatibility lab. This test holds the connection with
+AP and performs a netperf UDP_STREAM during the connection.
+"""
+
+from autotest_lib.server.cros.ap_configurators import ap_spec
+from autotest_lib.server.cros.chaos_lib import chaos_runner
+from autotest_lib.server.cros.network import connection_worker
+from autotest_lib.server.cros.network import netperf_runner
+
+
+def run_chaos_udp_upstream(machine):
+    host = hosts.create_host(machine)
+    # Test with WPA2PSK on both 2.4 and 5 GHz bands
+    ap_specs = [ap_spec.APSpec(security=ap_spec.SECURITY_TYPE_WPA2PSK,
+                               band=ap_spec.BAND_2GHZ),
+                ap_spec.APSpec(security=ap_spec.SECURITY_TYPE_WPA2PSK,
+                               band=ap_spec.BAND_5GHZ),
+                # Non-US models, which are all static
+                ap_spec.APSpec(security=ap_spec.SECURITY_TYPE_WPA2PSK,
+                               band=ap_spec.BAND_5GHZ,
+                               channel=48,
+                               configurator_type=ap_spec.CONFIGURATOR_STATIC)]
+    # Stream from DUT to work_client
+    netperf_config = netperf_runner.NetperfConfig('UDP_STREAM', test_time=30)
+    conn_worker = connection_worker.ConnectionNetperf(netperf_config)
+    for spec in ap_specs:
+        runner = chaos_runner.ChaosRunner(
+                'network_WiFi_ChaosLongConnect', host, spec)
+        runner.run(job, batch_size=15, conn_worker=conn_worker)
+
+
+parallel_simple(run_chaos_udp_upstream, machines)

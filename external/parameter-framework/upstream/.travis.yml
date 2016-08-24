@@ -1,0 +1,114 @@
+# Use travis docker infrastructure
+sudo: false
+language: cpp
+
+env:
+    global:
+        - PREFIX=$HOME/prefix
+
+compiler:
+    - gcc
+    - clang
+
+# Install a recent gcc and gcov,
+# it will not be necessary once travis worker is based on ubuntu > 12.04.
+# Install SWIG for bindings generation
+# Install valgrind for memcheck tests
+# Adding george-edison55-precise-backports ppa for for cmake 3.x.
+# Install python3-dev for the client simulator
+addons:
+    apt:
+        # Travis white list of ppa
+        # https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
+        sources:
+            - ubuntu-toolchain-r-test
+            - george-edison55-precise-backports
+            - llvm-toolchain-precise
+        # Travis white list of dpkg packages
+        # https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
+        packages:
+            - swig
+            - valgrind
+            - g++-4.8
+            - cmake-data
+            - cmake
+            - python3-dev
+            - clang-format-3.8
+
+install:
+    - wget https://codecov.io/bash -O $HOME/codecov; chmod +x $HOME/codecov
+    # This version of catch is known to work.
+    - wget --directory-prefix $PREFIX/include
+              https://raw.github.com/philsquared/Catch/v1.2.1/single_include/catch.hpp
+    - wget 'https://01.org/sites/default/files/asio-1.10.6.tar.gz'
+    - tar xf asio-1.10.6.tar.gz -C $PREFIX --strip-components=1
+
+before_script:
+    - coverage=OFF
+    # Force the manualy installed 4.8 version as it is not the default
+    # Only enable coverage on gcc as clang segfault on coverage file write
+    - if [ "$CC" = "gcc" ]; then
+          export CC=gcc-4.8 CXX=g++-4.8;
+          coverage=ON;
+      fi
+
+# how to build
+script:
+  # Check coding style
+  - git ls-files | grep -E '\.[ch](pp)?$' |  xargs clang-format-3.8 -i &&
+        git diff --exit-code || { git reset --hard; false; }
+
+  - ( mkdir build_debug && cd build_debug &&
+        cmake -DCMAKE_PREFIX_PATH=$PREFIX -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=${coverage} .. &&
+        make -j &&
+        CTEST_OUTPUT_ON_FAILURE=1 make ExperimentalTest ExperimentalMemCheck )
+  - ( mkdir build && cd build &&
+        cmake -DCMAKE_PREFIX_PATH=$PREFIX -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_BUILD_TYPE=Release .. &&
+        make -j &&
+        CTEST_OUTPUT_ON_FAILURE=1 make test &&
+        make install &&
+        cpack --verbose -G DEB && dpkg --info *.deb)
+  - ( cd skeleton-subsystem &&
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install . &&
+        make &&
+        CTEST_OUTPUT_ON_FAILURE=1 make ExperimentalTest ExperimentalMemCheck &&
+        make install )
+  - ( cd tools/clientSimulator &&
+        echo "TODO - install the generated .deb instead of using ../install."
+             "This would permit to test the packaging" &&
+        cmake -DCMAKE_INSTALL_PREFIX=../install . &&
+        make &&
+        make install )
+  # Keep this last
+  - ( mkdir build_less_features && cd build_less_features &&
+        rm -rf $PREFIX/asio-1.10.6 &&
+        cmake -DCMAKE_PREFIX_PATH=$PREFIX -DCMAKE_BUILD_TYPE=Debug
+        -DNETWORKING=OFF -DPYTHON_BINDINGS=OFF -DC_BINDINGS=OFF .. &&
+        make -j &&
+        CTEST_OUTPUT_ON_FAILURE=1 make test )
+
+after_success:
+    # Push coverage info on codecov.io.
+    # Ignore generated files, samples and tests
+    - if [ "${coverage}" = "ON" ]; then
+          $HOME/codecov
+               -g "*/build_debug/bindings/python/*"
+               -g "*/build_debug/CMakeFiles/*"
+               -g "*/build/*"
+               -g "*/install/*"
+               -g "*/skeleton-subsystem/*"
+               -g "*/tools/clientSimulator/*"
+               -g "*/test/test-subsystem/*"
+               -g "*/test/introspection-subsystem/*"
+               -g "*/test/functional-tests/*"
+               -g "*/test/tmpfile/*"
+               -g "*/test/tokenizer/*"
+               -g "*/bindings/c/Test.cpp"
+               -g "*/utility/test/*"
+               -x /usr/bin/gcov-4.8
+               -a '\--long-file-names --preserve-paths';
+      fi
+
+notifications:
+  irc:
+    - "chat.freenode.net#parameter-framework"

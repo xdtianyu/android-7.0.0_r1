@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME='FAST'
+AUTHOR = 'deymo,zeuthen,chromeos-installer'
+BUG_TEMPLATE = {
+    'cc': ['chromeos-installer-alerts@google.com'],
+    'labels': ['Cr-Internals-Installer'],
+}
+
+DOC = """\
+This test runs the p2p-server daemon which in turns runs the p2p-http-server
+daemon on the DUT and checks that a peer on the network can download a shared
+file but, for security reasons, localhost can't.
+"""
+NAME = 'p2p_ServeFiles'
+PURPOSE = 'Check that p2p-http-server daemon serves files over HTTP.'
+CRITERIA = "Fails if the DUT can't serve a HTTP request from the network."
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = 'bvt-cq'
+# See chromium:337726 for ongoing work to remove the experimental tag.
+TEST_CLASS = 'platform'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+job.run_test('p2p_ServeFiles')
+

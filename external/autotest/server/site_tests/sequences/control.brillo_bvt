@@ -1,0 +1,32 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "sbasi"
+NAME = "BrilloBVT"
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+
+DOC = """
+Sequence for kicking off the Brillo BVT tests.
+"""
+from autotest_lib.server import sequence
+
+
+# TODO (sbasi): Add the Autoupdate End to End Test.
+SERVER_SEQUENCES = [
+    sequence.SequenceJob('control.brillo_GtestsWhitelist', duration=2000,
+                         fetch_control_file=True),
+    sequence.SequenceJob('brillo_PingTest', duration=120),
+    sequence.SequenceJob('brillo_KernelVersionTest', duration=120),
+    sequence.SequenceJob('brillo_WifiInterfaceTest', duration=120),
+    sequence.SequenceJob('brillo_DiskSizeTest', duration=120),
+    sequence.SequenceJob('brillo_MemorySizeTest', duration=120),
+    sequence.SequenceJob('brillo_FastbootTest', duration=120),
+    sequence.SequenceJob('brillo_StorageWriteSpeedTest', duration=120),
+    sequence.SequenceJob('brillo_Invariants', duration=120),
+]
+
+sequence.sequence_schedule(job, machines, SERVER_SEQUENCES)

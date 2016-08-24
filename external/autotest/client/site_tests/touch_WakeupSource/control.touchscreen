@@ -1,0 +1,25 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kathrelkeld"
+NAME = "touch_WakeupSource.touchscreen"
+PURPOSE = "Test whether onboard touchscreen is wakeup source for the DUT."
+CRITERIA = """
+This test will fail if the touchpad is not a wakeup source or if the
+touchscreen (if any) is one.
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:touch"
+SUITE = "bvt-perbuild,touch"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "touch"
+TEST_TYPE = "client"
+DEPENDENCIES = "touchscreen"
+
+DOC = """
+For this device's touchscreen, verify whether that device is
+listed as a wake source or not.
+"""
+
+job.run_test('touch_WakeupSource')

@@ -1,0 +1,43 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_SimpleConnect.wifi_checkSGI'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test verifies that DUT can connect to an open 802.11n network
+on 5 GHz channel with short guard intervals enabled (both 20/40 Mhz).
+"""
+
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    caps20 = [hostap_config.HostapConfig.N_CAPABILITY_GREENFIELD,
+              hostap_config.HostapConfig.N_CAPABILITY_HT20,
+              hostap_config.HostapConfig.N_CAPABILITY_SGI20]
+    caps40 = [hostap_config.HostapConfig.N_CAPABILITY_GREENFIELD,
+              hostap_config.HostapConfig.N_CAPABILITY_HT40_MINUS,
+              hostap_config.HostapConfig.N_CAPABILITY_SGI40]
+    n = hostap_config.HostapConfig.MODE_11N_PURE
+    configurations = [(hostap_config.HostapConfig(frequency=5240, mode=n,
+                                                 n_capabilities=caps20),
+                       xmlrpc_datatypes.AssociationParameters()),
+                      (hostap_config.HostapConfig(frequency=5240, mode=n,
+                                                 n_capabilities=caps40),
+                       xmlrpc_datatypes.AssociationParameters())]
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_SimpleConnect',
+                 tag=NAME.split('.')[1],
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=configurations)
+
+
+parallel_simple(run, machines)

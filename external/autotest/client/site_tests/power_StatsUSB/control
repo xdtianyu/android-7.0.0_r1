@@ -1,0 +1,20 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_StatsUSB"
+ATTRIBUTES = "suite:power_build"
+SUITE = "power_build"
+PURPOSE = "Measure time USB devices spend in active state."
+CRITERIA = "This test is a benchmark."
+TIME = "SHORT"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+This test measures percent time USB devices spend in active state.
+"""
+
+job.run_test('power_StatsUSB')

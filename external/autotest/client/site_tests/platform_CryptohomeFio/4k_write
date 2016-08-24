@@ -1,0 +1,22 @@
+; Copyright (c) 2009 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; 4k random writes over a 1 GiB area.
+;
+
+[4k_write]
+filename=${FILENAME}
+size=${FILESIZE}
+
+time_based
+runtime=${RUN_TIME}
+
+ioengine=libaio
+iodepth=4
+
+readwrite=randwrite
+
+bs=4k
+norandommap
+

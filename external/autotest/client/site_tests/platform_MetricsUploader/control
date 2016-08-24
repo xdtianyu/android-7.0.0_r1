@@ -1,0 +1,25 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "bsimonnet"
+NAME = "platform_MetricsUploader"
+PURPOSE = "Verify that metrics_daemon uploads the metrics."
+
+CRITERIA = """
+MetricsUploader must pick up the metrics from the file and upload them
+periodically.
+"""
+
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+End to end test of the metrics uploader using a fake UMA server.
+"""
+
+job.run_test('platform_MetricsUploader')

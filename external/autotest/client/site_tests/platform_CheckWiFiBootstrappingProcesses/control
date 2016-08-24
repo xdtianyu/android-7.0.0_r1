@@ -1,0 +1,28 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, avakulenko'
+NAME = 'platform_CheckWiFiBootstrappingProcesses'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:tendo_experimental"
+SUITE='tendo_experimental'
+
+DOC = """
+This test has a static list of process names that should be running
+on a good Chrome OS Core image with WiFi bootstrapping support.
+It fails if any of these are not running at the time of the test.
+"""
+
+WIFI_BOOTSTRAPPING_PROCESSES = [
+    'apmanager',
+    'avahi-daemon',
+    'buffet',
+    'dbus-daemon',
+    'peerd',
+    'shill',
+    ]
+
+job.run_test('platform_CheckCriticalProcesses',
+             process_list=WIFI_BOOTSTRAPPING_PROCESSES)

@@ -1,0 +1,22 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "security_mprotect"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Verify mprotect+PROT_EXEC works on noexec filesystem"
+CRITERIA = "Fails if PROT_EXEC cannot be mapped on noexec filesystem"
+TIME = "SHORT"
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+    Checks that mprotect can use PROT_EXEC on noexec filesystems,
+    which NaCl needs for shared memory objects.
+"""
+
+job.run_test('security_mprotect')

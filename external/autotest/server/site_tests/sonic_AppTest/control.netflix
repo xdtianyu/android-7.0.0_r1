@@ -1,0 +1,39 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.common_lib import error
+from autotest_lib.client.common_lib import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "sonic_AppTest_netflix"
+PURPOSE = "Demonstrate the ability to start a sonic app."
+CRITERIA = "This test will fail if the app fails to start."
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "sonic"
+TEST_TYPE = "server"
+
+DOC = """
+This is a sonic test that will load the Netflix sonic app.
+
+Usage: test_that <ip of Cros DUT> --board=<boardname of DUT>
+           --args="sonic_hostname=<ip of sonichost>"
+"""
+
+args_dict = utils.args_to_dict(args)
+
+def run(machine):
+    sonic_hostname = args_dict.get('sonic_hostname')
+    if not sonic_hostname:
+        raise error.TestError('Cannot run sonic_AppTest without a sonic host. '
+                              'please specify --args="sonic_hostname=<ip>" with '
+                              'test_that.')
+
+    cros_host = hosts.create_host(machine)
+    sonic_host = hosts.create_host(sonic_hostname)
+    job.run_test('sonic_AppTest', cros_host=cros_host, sonic_host=sonic_host,
+                 app='Netflix', payload='http://www.netflix.com',
+                 disable_sysinfo=True, tag='netflix')
+
+parallel_simple(run, machines)

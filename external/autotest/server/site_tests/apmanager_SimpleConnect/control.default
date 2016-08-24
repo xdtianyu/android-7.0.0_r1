@@ -1,0 +1,27 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'zqiu, wiley, pstew'
+NAME = 'apmanager_SimpleConnect.default'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test verifies that DUT can connect to an WiFi network created using
+apmanager with default configurations (SSID will be generated during test).
+"""
+
+def run(machine):
+    # Using default configuration provided by apmanager. SSID will be generated
+    # during test.
+    configurations = {}
+    host = hosts.create_host(machine)
+    job.run_test('apmanager_SimpleConnect',
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=configurations)
+
+
+parallel_simple(run, machines)

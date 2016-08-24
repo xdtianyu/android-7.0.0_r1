@@ -1,0 +1,24 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import time
+from autotest_lib.server import utils
+
+AUTHOR = "dbasehore, snanda"
+NAME = "power_RPMTest"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "server"
+
+DOC = """
+This tests that the power supply for a device can successfully change state.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('power_RPMTest', verify=True, host=host,
+                 power_sequence=[False, True])
+
+parallel_simple(run, machines)

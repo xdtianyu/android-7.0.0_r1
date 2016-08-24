@@ -1,0 +1,35 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "scunningham"
+NAME = "policy_ManagedBookmarks"
+ATTRIBUTES = "suite:regression"
+SUITE = "regression"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "enterprise"
+TEST_TYPE = "client"
+
+DOC = """
+Verify effect of ManagedBookmarks policy on client behavior & appearance.
+
+This test verifies the effect of the ManagedBookmarks user policy on
+Chrome OS client behavior and appearance. It exercises a ranage of valid
+policy values across three test cases: NotSet_NotShown, SingleBookmark_Shown,
+and MultiBookmark_Shown.
+
+A test case shall pass if the Manage Bookmarks page contains (or does not
+contain) the domain-named bookmarks folder and the specified bookmarks when
+its value is set (or is not set). A test case shall fail if the above behavior
+is not enforced.
+
+Default usage example:
+$ test_that <IPAddress> ManagedBookmarks
+
+Runs both test cases using the local AutoTest fake DM server, and with
+the policy json and expected values as defined by each test case.
+
+"""
+
+job.run_test("policy_ManagedBookmarks", args=args)

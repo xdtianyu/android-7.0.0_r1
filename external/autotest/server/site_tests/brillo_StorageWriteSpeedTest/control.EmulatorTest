@@ -1,0 +1,41 @@
+# Copyright 2016 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+import logging
+
+from autotest_lib.client.common_lib import utils
+
+
+AUTHOR = 'garnold'
+NAME = 'brillo_StorageWriteSpeedTest.EmulatorTest'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:brillo-smoke'
+SUITE = 'brillo-smoke'
+
+DOC = """
+Tests whether a Brillo emulator's storage can be written to faster than
+a minimum speed.
+
+Arg:
+  block_size: The block size in bytes to use when writing to storage.
+  num_blocks: The number of blocks to write.
+  min_speed: The minimum write speed required in bytes per second.
+"""
+
+TEST_ARG_NAMES = ('block_size', 'num_blocks', 'min_speed')
+args_dict = utils.args_to_dict(args)
+
+EMULATOR_MIN_SPEED = 10 * 1024 * 1024
+
+def run(machine):
+    test_args = {'min_speed': EMULATOR_MIN_SPEED}
+    for k,v in args_dict.items():
+        if k in TEST_ARG_NAMES:
+            test_args[k] = int(v)
+    job.run_test('brillo_StorageWriteSpeedTest',
+                 host=hosts.create_host(machine), **test_args)
+
+
+parallel_simple(run, machines)

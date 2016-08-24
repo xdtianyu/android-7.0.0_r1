@@ -1,0 +1,171 @@
+#!/usr/bin/python
+
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import pprint
+import sys
+
+import common
+from autotest_lib.client.cros.networking import shill_proxy
+
+def usage():
+    """ Prints a script usage message. """
+    cmd = sys.argv[0]
+    print 'Usage: %s <command> [more parameters]' % cmd
+    print 'Example uses:'
+    print cmd, 'create <name> - Create a profile called |name|.'
+    print cmd, 'push <name> - Push a previously created profile called |name|.'
+    print cmd, 'pop <name> - Pop a profile called |name|.'
+    print cmd, 'pop - Pop the top-most profile.'
+    print cmd, 'remove <name> - Remove a profile called |name| from disk.'
+    print cmd, 'clean - Pop and remove profiles above the default profile.'
+    print cmd, 'list - List profiles and their properties.'
+    print cmd, 'list-entries - List profile entries.'
+    print cmd, 'delete-entry <entry> [name] - Delete an entry from a ' \
+        'profile called |name| or all profiles if no name is given.'
+    return False
+
+
+def print_profile_path(profile_path, active_path):
+    """ Print profile_path and indicate if it is the active profile. """
+    if profile_path == active_path:
+        print 'Profile: %s  <== active' % profile_path
+    else:
+        print 'Profile: %s' % profile_path
+
+
+def clean_profiles():
+    """ Pop and remove all profiles until 'default' is found. """
+    shill = shill_proxy.ShillProxy()
+    while True:
+        active_profile = shill.get_active_profile()
+        properties = active_profile.GetProperties(utf8_strings=True)
+        active_name = shill.dbus2primitive(
+                properties[shill.PROFILE_PROPERTY_NAME])
+        if active_name == 'default':
+            return True
+        else:
+            print 'Removing profile: %s' % active_name
+            shill.manager.PopProfile(active_name)
+            shill.manager.RemoveProfile(active_name)
+
+
+def delete_entry():
+    """
+    Remove an entry from the specified profile, or all profiles if no profile
+    is given.
+
+    """
+    if len(sys.argv) <= 2:
+        return usage()
+    identifier = sys.argv[2]
+    profile_path = None
+    if len(sys.argv) > 3:
+      profile_path = sys.argv[3]
+    shill = shill_proxy.ShillProxy()
+    properties = shill.dbus2primitive(
+        shill.manager.GetProperties(utf8_strings=True))
+    active_profile = shill.get_active_profile()
+    for path in properties[shill.MANAGER_PROPERTY_PROFILES]:
+        print_profile_path(path, active_profile.object_path)
+        if profile_path and path != profile_path:
+            continue
+
+        profile = shill.get_dbus_object(shill.DBUS_TYPE_PROFILE, path)
+        try:
+            profile.DeleteEntry(identifier)
+            print " -> delete succeeded"
+        except:
+            print " -> delete failed"
+
+
+def list_entries():
+    """ Display detailed profile entry information. """
+    shill = shill_proxy.ShillProxy()
+    active_profile = shill.get_active_profile()
+    for profile in shill.get_profiles():
+        print_profile_path(profile.object_path, active_profile.object_path)
+        properties = shill.dbus2primitive(
+                profile.GetProperties(utf8_strings=True))
+        if not shill.PROFILE_PROPERTY_ENTRIES in properties:
+            continue
+        for ident in properties[shill.PROFILE_PROPERTY_ENTRIES]:
+            print 'Entry: %s' % ident
+            pprint.pprint(shill.dbus2primitive(profile.GetEntry(ident)),
+                          indent=2)
+        print
+    return True
+
+
+def list_profiles():
+    """ List shill profiles and their properties. """
+    shill = shill_proxy.ShillProxy()
+    active_profile = shill.get_active_profile()
+    for profile in shill.get_profiles():
+        print_profile_path(profile.object_path, active_profile.object_path)
+        properties = shill.dbus2primitive(
+                profile.GetProperties(utf8_strings=True))
+        pprint.pprint(properties, indent=2)
+        print
+    return True
+
+
+def main():
+    """ Main entry point for the profile script. """
+    if len(sys.argv) < 2:
+        return usage()
+
+    command = sys.argv[1]
+    shill = shill_proxy.ShillProxy()
+
+    if command == 'clean':
+        return clean_profiles()
+
+    if command == 'delete-entry':
+        return delete_entry()
+
+    if command == 'list':
+      return list_profiles()
+
+    if command == 'list-entries':
+        return list_entries()
+
+    if command == 'pop' and len(sys.argv) == 2:
+        shill.manager.PopAnyProfile()
+        print 'Popped profile.'
+        return True
+
+    # All the remaining operations require a profile name.
+    if len(sys.argv) < 3:
+        return usage()
+
+    name = sys.argv[2]
+
+    if command == 'pop':
+        shill.manager.PopProfile(name)
+        print 'Popped profile %s.' % name
+        return True
+
+    if command == 'create':
+        path = shill.manager.CreateProfile(name)
+        print 'New profile created at %s.' % path
+        return True
+
+    if command == 'push':
+        path = shill.manager.PushProfile(name)
+        print 'Pushed profile %s.' % path
+        return True
+
+    if command == 'remove':
+        shill.manager.RemoveProfile(name)
+        print 'Removed profile %s.' % name
+        return True
+
+    return usage()
+
+
+if __name__ == '__main__':
+    if not main():
+        sys.exit(1)

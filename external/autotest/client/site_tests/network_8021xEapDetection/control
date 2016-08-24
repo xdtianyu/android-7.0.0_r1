@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "pstew@chromium.org"
+NAME = "network_8021xEapDetection"
+PURPOSE = "Verify shill correctly detects EAP requests on a wired interface"
+CRITERIA = """
+This test fails if the EapAuthenticatorDetected flag is not set on a
+device after EAP traffic is sent to that interface.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Tests that we can detect EAP traffic on an interface.
+
+"""
+
+job.run_test('network_8021xEapDetection')

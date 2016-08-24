@@ -1,0 +1,31 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_CDMAActivate"
+PURPOSE = """
+Tests various scenarios that may arise during the post-payment CDMA
+activation process when shill accesses the modem via ModemManager.
+"""
+
+CRITERIA = """
+Test will fail if the cellular service is found to be in an
+unexpected state.
+"""
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  After an online payment to activate a CDMA network, shill issues an OTASP
+  activation command to ModemManager and keeps retrying in the case of failure.
+  This test verifies that the activation state exposed by ModemManager is
+  reflected correctly in shill and that activation retries are repeatedly
+  scheduled in case of failure.
+"""
+
+job.run_test('network_CDMAActivate')

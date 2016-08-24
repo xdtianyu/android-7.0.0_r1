@@ -1,0 +1,22 @@
+; Copyright (c) 2009 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; A quick test of sequential random write at the front of the disk
+;
+
+[quick_write]
+filename=${FILENAME}
+size=${FILESIZE}
+
+time_based
+runtime=2
+
+ioengine=libaio
+iodepth=1
+
+readwrite=write
+verify=md5
+
+bs=512k
+

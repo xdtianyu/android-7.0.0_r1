@@ -1,0 +1,36 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Mussa Kiroga"
+NAME = "video_GlitchDetection.mp4.720p_1080p"
+PURPOSE = "Verify that Chrome Video Playback is glitch and corruption free"
+CRITERIA = """
+
+"""
+# ATTRIBUTES = "suite:video"
+# SUITE = "video"
+TIME = "LONG"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES = "video_glitch_detection"
+BUG_TEMPLATE = {
+    'owner': 'avkodipelli@chromium.org',
+    'cc': ['mussa@chromium.org', 'rohitbm@chromium.org'],
+    'labels': ['VideoTestFailure', 'OS-Chrome'],
+}
+
+DOC = """
+This test uses cloud based image comparison to determine test PASS or FAIL.
+The service sends an email to a preconfigured address in case of test FAIL only.
+If this tests reports FAIL it means something went wrong during the run of the
+test itself.
+All test results regardless of result are stored and viewable.
+"""
+
+job.run_test('video_GlitchDetection',
+              channel='dev',
+              video_name='switch_res',
+              video_format='mp4',
+              video_def='720p_1080p')

@@ -1,0 +1,19 @@
+#!/bin/sh
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+# args: -u chronos -g chronos -G
+
+needgroup=audio # a group chronos is in and root isn't
+neednogroup=root # we'd better not still be in root...
+
+. "$(dirname "$0")"/common.sh
+
+groups=$(groups)
+if ! echo "$groups" | grep -Eq "\b$needgroup\b"; then
+  die "$needgroup not in $groups"
+fi
+if echo "$groups" | grep -Eq "\b$neednogroup\b"; then
+  die "$neednogroup in $groups";
+fi
+exit 0

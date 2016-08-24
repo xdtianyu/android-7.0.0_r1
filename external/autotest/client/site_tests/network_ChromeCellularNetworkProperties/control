@@ -1,0 +1,28 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_ChromeCellularNetworkProperties"
+PURPOSE = "Verify that Chrome sees the correct cellular service properties."
+ATTRIBUTES = "suite:network_ui"
+SUITE = "network_ui"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DOC = """
+
+This test configures the cellular pseudomodem in various ways and makes sure
+that Service properties exposed by shill are propagated to Chrome. The API call
+that is under test is "chrome.networkingPrivate.getProperties".
+
+This test uses the pseudomodem for cellular, but it can also be extended to
+other technologies.
+
+"""
+
+job.run_test('network_ChromeCellularNetworkProperties',
+             family='3GPP', tag='3GPP')
+job.run_test('network_ChromeCellularNetworkProperties',
+             family='CDMA', tag='CDMA')

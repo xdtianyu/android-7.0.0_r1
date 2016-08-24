@@ -1,0 +1,46 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GDisableWhileConnecting.gobi3k"
+PURPOSE = "Check that the 3G modem can handle a disconnect while connecting."
+CRITERIA = """
+This test will fail if a disconnect request while the modem is
+connecting is not promptly executed.
+"""
+ATTRIBUTES = "suite:network3g_tmobile, suite:network3g_verizon"
+SUITE = "network3g_tmobile, network3g_verizon"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "modem:gobi3k"
+
+DOC = """
+Check that the 3G modem can handle a disconnect while connecting.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+ITERATIONS_PER_TEST=1
+
+test_env = test_environment.CellularOTATestEnvironment()
+job.run_test('network_3GDisableWhileConnecting',
+             test_env=test_env,
+             delay_before_disable_ms=200,
+             async_connect_sleep_ms=3000,
+             iterations=ITERATIONS_PER_TEST,
+             tag='short_delay_disable-gobi3k')
+
+# Since dbus-python emits our calls asynchronously, it is sometimes
+# (often?) the case that the disable arrives before the connect.
+# There's no good way to track what actually gets sent first, so we
+# sleep.
+job.run_test('network_3GDisableWhileConnecting',
+             test_env=test_env,
+             delay_before_disable_ms=0,
+             disable_delay_per_iteration_ms=0,
+             connect_fails_with_error_sending_qmi_request=1,
+             iterations=ITERATIONS_PER_TEST,
+             tag='qmi_failure-gobi3k')

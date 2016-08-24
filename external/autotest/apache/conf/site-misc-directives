@@ -1,0 +1,16 @@
+Alias /packages "/usr/local/autotest/packages/"
+
+# If the results directory doesn't exist locally, toss it to Google Storage.
+RewriteEngine On
+
+# Redirect job result url.
+RewriteCond %{REQUEST_URI} ^/results/([0-9].*)$
+RewriteCond /usr/local/autotest/%{REQUEST_URI} !-f
+RewriteCond /usr/local/autotest/%{REQUEST_URI} !-d
+RewriteRule ^/results/([0-9].*) https://storage.cloud.google.com/chromeos-autotest-results/$1 [R=301,L]
+
+# Redirect special task result url.
+RewriteCond %{REQUEST_URI} ^/results/(hosts/.*)$
+RewriteCond /usr/local/autotest/%{REQUEST_URI} !-f
+RewriteCond /usr/local/autotest/%{REQUEST_URI} !-d
+RewriteRule ^/results/hosts/(.*/[0-9].*) https://storage.cloud.google.com/chromeos-autotest-results/hosts/$1 [R=301,L]

@@ -1,0 +1,46 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        // this requires Gradle 2
+        classpath 'com.android.tools.build:gradle:1.0.1'
+    }
+}
+
+// This is actually a test without an AUT (application under test).
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion '21.1.2'
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 21
+        // Force remove the suffix '.test'
+        testApplicationId 'io.appium.droiddriver.manualtest'
+        testInstrumentationRunner 'io.appium.droiddriver.runner.TestRunner'
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+        androidTest {
+            java.srcDirs = ['src']
+        }
+    }
+}
+
+// Building with droiddriver source. Common tests should use droiddriver from jcenter by having
+// these lines instead:
+// repositories {
+//     jcenter()
+// }
+// dependencies {
+//     androidTestCompile 'io.appium:droiddriver:0.9.1-BETA' // or another version
+// }
+dependencies {
+    androidTestCompile project(':droiddriver')
+}

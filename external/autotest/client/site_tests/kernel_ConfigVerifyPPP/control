@@ -1,0 +1,23 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "kernel_ConfigVerifyPPP"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Verify that ppp installs all PPP related modules"
+CRITERIA = "Fails if PPP modules are not installed and ppp is set."
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+    We install ppp related modules for specific boards. PPP is not set on
+    most boards and the kernel config is set in different places. This makes
+    sure that ppp can't be disabled silently.
+"""
+
+job.run_test('kernel_ConfigVerifyPPP')

@@ -1,0 +1,23 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "UncleanShutdownServer"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "logging"
+TEST_TYPE = "server"
+
+DOC = """
+Test that unclean shutdowns are detected and handled appropriately.
+"""
+
+# This must be a server side file because it expects the kernel
+# has been recently reset - specifically it assumes the kernel
+# has been reset since it was last run.
+
+client = hosts.create_host(machines[0])
+client_at = autotest.Autotest(client)
+client.reboot()
+client_at.run_test('logging_UncleanShutdown')

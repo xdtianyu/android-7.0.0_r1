@@ -1,0 +1,24 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Enforces a whitelist of known, allowed setuid/gid binaries on the system
+"""
+NAME = "security_SuidBinaries"
+PURPOSE = "To maintain a minimal set of setuid/gid binaries on the system"
+CRITERIA = """
+Fail if the list of setuid/gid binaries doesn't match the baseline
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+job.run_test("security_SuidBinaries", baseline='suid', tag='suid')
+job.run_test("security_SuidBinaries", baseline='sgid', tag='sgid')
+job.run_test("security_SuidBinaries", baseline='fscap', tag='fscap')

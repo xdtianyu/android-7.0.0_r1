@@ -1,0 +1,41 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_Perf.vht80'
+ATTRIBUTES = 'suite:wifi_perf, suite:wifi_perf_bcm4371'
+SUITE = 'wifi_perf, wifi_perf_bcm4371'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test uses netperf to measure the maximal receiving and transmitting
+throughput on a DUT with an open HT80 802.11ac network.
+"""
+
+
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    n_caps = [hostap_config.HostapConfig.N_CAPABILITY_HT40_PLUS]
+    ac_caps = [hostap_config.HostapConfig.AC_CAPABILITY_SHORT_GI_80]
+    ac_mode = hostap_config.HostapConfig.MODE_11AC_MIXED
+    channel_width_80_mhz = hostap_config.HostapConfig.VHT_CHANNEL_WIDTH_80
+    configs = [hostap_config.HostapConfig(
+                    channel=channel,
+                    mode=ac_mode,
+                    n_capabilities=n_caps,
+                    vht_channel_width=channel_width_80_mhz,
+                    vht_center_channel=vht_center_channel,
+                    ac_capabilities=ac_caps)
+               for channel, vht_center_channel in [(44, 42), (157, 155)]]
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_Perf', tag=NAME.split('.')[1],
+                 host=host, raw_cmdline_args=args,
+                 additional_params=configs)
+
+
+parallel_simple(run, machines)

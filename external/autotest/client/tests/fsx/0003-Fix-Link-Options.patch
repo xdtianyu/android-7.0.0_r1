@@ -1,0 +1,23 @@
+--- a/Makefile	2014-01-29 16:25:19.476592865 -0800
++++ b/Makefile	2014-01-29 16:27:18.937995212 -0800
+@@ -98,16 +98,16 @@
+ fsstress.c:		global.h xfscompat.h
+ 
+ aio-test:		aio-test.o
+-	$(CC) $(LDFLAGS) -laio aio-test.o -o aio-test
++	$(CC) ${CFLAGS} $(LDFLAGS) aio-test.o -o aio-test -laio
+ 
+ aio-stress:		aio-stress.o
+-	$(CC) $(LDFLAGS) -laio -lpthread aio-stress.o -o aio-stress
++	$(CC) ${CFLAGS} $(LDFLAGS) aio-stress.o -o aio-stress -laio -lpthread
+ 
+ fsx-linux:		fsx-linux.o
+-	$(CC) $(LDFLAGS) -laio fsx-linux.o -o fsx-linux
++	$(CC) ${CFLAGS} $(LDFLAGS) fsx-linux.o -o fsx-linux -laio
+ 
+ rawread:		rawread.o
+-	$(CC) $(LDFLAGS) -laio -lpthread rawread.o -o rawread
++	$(CC) ${CFLAGS} $(LDFLAGS) rawread.o -o rawread -laio -lpthread
+ 
+ #pollbench:		pollbench.o
+ #	$(CXX) $(LDFLAGS) -lpthread polbench.o -o pollbench

@@ -1,0 +1,142 @@
+# Copy this file to tests.cfg and edit it.
+#
+# This file contains the test set definitions. Define your test sets here.
+
+# Include the base config files.
+include base.cfg
+include subtests.cfg
+include guest-os.cfg
+include cdkeys.cfg
+include virtio-win.cfg
+
+# Here you can override the image name for our custom linux and windows guests
+#
+CustomGuestLinux:
+    # Here you can override the default login credentials for your custom guest
+    username = root
+    password = 123456
+    image_name = custom_image_linux
+    image_size = 10G
+    # If you want to use a block device as the vm disk, uncomment the 2 lines
+    # below, pointing the image name for the device you want
+    #image_name = /dev/mapper/vg_linux_guest
+    #image_raw_device = yes
+
+CustomGuestWindows:
+    image_name = custom_image_windows
+    image_size = 10G
+    # If you want to use a block device as the vm disk, uncomment the 2 lines
+    # below, pointing the image name for the device you want
+    #image_name = /dev/mapper/vg_windows_guest
+    #image_raw_device = yes
+
+# Modify/comment the following lines if you wish to modify the paths of the
+# image files, ISO files or qemu binaries.
+#
+# As for the defaults:
+# * qemu and qemu-img are expected to be found under /usr/bin/qemu-kvm and
+#   /usr/bin/qemu-img respectively.
+# * All image files are expected under /tmp/kvm_autotest_root/images/
+# * All install iso files are expected under /tmp/kvm_autotest_root/isos/
+# * The parameters cdrom_unattended, floppy, kernel and initrd are generated
+#   by KVM autotest, so remember to put them under a writable location
+#   (for example, the cdrom share can be read only)
+image_name(_.*)? ?<= /tmp/kvm_autotest_root/images/
+cdrom(_.*)? ?<= /tmp/kvm_autotest_root/
+floppy ?<= /tmp/kvm_autotest_root/
+Linux..unattended_install:
+    kernel ?<= /tmp/kvm_autotest_root/
+    initrd ?<= /tmp/kvm_autotest_root/
+
+# Here are the test sets variants. The variant 'qemu_kvm_windows_quick' is
+# fully commented, the following ones have comments only on noteworthy points
+variants:
+    # Runs all variants defined. HUGE test set.
+    - @full:
+
+    # Runs qemu-kvm, Windows Vista 64 bit guest OS, install, boot, shutdown
+    - @qemu_kvm_windows_quick:
+        # We want qemu-kvm for this run
+        qemu_binary = /usr/bin/qemu-kvm
+        qemu_img_binary = /usr/bin/qemu-img
+        # Only qcow2 file format
+        only qcow2
+        # Only rtl8139 for nw card (default on qemu-kvm)
+        only rtl8139
+        # Only ide hard drives
+        only ide
+        # qemu-kvm will start only with -smp 2 (2 processors)
+        only smp2
+        # No PCI assignable devices
+        only no_pci_assignable
+        # No large memory pages
+        only smallpages
+        # Operating system choice
+        only Win7.64
+        # Subtest choice. You can modify that line to add more subtests
+        only unattended_install.cdrom, boot, shutdown
+
+    # Runs qemu, f15 64 bit guest OS, install, boot, shutdown
+    - @qemu_f15_quick:
+        # We want qemu for this run
+        qemu_binary = /usr/bin/qemu
+        qemu_img_binary = /usr/bin/qemu-img
+        only qcow2
+        # The default nw card for qemu is e1000
+        only e1000
+        only ide
+        # qemu using kvm doesn't support smp yet
+        only up
+        only no_pci_assignable
+        only smallpages
+        only Fedora.15.64
+        only unattended_install.cdrom, boot, shutdown
+        # qemu needs -enable-kvm on the cmdline
+        extra_params += ' -enable-kvm'
+
+    # Runs qemu-kvm, f15 64 bit guest OS, install, boot, shutdown
+    - @qemu_kvm_f15_quick:
+        # We want qemu-kvm for this run
+        qemu_binary = /usr/bin/qemu-kvm
+        qemu_img_binary = /usr/bin/qemu-img
+        only qcow2
+        only rtl8139
+        only ide
+        only smp2
+        only no_pci_assignable
+        only smallpages
+        only Fedora.15.64
+        only unattended_install.cdrom, boot, shutdown
+
+    # Runs your own guest image (qcow2, can be adjusted), all migration tests
+    # (on a core2 duo laptop with HD and 4GB RAM, F15 host took 3 hours to run)
+    # Be warned, disk stress + migration can corrupt your image, so make sure
+    # you have proper backups
+    - @qemu_kvm_custom_migrate:
+        # We want qemu-kvm for this run
+        qemu_binary = /usr/bin/qemu-kvm
+        qemu_img_binary = /usr/bin/qemu-img
+        only qcow2
+        only rtl8139
+        only ide
+        only smp2
+        only no_pci_assignable
+        only smallpages
+        only CustomGuestLinux
+        only migrate
+
+# You may provide information about the DTM server for WHQL tests here:
+#whql:
+#    server_address = 10.20.30.40
+#    server_shell_port = 10022
+#    server_file_transfer_port = 10023
+# Note that the DTM server must run rss.exe (available under deps/),
+# preferably with administrator privileges.
+
+# Uncomment the following lines to enable abort-on-error mode:
+#abort_on_error = yes
+#kill_vm.* ?= no
+#kill_unresponsive_vms.* ?= no
+
+# Choose your test list from the testsets defined
+only qemu_kvm_f15_quick

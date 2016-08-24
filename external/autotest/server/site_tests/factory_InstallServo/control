@@ -1,0 +1,21 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "Factory Install Servo"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "factory"
+TEST_TYPE = "server"
+
+DOC = """
+This test creates and runs a mini-Omaha server, images a ChromeOS
+factory install shim onto a USB image using the servo, installs ChromeOS on a
+real device, runs a subset of factory tests, and finally boots into ChromeOS.
+"""
+
+
+job.run_test('factory_InstallServo', **utils.args_to_dict(args))

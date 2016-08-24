@@ -1,0 +1,76 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "Power daily tests"
+ATTRIBUTES = "suite:power_daily"
+SUITE = "power_daily"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+DEPENDENCIES = "power:battery, rpm"
+
+DOC = """
+This test suite runs automated power tests that should all pass. These tests
+take a long time (several hours) to run and are run only once a day.
+"""
+
+from autotest_lib.server import site_host_attributes
+from autotest_lib.client.common_lib import error, global_config
+
+def _run_client_test(machine):
+    client = hosts.create_host(machine)
+    client_attributes = site_host_attributes.HostAttributes(machine)
+    client_at = autotest.Autotest(client)
+
+    job.run_test('power_RPMTest', verify=True, host=client,
+                 power_sequence=[True], tag='RPM_ON1')
+
+    # Charge the battery to at least 50% in preparation for the consumption
+    # test. Charging the battery from empty to full can take up to 4 hours.
+    client_at.run_test('power_BatteryCharge', percent_target_charge=50,
+                       max_run_time=60*60*4, tag='CHARGE_50')
+
+    job.run_test('power_RPMTest', verify=True, host=client,
+                 power_sequence=[False], tag='RPM_OFF1')
+
+    try:
+        client_at.run_test('power_Consumption')
+    finally:
+        job.run_test('power_RPMTest', verify=True, host=client,
+                     power_sequence=[True], tag='RPM_ON2')
+
+    # Charge the battery to at least 99% in preparation for the load
+    # test. Charging the battery from empty to full can take up to 4 hours.
+    client_at.run_test('power_BatteryCharge', percent_target_charge=67,
+                       max_run_time=60*60*4, tag='CHARGE_67')
+
+    # Run 1 iteration (1hr) of power_LoadTest daily.  See suite control.power
+    # for full drain parameters
+    # TODO (snanda):
+    # 1. Make the test login automatically to facebook and gmail
+    # 2. Add audiovideo_V4L2 webcam test
+    job.run_test('power_RPMTest', verify=True, host=client,
+                 power_sequence=[False], tag='RPM_OFF2')
+
+    try:
+        client_at.run_test('power_LoadTest', loop_count=1, loop_time=3600,
+                           check_network=False, tag='WIRED_1hr')
+        wifi_ap = utils.get_wireless_ssid(machine)
+        wifi_sec = global_config.global_config.get_config_value('CLIENT',
+                'wireless_security', default=None)
+        wifi_pw = global_config.global_config.get_config_value('CLIENT',
+                'wireless_password', default=None)
+        if wifi_ap:
+            client_at.run_test('power_LoadTest', loop_count=1, loop_time=3600,
+                               force_wifi=True, wifi_ap=wifi_ap,
+                               wifi_sec=wifi_sec, wifi_pw=wifi_pw,
+                               tag='WIFI_1hr')
+    finally:
+        job.run_test('power_RPMTest', verify=True, host=client,
+                     power_sequence=[True], tag='RPM_ON3')
+
+
+job.parallel_on_machines(_run_client_test, machines)

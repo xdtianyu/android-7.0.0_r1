@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_VideoSuspend"
+ATTRIBUTES = "suite:kernel_per-build_regression, suite:video"
+SUITE = "kernel_per-build_regression, video"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+Suspends the system with a video playing.
+"""
+
+videos = ['big_buck_bunny/big_buck_bunny_trailer_400p.mp4']
+base_url = 'http://commondatastorage.googleapis.com/chromeos-test-public/'
+video_urls = [base_url + video for video in videos]
+
+job.add_sysinfo_logfile('/sys/kernel/debug/suspend_stats', on_every_test=True)
+job.run_test('power_VideoSuspend', video_urls=video_urls)

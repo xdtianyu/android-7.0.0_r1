@@ -1,0 +1,35 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "chromeos-chameleon"
+NAME = "display_EdidStressWeekly"
+PURPOSE = "Stress DUT by switching EDID from among a large pool of EDIDs."
+CRITERIA = "This test will fail if DUT does not see the emulated monitor."
+ATTRIBUTES = "suite:chameleon_dp_stress, suite:chameleon_hdmi_stress"
+# Currently the test runs for 4 hours and weekly
+# test suite runs under high load - http://crbug/560951
+# Enable the line below after logic of shorter test run is added
+# SUITE = "chameleon_dp_stress,chameleon_hdmi_stress"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "display"
+TEST_TYPE = "server"
+DEPENDENCIES = 'chameleon'
+
+DOC = """
+This test switches Chameleon EDID from among a large pool of EDIDs, tests
+DUT recognizes the emulated monitor and emits the correct video signal to
+Chameleon.
+"""
+
+args_dict = utils.args_to_dict(args)
+chameleon_args = hosts.CrosHost.get_chameleon_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, chameleon_args=chameleon_args)
+    job.run_test("display_EdidStress", host=host, edid_set="weekly")
+
+parallel_simple(run, machines)

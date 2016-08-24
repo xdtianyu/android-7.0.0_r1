@@ -1,0 +1,22 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "dummy_Pass.experimental"
+PURPOSE = "Demonstrate success methods of autotests."
+CRITERIA = "This test will always succeed."
+ATTRIBUTES = "suite:dummy, suite:dummyclientretries, suite:something_else"
+SUITE = "something_else, dummy, dummyclientretries"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "dummy"
+TEST_TYPE = "client"
+
+DOC = """
+This is a helper test that will succeed.
+"""
+
+job.run_test('dummy_Pass', tag='experimental')
+
+

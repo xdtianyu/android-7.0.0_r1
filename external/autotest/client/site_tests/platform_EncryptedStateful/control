@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "platform_EncryptedStateful"
+AUTHOR = "Chrome OS Team"
+PURPOSE = "Verify mount-encrypted operates as expected"
+CRITERIA = """
+Fails if the mount-encrypted helper does not operated as expected
+"""
+TIME = "SHORT"
+ATTRIBUTES = "suite:security"
+SUITE = "security"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+
+DOC = """
+    Ensures the mount-encrypted helper for mounting the encrypted statful
+    partition operates as expected.
+"""
+
+job.run_test('platform_EncryptedStateful')

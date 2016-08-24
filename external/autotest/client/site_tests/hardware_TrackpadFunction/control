@@ -1,0 +1,22 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "hardware_TrackpadFunction"
+AUTHOR = "Chromium OS Authors"
+PURPOSE = "Verify if CMT driver is loaded on system."
+CRITERIA = """
+If CMT is not loaded for any of the detected trackpad this test will fail.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Hardware"
+TEST_TYPE = "Client"
+JOB_RETRIES = 2
+
+DOC = """
+This test probes the trackpad device name and detect if CMT has been loaded
+correctly for it.
+"""
+
+job.run_test('hardware_TrackpadFunction')

@@ -1,0 +1,27 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project"
+NAME = "video_YouTubeHTML5"
+PURPOSE = "Verify that YouTube HTML5 video works"
+CRITERIA = """
+This test will fail if YouTube HTML5 video fails to play.
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:partners"
+SUITE = "bvt-perbuild, partners"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+DEPENDENCIES='cleanup-reboot'
+BUG_TEMPLATE = {
+    'labels': ['VideoTestFailure', 'OS-Chrome'],
+}
+
+DOC = """
+This test verify YouTube video playback, states and resolutions.
+"""
+
+job.run_test('video_YouTubeHTML5')

@@ -1,0 +1,696 @@
+{
+  "tests": {
+    "glean/glsl1-Swizzled swizzled swizzle": {
+      "command": "bin/glean -o -v -v -v -t +glsl1 --quick",
+      "result": "skip"
+    },
+    "glean/texture_srgb": {
+      "command": "bin/glean -o -v -v -v -t +texture_srgb --quick",
+      "comment": "Regression tracked at crbug.com/384415",
+      "crbug": "384415",
+      "result": "skip"
+    },
+    "glx/GLX_OML_sync_control/swapbuffersmsc-return swap_interval 1": {
+      "command": "bin/glx-oml-sync-control-swapbuffersmsc-return 1 -fbo -auto",
+      "result": "skip"
+    },
+    "glx/GLX_OML_sync_control/waitformsc": {
+      "command": "bin/glx-oml-sync-control-waitformsc -fbo -auto",
+      "result": "skip"
+    },
+    "glx/glx-copy-sub-buffer samples=6": {
+      "command": "bin/glx-copy-sub-buffer -samples=6 -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "glx/glx-copy-sub-buffer samples=8": {
+      "command": "bin/glx-copy-sub-buffer -samples=8 -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "glx/glx-swap-event_interval": {
+      "command": "bin/glx-swap-event --interval -auto",
+      "pass rate": "0.65",
+      "result": "flaky"
+    },
+    "shaders/arb_texture_gather-miplevels": {
+      "command": "bin/shader_runner tests/shaders/arb_texture_gather-miplevels.shader_test -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "shaders/dependency-hints/exp2": {
+      "command": "bin/shader_runner tests/shaders/dependency-hints/exp2.shader_test -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "shaders/glsl-fs-user-varying-ff": {
+      "command": "bin/glsl-fs-user-varying-ff -fbo -auto",
+      "result": "skip"
+    },
+    "shaders/glsl-routing": {
+      "command": "bin/glsl-routing -fbo -auto",
+      "crbug": "391395",
+      "result": "skip"
+    },
+    "shaders/sso-user-varying-01": {
+      "command": "bin/sso-user-varying-01 -fbo -auto",
+      "result": "skip"
+    },
+    "shaders/sso-user-varying-02": {
+      "command": "bin/sso-user-varying-02 -fbo -auto",
+      "result": "skip"
+    },
+    "spec/!OpenGL 1.0/gl-1.0-edgeflag-quads": {
+      "command": "bin/gl-1.0-edgeflag-quads -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/!OpenGL 1.1/dlist-fdo31590": {
+      "command": "bin/dlist-fdo31590 -auto",
+      "result": "skip"
+    },
+    "spec/!OpenGL 1.1/draw-pixels": {
+      "command": "bin/draw-pixels -auto",
+      "crbug": "410528",
+      "result": "skip"
+    },
+    "spec/!OpenGL 3.0/gl-3.0-texture-integer": {
+      "command": "bin/gl-3.0-texture-integer -fbo -auto",
+      "result": "skip"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/compiler/depth-any-01.frag": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/compiler/depth-any-01.frag pass 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/compiler/depth-greater-01.frag": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/compiler/depth-greater-01.frag pass 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/compiler/depth-less-01.frag": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/compiler/depth-less-01.frag pass 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/compiler/depth-unchanged-01.frag": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/compiler/depth-unchanged-01.frag pass 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/compiler/invalid-layout-01.frag": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/compiler/invalid-layout-01.frag fail 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/compiler/late-redeclaration-01.frag": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/compiler/late-redeclaration-01.frag fail 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/compiler/no-layout-01.frag": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/compiler/no-layout-01.frag pass 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/compiler/no-redeclaration-01.frag": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/compiler/no-redeclaration-01.frag pass 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/compiler/no-redeclaration-01.vert": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/compiler/no-redeclaration-01.vert pass 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/compiler/vs-redeclaration-01.vert": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/compiler/vs-redeclaration-01.vert fail 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/linker/matching-qualifiers-01": {
+      "command": "bin/shader_runner tests/spec/amd_conservative_depth/glsl-1.30/linker/matching-qualifiers-01.shader_test -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/linker/matching-qualifiers-02": {
+      "command": "bin/shader_runner tests/spec/amd_conservative_depth/glsl-1.30/linker/matching-qualifiers-02.shader_test -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/linker/mismatched-qualifiers-01": {
+      "command": "bin/shader_runner tests/spec/amd_conservative_depth/glsl-1.30/linker/mismatched-qualifiers-01.shader_test -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/preprocessor/feature-macro.frag": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/preprocessor/feature-macro.frag pass 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/AMD_conservative_depth/glsl-1.30/preprocessor/feature-macro.vert": {
+      "command": "bin/glslparsertest tests/spec/amd_conservative_depth/glsl-1.30/preprocessor/feature-macro.vert pass 1.30 GL_AMD_conservative_depth",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_depth_texture/depthstencil-render-miplevels 146 d=z16": {
+      "command": "bin/depthstencil-render-miplevels 146 d=z16 -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_depth_texture/depthstencil-render-miplevels 292 d=z16": {
+      "command": "bin/depthstencil-render-miplevels 292 d=z16 -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_depth_texture/depthstencil-render-miplevels 585 d=z16": {
+      "command": "bin/depthstencil-render-miplevels 585 d=z16 -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_depth_texture/fbo-depth-GL_DEPTH_COMPONENT16-clear": {
+      "command": "bin/fbo-depth clear GL_DEPTH_COMPONENT16 -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_framebuffer_object/fbo-attachments-blit-scaled-linear": {
+      "command": "bin/fbo-attachments-blit-scaled-linear -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_framebuffer_object/fbo-blit-scaled-linear": {
+      "command": "bin/fbo-blit-scaled-linear -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_framebuffer_object/fbo-blit-stretch": {
+      "command": "bin/fbo-blit-stretch -auto",
+      "result": "skip"
+    },
+    "spec/ARB_occlusion_query/occlusion_query_meta_fragments": {
+      "command": "bin/occlusion_query_meta_fragments -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_shader_texture_lod/execution/tex-miplevel-selection *GradARB 1DShadow": {
+      "command": "bin/tex-miplevel-selection *GradARB 1DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_shader_texture_lod/execution/tex-miplevel-selection *GradARB 2DShadow": {
+      "command": "bin/tex-miplevel-selection *GradARB 2DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_shader_texture_lod/execution/tex-miplevel-selection *Lod 1DShadow": {
+      "command": "bin/tex-miplevel-selection *Lod 1DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_shader_texture_lod/execution/tex-miplevel-selection *Lod 2DShadow": {
+      "command": "bin/tex-miplevel-selection *Lod 2DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_shader_texture_lod/execution/tex-miplevel-selection *ProjGradARB 1DShadow": {
+      "command": "bin/tex-miplevel-selection *ProjGradARB 1DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_shader_texture_lod/execution/tex-miplevel-selection *ProjGradARB 2DShadow": {
+      "command": "bin/tex-miplevel-selection *ProjGradARB 2DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_shader_texture_lod/execution/tex-miplevel-selection *ProjLod 1DShadow": {
+      "command": "bin/tex-miplevel-selection *ProjLod 1DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_shader_texture_lod/execution/tex-miplevel-selection *ProjLod 2DShadow": {
+      "command": "bin/tex-miplevel-selection *ProjLod 2DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_sync/repeat-wait": {
+      "command": "bin/arb_sync-repeat-wait -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_texture_cube_map/copyteximage CUBE": {
+      "command": "bin/copyteximage CUBE -auto",
+      "comment": "See https://bugs.freedesktop.org/show_bug.cgi?id=77553",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_float/multisample-formats 2 GL_ARB_texture_float": {
+      "command": "bin/ext_framebuffer_multisample-formats 2 GL_ARB_texture_float -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_texture_float/multisample-formats 4 GL_ARB_texture_float": {
+      "command": "bin/ext_framebuffer_multisample-formats 4 GL_ARB_texture_float -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_texture_float/multisample-formats 6 GL_ARB_texture_float": {
+      "command": "bin/ext_framebuffer_multisample-formats 6 GL_ARB_texture_float -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_float/multisample-formats 8 GL_ARB_texture_float": {
+      "command": "bin/ext_framebuffer_multisample-formats 8 GL_ARB_texture_float -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_multisample/arb_texture_multisample-texelfetch 8": {
+      "command": "bin/arb_texture_multisample-texelfetch 8 -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_multisample/fb-completeness/6": {
+      "command": "bin/arb_texture_multisample-fb-completeness 6 -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_multisample/fb-completeness/8": {
+      "command": "bin/arb_texture_multisample-fb-completeness 8 -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_multisample/sample-position/6": {
+      "command": "bin/arb_texture_multisample-sample-position 6 -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_multisample/sample-position/8": {
+      "command": "bin/arb_texture_multisample-sample-position 8 -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_rg/multisample-formats 2 GL_ARB_texture_rg": {
+      "command": "bin/ext_framebuffer_multisample-formats 2 GL_ARB_texture_rg -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_texture_rg/multisample-formats 2 GL_ARB_texture_rg-float": {
+      "command": "bin/ext_framebuffer_multisample-formats 2 GL_ARB_texture_rg-float -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_texture_rg/multisample-formats 2 GL_ARB_texture_rg-int": {
+      "command": "bin/ext_framebuffer_multisample-formats 2 GL_ARB_texture_rg-int -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_texture_rg/multisample-formats 4 GL_ARB_texture_rg": {
+      "command": "bin/ext_framebuffer_multisample-formats 4 GL_ARB_texture_rg -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_texture_rg/multisample-formats 4 GL_ARB_texture_rg-float": {
+      "command": "bin/ext_framebuffer_multisample-formats 4 GL_ARB_texture_rg-float -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_texture_rg/multisample-formats 4 GL_ARB_texture_rg-int": {
+      "command": "bin/ext_framebuffer_multisample-formats 4 GL_ARB_texture_rg-int -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_texture_rg/multisample-formats 6 GL_ARB_texture_rg": {
+      "command": "bin/ext_framebuffer_multisample-formats 6 GL_ARB_texture_rg -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_rg/multisample-formats 6 GL_ARB_texture_rg-float": {
+      "command": "bin/ext_framebuffer_multisample-formats 6 GL_ARB_texture_rg-float -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_rg/multisample-formats 6 GL_ARB_texture_rg-int": {
+      "command": "bin/ext_framebuffer_multisample-formats 6 GL_ARB_texture_rg-int -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_rg/multisample-formats 8 GL_ARB_texture_rg": {
+      "command": "bin/ext_framebuffer_multisample-formats 8 GL_ARB_texture_rg -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_rg/multisample-formats 8 GL_ARB_texture_rg-float": {
+      "command": "bin/ext_framebuffer_multisample-formats 8 GL_ARB_texture_rg-float -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_rg/multisample-formats 8 GL_ARB_texture_rg-int": {
+      "command": "bin/ext_framebuffer_multisample-formats 8 GL_ARB_texture_rg-int -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_view/clear-into-view-2d": {
+      "command": "bin/arb_texture_view-clear-into-view-2d -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_view/clear-into-view-2d-array": {
+      "command": "bin/arb_texture_view-clear-into-view-2d-array -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_view/copytexsubimage-layers": {
+      "command": "bin/arb_texture_view-copytexsubimage-layers -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_view/getteximage-srgb": {
+      "command": "bin/arb_texture_view-getteximage-srgb -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_view/immutable_levels": {
+      "command": "bin/arb_texture_view-texture-immutable-levels -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_view/rendering-formats": {
+      "command": "bin/arb_texture_view-rendering-formats -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_view/rendering-layers": {
+      "command": "bin/arb_texture_view-rendering-layers -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_view/rendering-levels": {
+      "command": "bin/arb_texture_view-rendering-levels -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_view/rendering-target": {
+      "command": "bin/arb_texture_view-rendering-target -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_view/texsubimage-layers": {
+      "command": "bin/arb_texture_view-texsubimage-layers -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_view/texsubimage-levels": {
+      "command": "bin/arb_texture_view-texsubimage-levels -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/ARB_timer_query/query GL_TIMESTAMP": {
+      "command": "bin/ext_timer_query-time-elapsed timestamp -fbo -auto",
+      "result": "skip"
+    },
+    "spec/ARB_timer_query/timestamp-get": {
+      "command": "bin/arb_timer_query-timestamp-get -fbo -auto",
+      "pass rate": "0.59",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback2/Change objects while paused": {
+      "command": "bin/arb_transform_feedback2-change-objects-while-paused -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback2/cannot bind when another object is active": {
+      "command": "bin/arb_transform_feedback2-cannot-bind-when-active -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback2/counting with pause": {
+      "command": "bin/arb_transform_feedback2-pause-counting -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback2/draw-auto": {
+      "command": "bin/arb_transform_feedback2-draw-auto -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback2/glGenTransformFeedbacks names only": {
+      "command": "bin/arb_transform_feedback2-gen-names-only -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback2/istranformfeedback": {
+      "command": "bin/arb_transform_feedback2-istransformfeedback -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback2/misc. API queries": {
+      "command": "bin/arb_transform_feedback2-api-queries -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback3/gl_NextBuffer-1": {
+      "command": "bin/ext_transform_feedback-output-type gl_NextBuffer-1 -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback3/gl_NextBuffer-2": {
+      "command": "bin/ext_transform_feedback-output-type gl_NextBuffer-2 -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback3/gl_NextBuffer-gl_NextBuffer": {
+      "command": "bin/ext_transform_feedback-output-type gl_NextBuffer-gl_NextBuffer -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback3/gl_NextBuffer-gl_SkipComponents1-gl_NextBuffer": {
+      "command": "bin/ext_transform_feedback-output-type gl_NextBuffer-gl_SkipComponents1-gl_NextBuffer -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback3/gl_SkipComponents1-1": {
+      "command": "bin/ext_transform_feedback-output-type gl_SkipComponents1-1 -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback3/gl_SkipComponents1-2": {
+      "command": "bin/ext_transform_feedback-output-type gl_SkipComponents1-2 -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback3/gl_SkipComponents1-3": {
+      "command": "bin/ext_transform_feedback-output-type gl_SkipComponents1-3 -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback3/gl_SkipComponents1234": {
+      "command": "bin/ext_transform_feedback-output-type gl_SkipComponents1234 -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback3/gl_SkipComponents2": {
+      "command": "bin/ext_transform_feedback-output-type gl_SkipComponents2 -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback3/gl_SkipComponents3": {
+      "command": "bin/ext_transform_feedback-output-type gl_SkipComponents3 -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback3/gl_SkipComponents4": {
+      "command": "bin/ext_transform_feedback-output-type gl_SkipComponents4 -fbo -auto",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_transform_feedback_instanced/draw-auto instanced": {
+      "command": "bin/arb_transform_feedback2-draw-auto -auto instanced",
+      "pass rate": "0.53",
+      "result": "flaky"
+    },
+    "spec/ARB_vertex_type_2_10_10_10_rev/draw-vertices-2101010": {
+      "command": "bin/draw-vertices-2101010 -auto",
+      "pass rate": "0.65",
+      "result": "flaky"
+    },
+    "spec/EXT_framebuffer_multisample_blit_scaled/blit-scaled samples=6": {
+      "command": "bin/ext_framebuffer_multisample_blit_scaled-blit-scaled 6 -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_framebuffer_multisample_blit_scaled/blit-scaled samples=8": {
+      "command": "bin/ext_framebuffer_multisample_blit_scaled-blit-scaled 8 -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_framebuffer_object/fbo-bind-renderbuffer": {
+      "command": "bin/fbo-bind-renderbuffer -fbo -auto",
+      "comment": "Remove when we have piglit 9ed80d2cf76d20f58eee218be699839f6a6e9223",
+      "result": "skip"
+    },
+    "spec/EXT_packed_float/multisample-formats 2 GL_EXT_packed_float": {
+      "command": "bin/ext_framebuffer_multisample-formats 2 GL_EXT_packed_float -fbo -auto",
+      "result": "skip"
+    },
+    "spec/EXT_packed_float/multisample-formats 4 GL_EXT_packed_float": {
+      "command": "bin/ext_framebuffer_multisample-formats 4 GL_EXT_packed_float -fbo -auto",
+      "result": "skip"
+    },
+    "spec/EXT_packed_float/multisample-formats 6 GL_EXT_packed_float": {
+      "command": "bin/ext_framebuffer_multisample-formats 6 GL_EXT_packed_float -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_packed_float/multisample-formats 8 GL_EXT_packed_float": {
+      "command": "bin/ext_framebuffer_multisample-formats 8 GL_EXT_packed_float -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_texture_array/copyteximage 1D_ARRAY": {
+      "command": "bin/copyteximage 1D_ARRAY -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_texture_array/copyteximage 2D_ARRAY": {
+      "command": "bin/copyteximage 2D_ARRAY -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_texture_array/fbo-depth-array": {
+      "command": "bin/fbo-depth-array -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_texture_integer/multisample-formats 2 GL_EXT_texture_integer": {
+      "command": "bin/ext_framebuffer_multisample-formats 2 GL_EXT_texture_integer -fbo -auto",
+      "result": "skip"
+    },
+    "spec/EXT_texture_integer/multisample-formats 4 GL_EXT_texture_integer": {
+      "command": "bin/ext_framebuffer_multisample-formats 4 GL_EXT_texture_integer -fbo -auto",
+      "result": "skip"
+    },
+    "spec/EXT_texture_integer/multisample-formats 6 GL_EXT_texture_integer": {
+      "command": "bin/ext_framebuffer_multisample-formats 6 GL_EXT_texture_integer -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_texture_integer/multisample-formats 8 GL_EXT_texture_integer": {
+      "command": "bin/ext_framebuffer_multisample-formats 8 GL_EXT_texture_integer -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_texture_integer/texture_integer_glsl130": {
+      "command": "bin/ext_texture_integer-texture_integer_glsl130 -fbo -auto",
+      "result": "skip"
+    },
+    "spec/EXT_texture_sRGB/multisample-formats 2 GL_EXT_texture_sRGB": {
+      "command": "bin/ext_framebuffer_multisample-formats 2 GL_EXT_texture_sRGB -fbo -auto",
+      "result": "skip"
+    },
+    "spec/EXT_texture_sRGB/multisample-formats 4 GL_EXT_texture_sRGB": {
+      "command": "bin/ext_framebuffer_multisample-formats 4 GL_EXT_texture_sRGB -fbo -auto",
+      "result": "skip"
+    },
+    "spec/EXT_texture_sRGB/multisample-formats 6 GL_EXT_texture_sRGB": {
+      "command": "bin/ext_framebuffer_multisample-formats 6 GL_EXT_texture_sRGB -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_texture_sRGB/multisample-formats 8 GL_EXT_texture_sRGB": {
+      "command": "bin/ext_framebuffer_multisample-formats 8 GL_EXT_texture_sRGB -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_texture_snorm/multisample-formats 2 GL_EXT_texture_snorm": {
+      "command": "bin/ext_framebuffer_multisample-formats 2 GL_EXT_texture_snorm -fbo -auto",
+      "result": "skip"
+    },
+    "spec/EXT_texture_snorm/multisample-formats 4 GL_EXT_texture_snorm": {
+      "command": "bin/ext_framebuffer_multisample-formats 4 GL_EXT_texture_snorm -fbo -auto",
+      "result": "skip"
+    },
+    "spec/EXT_texture_snorm/multisample-formats 6 GL_EXT_texture_snorm": {
+      "command": "bin/ext_framebuffer_multisample-formats 6 GL_EXT_texture_snorm -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_texture_snorm/multisample-formats 8 GL_EXT_texture_snorm": {
+      "command": "bin/ext_framebuffer_multisample-formats 8 GL_EXT_texture_snorm -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/EXT_transform_feedback/generatemipmap prims_generated": {
+      "command": "bin/ext_transform_feedback-generatemipmap prims_generated -fbo -auto",
+      "result": "skip"
+    },
+    "spec/EXT_transform_feedback/intervening-read prims_generated": {
+      "command": "bin/ext_transform_feedback-intervening-read prims_generated -fbo -auto",
+      "result": "skip"
+    },
+    "spec/NV_conditional_render/begin-zero": {
+      "command": "bin/nv_conditional_render-begin-zero -fbo -auto",
+      "comment": "Remove when we have piglit 271b998e079a8d73e3f0de6ec3494a5c374593aa",
+      "result": "skip"
+    },
+    "spec/NV_conditional_render/blitframebuffer": {
+      "command": "bin/nv_conditional_render-blitframebuffer -auto",
+      "comment": "Remove when we have piglit 0364f161c9b41b7b1fe94f7b761241ccfdca4981",
+      "result": "skip"
+    },
+    "spec/glsl-1.10/compiler/reserved/double-underscore-01.frag": {
+      "command": "bin/glslparsertest tests/spec/glsl-1.10/compiler/reserved/double-underscore-01.frag pass 1.10",
+      "comment": "Remove when we have piglit 3a521d467c108f25b2033132ca6ac665786c0e04",
+      "result": "skip"
+    },
+    "spec/glsl-1.10/compiler/reserved/double-underscore-02.frag": {
+      "command": "bin/glslparsertest tests/spec/glsl-1.10/compiler/reserved/double-underscore-02.frag pass 1.10",
+      "comment": "Remove when we have piglit 3a521d467c108f25b2033132ca6ac665786c0e04",
+      "result": "skip"
+    },
+    "spec/glsl-1.10/compiler/reserved/double-underscore-03.frag": {
+      "command": "bin/glslparsertest tests/spec/glsl-1.10/compiler/reserved/double-underscore-03.frag pass 1.10",
+      "comment": "Remove when we have piglit 3a521d467c108f25b2033132ca6ac665786c0e04",
+      "result": "skip"
+    },
+    "spec/glsl-1.20/execution/tex-miplevel-selection GL2:texture() 1DShadow": {
+      "command": "bin/tex-miplevel-selection GL2:texture() 1DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/tex-miplevel-selection GL2:texture() 2DShadow": {
+      "command": "bin/tex-miplevel-selection GL2:texture() 2DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/tex-miplevel-selection GL2:texture(bias) 1DShadow": {
+      "command": "bin/tex-miplevel-selection GL2:texture(bias) 1DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/tex-miplevel-selection GL2:texture(bias) 2DShadow": {
+      "command": "bin/tex-miplevel-selection GL2:texture(bias) 2DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/tex-miplevel-selection GL2:textureProj 1DShadow": {
+      "command": "bin/tex-miplevel-selection GL2:textureProj 1DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/tex-miplevel-selection GL2:textureProj 2DShadow": {
+      "command": "bin/tex-miplevel-selection GL2:textureProj 2DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/tex-miplevel-selection GL2:textureProj(bias) 1DShadow": {
+      "command": "bin/tex-miplevel-selection GL2:textureProj(bias) 1DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/tex-miplevel-selection GL2:textureProj(bias) 2DShadow": {
+      "command": "bin/tex-miplevel-selection GL2:textureProj(bias) 2DShadow -fbo -auto",
+      "pass rate": "0.88",
+      "result": "flaky"
+    },
+    "spec/glsl-1.30/preprocessor/reserved/double-underscore-01.frag": {
+      "command": "bin/glslparsertest tests/spec/glsl-1.30/preprocessor/reserved/double-underscore-01.frag pass 1.30",
+      "comment": "Remove when we have piglit 3a521d467c108f25b2033132ca6ac665786c0e04",
+      "result": "skip"
+    },
+    "spec/glsl-1.30/preprocessor/reserved/double-underscore-02.frag": {
+      "command": "bin/glslparsertest tests/spec/glsl-1.30/preprocessor/reserved/double-underscore-02.frag pass 1.30",
+      "comment": "Remove when we have piglit 3a521d467c108f25b2033132ca6ac665786c0e04",
+      "result": "skip"
+    },
+    "spec/glsl-1.30/preprocessor/reserved/double-underscore-03.frag": {
+      "command": "bin/glslparsertest tests/spec/glsl-1.30/preprocessor/reserved/double-underscore-03.frag pass 1.30",
+      "comment": "Remove when we have piglit 3a521d467c108f25b2033132ca6ac665786c0e04",
+      "result": "skip"
+    }
+  }
+}

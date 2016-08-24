@@ -1,0 +1,55 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+import re
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_Standby"
+TIME = "LONG"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+This test measures the power draw during standby (S3).
+
+Test uses RTC wake to transistion from S3 to S0 every sample_hours for a total
+  standby time of test_hours.  The S3->S0 transistions are added to
+  1. Validate battery use
+  2. Guarantee that S3 was maintained (no external/false wake)
+  3. Create S3->S0->S3 transistions which more closely model user's interaction.
+
+Arguments:
+  sample_hours: float, number of hours between charge use samples.
+  test_hours: float, the number of hours to run the test.
+
+Test must meet the following criteria:
+  Battery must contain ~20% of its charge.
+  Must be run on battery power
+  sample_hours > 0.1
+  test_hours > sample_hours
+"""
+
+opts = {}
+sample_hours = 1.0
+test_hours = 12.0
+max_milliwatts_standby = 500.0
+
+for arg in args:
+    match = re.search("^(\w+)=(.+)", arg)
+    if match:
+        opts[match.group(1)] = match.group(2)
+
+if 'test_hours' in opts:
+    test_hours = float(opts['test_hours'])
+
+if 'sample_hours' in opts:
+    sample_hours = float(opts['sample_hours'])
+
+
+constraints = []
+constraints.append("milliwatts_standby_power <= %.2f" % max_milliwatts_standby)
+
+job.run_test('power_Standby', sample_hours=sample_hours, test_hours=test_hours,
+             constraints=constraints,
+             max_milliwatts_standby=max_milliwatts_standby)

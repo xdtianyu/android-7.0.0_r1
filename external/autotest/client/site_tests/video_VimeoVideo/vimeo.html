@@ -1,0 +1,65 @@
+<html><head>
+  <title>Vimeo Video Test</title>
+  <script type="text/javascript"
+          src="jquery-2.1.3.min.js">
+  </script>
+  <script type="text/javascript" src="froogaloop.js"></script>
+  <style type="text/css"></style>
+  <script type="text/javascript">
+        $(function(){
+                var iframe = $('#player')[0],
+                        player = $f(iframe),
+                        status = $('.status'),
+                        duration = $('.duration');
+
+                // When the player is ready, add listeners for
+                // pause, finish, and playProgress
+                vimeo_player = player.addEvent('ready', onReady);
+
+                function onReady(id) {
+                        status.text('ready');
+                        player.addEvent('pause', onPause);
+                        player.addEvent('finish', onFinish);
+                        player.addEvent('play', onPlay);
+                        player.addEvent('playProgress', onPlayProgress);
+                        vimeo_player.duration = 0.0;
+                        play.click();
+                }
+
+                // Call the API when a button is pressed
+                $('button').bind('click', function() {
+                        player.api($(this).text().toLowerCase());
+                });
+
+                function onPlay(id) {
+                        vimeo_player.status = 'play';
+                        status.text('play');
+                }
+
+                function onPause(id) {
+                        vimeo_player.status = 'pause';
+                        status.text('pause');
+                }
+
+                function onFinish(id) {
+                        vimeo_player.status = 'finished';
+                        status.text('finished');
+                }
+
+                function onPlayProgress(data, id) {
+                        vimeo_player.duration = data.seconds;
+                        duration.text(data.seconds);
+                }
+        });
+        </script>
+</head>
+<body>
+  <iframe id="player"
+          src="http://player.vimeo.com/video/71174245?api=1&player_id=player"
+          width="1024" height="576" frameborder="0"
+          webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="">
+  </iframe>
+  <p>Duration: <span class="duration">0.0</span></p>
+  <p>Video status: <span class="status">Not Ready</span></p>
+  <p><button id="play">Play</button> <button id="pause">Pause</button></p>
+</body></html>

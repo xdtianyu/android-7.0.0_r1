@@ -1,0 +1,21 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "firmware_RomSize with performance constraints."
+PURPOSE = "Ensure the firmware size is large enough."
+CRITERIA = "Firmware size must be >= 4MB."
+ATTRIBUTES = "suite:hwqual"
+SUITE = "hwqual"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "client"
+
+DOC = """
+This test relies on dmidecode to find the ROM Size.
+"""
+
+job.run_test('firmware_RomSize', constraints=['kb_system_rom_size >= 4096',
+                                              'kb_ec_rom_size >= 128'])

@@ -1,0 +1,18 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_ModemManagerSMS"
+PURPOSE = "Verify ModemManager's SMS API"
+CRITERIA = """
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+"""
+
+job.run_test('network_ModemManagerSMS')

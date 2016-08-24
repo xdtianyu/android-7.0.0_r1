@@ -1,0 +1,25 @@
+<!--
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This html file is used by Interactive Tests.  Scripts are able to append
+# HTML to the document, including buttons that can call submit_button() on
+# click and retrieve the results.
+-->
+<html>
+    <head>
+        <title>Interactive Test</title>
+        <script language="Javascript">
+            window.__ready = 0;
+            window.__result = null;
+            function submit_button(value) {
+                window.__result = value;
+                window.__ready = 1;
+            };
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

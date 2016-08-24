@@ -1,0 +1,16 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kaliamoorthi, achuith"
+NAME = "enterprise_PowerManagement"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "enterprise"
+TEST_TYPE = "client"
+
+DOC = """
+This test checks if setting the power management policies function as expected.
+"""
+
+job.run_test('enterprise_PowerManagement')

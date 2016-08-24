@@ -1,0 +1,40 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "tienchang@chromium.org, bmahadev@chromium.org"
+NAME = "wifi_matfunc_bcm4371"
+PURPOSE = "Verify basic WiFi functionality."
+CRITERIA = "All tests with SUITE=wifi_matfunc_bcm4371 must pass."
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This is an example of a dynamic test suite.
+
+@param build: The name of the image to test.
+          Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on. Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+@param file_bugs: If True your suite will file bugs on failures.
+@param max_run_time: Amount of time each test shoud run in minutes.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+dynamic_suite.reimage_and_run(
+    build=build, board=board, name=NAME, job=job, pool=pool,
+    check_hosts=check_hosts, add_experimental=True, num=num,
+    file_bugs=file_bugs, priority=priority, timeout_mins=timeout_mins,
+    max_runtime_mins=60, devserver_url=devserver_url,
+    version_prefix=provision.CROS_VERSION_PREFIX, job_retry=job_retry,
+    max_retries=max_retries, suite_dependencies='wifi:bcm4371',
+    wait_for_results=wait_for_results)

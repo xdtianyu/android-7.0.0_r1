@@ -1,0 +1,20 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "platform_DebugDaemonGetRoutes"
+PURPOSE = "Verify that debugd's GetRoutes works."
+
+CRITERIA = """
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+Exercises the debugd GetRoutes API.
+"""
+
+job.run_test('platform_DebugDaemonGetRoutes')

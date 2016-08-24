@@ -1,0 +1,20 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_GPIOSwitches'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Verify that mode and button switches are set correctly.'
+CRITERIA = """
+Fail if the settings for a particular board are not set correctly.
+"""
+TIME='SHORT'
+TEST_CATEGORY = 'factory'
+TEST_CLASS = 'hardware'
+TEST_TYPE = 'client'
+
+DOC = """
+This test checks if the buttons and mode switches are set as expected
+"""
+
+job.run_test('hardware_GPIOSwitches')

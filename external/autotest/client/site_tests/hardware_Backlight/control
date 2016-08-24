@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "hardware_Backlight"
+PURPOSE = 'Verify that the backlight can be adjusted in software.'
+CRITERIA = """
+If backlight_tool fails to adjust the backlight brightness this test will fail.
+"""
+ATTRIBUTES = "suite:hwqual"
+SUITE = "hwqual"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+
+DOC = """
+This test will utilize the /sys/class/backlight interface to adjust the
+strength of the backlight.
+"""
+
+job.run_test("hardware_Backlight")

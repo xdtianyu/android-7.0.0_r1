@@ -1,0 +1,20 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "platform_CrashStateful"
+AUTHOR = "chromeos-kernel,taysom"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+Tests crash recovery of stateful partition
+"""
+
+def run_crash_stateful(machine):
+    host = hosts.create_host(machine)
+    job.run_test("platform_CrashStateful", host=host)
+
+parallel_simple(run_crash_stateful, machines)

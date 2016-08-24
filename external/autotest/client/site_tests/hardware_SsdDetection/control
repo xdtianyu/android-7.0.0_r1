@@ -1,0 +1,22 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_SsdDetection'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Determine if main disk is a solid state device.'
+CRITERIA = 'Fails if the main disk is not a solid state device.'
+ATTRIBUTES = "suite:hwqual"
+SUITE = "hwqual"
+TIME='SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = "hardware"
+TEST_TYPE = 'client'
+
+DOC = """
+This test uses hdparm to determine if the rotation rate properties match that of
+a solid state device.
+"""
+
+job.run_test('hardware_SsdDetection',
+              constraints=['mb_ssd_device_size >= 8000'])

@@ -1,0 +1,11 @@
+#!/bin/sh
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+# args: -v
+
+SRCDIR="$(dirname "$0")"
+
+. "${SRCDIR}"/common.sh
+
+python "${SRCDIR}"/mountns-enter.py "${SRCDIR}" || die "enter mount ns"

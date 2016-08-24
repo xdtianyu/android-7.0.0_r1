@@ -1,0 +1,32 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'bfreed'
+NAME = 'network_WiFi_BluetoothScanPerf.11a'
+TIME = 'MEDIUM'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test uses netperf to measure the maximal receiving and transmitting
+throughput on a DUT with an open 802.11a network while scanning bluetooth.
+"""
+
+
+from autotest_lib.server import utils
+from autotest_lib.server.cros.network import hostap_config
+
+args_dict = utils.args_to_dict(args)
+
+def run(machine):
+    host = hosts.create_host(machine)
+    mode = hostap_config.HostapConfig.MODE_11A
+    configs = [hostap_config.HostapConfig(channel=channel, mode=mode)
+               for channel in (44,)]
+    job.run_test('network_WiFi_BluetoothScanPerf', tag=NAME.split('.')[1],
+                 host=host, raw_cmdline_args=args,
+                 additional_params=configs)
+
+
+parallel_simple(run, machines)

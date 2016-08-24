@@ -1,0 +1,36 @@
+[
+  {
+    "description": "NTFS filesystem with label (read)",
+    "block_size": 1024,
+    "block_count": 65536,
+    "filesystem_type": "ntfs",
+    "mount_filesystem_type": "ntfs-3g",
+    "mkfs_options": [ "-f", "-L", "MyDisk" ],
+    "test_mount_options": [ "ro", "nodev", "noexec", "nosuid", "sync" ],
+    "expected_mount_status": 0,
+    "expected_mount_path": "/media/removable/MyDisk"
+  },
+  {
+    "description": "NTFS filesystem without label (read)",
+    "block_size": 1024,
+    "block_count": 65536,
+    "filesystem_type": "ntfs",
+    "mount_filesystem_type": "ntfs-3g",
+    "mkfs_options": [ "-f" ],
+    "test_mount_options": [ "ro", "nodev", "noexec", "nosuid", "sync" ],
+    "expected_mount_status": 0,
+    "expected_mount_path": "/media/removable/External Drive"
+  },
+  {
+    "description": "NTFS filesystem (write)",
+    "is_write_test": true,
+    "block_size": 1024,
+    "block_count": 65536,
+    "filesystem_type": "ntfs",
+    "mount_filesystem_type": "ntfs-3g",
+    "mkfs_options": [ "-f", "-L", "MyDisk" ],
+    "test_mount_options": [ "rw", "nodev", "noexec", "nosuid", "sync" ],
+    "expected_mount_status": 0,
+    "expected_mount_path": "/media/removable/MyDisk"
+  }
+]

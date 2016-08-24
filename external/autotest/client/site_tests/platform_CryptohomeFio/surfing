@@ -1,0 +1,33 @@
+; Copyright (c) 2009 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; A simulation of disk traffic from a heavy web surfing load.  This test
+; should be measures in terms of iop/s, a minimum of 6 iop/s combined read
+; and write is required for good performance.
+;
+
+[surfing]
+filename=${FILENAME}
+; directory=${DIRNAME}
+size=${FILESIZE}
+overwrite=1
+
+time_based
+runtime=${RUN_TIME}
+numjobs=1
+
+ioengine=libaio
+iodepth=4
+; fails
+
+readwrite=randrw
+rwmixwrite=80
+
+bssplit=4k/78:8k/5:16k/5:128k/12,4k/57:8k/13:16k/6:64k/20:512k/4
+; norandommap
+; verify=crc32c-intel
+verify=crc32
+verify_pattern="ecryptfs"
+verify_backlog=1
+stonewall

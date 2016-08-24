@@ -1,0 +1,20 @@
+NAME='kernel_CryptoAPI'
+PURPOSE='Crypto UAPI Module Loading Test'
+AUTHOR="""
+Brian Norris <briannorris@chromium.org>
+Mathias Krause <minipli@googlemail.com>
+"""
+TIME='SHORT'
+TEST_TYPE='client'
+TEST_CLASS='Kernel'
+TEST_CATEGORY='Security, Functional'
+ATTRIBUTES = "suite:bvt-perbuild, suite:smoke"
+SUITE = "bvt-perbuild, smoke"
+DOC="""
+Test whether crypto user API is loaded, and whether it is patched to prevent
+using it to load arbitrary modules as an unpriveleged user. (It should only
+allow loading of modules with a 'crypto-*' prefix.)
+Part of this test is pulled from:
+https://lkml.org/lkml/2013/3/4/70
+"""
+job.run_test('kernel_CryptoAPI')

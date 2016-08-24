@@ -1,0 +1,22 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+This test is to make sure that udelay() delays at least as long as
+requested (as compared to ktime()).
+"""
+NAME = "kernel_Delay"
+PURPOSE = ""
+CRITERIA = """
+Fails if udelay() returns early.
+"""
+ATTRIBUTES = "suite:kernel_per-build_regression"
+SUITE = "kernel_per-build_regression"
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+
+job.run_test('kernel_Delay')

@@ -1,0 +1,46 @@
+#!/usr/bin/awk -f
+
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This script computes the intervals between the time instants of
+# contiguous SYN_REPORT packets, and count the number of packets
+# with time intervals greater than 1/60 seconds.
+# Note: this script is larged borrowed from adlr@'s timing test in shell.
+
+# Usage: DISPLAY=:0 mtplot tools/awk_process_syn
+#  Note: You need to press 'q' instead of ctrl-c to exit mtplot
+#        in order to print the count of large intervals.
+
+
+BEGIN {
+  previous = 0;
+  count_packets = 0;
+  count_large = 0;
+}
+
+/SYN_REPORT/ {
+  if (previous == 0) {
+    previous = $3;
+  } else {
+    current = $3;
+    interval = current - previous;
+    previous = current;
+    count_packets++;
+    if (interval > 1.0 / 60) {
+      mark = "*****";
+      count_large++;
+    } else {
+      mark = "     ";
+    }
+    template = "  %s interval: %.6f   (%s)\n";
+    printf(template, mark, interval, $0);
+  }
+}
+
+END {
+  msg = "\nthe count of large intervals: %d out of %d packets\n\n"
+  printf(msg, count_large, count_packets);
+}
+

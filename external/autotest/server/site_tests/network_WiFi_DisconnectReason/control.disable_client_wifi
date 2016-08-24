@@ -1,0 +1,30 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'silberst, pstew, quiche'
+NAME = 'network_WiFi_DisconnectReason.disable_client_wifi'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = ('suite:wifi_correctness_cros_core, suite:wifi_matfunc, '
+              'suite:wifi_matfunc_bcm4371')
+SUITE = ('wifi_matfunc, wifi_matfunc_bcm4371, wifi_correctness_cros_core')
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test reads (but does not verify) the reported DiconnectReason property
+reported by supplicant when the client disables WiFi.
+"""
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_DisconnectReason',
+                 host=host,
+                 tag=NAME.split('.')[1],
+                 disconnect_trigger='disable client wifi',
+                 raw_cmdline_args=args,
+                 test='all')
+
+
+parallel_simple(run, machines)

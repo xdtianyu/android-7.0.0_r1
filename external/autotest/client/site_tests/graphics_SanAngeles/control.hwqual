@@ -1,0 +1,26 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'chromeos-gfx'
+NAME = 'graphics_SanAngeles.hwqual'
+PURPOSE = 'Benchmark OpenGL object rendering.'
+CRITERIA = 'This test is a benchmark. It will fail if it fails to complete.'
+ATTRIBUTES = "suite:hwqual"
+SUITE = 'hwqual'
+TIME='MEDIUM'
+TEST_CATEGORY = 'Performance'
+TEST_CLASS = "graphics"
+TEST_TYPE = 'client'
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+This test runs the San Angeles Observation GPU benchmark. This benchmark uses
+a minimal and portable framework to generate a small demo program. It exercises
+basic features of OpenGL like vertex arrays, color arrays, and lighting. It
+also uses objects generated using procedural algorithms.
+"""
+
+job.run_test('graphics_SanAngeles', creds='$backdoor')

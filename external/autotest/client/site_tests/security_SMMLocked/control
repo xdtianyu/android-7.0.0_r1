@@ -1,0 +1,21 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "security_SMMLocked"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Verify SMM is locked"
+CRITERIA = "Fails if SMM is mapped or is not locked"
+TIME = "SHORT"
+ATTRIBUTES = "suite:security"
+SUITE = "security"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+
+DOC = """
+    Checks that the SMM area is correctly restricted by having both
+    the SMRAM area unmapped and the SMM registers locked.
+"""
+
+job.run_test('security_SMMLocked')

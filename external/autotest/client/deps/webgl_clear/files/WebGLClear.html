@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!--
+ * Copyright 2014 The Chromium OS Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+-->
+
+<html>
+    <head>
+    <title>WebGL Clear Test</title>
+    <script type="text/javascript" src="tdl/base.js"></script>
+    <script type="text/javascript">
+        tdl.require('tdl.fps');
+        tdl.require('tdl.webgl');
+
+        window.onload = initialize;
+
+        var g_fpsTimer; // object to measure frames per second
+
+        function initialize() {
+            var then = 0.0;
+            var last = 0.0;
+            var fpsElem = document.getElementById('fps');
+            var canvas = document.getElementById('canvas');
+            var w = 1024;
+            var h = 1024;
+
+            canvas.width = w;
+            canvas.height = h;
+
+            tdl.fps.NUM_FRAMES_TO_AVERAGE = 120;
+            g_fpsTimer = new tdl.fps.FPSTimer();
+
+            gl = tdl.webgl.setupWebGL(canvas, {alpha:false,antialias:false});
+            if (!gl) {
+                return false;
+            }
+
+            gl.clearColor(
+                Math.random(), Math.random(), Math.random(), 1.0);
+            gl.viewport(0, 0, w, h);
+
+            function render() {
+                tdl.webgl.requestAnimationFrame(render, canvas);
+
+                var now = (new Date()).getTime();
+                var elapsedTime = 0.0;
+                if (then != 0.0) {
+                    elapsedTime = now - then;
+                }
+                then = now;
+
+                g_fpsTimer.update(elapsedTime * 0.001);
+                fpsElem.innerHTML = g_fpsTimer.averageFPS;
+
+                // Regulate how often we change the clear color over time. If we
+                // were to change the color every frame then, depending on the
+                // FPS rate, this would potentially happen very very fast and is
+                // really irritating to watch.  I'm not sure how much impact
+                // changing the color really has on performance, if any.
+                // Nonetheless, changing the color periodically gives us a
+                // visual cue that somethings actually happening.
+                if (now - last > 500) {
+                    gl.clearColor(
+                        Math.random(), Math.random(), Math.random(), 1.0);
+                    last = now;
+                }
+
+                // Clear color and depth buffers
+                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            }
+
+            render();
+
+            return true;
+        }
+    </script>
+  </head>
+  <body>
+    <div>fps: <span id="fps"></span></div>
+    <canvas id="canvas" width="1024" height="1024" style="width: 100%; height: 100%;"></canvas>
+  </body>
+</html>

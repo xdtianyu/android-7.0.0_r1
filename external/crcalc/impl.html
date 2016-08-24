@@ -1,0 +1,112 @@
+<HTML>
+<HEAD>
+<TITLE>Constructive Real Calculator and Library Implementation Notes</title>
+</head>
+<BODY BGCOLOR="#FFFFFF">
+<H1>Constructive Real Calculator and Library Implementation Notes</h1>
+</body>
+The calculator is based on the constructive real library consisting
+mainly of <TT>com.sgi.math.CR</tt> and <TT>com.sgi.math.UnaryCRFunction</tt>.
+The former provides basic arithmetic operations on constructive reals.
+The latter provides some basic operations on unary functions over the
+constructive reals.
+<H2>General approach</h2>
+The library was not designed to use the absolute best known algorithms
+and to provide the best possible performance.  To do so would have
+significantly complicated the code, and lengthened start-up times for
+the calculator and similar applications.  Instead the goals were to:
+<OL>
+<LI> Rely on the standard library to the greatest possible extent.
+The implementation relies heavily on <TT>java.math.BigInteger</tt>,
+in spite of the fact that it may not provide asymptotically optimal
+performance for all operations.
+<LI> Use algorithms with asymptotically reasonable performance.
+<LI> Keep the code, and especially the library code, simple.
+This was done both to make it more easily understandable, and to
+keep down class loading time.
+<LI> Avoid heuristics.  The code accepts that there is no practical way
+to avoid diverging computations.  The user interface is designed to
+deal with that.  There is no attempt to try to prove that a computation
+will diverge ahead of time, not even in cases in which such a proof is
+trivial.
+</ol>
+A constructive real number <I>x</i> is represented abstractly as a function
+<I>f<SUB>x</sub></i>, such that  <I>f<SUB>x</sub>(n)</i> produces a scaled
+integer approximation to <I>x</i>, with an error of strictly less than
+2<SUP><I>n</i></sup>.  More precisely:
+<P>
+|<I>f<SUB>x</sub></i>(<I>n</i>) * 2<SUP><I>n</i></sup> - x| < 2<SUP><I>n</i></sup>
+<P>
+Since Java does not support higher order functions, these functions
+are actually represented as objects with an <TT>approximate</tt>
+function.  In order to obtain reasonable performance, each object
+caches the best previous approximation computed so far.
+<P>
+This is very similar to earlier work by Boehm, Lee, Cartwright, Riggle, and
+O'Donnell.
+The implementation borrows many ideas from the
+<A HREF="http://reality.sgi.com/boehm/calc">calculator</a>
+developed earlier by Boehm and Lee.  The major differences are the
+user interface, the portability of the implementation, the emphasis
+on simplicity, and the reliance on a general implementation of inverse
+functions.
+<P>
+Several alternate and functionally equivalent representations of
+constructive real numbers are possible.
+Gosper and Vuillemin proposed representations based on continued
+fractions.
+A representation as functions
+producing variable precision intervals is probably more efficient
+for larger scale computation.
+We chose this representation because it can be implemented compactly
+layered on large integer arithmetic.
+<H2>Transcendental functions</h2>
+The exponential and natural logarithm functions are implemented as Taylor
+series expansions.  There is also a specialized function that computes
+the Taylor series expansion of atan(1/n), where n is a small integer.
+This allows moderately efficient computation of pi using
+<P>
+pi/4 = 4*atan(1/5) - atan(1/239)
+<P>
+All of the remaining trigonometric functions are implemented in terms
+of the cosine function, which again uses a Taylor series expansion.
+<P>
+The inverse trigonometric functions are implemented using a general
+inverse function operation in <TT>UnaryCRFunction</tt>.  This is
+more expensive than a direct implementation, since each time an approximation
+to the result is computed, several evaluations of the underlying
+trigonometric function are needed.  Nonetheless, it appears to be
+surprisingly practical, at least for something as undemanding as a desk
+calculator.
+<H2>Prior work</h2>
+There has been much prior research on the constructive/recursive/computable
+real numbers and constructive analysis.  Relatively little of this
+has been concerned with issues related to practical implementations.
+<P>
+Several implementation efforts examined representations based on
+either infinite, lazily-evaluated decimal expansions (Schwartz),
+or continued fractions (Gosper, Vuillemin).  So far, these appear
+less practical than what is implemented here.
+<P>
+Probably the most practical approach to constructive real arithmetic
+is one based on interval arithmetic.  A variant that is close to,
+but not quite, constructive real arithmetic is described in
+<P>
+Oliver Aberth, <I>Precise Numerical Analysis</i>, Wm. C. Brown Publishers,
+Dubuque, Iowa, 1988.
+<P>
+The issues related to using this in a higher performance implementation
+of constructive real arithmetic are explored in
+<P>
+Lee and Boehm, "Optimizing Programs over the Constructive Reals",
+<I>ACM SIGPLAN 90 Conference on Programming Language Design and
+Implementation, SIGPLAN Notices 25</i>, 6, pp. 102-111.
+<P>
+The particular implementation strategy used n this calculator was previously
+described in
+<P>
+Boehm, Cartwright, Riggle, and O'Donnell, "Exact Real Arithmetic:
+A Case Study in Higher Order Programming", <I>Proceedings of the
+1986 ACM Lisp and Functional Programming Conference</i>, pp. 162-173, 1986.
+</body>
+</html>

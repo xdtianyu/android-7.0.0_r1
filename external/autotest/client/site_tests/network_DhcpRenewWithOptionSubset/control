@@ -1,0 +1,21 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_DhcpRenewWithOptionSubset'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that shill can renew leases through dhcpcd.  In particular,
+  this test replies to a DHCPREQUEST method with a subset of the
+  DHCP parameters it sent in the original DHCPOFFER, and observe
+  whether the client can retain those options itself.
+
+  This test fails if shill fails to renew the lease, or if the
+  parameters in the resulting ifconfig do not retain the values from
+  the DHCPOFFER.
+"""
+
+job.run_test('network_DhcpRenewWithOptionSubset')

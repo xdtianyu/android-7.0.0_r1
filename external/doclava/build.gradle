@@ -1,0 +1,52 @@
+apply plugin: 'java'
+
+import com.android.internal.BuildUtils
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/']
+        }
+        resources {
+            srcDirs = ['res/']
+        }
+    }
+}
+
+// TODO put this function in a plugin
+// TODO remove when prebuilt's case will always properly work with BuildUtils's version.
+String findToolsJar() {
+    new ByteArrayOutputStream().withStream { os ->
+        project.exec {
+            executable "../../build/core/find-jdk-tools-jar.sh"
+
+            standardOutput = os
+        }
+        return os.toString().trim()
+    }
+}
+
+if (project.hasProperty("usePrebuilts") && project.usePrebuilts == "true") {
+    repositories {
+        maven { url '../../prebuilts/tools/common/m2/repository' }
+    }
+
+    // TODO refactor to allow referencing the "gradle way"
+    dependencies {
+        compile files(findToolsJar())
+        compile files('../../prebuilts/misc/common/antlr/antlr-3.4-complete.jar')
+        compile 'com.google.jsilver:jsilver:1.0.0'
+        // TODO add tagsoup to prebuils to fully support building using prebuilts
+        compile project(':tagsoup')
+        // required by jsilver
+        compile 'com.google.guava:guava:15.0'
+        //compile project(path: ':junit', configuration: 'target')
+    }
+} else {
+    dependencies {
+        compile files(BuildUtils.findToolsJar(project))
+        compile project(path: ':antlr', configuration: 'antlrRuntime')
+        compile project(':jsilver')
+        compile project(':tagsoup')
+    }
+}

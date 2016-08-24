@@ -1,0 +1,39 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_LoadTest.fast"
+PURPOSE = "Test health of power load test functionality."
+CRITERIA = "This test is a benchmark."
+TIME = "SHORT"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+ATTRIBUTES = "suite:power_build"
+SUITE = "power_build"
+
+DOC = """
+This test runs a load test consisting of cycling though web pages, playing
+videos, etc. and measures battery power draw. The duration of this test is
+determined by the loop_time * loop_count variables below.
+
+This control file is simply meant to stimulate the various aspects of the test
+to validate mechanics are in good health (login, external website access).
+
+It ignores whether wired access (check_network=False) or AC is
+connected(ac_ok=True).
+
+For reasons above and reduced runtime (3min) it will NOT produce valid power
+consumption results for the 60/20/10/10 load and therefore should NOT be used
+for any battery life estimations.
+"""
+
+# TODO (bleung): Find a way to do automatic Facebook login for test account.
+# TODO (tbroch): Find way to not replicate all these parameters that are common
+# between this control file and the original
+loop_time = 180
+loop_count = 1
+
+job.run_test('power_LoadTest', loop_time=loop_time, loop_count=loop_count,
+             test_low_batt_p=6, check_network=False, ac_ok=True)

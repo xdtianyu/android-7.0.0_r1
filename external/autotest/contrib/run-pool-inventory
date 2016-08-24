@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# We have some very rudimentary command line processing, which we
+# share with run-board-inventory.
+
+SCRIPT_DIR=$(dirname $(readlink -f $0))
+cd $SCRIPT_DIR/..
+. contrib/inventory_options
+
+site_utils/lab_inventory.py $OPTIONS "${BOARD_NOTIFY[@]}" "${POOL_NOTIFY[@]}"

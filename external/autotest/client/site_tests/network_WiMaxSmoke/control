@@ -1,0 +1,32 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "network_WiMaxSmoke"
+ATTRIBUTES = "suite:wimax"
+SUITE = "wimax"
+PURPOSE = "Verify a WiMAX module can connect to a WiMAX network."
+CRITERIA = """
+This test fails if one of the following conditions occurs:
+  1. The WiMAX module fails to find a WiMAX network.
+  2. The WiMAX module fails to connect to the network.
+  3. The WiMAX module fails to fetch data from a URL.
+  4. The WiMAX module fails to disconnect from the network.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "wimax"
+DOC = """
+  Verifies that a WiMAX module can connect to a WiMAX network.
+
+  The test attempts to connect to a WiMAX network. It assumes that a WiMAX
+  module is plugged in to the DUT and a WiMAX network is available. It repeats
+  the connect/disconnect sequence several times. Each time after connecting to
+  the WiMAX network, it fetches some data from a URL to confirm the WiMAX
+  connectivity.
+"""
+
+job.run_test('network_WiMaxSmoke')

@@ -1,0 +1,73 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import logging
+
+from autotest_lib.client.common_lib import error
+from autotest_lib.client.common_lib import utils
+from autotest_lib.client.common_lib.cros import dev_server
+from autotest_lib.server import host_attributes
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_InstallTestImage"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Install"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:push_to_prod"
+SUITE = "push_to_prod"
+
+DOC = """
+This test installs a specified test image onto a servo-connected DUT.
+The principle purpose is to allow installing a known-good image onto
+a wedged unit that would otherwise have to be re-imaged manually.
+
+Here is the command to install a recovery image with a locally attached
+servo:
+    test_that -b ${BOARD} ${IP_ADDRESS} \
+        --args="image=$IMAGE_PATH" platform_InstallTestImage
+
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    # Setup the client machine.
+    host = hosts.create_host(machine, servo_args=servo_args)
+    # If we're invoked from test_that, the user can pass an
+    # optional "image" argument.  If it's omitted, we want to pass
+    # `None` to the test.  That will cause the test to assume
+    # there's an image pre-installed on USB.  This is convenient,
+    # because it can save the time of a long download.
+    #
+    # If we're called from the AFE, there won't be an "image"
+    # argument, and we want to ask the dev server to stage a test
+    # image.
+    #
+    # To distinguish the two cases above, we ask the host for
+    # the name of the default image we should stage.  When we're
+    # called from test_that, this call should fail when we
+    # try to look the host up in the AFE database.  Otherwise, if we
+    # get a valid image name, we use it to stage a build.
+    image_url = args_dict.get("image")
+    if image_url is None:
+        try:
+            # This fails if the board type can't be determined.
+            image_name = host.get_repair_image_name()
+        except error.AutoservError as e:
+            # Failed, so assume this is test_that.
+            logging.info("Can't find build to stage: %s.", e)
+            logging.info("Assuming this is an invocation from test_that "
+                         "with a pre-installed USB image")
+        else:
+            # Succeeded, so stage the build and get its URL.
+            # N.B. Failures from staging the build at this point
+            # are fatal by design.
+            image_url = host.stage_image_for_servo(image_name)
+            logging.info("Using staged image:  %s", image_url)
+    job.run_test("platform_InstallTestImage", host=host,
+                 disable_sysinfo=True, image_url=image_url)
+
+parallel_simple(run, machines)

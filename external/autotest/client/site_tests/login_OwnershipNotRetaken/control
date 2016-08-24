@@ -1,0 +1,20 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "cmasone, mnissler"
+NAME = "login_OwnershipNotRetaken"
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "login"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test checks that, after taking ownership successfully, subsequent logins
+do not clobber the owner's registered public key.
+"""
+
+job.run_test('login_OwnershipNotRetaken')

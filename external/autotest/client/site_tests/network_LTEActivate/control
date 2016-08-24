@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_LTEActivate"
+PURPOSE = """
+Test various scenarios that may arise during the post-payment LTE
+activation process.
+"""
+CRITERIA = """
+Test will fail if the cellular service is found to be in an
+unexpected state.
+"""
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DOC = """
+  After an online payment to activate a network, shill keeps track of service
+  activation by monitoring changes to network registration and MDN updates
+  combined with a modem reset. The test checks that the Cellular.ActivationState
+  property of the service has the correct value associated with it by simulating
+  possible scenarios using the pseudo modem manager.
+"""
+
+job.run_test('network_LTEActivate')

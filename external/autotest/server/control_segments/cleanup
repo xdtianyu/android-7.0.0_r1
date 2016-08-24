@@ -1,0 +1,58 @@
+import logging
+import os
+
+from autotest_lib.client.common_lib import error
+from autotest_lib.client.common_lib.cros.graphite import autotest_stats
+from autotest_lib.server import utils
+from autotest_lib.server.cros import provision
+
+
+# A string of the form 'label1,label2:value,label3'.
+job_labels = locals().get('job_labels') or ','.join(args)
+labels_list = [l.strip() for l in job_labels.split(',') if l]
+
+
+def cleanup(machine):
+    timer = None
+    try:
+        hostname = utils.get_hostname_from_machine(machine)
+        job.record('START', None, 'cleanup')
+        host = hosts.create_host(machine, initialize=False, auto_monitor=False,
+                                 try_lab_servo=True)
+        timer = autotest_stats.Timer('cleanup_time')
+        timer.start()
+
+        # Try to save /var/log files. If the dut is not sshable, try to restart
+        # with servo. This is a temp fix to collect log for test failed with dut
+        # not returning from reboot.
+        # TODO(dshi): This temp fix should be removed after crash collect work
+        # is completed, crbug.com/336985
+        try:
+            host.ssh_ping()
+        except error.AutoservSshPingHostError:
+            # Try to restart dut with servo.
+            host._servo_repair_power()
+        local_log_dir = os.path.join(job.resultdir, hostname)
+        host.collect_logs('/var/log', local_log_dir, ignore_errors=True)
+
+        host.cleanup()
+        provision.run_special_task_actions(job, host, labels_list,
+                                           provision.Cleanup)
+    except Exception as e:
+        logging.exception(e)
+        job.record('END FAIL', None, 'cleanup')
+        # See the provision control segment for the explanation of why we're
+        # doing this.
+        raise Exception('')
+    else:
+        job.record('END GOOD', None, 'cleanup',
+                   '%s cleaned successfully' % machine)
+    finally:
+        if timer:
+            timer.stop()
+
+
+
+job.parallel_simple(cleanup, machines, log=False)
+
+# vim: set syntax=python :

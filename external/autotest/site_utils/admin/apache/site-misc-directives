@@ -1,0 +1,9 @@
+Alias /kernels "/usr/local/autotest/kernels/"
+Alias /packages "/usr/local/autotest/packages/"
+
+# If the results directory doesn't exist locally, toss it to Google Storage.
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/results/([0-9].*)$
+RewriteCond /usr/local/autotest/%{REQUEST_URI} !-f
+RewriteCond /usr/local/autotest/%{REQUEST_URI} !-d
+RewriteRule /results/([0-9].*) https://sandbox.google.com/storage/chromeos-autotest-results/$1 [R=301,L]

@@ -1,0 +1,70 @@
+# Modem regular expressions (left) and replies (rest of line after
+# whitespace)
+
+# Generic GSM stuff
+
+# sets CONNECT response
+X4
+
+# sets DCD mode
+&C1
+# Product ID
+I[01]?   Fake modem software implementation.
+# Capabilities
+\+GCAP   +CGSM,+FCLASS,+DS
+# Serial number
+\+C?GSN  123456789
+# Manufacturer
+\+C?GMI  Fake Modem Software, Inc.
+# Module ID
+\+C?GMM  Fake Modem
+# Module revision
+\+C?GMR  v0.1
+# Read PIN state
+\+CPIN\? +CPIN: READY
+# Set/get flow control mode
+\+IFC=2,2
+\+IFC\?  2,2
+# Set new SMS message indication
+\+CNMI=[0123]
+# Set preferred SMS message storage
+\+CPMS=.*
+# Get supported indicators
+\+CIND?  +CIND: ("service",(0-1)),("call",(0-1)),("callsetup",(0-3))
+# Get supported character sets
+\+CSCS=\? +CSCS: ("GSM","HEX","IRA","PCCP","PCDN","UCS2","8859-1")
+# Set/get character set
+\+CSCS="UCS2"
+\+CSCS\?   +CSCS: "UCS2"
+# Enable/disable "+CME ERROR" errors
+\+CMEE=[012]
+# Enable/disable event reporting via unsolicited result codes
+\+CMER=[0-9,]*
+# Enable/disable network registration unsolicited result codes
+\+CREG=[012]
+\+CGREG=[012]
+# Check network registration
+# (2,2) is "not registered, searching"
+# (2,1) is "registered, home network"
+\+CREG\?  +CREG: 2,1
+\+CGREG\? +CGREG: 2,1
+# Register on GSM network
+\+COPS=.*
+# Query currently registered network
+\+COPS\?   +COPS: 0,0,"",0
+# Signal quality and error rate
+\+CSQ     +CSQ: 27,0
+
+
+# SIM card queries
+# ICCID
+\+CRSM=176,12258,0,0,10 21436587092143658709
+# SPN
+\+CRSM=176,28486,0,0,17 +CRSM: 144,0,"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+# Subscriber number
+\+CNUM    +CNUM: "004D0073006900730064006E0031","18572842562",129,116,4
+# IMSI
+\+CIMI    310260436187036
+
+# Eat up whitespace
+\s+

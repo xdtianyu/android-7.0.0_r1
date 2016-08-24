@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, quiche, wiley'
+NAME = 'network_DhcpStaticIP'
+ATTRIBUTES = "suite:network_nightly"
+SUITE = 'network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that we can negotiate a lease on an IPv4 address via DHCP,
+  but apply Static IP parameters instead.
+
+  This test succceeds if dhcpcd is able to negotiate and DHCP lease, but then
+  apply static IP parameters and release the lease after acquiring DNS and
+  other parameters.  This test further ensures that during static IP
+  negotiation although a lease is negotiated, it is released back to the DHCP
+  server.  When static IP configuration is removed another negotiation should
+  go back to using the server-provided IP address.
+
+"""
+
+job.run_test('network_DhcpStaticIP',
+             static_param_list=[
+                      ['ip-address'],
+                      ['dns-servers'],
+                      ['dns-servers', 'ip-address' ]])

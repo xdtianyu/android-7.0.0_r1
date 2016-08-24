@@ -1,0 +1,30 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_SuspendTwice'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+# TODO(wiley) When we have servos on our test machines, put this in
+# wifi_matfunc, wifi_matfunc_bcm4371
+# Currently, it kills to many device on broken suspends.
+DEPENDENCIES = 'wificell'
+
+DOC = """
+The ath9k driver had a bug where the the WiFi hardware would hang
+if we suspended and resumed twice while WiFi was disabled.  Run
+this test to make sure we never regress.  Try to run this late
+in the cycle so if this test fails, we don't take other tests with
+us.
+
+"""
+
+
+def run(machine):
+    job.run_test('network_WiFi_SuspendTwice',
+                 host=hosts.create_host(machine),
+                 raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

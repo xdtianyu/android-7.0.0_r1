@@ -1,0 +1,15 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, avakulenko'
+NAME = 'webservd_BasicDBusAPI'
+TIME = 'FAST'
+TEST_TYPE = 'client'
+
+DOC = """
+Check that basic DBus API calls to the webservd return expected responses.
+
+"""
+
+job.run_test('webservd_BasicDBusAPI')

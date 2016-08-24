@@ -1,0 +1,33 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GModemControl.wooly"
+PURPOSE = "Verify commands sent to a modem manager are reflected in flimflam."
+CRITERIA = """
+This test will fail if modem manager state differs from flimflam state.
+"""
+ATTRIBUTES = "suite:network3g_att, suite:network3g_tmobile"
+SUITE = "network3g_att, network3g_tmobile"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "modem:wooly"
+
+DOC = """
+  Tests that commands sent to ModemManager or cromo are reflected in flimflam.
+
+  Issues many connect, disconnect, enable, and disable commands to ensure
+  that the modem state is always properly reflected in flimflam -- even
+  if the commands are sent to the modem manager instead of flimflam.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+test_env = test_environment.CellularOTATestEnvironment()
+job.run_test('network_3GModemControl', test_env=test_env, autoconnect=False,
+             tag='no-autoconnect-wooly')
+job.run_test('network_3GModemControl', test_env=test_env, autoconnect=True,
+             tag='autoconnect-wooly')

@@ -1,0 +1,38 @@
+# Copyright (c) 2009 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.bin.site_sysinfo import purgeable_logdir
+
+AUTHOR = "Chrome OS Team"
+NAME = "KernelCrashServer"
+TIME = "SHORT"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test crashes the client and verifies the kernel crash was collected.
+
+Fails if any of the following conditions occur:
+  - kernel does not support crash dumping
+  - kernel crash dump doesn't appear after crash
+  - crash dump does not appear to be correct
+  - crash report is not sent properly
+"""
+
+def run_it(machine):
+    # We have set up our autotest to copy off the crashes in /var/spool/crash
+    # and purge its content after each test pass.  This test executes several
+    # client-side tests and require that the content of /var/spool/crash be
+    # preserved between each client-side tests.  So we'll need to remove the
+    # /var/spool/crash entry from the test_loggables so that autotest doesn't
+    # purge the content.
+    for log in job.sysinfo.test_loggables:
+      if type(log) is purgeable_logdir and log.dir == '/var/spool/crash':
+        job.sysinfo.test_loggables.remove(log)
+        break
+    host = hosts.create_host(machine)
+    job.run_test("logging_KernelCrashServer", host=host)
+
+parallel_simple(run_it, machines)

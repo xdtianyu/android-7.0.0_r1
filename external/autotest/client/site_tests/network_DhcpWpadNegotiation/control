@@ -1,0 +1,20 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, quiche, wiley'
+NAME = 'network_DhcpWpadNegotiation'
+ATTRIBUTES = "suite:network_nightly"
+SUITE = 'network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that we can negotiate a lease on an IPv4 address via DHCP from a server
+  that provides the Web Proxy Auto Discovery option.  This test fails if dhcpcd
+  is unable to negotiate a DHCP lease, or if shill fails to report the WPAD
+  parameter sent by the server.
+
+"""
+
+job.run_test('network_DhcpWpadNegotiation')

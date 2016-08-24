@@ -1,0 +1,21 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'The Chromium OS Authors'
+NAME = 'audio_PlaybackRecordSemiAuto'
+PURPOSE = 'Tests playback, recording, and mixing of audio devices.'
+CRITERIA = """
+Every expected hardware device must be listed in device list. Additionally, the user can fail the test if they don't hear or see the expected result.
+"""
+TIME='MEDIUM'
+TEST_CATEGORY = 'PLAYBACKCAPTURE'
+TEST_CLASS = "audio"
+TEST_TYPE = 'client'
+
+DOC = """
+This is a semi-automated test that exercises the audio devices on the system.
+Playback, recording, and mixers are tested.
+"""
+
+job.run_test('audio_PlaybackRecordSemiAuto')

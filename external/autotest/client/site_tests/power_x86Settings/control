@@ -1,0 +1,26 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_x86Settings"
+ATTRIBUTES = "suite:power_build"
+ATTRIBUTES = "suite:power_build"
+SUITE = "power_build"
+PURPOSE = "Verify that power realted settings are set correctly."
+CRITERIA = """
+This test will fail if any of the power related settings aren't set to
+expected values.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+This test reads various power related settings such as CPU MSRs, PCIe BARs,
+MCH BARs etc. to determine whether they have been set to the expected values
+from power standpoint.
+"""
+
+job.run_test('power_x86Settings')

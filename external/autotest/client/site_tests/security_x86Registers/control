@@ -1,0 +1,25 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "security_x86Registers"
+PURPOSE = "Verify that CPU registers on x86 are set correctly."
+CRITERIA = """
+This test will fail if any of the security-related CPU registers aren't set
+to expected values.
+"""
+TIME = "SHORT"
+ATTRIBUTES = "suite:security"
+SUITE = "security"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+
+DOC = """
+This test reads CPU MSRs to determine whether they have been set to the
+expected values from a security standpoint. It also goes through a
+suspend/resume cycle to re-verify the values once resumed.
+"""
+
+job.run_test('security_x86Registers')

@@ -1,0 +1,23 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, avakulenko, keybuk'
+NAME = 'peerd_HandlesNameConflicts'
+TIME = 'FAST'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:tendo_experimental"
+SUITE = 'tendo_experimental'
+
+DOC = """
+This test:
+
+1) Starts up Avahi inside a network chroot
+2) Advertises a service via peerd
+3) Waits for that service to show up over mDNS
+4) Advertises records with the same unique name over mDNS
+5) Waits for peerd to rename its records.
+
+"""
+
+job.run_test('peerd_HandlesNameConflicts')

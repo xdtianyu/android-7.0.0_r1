@@ -1,0 +1,22 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "achuith, zelidrag"
+NAME = "enterprise_RemoraRequisition"
+TIME = "SHORT"
+TEST_CATEGORY = "Enterprise"
+TEST_CLASS = "enterprise"
+TEST_TYPE = "client"
+# Reboot after test ends.
+DEPENDENCIES='cleanup-reboot'
+
+DOC = """
+This test enrolls a Chrome device as a Remora device.
+
+You need a credentials.txt file with user_id:password in this directory for
+this test to succeed. The credentials are used to enroll the device as a Remora
+device.
+"""
+
+job.run_test('enterprise_RemoraRequisition')

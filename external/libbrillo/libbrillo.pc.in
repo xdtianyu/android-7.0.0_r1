@@ -1,0 +1,8 @@
+bslot=@BSLOT@
+
+Name: libbrillo
+Description: brillo base library
+Version: ${bslot}
+Requires.private: @PRIVATE_PC@
+Cflags: -DUSE_RTTI_FOR_TYPE_TAGS
+Libs: -lbrillo-${bslot}

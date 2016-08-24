@@ -1,0 +1,27 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'keybuk@chromium.org'
+NAME = 'bluetooth_Sanity_AdapterPresent'
+ATTRIBUTES = "suite:bluetooth, suite:bluetooth_sanity"
+SUITE = 'bluetooth,bluetooth_sanity'
+TIME = 'SHORT'
+TEST_CLASS = 'bluetooth'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'bluetooth,wificell'
+
+DOC = """
+Verify that the device has a Bluetooth adapter and that it's visible to both
+the Kernel and the Bluetooth daemon.
+"""
+
+def run(machine):
+    device_host = hosts.create_host(machine)
+    job.run_test('bluetooth_Sanity_AdapterPresent',
+                 device_host=device_host,
+                 tester_host=None,
+                 interactive=False)
+
+
+parallel_simple(run, machines)

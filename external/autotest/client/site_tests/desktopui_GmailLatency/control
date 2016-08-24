@@ -1,0 +1,30 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Project"
+NAME = "desktopui_GmailLatency"
+PURPOSE = "Basic test of performance and latency of Gmail on Chrome OS."
+CRITERIA = """
+This test will fail if the URL fails to load or the test does not complete
+within the allotted time.
+"""
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+
+DOC = """
+This test opens a new browser to the internal Gmail latency test URL and
+waits for the test to complete.
+TODO(sosa@chromium.org) - Must find way to bring over tests from image (add
+to chromium buildbot, etc).  url_fetch_test is from ~chromium/src/chrome/test
+TODO(sjg@chromium.org) - Create an externally-accessible URL for use by this
+test. At present the test can only be run by one dev, and is intended for use
+by the Gmail team.
+TODO(sjg@chromium.org) - Move this to use PyAuto or some other mechanism
+which uses the running Chrome and doesn't involve us including a binary with
+this test
+"""
+
+job.run_test('desktopui_GmailLatency')

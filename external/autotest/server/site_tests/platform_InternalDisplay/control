@@ -1,0 +1,31 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved 2014.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_InternalDisplay"
+PURPOSE = "Check if chromebook is initialized with internal dispalyt"
+CRITERIA = "This test will fail if internal display is not set"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+SUITE = "bvt-perbuild"
+REQUIRE_SSP = False
+
+
+DOC = """
+This test catches internal display not initialized for devices with internal display - crbug/508569.
+It's checked after 1) reboot and 2) suspend/resume.
+"""
+
+args_dict = utils.args_to_dict(args)
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test("platform_InternalDisplay", host=host,
+                 disable_sysinfo=True)
+
+parallel_simple(run, machines)

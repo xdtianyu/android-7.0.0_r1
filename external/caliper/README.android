@@ -1,0 +1,15 @@
+URL: https://github.com/google/caliper.git
+License: Apache 2
+Description: "Google's Caliper Benchmarking And Measuring Tool"
+
+Version: 73efbe138dafba57d6a890257961ba83f41b89f2
+
+This uses the Dagger2 dependency injection framework which runs as an annotation
+processor and generates the dependency injecting code. At the moment the
+generated code for the caliper-host target can be found at:
+  out/host/common/gen/JAVA_LIBRARIES/caliper-host_intermediates/annotation_processor_output/
+For the caliper-tests target it can be found at:
+  out/host/common/gen/JAVA_LIBRARIES/caliper-tests_intermediates/annotation_processor_output/
+
+Local Patches:
+    None

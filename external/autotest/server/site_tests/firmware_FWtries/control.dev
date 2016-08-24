@@ -1,0 +1,33 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_FWtries.dev"
+ATTRIBUTES = "suite:faft, suite:faft_bios, suite:faft_dev, suite:faft_lv1, suite:faft_dev_ryu, suite:faft_bios_ec3po"
+SUITE = "faft,faft_bios,faft_dev,faft_lv1,faft_dev_ryu,faft_bios_ec3po"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+JOB_RETRIES = 4
+
+DOC = """
+Boot with firmware B until fwb_tries count down to 0
+
+After each reboot check the value of mainfw_act, mainfw_type, fwb_tries,
+tried_fwb
+"""
+
+from autotest_lib.client.common_lib import utils
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_fwtries(machine):
+    # Setup the client machine.
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test('firmware_FWtries', host=host, cmdline_args=args,
+                 dev_mode=True, tag="dev")
+
+parallel_simple(run_fwtries, machines)

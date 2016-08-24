@@ -1,0 +1,27 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'The Chromium OS Audiovideo Team, chromeos-audio@google.com'
+NAME = 'audio_AlsaLoopback'
+PURPOSE = 'Test that audio played to line out can be heard at mic in.'
+CRITERIA = """
+Check if the audio played to line out is heard by arecord at mic in.
+"""
+ATTRIBUTES = "suite:audio"
+SUITE = 'audio'
+TIME = 'SHORT'
+TEST_CATEGORY = 'PLAYBACKCAPTURE'
+TEST_CLASS = "audio"
+TEST_TYPE = 'client'
+DEPENDENCIES = 'audio_loopback_dongle'
+
+DOC = """
+Test that audio playback and capture are working.
+
+NOTE: For this test to pass you need to have the line out looped back to mic-in.
+This can be through a 3.5mm male-to-male cable or a loopback dongle depending on
+your device.
+"""
+
+job.run_test('audio_AlsaLoopback', constraints=['rms_value > 0.05'])

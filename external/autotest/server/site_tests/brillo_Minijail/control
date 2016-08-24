@@ -1,0 +1,25 @@
+# Copyright 2016 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+import logging
+
+from autotest_lib.client.common_lib import utils
+
+
+AUTHOR = 'jorgelo'
+NAME = 'brillo_Minijail'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:brillo-bvt,suite:brillo-smoke'
+SUITE = 'brillo-bvt'
+
+DOC = """
+Tests basic Minijail sandboxing functionality.
+"""
+
+def run(machine):
+    job.run_test('brillo_Minijail', host=hosts.create_host(machine))
+
+
+parallel_simple(run, machines)

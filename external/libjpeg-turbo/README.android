@@ -1,0 +1,34 @@
+Any Android specific modifications to upstream libjpeg-turbo (1.4.2) should
+be listed here:
+
+(1) jconfig.h and jconfigint.h
+
+These are included upstream as jconfig.h.in and jconfigint.h.in.
+We have the option autogenerate these platform/version specific files (using
+the libjpeg-turbo build system) or to manually create them.
+
+Autogenerating these files on linux gets us most of the way, but we've needed
+to add some multi-platform flexibility to the INLINE and SIZEOF_SIZE_T macros.
+
+(2) Partial decoding optimizations
+
+These have been cherry picked from upstream and will be included in the 1.5
+release.
+
+(3) Security fix
+
+Cherry picked from upstream to address b/27494207.
+
+(4) simd/jsimdext.inc
+
+The modification enables us to compile x86 SIMD.
+
+The original code was:
+%define EXTN(name)   _ %+ name
+The new code is:
+%define EXTN(name)   name
+
+It is unclear why the unmodified code from upstream appends an underscore
+to name.  Before removing the underscore, the code failed to link because
+the function names in the SIMD code did not match the callers (because of
+the extra underscore).

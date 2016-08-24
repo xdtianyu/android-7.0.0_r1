@@ -1,0 +1,48 @@
+# Copyright 2016 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.common_lib import utils
+from autotest_lib.server.brillo.feedback import client_factory
+
+
+AUTHOR = 'garnold, ralphnathan'
+NAME = 'brillo_MonoLibmediaRecordingAudioTest'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:brillo-audio'
+SUITE = 'brillo-audio'
+
+DOC = """
+Tests audio recording using libmedia on a Brillo device.
+
+Test arguments:
+
+    feedback=NAME  Name of the feedback client implementation to use. See
+                   server.brillo.feedback.client_factory for supported values.
+                   Default: 'loop'.
+
+    feedback_args  Comma-separated list of initialization arguments for the
+                   feedback client. Default: no additional arguments.
+"""
+
+TEST_ARG_NAMES = ()
+args_dict = utils.args_to_dict(args)
+
+
+def run(machine):
+    test_args = {name: args_dict[name] for name in TEST_ARG_NAMES
+                 if name in args_dict}
+    fb_client_name = args_dict.get('feedback', 'loop')
+    fb_client = client_factory.get_audio_client(fb_client_name, NAME, machine,
+                                                args_dict.get('feedback_args'))
+    job.run_test('brillo_RecordingAudioTest',
+                 host=hosts.create_host(machine),
+                 fb_client=fb_client,
+                 recording_method='libmedia',
+                 num_channels=1,
+                 **test_args)
+
+
+parallel_simple(run, machines)

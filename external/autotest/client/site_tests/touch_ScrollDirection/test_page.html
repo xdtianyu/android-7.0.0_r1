@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Long Page</title>
+<script type="text/javascript">
+var startX;
+var startY;
+var cursorOnPage = false;
+var pageReady = false;
+var userWidth = screen.width;
+var userHeight = screen.height;
+
+function onLoad() {
+    document.addEventListener('mousedown', mouseDown);
+    document.addEventListener('mouseup', mouseUp);
+    var mainDiv = document.getElementById("longPage")
+    mainDiv.style.width = parseInt(userWidth * 15) + "px";
+    mainDiv.style.height = parseInt(userHeight * 15) + "px";
+    pageReady = true;
+}
+
+function mouseUp(e) {
+    cursorOnPage = ((e.pageX !=0) || (e.pageY !=0))
+    clickCount = clickCount + 1;
+    console.log(clickCount, cursorOnPage)
+}
+
+function mouseDown(e) {
+    startX = e.pageX;
+    startY = e.pageY;
+}
+
+</script>
+</head>
+<body onload="onLoad()">
+<div id="longPage"></div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+import sys
+
+from autotest_lib.client.common_lib.cros.graphite import autotest_stats
+from autotest_lib.server.cros import provision
+
+
+# A string of the form 'label1,label2:value,label3'.
+job_labels = locals().get('job_labels') or ','.join(args)
+labels_list = [l.strip() for l in job_labels.split(',') if l]
+
+
+def reset(machine):
+    print 'Starting to reset host %s' % machine
+    timer = None
+    try:
+        job.record('START', None, 'reset')
+        target = hosts.create_target_machine(machine, initialize=False,
+                                             auto_monitor=False)
+        timer = autotest_stats.Timer('reset_time')
+        timer.start()
+
+        # Assume cleanup always runs first.
+        target.cleanup()
+        provision.run_special_task_actions(job, target, labels_list,
+                                           provision.Cleanup)
+
+        target.verify()
+        provision.run_special_task_actions(job, target, labels_list,
+                                           provision.Verify)
+    except Exception as e:
+        logging.exception(e)
+        job.record('END FAIL', None, 'reset')
+        # See the provision control segment for the explanation of why we're
+        # doing this.
+        raise Exception('')
+    else:
+        job.record('END GOOD', None, 'reset',
+                   '%s reset successfully' % machine)
+    finally:
+        if timer:
+            timer.stop()
+
+
+job.parallel_simple(reset, machines)
+
+# vim: set syntax=python :

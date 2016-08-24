@@ -1,0 +1,21 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dkrahn, dpursell"
+NAME = "login_CryptohomeOwnerQuery"
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "login"
+TEST_TYPE = "client"
+
+DOC = """
+This test verifies that the owner user query in cryptohome reports the proper
+status. The test will wipe credentials from the device and verify that the
+query shows no owner, then give the device an owner and verify the query
+result changes.
+"""
+
+job.run_test('login_CryptohomeOwnerQuery')

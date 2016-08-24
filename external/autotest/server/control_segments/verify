@@ -1,0 +1,42 @@
+from autotest_lib.client.common_lib.cros.graphite import autotest_stats
+from autotest_lib.server import utils
+from autotest_lib.server.cros import provision
+
+
+# A string of the form 'label1,label2:value,label3'.
+job_labels = locals().get('job_labels') or ','.join(args)
+labels_list = [l.strip() for l in job_labels.split(',') if l]
+
+
+def verify(machine):
+    print 'Initializing host %s' % machine
+    timer = None
+    # We set try_lab_servo to True to trigger servo verify and
+    # servo update if needed.
+    target = hosts.create_target_machine(machine, initialize=False,
+                                         auto_monitor=False, try_lab_servo=True)
+    try:
+        job.record('START', None, 'verify')
+        timer = autotest_stats.Timer('verify_time')
+        timer.start()
+
+        target.verify()
+        provision.run_special_task_actions(job, target, labels_list,
+                                           provision.Verify)
+    except Exception as e:
+        logging.exception(e)
+        job.record('END FAIL', None, 'verify')
+        # See the provision control segment for the explanation of why we're
+        # doing this.
+        raise Exception('')
+    else:
+        job.record('END GOOD', None, 'verify',
+                   '%s verified successfully' % machine)
+    finally:
+        if timer:
+            timer.stop()
+
+
+job.parallel_simple(verify, machines)
+
+# vim: set syntax=python :

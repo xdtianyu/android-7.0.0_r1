@@ -1,0 +1,19 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "jorgelo, kees"
+DOC = """
+Integration test for the firewall service.
+Tests whether firewall rules can be added using D-Bus.
+Fails if rules are not added after the D-Bus call, or if rules are not removed
+when the lifeline file descriptors are closed.
+"""
+NAME = "platform_Firewall"
+TIME="SHORT"
+TEST_TYPE = "client"
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+JOB_RETRIES = 2
+
+job.run_test("platform_Firewall")

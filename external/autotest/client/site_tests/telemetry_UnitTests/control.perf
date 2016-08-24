@@ -1,0 +1,20 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "achuith@chromium.org"
+NAME = "telemetry_UnitTests_perf"
+PURPOSE = "Run the Telemetry perf unit tests as a logged-in user."
+ATTRIBUTES = "suite:telemetry_unit"
+SUITE = "telemetry_unit"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+
+DOC = """
+Verifies that all Telemetry perf unit tests pass when run as a logged-in user.
+"""
+
+job.run_test('telemetry_UnitTests', browser_type='system', tag='perf',
+             unit_tests=[], perf_tests=[''])

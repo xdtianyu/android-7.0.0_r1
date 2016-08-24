@@ -1,0 +1,27 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_WebRtcCamera"
+PURPOSE = "Check that a series of gUM calls at different resolutions"
+CRITERIA = "This test will fail if WebRTC gUM fails mandatory resolutions"
+ATTRIBUTES = "suite:camera_perbuild"
+SUITE = "camera_perbuild"
+TIME = "MEDIUM"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES = "webcam"
+BUG_TEMPLATE = {
+    "labels": ["OS-Chrome", "Cr-OS-Kernel-Video"],
+}
+
+DOC = """
+This test starts a  WebRTC GetUserMedia call with one video tag.
+This test will iterate through a set of resolutions and check if the gUM call
+could set the requested resolutions. This also checks that we don't have black
+frames, frozen frames or no frames at all.
+"""
+
+job.run_test("video_WebRtcCamera")

@@ -1,0 +1,22 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "security_HardlinkRestrictions"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Verify hardlink restrictions introduced by the Yama LSM"
+CRITERIA = "Fails if kernel lacks hardlink restrictions"
+TIME = "SHORT"
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+    Checks that the kernel correctly restrictions the creation of dangerous
+    hardlinks.
+"""
+
+job.run_test('security_HardlinkRestrictions')

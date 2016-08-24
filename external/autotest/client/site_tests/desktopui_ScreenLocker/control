@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "desktopui_ScreenLocker"
+PURPOSE = "Verify screen locker is functional."
+CRITERIA = """
+This test will fail if the screen cannot be locked with
+autotestPrivate.lockScreen, or cannot be unlocked with the correct password,
+or if the screen is unlocked with an incorrect password.
+"""
+# TODO(jdufault): Stop running this in the bvt suite once crbug.com/452599 is
+# resolved.
+ATTRIBUTES = "suite:smoke, suite:bvt-perbuild"
+SUITE = "smoke, bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test checks if the screen locker can lock and unlock the screen.
+"""
+
+job.run_test('desktopui_ScreenLocker')
+
+

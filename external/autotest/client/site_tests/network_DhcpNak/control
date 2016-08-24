@@ -1,0 +1,23 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_DhcpNak'
+ATTRIBUTES = "suite:network_nightly"
+SUITE = 'network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests handling of DHCP NAK messages. In particular, tests that
+  we accept DHCP NAK messages without a server-id. This is necessary
+  because some DHCP servers do not include a server-id in their
+  NAKs.
+
+  The test will fail if dhcpcd does not restart the DHCP process
+  when it receives a NAK without a server-id.
+
+"""
+
+job.run_test('network_DhcpNak')

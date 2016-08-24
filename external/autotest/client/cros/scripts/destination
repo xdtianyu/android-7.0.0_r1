@@ -1,0 +1,56 @@
+#!/usr/bin/python
+
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import sys
+
+import common
+from autotest_lib.client.cros.networking import shill_proxy
+
+def usage():
+    """ Print a usage message for this script. """
+    cmd = sys.argv[0]
+    common_args = ['<certificate>', '<public_key>', '<nonce>',
+                   '<signed_data>', '<destination_udn>',
+                   '<hotspot_ssid>', '<hotspot_bssid>']
+    print cmd, 'encrypt', ' '.join(common_args)
+    print cmd, 'verify', ' '.join(common_args), '<data to encrypt>'
+    return False
+
+
+def main(args):
+    """ Call methods related to destinations.
+
+    @param args arguments to the script, not including the script name.
+
+    """
+    NUM_VERIFY_ARGS = 7
+    NUM_ENCRYPT_ARGS = NUM_VERIFY_ARGS + 1
+    if len(args) < 1:
+        return usage()
+    command = args[0]
+    args = args[1:]
+    shill = shill_proxy.ShillProxy()
+    if command == 'verify':
+        if len(args) < NUM_VERIFY_ARGS:
+            return usage()
+
+        if shill.manager.VerifyDestination(*args[0:NUM_VERIFY_ARGS]):
+            print 'Valid destination'
+            return True
+
+    if command == 'encrypt':
+        if len(args) < NUM_ENCRYPT_ARGS:
+            return usage()
+
+        print shill.manager.VerifyAndEncryptData(*args[0:NUM_ENCRYPT_ARGS])
+        return True
+
+    return usage()
+
+
+if __name__ == '__main__':
+    if not main(sys.argv[1:]):
+        sys.exit(1)

@@ -1,0 +1,33 @@
+; Copyright (c) 2014 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; Extremely quick test for bvt suite
+;
+
+[global]
+filename=${FILENAME}
+size=${FILESIZE}
+ioengine=libaio
+direct=1
+norandommap
+
+[64k_write]
+bs=64k
+iodepth=4
+readwrite=randwrite
+
+[64k_read]
+bs=64k
+iodepth=4
+readwrite=randread
+
+[seq_write]
+bs=512k
+iodepth=1
+readwrite=write
+
+[seq_read]
+bs=512k
+iodepth=1
+readwrite=read

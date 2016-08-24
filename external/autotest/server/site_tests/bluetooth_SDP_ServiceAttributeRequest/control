@@ -1,0 +1,68 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'arakhov@chromium.org'
+NAME = 'bluetooth_SDP_ServiceAttributeRequest'
+ATTRIBUTES = "suite:bluetooth, suite:bluetooth_qualification"
+SUITE = 'bluetooth,bluetooth_qualification'
+TIME = 'SHORT'
+TEST_CLASS = 'bluetooth'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'bluetooth,wificell'
+
+DOC = """
+Verify the correct behaviour of the device when searching for attributes of
+services.
+
+The tester sends Service Search Request and Service Attribute Request to the DUT
+to ensure that it is able to response with different attributes:
+ServiceRecordHandle, BrowseGroupList, DocumentationURL, ClientExecutableURL,
+IconURL, ProtocolDescriptorList, VersionNumberList, ServiceDatabaseState,
+BluetoothProfileDescriptorList, AdditionalProtocolDescriptorLists, ServiceID,
+ServiceRecordState, ServiceInfoTime, LanguageBaseAttributeIdList,
+ServiceAvailability, ServiceName, ServiceDescription, ProviderName.
+It also checks that responses with continuation state work properly,
+as well as requests with non-existing attributes and various invalid requests.
+
+This test covers the Bluetooth SIG test cases:
+TP/SERVER/SA/BV-01-C
+TP/SERVER/SA/BV-03-C
+TP/SERVER/SA/BV-04-C
+TP/SERVER/SA/BV-05-C
+TP/SERVER/SA/BV-06-C
+TP/SERVER/SA/BV-07-C
+TP/SERVER/SA/BV-08-C
+TP/SERVER/SA/BV-09-C
+TP/SERVER/SA/BV-10-C
+TP/SERVER/SA/BV-11-C
+TP/SERVER/SA/BV-12-C
+TP/SERVER/SA/BV-13-C
+TP/SERVER/SA/BV-14-C
+TP/SERVER/SA/BV-15-C
+TP/SERVER/SA/BV-16-C
+TP/SERVER/SA/BV-17-C
+TP/SERVER/SA/BV-18-C
+TP/SERVER/SA/BV-19-C
+TP/SERVER/SA/BV-20-C
+TP/SERVER/SA/BV-21-C
+TP/SERVER/SA/BI-01-C
+TP/SERVER/SA/BI-02-C
+TP/SERVER/SA/BI-03-C
+"""
+
+from autotest_lib.server.cros.bluetooth import bluetooth_tester
+from autotest_lib.server import utils
+
+
+args_dict = utils.args_to_dict(args)
+
+def run(machine):
+    device_host = hosts.create_host(machine)
+    tester_host = bluetooth_tester.create_host_from(device_host, args=args_dict)
+    job.run_test('bluetooth_SDP_ServiceAttributeRequest',
+                 device_host=device_host,
+                 tester_host=tester_host,
+                 interactive=False)
+
+parallel_simple(run, machines)

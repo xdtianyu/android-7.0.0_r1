@@ -1,0 +1,137 @@
+Toybox: all-in-one Linux command line.
+
+--- Getting started
+
+You can download static binaries for various targets from:
+
+  http://landley.net/toybox/bin
+
+The special name "." indicates the current directory (just like ".." means
+the parent directory), and you can run a program that isn't in the $PATH by
+specifying a path to it, so this should work:
+
+  wget http://landley.net/bin/toybox-x86_64
+  chmod +x toybox-x86_64
+  ./toybox-x86_64 echo hello world
+
+--- Building toybox
+
+Type "make help" for build instructions.
+
+Toybox uses the "make menuconfig; make; make install" idiom same as
+the Linux kernel. Usually you want something like:
+
+  make defconfig
+  make
+  make install
+
+Or maybe:
+
+  LDFLAGS="--static" CROSS_COMPILE=armv5l- make defconfig toybox
+  PREFIX=/path/to/root/filesystem/bin make install_flat
+
+The file "configure" defines default values for many environment
+variables that control the toybox build; if you set a value for any of
+these, your value is used instead of the default in that file.
+
+The CROSS_COMPILE argument above is optional, the default builds a version of
+toybox to run on the current machine. Cross compiling requires an appropriately
+prefixed cross compiler toolchain, several example toolchains are available at:
+
+  http;//landley.net/aboriginal/bin
+
+For the "CROSS_COMPILE=armv5l-" example above, download
+cross-compiler-armv5l.tar.bz2, extract it, and add its "bin" subdirectory to
+your $PATH. (And yes, the trailing - is significant, because the prefix
+includes a dash.)
+
+For more about cross compiling, see:
+
+  http://landley.net/writing/docs/cross-compiling.html
+  http://landley.net/aboriginal/architectures.html
+
+For a more thorough description of the toybox build process, see
+http://landley.net/toybox/code.html#building
+
+--- Using toybox
+
+The toybox build produces a multicall binary, a "swiss-army-knife" program
+that acts differently depending on the name it was called by (cp, mv, cat...).
+Installing toybox adds symlinks for each command name to the $PATH.
+
+The special "toybox" command treats its first argument as the command to run.
+With no arguments, it lists available commands. This allows you to use toybox
+without installing it. This is the only command that can have an arbitrary
+suffix (hence "toybox-armv5l").
+
+The "help" command provides information about each command (ala "help cat").
+
+--- Configuring toybox
+
+It works like the Linux kernel: allnoconfig, defconfig, and menuconfig edit
+a ".config" file that selects which features to include in the resulting
+binary.
+
+The maximum sane configuration is "make defconfig": allyesconfig isn't
+recommended for toybox because it enables unfinished commands and debug code.
+
+--- Creating a Toybox-based Linux system
+
+Toybox is not a complete operating system, it's a program that runs under
+an operating system. Booting a simple system to a shell prompt requires
+three packages: an operating system kernel (Linux) to drive the hardware,
+a program for the system to run (toybox), and a C library to tie them
+together (toybox has been tested with musl, uClibc, glibc, and bionic).
+
+The C library is part of a "toolchain", which is an integrated suite
+of compiler, assembler, and linker, plus the standard headers and libraries
+necessary to build C programs.
+
+Static linking (with the --static option) copies the shared library contents
+into the program, resulting in larger but more portable programs, which
+can run even if they're the only file in the filesystem. Otherwise,
+the "dynamically" linked programs require the library files to be present on
+the target system ("man ldd" and "man ld.so" for details).
+
+An example toybox-based system is Aboriginal Linux:
+
+  http://landley.net/aboriginal/about.html
+
+That's designed to run under qemu, emulating several different hardware
+architectures (x86, x86-64, arm, mips, sparc, powerpc, sh4). Each toybox
+release is regression tested by building Linux From Scratch under this
+toybox-based system on each supported architecture, using QEMU to emulate
+big and little endian systems with different word size and alignment
+requirements.
+
+--- Presentations
+
+1) "Why Toybox?" 2013 talk here at CELF
+
+    video: http://youtu.be/SGmtP5Lg_t0
+    outline: http://landley.net/talks/celf-2013.txt
+    linked from http://landley.net/toybox/ in nav bar on left as "Why is it?"
+    - march 21, 2013 entry has section links.
+
+2) "Why Public Domain?" The rise and fall of copyleft, Ohio LinuxFest 2013
+
+    audio: https://archive.org/download/OhioLinuxfest2013/24-Rob_Landley-The_Rise_and_Fall_of_Copyleft.mp3
+    outline: http://landley.net/talks/ohio-2013.txt
+
+3) Why did I do Aboriginal Linux (which led me here)
+
+    260 slide presentation:
+    https://speakerdeck.com/landley/developing-for-non-x86-targets-using-qemu
+
+    How and why to make android self-hosting:
+      http://landley.net/aboriginal/about.html#selfhost
+
+4) What's new with toybox (ELC 2015 status update):
+
+    video: http://elinux.org/ELC_2015_Presentations
+    outline: http://landley.net/talks/celf-2015.txt
+
+--- Code of conduct
+
+We're using twitter's https://engineering.twitter.com/opensource/code-of-conduct
+except email rob@landley.net with complaints.

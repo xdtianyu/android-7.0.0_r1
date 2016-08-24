@@ -1,0 +1,2921 @@
+_BEGIN
+_INPUT_START TPM2_Startup
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_COMMENT TPM_ST_NO_SESSIONS
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Startup {NV}
+_TYPE TPM_SU
+_NAME startupType
+_COMMENT TPM_SU_CLEAR or TPM_SU_STATE
+_OUTPUT_START TPM2_Startup
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_Shutdown
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Shutdown {NV}
+_TYPE TPM_SU
+_NAME shutdownType
+_COMMENT TPM_SU_CLEAR or TPM_SU_STATE
+_OUTPUT_START TPM2_Shutdown
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_SelfTest
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_SelfTest {NV}
+_TYPE TPMI_YES_NO
+_NAME fullTest
+_COMMENT YES if full test to be performed NO if only test of untested functions required
+_OUTPUT_START TPM2_SelfTest
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_IncrementalSelfTest
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_IncrementalSelfTest {NV}
+_TYPE TPML_ALG
+_NAME toTest
+_COMMENT list of algorithms that should be tested
+_OUTPUT_START TPM2_IncrementalSelfTest
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPML_ALG
+_NAME toDoList
+_COMMENT list of algorithms that need testing
+_INPUT_START TPM2_GetTestResult
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_GetTestResult
+_OUTPUT_START TPM2_GetTestResult
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_MAX_BUFFER
+_NAME outData
+_TYPE TPM_RC
+_NAME testResult
+_COMMENT test result data contains manufacturer-specific information
+_INPUT_START TPM2_StartAuthSession
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_StartAuthSession
+_TYPE TPMI_DH_OBJECT+
+_NAME tpmKey
+_COMMENT handle of a loaded decrypt key used to encrypt salt may be TPM_RH_NULL Auth Index: None
+_TYPE TPMI_DH_ENTITY+
+_NAME bind
+_COMMENT entity providing the authValue may be TPM_RH_NULL Auth Index: None
+_TYPE TPM2B_NONCE
+_NAME nonceCaller
+_COMMENT initial nonceCaller, sets nonce size for the session shall be at least 16 octets
+_TYPE TPM2B_ENCRYPTED_SECRET
+_NAME encryptedSalt
+_COMMENT value encrypted according to the type of tpmKey If tpmKey is TPM_RH_NULL, this shall be the Empty Buffer.
+_TYPE TPM_SE
+_NAME sessionType
+_COMMENT indicates the type of the session; simple HMAC or policy (including a trial policy)
+_TYPE TPMT_SYM_DEF+
+_NAME symmetric
+_COMMENT the algorithm and key size for parameter encryption may select TPM_ALG_NULL
+_TYPE TPMI_ALG_HASH
+_NAME authHash
+_COMMENT hash algorithm to use for the session Shall be a hash algorithm supported by the TPM and not TPM_ALG_NULL
+_OUTPUT_START TPM2_StartAuthSession
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMI_SH_AUTH_SESSION
+_NAME sessionHandle
+_COMMENT handle for the newly created session
+_TYPE TPM2B_NONCE
+_NAME nonceTPM
+_COMMENT the initial nonce from the TPM, used in the computation of the sessionKey
+_INPUT_START TPM2_PolicyRestart
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyRestart
+_TYPE TPMI_SH_POLICY
+_NAME sessionHandle
+_COMMENT the handle for the policy session
+_OUTPUT_START TPM2_PolicyRestart
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_Create
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Create
+_TYPE TPMI_DH_OBJECT
+_NAME parentHandle
+_COMMENT handle of parent for new object Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_SENSITIVE_CREATE
+_NAME inSensitive
+_COMMENT the sensitive data
+_TYPE TPM2B_PUBLIC
+_NAME inPublic
+_COMMENT the public template
+_TYPE TPM2B_DATA
+_NAME outsideInfo
+_COMMENT data that will be included in the creation data for this object to provide permanent, verifiable linkage between this object and some object owner data
+_TYPE TPML_PCR_SELECTION
+_NAME creationPCR
+_COMMENT PCR that will be used in creation data
+_OUTPUT_START TPM2_Create
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_PRIVATE
+_NAME outPrivate
+_COMMENT the private portion of the object
+_TYPE TPM2B_PUBLIC
+_NAME outPublic
+_COMMENT the public portion of the created object
+_TYPE TPM2B_CREATION_DATA
+_NAME creationData
+_COMMENT contains a TPMS_CREATION_DATA
+_TYPE TPM2B_DIGEST
+_NAME creationHash
+_COMMENT digest of creationData using nameAlg of outPublic
+_TYPE TPMT_TK_CREATION
+_NAME creationTicket
+_COMMENT ticket used by TPM2_CertifyCreation() to validate that the creation data was produced by the TPM
+_INPUT_START TPM2_Load
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Load
+_TYPE TPMI_DH_OBJECT
+_NAME parentHandle
+_COMMENT TPM handle of parent key; shall not be a reserved handle Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_PRIVATE
+_NAME inPrivate
+_COMMENT the private portion of the object
+_TYPE TPM2B_PUBLIC
+_NAME inPublic
+_COMMENT the public portion of the object
+_OUTPUT_START TPM2_Load
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM_HANDLE
+_NAME objectHandle
+_COMMENT handle for the loaded object
+_TYPE TPM2B_NAME
+_NAME name
+_COMMENT Name of the loaded object
+_INPUT_START TPM2_LoadExternal
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_LoadExternal
+_TYPE TPM2B_SENSITIVE
+_NAME inPrivate
+_COMMENT the sensitive portion of the object (optional)
+_TYPE TPM2B_PUBLIC+
+_NAME inPublic
+_COMMENT the public portion of the object
+_TYPE TPMI_RH_HIERARCHY+
+_NAME hierarchy
+_COMMENT hierarchy with which the object area is associated
+_OUTPUT_START TPM2_LoadExternal
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM_HANDLE
+_NAME objectHandle
+_COMMENT handle for the loaded object
+_TYPE TPM2B_NAME
+_NAME name
+_COMMENT name of the loaded object
+_INPUT_START TPM2_ReadPublic
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ReadPublic
+_TYPE TPMI_DH_OBJECT
+_NAME objectHandle
+_COMMENT TPM handle of an object Auth Index: None
+_OUTPUT_START TPM2_ReadPublic
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_PUBLIC
+_NAME outPublic
+_COMMENT structure containing the public area of an object
+_TYPE TPM2B_NAME
+_NAME name
+_COMMENT name of the object
+_TYPE TPM2B_NAME
+_NAME qualifiedName
+_COMMENT the Qualified Name of the object
+_INPUT_START TPM2_ActivateCredential
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ActivateCredential
+_TYPE TPMI_DH_OBJECT
+_NAME activateHandle
+_COMMENT handle of the object associated with certificate in credentialBlob Auth Index: 1 Auth Role: ADMIN
+_TYPE TPMI_DH_OBJECT
+_NAME keyHandle
+_COMMENT loaded key used to decrypt the TPMS_SENSITIVE in credentialBlob Auth Index: 2 Auth Role: USER
+_TYPE TPM2B_ID_OBJECT
+_NAME credentialBlob
+_COMMENT the credential
+_TYPE TPM2B_ENCRYPTED_SECRET
+_NAME secret
+_COMMENT keyHandle algorithm-dependent encrypted seed that protects credentialBlob
+_OUTPUT_START TPM2_ActivateCredential
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_DIGEST
+_NAME certInfo
+_COMMENT the decrypted certificate information the data should be no larger than the size of the digest of the nameAlg associated with keyHandle
+_INPUT_START TPM2_MakeCredential
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_MakeCredential
+_TYPE TPMI_DH_OBJECT
+_NAME handle
+_COMMENT loaded public area, used to encrypt the sensitive area containing the credential key Auth Index: None
+_TYPE TPM2B_DIGEST
+_NAME credential
+_COMMENT the credential information
+_TYPE TPM2B_NAME
+_NAME objectName
+_COMMENT Name of the object to which the credential applies
+_OUTPUT_START TPM2_MakeCredential
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_ID_OBJECT
+_NAME credentialBlob
+_TYPE TPM2B_ENCRYPTED_SECRET
+_NAME secret
+_COMMENT the credential handle algorithm-dependent data that wraps the key that encrypts credentialBlob
+_INPUT_START TPM2_Unseal
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME Tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Unseal
+_TYPE TPMI_DH_OBJECT
+_NAME itemHandle
+_COMMENT handle of a loaded data object Auth Index: 1 Auth Role: USER
+_OUTPUT_START TPM2_Unseal
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_SENSITIVE_DATA
+_NAME outData
+_COMMENT unsealed data Size of outData is limited to be no more than 128 octets.
+_INPUT_START TPM2_ObjectChangeAuth
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ObjectChangeAuth
+_TYPE TPMI_DH_OBJECT
+_NAME objectHandle
+_COMMENT handle of the object Auth Index: 1 Auth Role: ADMIN
+_TYPE TPMI_DH_OBJECT
+_NAME parentHandle
+_COMMENT handle of the parent Auth Index: None
+_TYPE TPM2B_AUTH
+_NAME newAuth
+_COMMENT new authorization value
+_OUTPUT_START TPM2_ObjectChangeAuth
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_PRIVATE
+_NAME outPrivate
+_COMMENT private area containing the new authorization value
+_INPUT_START TPM2_Duplicate
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Duplicate
+_TYPE TPMI_DH_OBJECT
+_NAME objectHandle
+_COMMENT loaded object to duplicate Auth Index: 1 Auth Role: DUP
+_TYPE TPMI_DH_OBJECT+
+_NAME newParentHandle
+_COMMENT shall reference the public area of an asymmetric key Auth Index: None
+_TYPE TPM2B_DATA
+_NAME encryptionKeyIn
+_COMMENT optional symmetric encryption key The size for this key is set to zero when the TPM is to generate the key. This parameter may be encrypted.
+_TYPE TPMT_SYM_DEF_OBJECT+
+_NAME symmetricAlg
+_COMMENT definition for the symmetric algorithm to be used for the inner wrapper may be TPM_ALG_NULL if no inner wrapper is applied
+_OUTPUT_START TPM2_Duplicate
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_DATA
+_NAME encryptionKeyOut
+_COMMENT If the caller provided an encryption key or if symmetricAlg was TPM_ALG_NULL, then this will be the Empty Buffer; otherwise, it shall contain the TPMgenerated, symmetric encryption key for the inner wrapper.
+_TYPE TPM2B_PRIVATE
+_NAME duplicate
+_COMMENT private area that may be encrypted by encryptionKeyIn; and may be doubly encrypted
+_TYPE TPM2B_ENCRYPTED_SECRET
+_NAME outSymSeed
+_COMMENT seed protected by the asymmetric algorithms of new parent (NP)
+_INPUT_START TPM2_Rewrap
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Rewrap
+_TYPE TPMI_DH_OBJECT+
+_NAME oldParent
+_COMMENT parent of object Auth Index: 1 Auth Role: User
+_TYPE TPMI_DH_OBJECT+
+_NAME newParent
+_COMMENT new parent of the object Auth Index: None
+_TYPE TPM2B_PRIVATE
+_NAME inDuplicate
+_COMMENT an object encrypted using symmetric key derived from inSymSeed
+_TYPE TPM2B_NAME
+_NAME name
+_COMMENT the Name of the object being rewrapped
+_TYPE TPM2B_ENCRYPTED_SECRET
+_NAME inSymSeed
+_COMMENT seed for symmetric key needs oldParent private key to recover the seed and generate the symmetric key
+_OUTPUT_START TPM2_Rewrap
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_PRIVATE
+_NAME outDuplicate
+_TYPE TPM2B_ENCRYPTED_SECRET
+_NAME outSymSeed
+_COMMENT an object encrypted using symmetric key derived from outSymSeed seed for a symmetric key protected by newParent asymmetric key
+_INPUT_START TPM2_Import
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Import
+_TYPE TPMI_DH_OBJECT
+_NAME parentHandle
+_COMMENT the handle of the new parent for the object Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_DATA
+_NAME encryptionKey
+_COMMENT the optional symmetric encryption key used as the inner wrapper for duplicate If symmetricAlg is TPM_ALG_NULL, then this parameter shall be the Empty Buffer.
+_TYPE TPM2B_PUBLIC
+_NAME objectPublic
+_COMMENT the public area of the object to be imported This is provided so that the integrity value for duplicate and the object attributes can be checked. NOTE
+_TYPE TPM2B_PRIVATE
+_NAME duplicate
+_COMMENT Even if the integrity value of the object is not checked on input, the object Name is required to create the integrity value for the imported object. the symmetrically encrypted duplicate object that may contain an inner symmetric wrapper
+_TYPE TPM2B_ENCRYPTED_SECRET
+_NAME inSymSeed
+_COMMENT symmetric key used to encrypt duplicate inSymSeed is encrypted/encoded using the algorithms of newParent.
+_TYPE TPMT_SYM_DEF_OBJECT+
+_NAME symmetricAlg
+_COMMENT definition for the symmetric algorithm to use for the inner wrapper If this algorithm is TPM_ALG_NULL, no inner wrapper is present and encryptionKey shall be the Empty Buffer.
+_OUTPUT_START TPM2_Import
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_PRIVATE
+_NAME outPrivate
+_COMMENT the sensitive area encrypted with the symmetric key of parentHandle
+_INPUT_START TPM2_RSA_Encrypt
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_RSA_Encrypt
+_TYPE TPMI_DH_OBJECT
+_NAME keyHandle
+_COMMENT reference to public portion of RSA key to use for encryption Auth Index: None message to be encrypted
+_TYPE TPM2B_PUBLIC_KEY_RSA
+_NAME message
+_TYPE TPMT_RSA_DECRYPT+
+_NAME inScheme
+_TYPE TPM2B_DATA
+_NAME label
+_COMMENT NOTE 1 The data type was chosen because it limits the overall size of the input to no greater than the size of the largest RSA public key. This may be larger than allowed for keyHandle. the padding scheme to use if scheme associated with keyHandle is TPM_ALG_NULL optional label L to be associated with the message Size of the buffer is zero if no label is present NOTE 2 See description of label above.
+_OUTPUT_START TPM2_RSA_Encrypt
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_PUBLIC_KEY_RSA
+_NAME outData
+_COMMENT encrypted output
+_INPUT_START TPM2_RSA_Decrypt
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_RSA_Decrypt
+_TYPE TPMI_DH_OBJECT
+_NAME keyHandle
+_COMMENT RSA key to use for decryption Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_PUBLIC_KEY_RSA
+_NAME cipherText
+_COMMENT NOTE
+_TYPE TPMT_RSA_DECRYPT+
+_NAME inScheme
+_COMMENT the padding scheme to use if scheme associated with keyHandle is TPM_ALG_NULL
+_TYPE TPM2B_DATA
+_NAME label
+_COMMENT label whose association with the message is to be verified cipher text to be decrypted An encrypted RSA data block is the size of the public modulus.
+_OUTPUT_START TPM2_RSA_Decrypt
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_PUBLIC_KEY_RSA
+_NAME message
+_COMMENT decrypted output
+_INPUT_START TPM2_ECDH_KeyGen
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ECDH_KeyGen
+_TYPE TPMI_DH_OBJECT
+_NAME keyHandle
+_COMMENT Handle of a loaded ECC key public area. Auth Index: None
+_OUTPUT_START TPM2_ECDH_KeyGen
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_ECC_POINT
+_NAME zPoint
+_COMMENT results of P ≔ h[de]Qs
+_TYPE TPM2B_ECC_POINT
+_NAME pubPoint
+_COMMENT generated ephemeral public point (Qe)
+_INPUT_START TPM2_ECDH_ZGen
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ECDH_ZGen
+_TYPE TPMI_DH_OBJECT
+_NAME keyHandle
+_COMMENT handle of a loaded ECC key Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_ECC_POINT
+_NAME inPoint
+_COMMENT a public key
+_OUTPUT_START TPM2_ECDH_ZGen
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_ECC_POINT
+_NAME outPoint
+_COMMENT X and Y coordinates of the product of the multiplication Z = (xZ , yZ) ≔ [hdS]QB
+_INPUT_START TPM2_ECC_Parameters
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ECC_Parameters
+_TYPE TPMI_ECC_CURVE
+_NAME curveID
+_COMMENT parameter set selector
+_OUTPUT_START TPM2_ECC_Parameters
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMS_ALGORITHM_DETAIL_ECC
+_NAME parameters
+_COMMENT ECC parameters for the selected curve
+_INPUT_START TPM2_ZGen_2Phase
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ZGen_2Phase handle of an unrestricted decryption key ECC The private key referenced by this handle is used as dS,A
+_TYPE TPMI_DH_OBJECT
+_NAME keyA
+_TYPE TPM2B_ECC_POINT
+_NAME inQsB
+_COMMENT other party’s static public key (Qs,B = (Xs,B, Ys,B))
+_TYPE TPM2B_ECC_POINT
+_NAME inQeB
+_COMMENT other party's ephemeral public key (Qe,B = (Xe,B, Ye,B))
+_TYPE TPMI_ECC_KEY_EXCHANGE
+_NAME inScheme
+_COMMENT the key exchange scheme
+_TYPE UINT16
+_NAME counter
+_COMMENT value returned by TPM2_EC_Ephemeral() Auth Index: 1 Auth Role: USER
+_OUTPUT_START TPM2_ZGen_2Phase
+_TYPE TPM_ST
+_NAME tag
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_ECC_POINT
+_NAME outZ1
+_COMMENT X and Y coordinates of the computed value (scheme dependent)
+_TYPE TPM2B_ECC_POINT
+_NAME outZ2
+_COMMENT X and Y coordinates of the second computed value (scheme dependent) 16.7.3 1 2 3
+_INPUT_START TPM2_EncryptDecrypt
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_EncryptDecrypt
+_TYPE TPMI_DH_OBJECT
+_NAME keyHandle
+_COMMENT the symmetric key used for the operation Auth Index: 1 Auth Role: USER
+_TYPE TPMI_YES_NO
+_NAME decrypt
+_COMMENT if YES, then the operation is decryption; if NO, the operation is encryption
+_TYPE TPMI_ALG_SYM_MODE+
+_NAME mode
+_COMMENT symmetric mode For a restricted key, this field shall match the default mode of the key or be TPM_ALG_NULL.
+_TYPE TPM2B_IV
+_NAME ivIn
+_COMMENT an initial value as required by the algorithm
+_TYPE TPM2B_MAX_BUFFER
+_NAME inData
+_COMMENT the data to be encrypted/decrypted
+_OUTPUT_START TPM2_EncryptDecrypt
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_MAX_BUFFER
+_NAME outData
+_COMMENT encrypted output
+_TYPE TPM2B_IV
+_NAME ivOut
+_COMMENT chaining value to use for IV in next round
+_INPUT_START TPM2_Hash
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_COMMENT Shall have at least one session
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Hash
+_TYPE TPM2B_MAX_BUFFER
+_NAME data
+_COMMENT data to be hashed
+_TYPE TPMI_ALG_HASH
+_NAME hashAlg
+_COMMENT algorithm for the hash being computed – shall not be TPM_ALG_NULL
+_TYPE TPMI_RH_HIERARCHY+
+_NAME hierarchy
+_COMMENT hierarchy to use for the ticket (TPM_RH_NULL allowed)
+_OUTPUT_START TPM2_Hash
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_DIGEST
+_NAME outHash
+_COMMENT results
+_TYPE TPMT_TK_HASHCHECK
+_NAME validation
+_COMMENT ticket indicating that the sequence of octets used to compute outDigest did not start with TPM_GENERATED_VALUE will be a NULL ticket if the digest may not be signed with a restricted key
+_INPUT_START TPM2_HMAC
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_HMAC
+_TYPE TPMI_DH_OBJECT
+_NAME handle
+_COMMENT handle for the symmetric signing key providing the HMAC key Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_MAX_BUFFER
+_NAME buffer
+_COMMENT HMAC data
+_TYPE TPMI_ALG_HASH+
+_NAME hashAlg
+_COMMENT algorithm to use for HMAC
+_OUTPUT_START TPM2_HMAC
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_DIGEST
+_NAME outHMAC
+_COMMENT the returned HMAC in a sized buffer
+_INPUT_START TPM2_GetRandom
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_GetRandom
+_TYPE UINT16
+_NAME bytesRequested
+_COMMENT number of octets to return
+_OUTPUT_START TPM2_GetRandom
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_DIGEST
+_NAME randomBytes
+_COMMENT the random octets
+_INPUT_START TPM2_StirRandom
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_StirRandom {NV}
+_TYPE TPM2B_SENSITIVE_DATA
+_NAME inData
+_COMMENT additional information
+_OUTPUT_START TPM2_StirRandom
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_HMAC_Start
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_HMAC_Start
+_TYPE TPMI_DH_OBJECT
+_NAME handle
+_COMMENT handle of an HMAC key Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_AUTH
+_NAME auth
+_COMMENT authorization value for subsequent use of the sequence
+_TYPE TPMI_ALG_HASH+
+_NAME hashAlg
+_COMMENT the hash algorithm to use for the HMAC
+_OUTPUT_START TPM2_HMAC_Start
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMI_DH_OBJECT
+_NAME sequenceHandle
+_COMMENT a handle to reference the sequence
+_INPUT_START TPM2_HashSequenceStart
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_HashSequenceStart
+_TYPE TPM2B_AUTH
+_NAME auth
+_COMMENT authorization value for subsequent use of the sequence
+_TYPE TPMI_ALG_HASH+
+_NAME hashAlg
+_COMMENT the hash algorithm to use for the hash sequence An Event sequence starts if this is TPM_ALG_NULL.
+_OUTPUT_START TPM2_HashSequenceStart
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMI_DH_OBJECT
+_NAME sequenceHandle
+_COMMENT a handle to reference the sequence
+_INPUT_START TPM2_SequenceUpdate
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_SequenceUpdate
+_TYPE TPMI_DH_OBJECT
+_NAME sequenceHandle
+_COMMENT handle for the sequence object Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_MAX_BUFFER
+_NAME buffer
+_COMMENT data to be added to hash
+_OUTPUT_START TPM2_SequenceUpdate
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_SequenceComplete
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_SequenceComplete {F}
+_TYPE TPMI_DH_OBJECT
+_NAME sequenceHandle
+_COMMENT authorization for the sequence Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_MAX_BUFFER
+_NAME buffer
+_COMMENT data to be added to the hash/HMAC
+_TYPE TPMI_RH_HIERARCHY+
+_NAME hierarchy
+_COMMENT hierarchy of the ticket for a hash
+_OUTPUT_START TPM2_SequenceComplete
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_DIGEST
+_NAME result
+_COMMENT the returned HMAC or digest in a sized buffer
+_TYPE TPMT_TK_HASHCHECK
+_NAME validation
+_COMMENT ticket indicating that the sequence of octets used to compute outDigest did not start with TPM_GENERATED_VALUE This is a NULL Ticket when the session is HMAC.
+_INPUT_START TPM2_EventSequenceComplete
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_EventSequenceComplete {NV F}
+_TYPE TPMI_DH_PCR+
+_NAME pcrHandle
+_COMMENT PCR to be extended with the Event data Auth Index: 1 Auth Role: USER
+_TYPE TPMI_DH_OBJECT
+_NAME sequenceHandle
+_COMMENT authorization for the sequence Auth Index: 2 Auth Role: USER
+_TYPE TPM2B_MAX_BUFFER
+_NAME buffer
+_COMMENT data to be added to the Event
+_OUTPUT_START TPM2_EventSequenceComplete
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPML_DIGEST_VALUES
+_NAME results
+_COMMENT list of digests computed for the PCR
+_INPUT_START TPM2_Certify
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Certify
+_TYPE TPMI_DH_OBJECT
+_NAME objectHandle
+_COMMENT handle of the object to be certified Auth Index: 1 Auth Role: ADMIN
+_TYPE TPMI_DH_OBJECT+
+_NAME signHandle
+_COMMENT handle of the key used to sign the attestation structure Auth Index: 2 Auth Role: USER
+_TYPE TPM2B_DATA
+_NAME qualifyingData
+_COMMENT user provided qualifying data
+_TYPE TPMT_SIG_SCHEME+
+_NAME inScheme
+_COMMENT signing scheme to use if the scheme for signHandle is TPM_ALG_NULL
+_OUTPUT_START TPM2_Certify
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT .
+_TYPE TPM2B_ATTEST
+_NAME certifyInfo
+_COMMENT the structure that was signed
+_TYPE TPMT_SIGNATURE
+_NAME signature
+_COMMENT the asymmetric signature over certifyInfo using the key referenced by signHandle
+_INPUT_START TPM2_CertifyCreation
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_CertifyCreation
+_TYPE TPMI_DH_OBJECT+
+_NAME signHandle
+_COMMENT handle of the key that will sign the attestation block Auth Index: 1 Auth Role: USER
+_TYPE TPMI_DH_OBJECT
+_NAME objectHandle
+_COMMENT the object associated with the creation data Auth Index: None
+_TYPE TPM2B_DATA
+_NAME qualifyingData
+_COMMENT user-provided qualifying data
+_TYPE TPM2B_DIGEST
+_NAME creationHash
+_COMMENT hash of the creation data produced by TPM2_Create() or TPM2_CreatePrimary()
+_TYPE TPMT_SIG_SCHEME+
+_NAME inScheme
+_COMMENT signing scheme to use if the scheme for signHandle is TPM_ALG_NULL
+_TYPE TPMT_TK_CREATION
+_NAME creationTicket
+_COMMENT ticket produced by TPM2_Create() or TPM2_CreatePrimary()
+_OUTPUT_START TPM2_CertifyCreation
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_ATTEST
+_NAME certifyInfo
+_COMMENT the structure that was signed
+_TYPE TPMT_SIGNATURE
+_NAME signature
+_COMMENT the signature over certifyInfo
+_INPUT_START TPM2_Quote
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Quote
+_TYPE TPMI_DH_OBJECT
+_NAME signHandle
+_COMMENT handle of key that will perform signature Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_DATA
+_NAME qualifyingData
+_COMMENT data supplied by the caller
+_TYPE TPMT_SIG_SCHEME+
+_NAME inScheme
+_COMMENT signing scheme to use if the scheme for signHandle is TPM_ALG_NULL
+_TYPE TPML_PCR_SELECTION
+_NAME PCRselect
+_COMMENT PCR set to quote
+_OUTPUT_START TPM2_Quote
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_ATTEST
+_NAME quoted
+_COMMENT the quoted information
+_TYPE TPMT_SIGNATURE
+_NAME signature
+_COMMENT the signature over quoted
+_INPUT_START TPM2_GetSessionAuditDigest
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_GetSessionAuditDigest
+_TYPE TPMI_RH_ENDORSEMENT
+_NAME privacyAdminHandle
+_COMMENT handle of the privacy administrator (TPM_RH_ENDORSEMENT) Auth Index: 1 Auth Role: USER
+_TYPE TPMI_DH_OBJECT+
+_NAME signHandle
+_COMMENT handle of the signing key Auth Index: 2 Auth Role: USER
+_TYPE TPMI_SH_HMAC
+_NAME sessionHandle
+_COMMENT handle of the audit session Auth Index: None
+_TYPE TPM2B_DATA
+_NAME qualifyingData
+_COMMENT user-provided qualifying data – may be zero-length
+_TYPE TPMT_SIG_SCHEME+
+_NAME inScheme
+_COMMENT signing scheme to use if the scheme for signHandle is TPM_ALG_NULL
+_OUTPUT_START TPM2_GetSessionAuditDigest
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_ATTEST
+_NAME auditInfo
+_COMMENT the audit information that was signed
+_TYPE TPMT_SIGNATURE
+_NAME signature
+_COMMENT the signature over auditInfo
+_INPUT_START TPM2_GetCommandAuditDigest
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_GetCommandAuditDigest {NV}
+_TYPE TPMI_RH_ENDORSEMENT
+_NAME privacyHandle
+_COMMENT handle of the privacy administrator (TPM_RH_ENDORSEMENT) Auth Index: 1 Auth Role: USER
+_TYPE TPMI_DH_OBJECT+
+_NAME signHandle
+_COMMENT the handle of the signing key Auth Index: 2 Auth Role: USER
+_TYPE TPM2B_DATA
+_NAME qualifyingData
+_COMMENT other data to associate with this audit digest
+_TYPE TPMT_SIG_SCHEME+
+_NAME inScheme
+_COMMENT signing scheme to use if the scheme for signHandle is TPM_ALG_NULL
+_OUTPUT_START TPM2_GetCommandAuditDigest
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_ATTEST
+_NAME auditInfo
+_COMMENT the auditInfo that was signed
+_TYPE TPMT_SIGNATURE
+_NAME signature
+_COMMENT the signature over auditInfo
+_INPUT_START TPM2_GetTime
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_GetTime
+_TYPE TPMI_RH_ENDORSEMENT
+_NAME privacyAdminHandle
+_COMMENT handle of the privacy administrator (TPM_RH_ENDORSEMENT) Auth Index: 1 Auth Role: USER
+_TYPE TPMI_DH_OBJECT+
+_NAME signHandle
+_COMMENT the keyHandle identifier of a loaded key that can perform digital signatures Auth Index: 2 Auth Role: USER
+_TYPE TPM2B_DATA
+_NAME qualifyingData
+_COMMENT data to tick stamp
+_TYPE TPMT_SIG_SCHEME+
+_NAME inScheme
+_COMMENT signing scheme to use if the scheme for signHandle is TPM_ALG_NULL
+_OUTPUT_START TPM2_GetTime
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT .
+_TYPE TPM2B_ATTEST
+_NAME timeInfo
+_COMMENT standard TPM-generated attestation block
+_TYPE TPMT_SIGNATURE
+_NAME signature
+_COMMENT the signature over timeInfo
+_INPUT_START TPM2_Commit
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME paramSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Commit handle of the key that will be used in the signing operation
+_TYPE TPMI_DH_OBJECT
+_NAME signHandle
+_COMMENT Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_ECC_POINT
+_NAME P1
+_COMMENT a point (M) on the curve used by signHandle
+_TYPE TPM2B_SENSITIVE_DATA
+_NAME s2
+_COMMENT octet array used to derive x-coordinate of a base point
+_TYPE TPM2B_ECC_PARAMETER
+_NAME y2
+_COMMENT y coordinate of the point associated with s2
+_OUTPUT_START TPM2_Commit
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see 8
+_TYPE UINT32
+_NAME paramSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_ECC_POINT
+_NAME K
+_COMMENT ECC point K ≔ [ds](x2, y2)
+_TYPE TPM2B_ECC_POINT
+_NAME L
+_COMMENT ECC point L ≔ [r](x2, y2)
+_TYPE TPM2B_ECC_POINT
+_NAME E
+_COMMENT ECC point E ≔ [r]P1
+_TYPE UINT16
+_NAME counter
+_COMMENT least-significant 16 bits of commitCount
+_INPUT_START TPM2_EC_Ephemeral
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME paramSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_EC_Ephemeral
+_TYPE TPMI_ECC_CURVE
+_NAME curveID
+_COMMENT The curve for the computed ephemeral point
+_OUTPUT_START TPM2_EC_Ephemeral
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see 8
+_TYPE UINT32
+_NAME paramSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_ECC_POINT
+_NAME Q
+_COMMENT ephemeral public key Q ≔ [r]G
+_TYPE UINT16
+_NAME counter
+_COMMENT least-significant 16 bits of commitCount
+_INPUT_START TPM2_VerifySignature
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_VerifySignature
+_TYPE TPMI_DH_OBJECT
+_NAME keyHandle
+_COMMENT handle of public key that will be used in the validation Auth Index: None
+_TYPE TPM2B_DIGEST
+_NAME digest
+_COMMENT digest of the signed message
+_TYPE TPMT_SIGNATURE
+_NAME signature
+_COMMENT signature to be tested
+_OUTPUT_START TPM2_VerifySignature
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMT_TK_VERIFIED
+_NAME validation
+_INPUT_START TPM2_Sign
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Sign
+_TYPE TPMI_DH_OBJECT
+_NAME keyHandle
+_COMMENT Handle of key that will perform signing Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_DIGEST
+_NAME digest
+_COMMENT digest to be signed
+_TYPE TPMT_SIG_SCHEME+
+_NAME inScheme
+_COMMENT signing scheme to use if the scheme for keyHandle is TPM_ALG_NULL
+_TYPE TPMT_TK_HASHCHECK
+_NAME validation
+_COMMENT proof that digest was created by the TPM If keyHandle is not a restricted signing key, then this may be a NULL Ticket with tag = TPM_ST_CHECKHASH.
+_OUTPUT_START TPM2_Sign
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMT_SIGNATURE
+_NAME signature
+_COMMENT the signature
+_INPUT_START TPM2_SetCommandCodeAuditStatus
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_SetCommandCodeAuditStatus {NV}
+_TYPE TPMI_RH_PROVISION
+_NAME auth
+_COMMENT TPM_RH_ENDORSEMENT or TPM_RH_PLATFORM+{PP} Auth Index: 1 Auth Role: USER
+_TYPE TPMI_ALG_HASH+
+_NAME auditAlg
+_COMMENT hash algorithm for the audit digest; if TPM_ALG_NULL, then the hash is not changed
+_TYPE TPML_CC
+_NAME setList
+_COMMENT list of commands that will be added to those that will be audited
+_TYPE TPML_CC
+_NAME clearList
+_COMMENT list of commands that will no longer be audited
+_OUTPUT_START TPM2_SetCommandCodeAuditStatus
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_PCR_Extend
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PCR_Extend {NV}
+_TYPE TPMI_DH_PCR+
+_NAME pcrHandle
+_COMMENT handle of the PCR Auth Handle: 1 Auth Role: USER
+_TYPE TPML_DIGEST_VALUES
+_NAME digests
+_COMMENT list of tagged digest values to be extended
+_OUTPUT_START TPM2_PCR_Extend
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT .
+_INPUT_START TPM2_PCR_Event
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PCR_Event {NV}
+_TYPE TPMI_DH_PCR+
+_NAME pcrHandle
+_COMMENT Handle of the PCR Auth Handle: 1 Auth Role: USER
+_TYPE TPM2B_EVENT
+_NAME eventData
+_COMMENT Event data in sized buffer
+_OUTPUT_START TPM2_PCR_Event
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPML_DIGEST_VALUES
+_NAME digests
+_COMMENT .
+_INPUT_START TPM2_PCR_Read
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PCR_Read
+_TYPE TPML_PCR_SELECTION
+_NAME pcrSelectionIn
+_COMMENT The selection of PCR to read
+_OUTPUT_START TPM2_PCR_Read
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE UINT32
+_NAME pcrUpdateCounter
+_COMMENT the current value of the PCR update counter
+_TYPE TPML_PCR_SELECTION
+_NAME pcrSelectionOut
+_COMMENT the PCR in the returned list
+_TYPE TPML_DIGEST
+_NAME pcrValues
+_COMMENT the contents of the PCR indicated in pcrSelect as tagged digests
+_INPUT_START TPM2_PCR_Allocate
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PCR_Allocate {NV}
+_TYPE TPMI_RH_PLATFORM
+_NAME authHandle
+_COMMENT TPM_RH_PLATFORM+{PP} Auth Index: 1 Auth Role: USER
+_TYPE TPML_PCR_SELECTION
+_NAME pcrAllocation
+_COMMENT the requested allocation
+_OUTPUT_START TPM2_PCR_Allocate
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMI_YES_NO
+_NAME allocationSuccess
+_COMMENT YES if the allocation succeeded
+_TYPE UINT32
+_NAME maxPCR
+_COMMENT maximum number of PCR that may be in a bank
+_TYPE UINT32
+_NAME sizeNeeded
+_COMMENT number of octets required to satisfy the request
+_TYPE UINT32
+_NAME sizeAvailable
+_COMMENT Number of octets available. Computed before the allocation.
+_INPUT_START TPM2_PCR_SetAuthPolicy
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PCR_SetAuthPolicy {NV}
+_TYPE TPMI_RH_PLATFORM
+_NAME authHandle
+_COMMENT TPM_RH_PLATFORM+{PP} Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_DIGEST
+_NAME authPolicy
+_COMMENT the desired authPolicy
+_TYPE TPMI_ALG_HASH+
+_NAME hashAlg
+_COMMENT the hash algorithm of the policy
+_TYPE TPMI_DH_PCR
+_NAME pcrNum
+_COMMENT the PCR for which the policy is to be set
+_OUTPUT_START TPM2_PCR_SetAuthPolicy
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_PCR_SetAuthValue
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PCR_SetAuthValue
+_TYPE TPMI_DH_PCR
+_NAME pcrHandle
+_COMMENT handle for a PCR that may have an authorization value set Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_DIGEST
+_NAME auth
+_COMMENT the desired authorization value
+_OUTPUT_START TPM2_PCR_SetAuthValue
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_PCR_Reset
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PCR_Reset {NV}
+_TYPE TPMI_DH_PCR
+_NAME pcrHandle
+_COMMENT the PCR to reset Auth Index: 1 Auth Role: USER
+_OUTPUT_START TPM2_PCR_Reset
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_PolicySigned
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicySigned
+_TYPE TPMI_DH_OBJECT
+_NAME authObject
+_COMMENT handle for a public key that will validate the signature Auth Index: None
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPM2B_NONCE
+_NAME nonceTPM
+_COMMENT the policy nonce for the session If the nonce is not included in the authorization qualification, this field is the Empty Buffer.
+_TYPE TPM2B_DIGEST
+_NAME cpHashA
+_COMMENT digest of the command parameters to which this authorization is limited This is not the cpHash for this command but the cpHash for the command to which this policy session will be applied. If it is not limited, the parameter will be the Empty Buffer.
+_TYPE TPM2B_NONCE
+_NAME policyRef
+_COMMENT a reference to a policy relating to the authorization – may be the Empty Buffer Size is limited to be no larger than the nonce size supported on the TPM.
+_TYPE INT32
+_NAME expiration
+_COMMENT time when authorization will expire, measured in seconds from the time that nonceTPM was generated If expiration is zero, a NULL Ticket is returned.
+_TYPE TPMT_SIGNATURE
+_NAME auth
+_COMMENT signed authorization (not optional)
+_OUTPUT_START TPM2_PolicySigned
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_TIMEOUT
+_NAME timeout
+_TYPE TPMT_TK_AUTH
+_NAME policyTicket
+_COMMENT implementation-specific time value, used to indicate to the TPM when the ticket expires NOTE If policyTicket is a NULL Ticket, then this shall be the Empty Buffer. produced if the command succeeds and expiration in the command was non-zero; this ticket will use the TPMT_ST_AUTH_SIGNED structure tag
+_INPUT_START TPM2_PolicySecret
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicySecret
+_TYPE TPMI_DH_ENTITY
+_NAME authHandle
+_COMMENT handle for an entity providing the authorization Auth Index: 1 Auth Role: USER
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPM2B_NONCE
+_NAME nonceTPM
+_COMMENT the policy nonce for the session If the nonce is not included in the authorization qualification, this field is the Empty Buffer.
+_TYPE TPM2B_DIGEST
+_NAME cpHashA
+_COMMENT digest of the command parameters to which this authorization is limited This not the cpHash for this command but the cpHash for the command to which this policy session will be applied. If it is not limited, the parameter will be the Empty Buffer.
+_TYPE TPM2B_NONCE
+_NAME policyRef
+_COMMENT a reference to a policy relating to the authorization – may be the Empty Buffer Size is limited to be no larger than the nonce size supported on the TPM.
+_TYPE INT32
+_NAME expiration
+_COMMENT time when authorization will expire, measured in seconds from the time that nonceTPM was generated If expiration is zero, a NULL Ticket is returned.
+_OUTPUT_START TPM2_PolicySecret
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_TIMEOUT
+_NAME timeout
+_COMMENT implementation-specific time value used to indicate to the TPM when the ticket expires; this ticket will use the TPMT_ST_AUTH_SECRET structure tag
+_TYPE TPMT_TK_AUTH
+_NAME policyTicket
+_COMMENT produced if the command succeeds and expiration in the command was non-zero
+_INPUT_START TPM2_PolicyTicket
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyTicket
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPM2B_TIMEOUT
+_NAME timeout
+_COMMENT time when authorization will expire The contents are TPM specific. This shall be the value returned when ticket was produced.
+_TYPE TPM2B_DIGEST
+_NAME cpHashA
+_COMMENT digest of the command parameters to which this authorization is limited If it is not limited, the parameter will be the Empty Buffer.
+_TYPE TPM2B_NONCE
+_NAME policyRef
+_COMMENT reference to a qualifier for the policy – may be the Empty Buffer
+_TYPE TPM2B_NAME
+_NAME authName
+_COMMENT name of the object that provided the authorization
+_TYPE TPMT_TK_AUTH
+_NAME ticket
+_COMMENT an authorization ticket returned by the TPM in response to a TPM2_PolicySigned() or TPM2_PolicySecret()
+_OUTPUT_START TPM2_PolicyTicket
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_PolicyOR
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyOR.
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPML_DIGEST
+_NAME pHashList
+_COMMENT the list of hashes to check for a match
+_OUTPUT_START TPM2_PolicyOR
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_PolicyPCR
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyPCR
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPM2B_DIGEST
+_NAME pcrDigest
+_COMMENT expected digest value of the selected PCR using the hash algorithm of the session; may be zero length
+_TYPE TPML_PCR_SELECTION
+_NAME pcrs
+_COMMENT the PCR to include in the check digest
+_OUTPUT_START TPM2_PolicyPCR
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_PolicyLocality
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyLocality
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPMA_LOCALITY
+_NAME locality
+_COMMENT the allowed localities for the policy
+_OUTPUT_START TPM2_PolicyLocality
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_PolicyNV
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyNV
+_TYPE TPMI_RH_NV_AUTH
+_NAME authHandle
+_COMMENT handle indicating the source of the authorization value Auth Index: 1 Auth Role: USER
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT the NV Index of the area to read Auth Index: None
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPM2B_OPERAND
+_NAME operandB
+_COMMENT the second operand
+_TYPE UINT16
+_NAME offset
+_COMMENT the offset in the NV Index for the start of operand A
+_TYPE TPM_EO
+_NAME operation
+_COMMENT the comparison to make
+_OUTPUT_START TPM2_PolicyNV
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_PolicyCounterTimer
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyCounterTimer
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPM2B_OPERAND
+_NAME operandB
+_COMMENT the second operand
+_TYPE UINT16
+_NAME offset
+_COMMENT the offset in TPMS_TIME_INFO structure for the start of operand A
+_TYPE TPM_EO
+_NAME operation
+_COMMENT the comparison to make
+_OUTPUT_START TPM2_PolicyCounterTimer
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 25.10.3 1 2 3
+_INPUT_START TPM2_PolicyCommandCode
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyCommandCode
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPM_CC
+_NAME code
+_COMMENT the allowed commandCode
+_OUTPUT_START TPM2_PolicyCommandCode
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 25.11.3 1 2
+_INPUT_START TPM2_PolicyPhysicalPresence
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyPhysicalPresence
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_OUTPUT_START TPM2_PolicyPhysicalPresence
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 25.12.3 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35
+_INPUT_START TPM2_PolicyCpHash
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyCpHash
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPM2B_DIGEST
+_NAME cpHashA
+_COMMENT the cpHash added to the policy
+_OUTPUT_START TPM2_PolicyCpHash
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 25.13.3 1 2
+_INPUT_START TPM2_PolicyNameHash
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyNameHash
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPM2B_DIGEST
+_NAME nameHash
+_COMMENT the digest to be added to the policy
+_OUTPUT_START TPM2_PolicyNameHash
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 25.14.3 1 2
+_INPUT_START TPM2_PolicyDuplicationSelect
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyDuplicationSelect
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPM2B_NAME
+_NAME objectName
+_COMMENT the Name of the object to be duplicated
+_TYPE TPM2B_NAME
+_NAME newParentName
+_COMMENT the Name of the new parent
+_TYPE TPMI_YES_NO
+_NAME includeObject
+_COMMENT if YES, the objectName will be included in the value in policySession→policyDigest
+_OUTPUT_START TPM2_PolicyDuplicationSelect
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 25.15.3 1 2
+_INPUT_START TPM2_PolicyAuthorize
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyAuthorize
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPM2B_DIGEST
+_NAME approvedPolicy
+_COMMENT digest of the policy being approved
+_TYPE TPM2B_NONCE
+_NAME policyRef
+_COMMENT a policy qualifier
+_TYPE TPM2B_NAME
+_NAME keySign
+_COMMENT Name of a key that can sign a policy addition
+_TYPE TPMT_TK_VERIFIED
+_NAME checkTicket
+_COMMENT ticket validating that approvedPolicy and policyRef were signed by keySign
+_OUTPUT_START TPM2_PolicyAuthorize
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 25.16.3 1 2 3
+_INPUT_START TPM2_PolicyAuthValue
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyAuthValue
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_OUTPUT_START TPM2_PolicyAuthValue
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 25.17.3 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37
+_INPUT_START TPM2_PolicyPassword
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyPassword
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_OUTPUT_START TPM2_PolicyPassword
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 25.18.3 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37
+_INPUT_START TPM2_PolicyGetDigest
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyGetDigest
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session Auth Index: None
+_OUTPUT_START TPM2_PolicyGetDigest
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_DIGEST
+_NAME policyDigest
+_COMMENT the current value of the policySession→policyDigest 25.19.3 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+_INPUT_START TPM2_PolicyNvWritten
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME Tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PolicyNvWritten
+_TYPE TPMI_SH_POLICY
+_NAME policySession
+_COMMENT handle for the policy session being extended Auth Index: None
+_TYPE TPMI_YES_NO
+_NAME writtenSet
+_COMMENT YES if NV Index is required to have been written NO if NV Index is required not to have been written
+_OUTPUT_START TPM2_PolicyNvWritten
+_TYPE TPM_ST
+_NAME Tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 25.20.3 1 2
+_INPUT_START TPM2_CreatePrimary
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_CreatePrimary
+_TYPE TPMI_RH_HIERARCHY+
+_NAME primaryHandle
+_COMMENT TPM_RH_ENDORSEMENT, TPM_RH_OWNER, TPM_RH_PLATFORM+{PP}, or TPM_RH_NULL Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_SENSITIVE_CREATE
+_NAME inSensitive
+_COMMENT the sensitive data, see Part 1 Sensitive Values
+_TYPE TPM2B_PUBLIC
+_NAME inPublic
+_COMMENT the public template
+_TYPE TPM2B_DATA
+_NAME outsideInfo
+_COMMENT data that will be included in the creation data for this object to provide permanent, verifiable linkage between this object and some object owner data
+_TYPE TPML_PCR_SELECTION
+_NAME creationPCR
+_COMMENT PCR that will be used in creation data
+_OUTPUT_START TPM2_CreatePrimary
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM_HANDLE
+_NAME objectHandle
+_COMMENT Handle for created Primary Object
+_TYPE TPM2B_PUBLIC
+_NAME outPublic
+_COMMENT the public portion of the created object
+_TYPE TPM2B_CREATION_DATA
+_NAME creationData
+_COMMENT contains a TPMT_CREATION_DATA
+_TYPE TPM2B_DIGEST
+_NAME creationHash
+_COMMENT digest of creationData using nameAlg of outPublic
+_TYPE TPMT_TK_CREATION
+_NAME creationTicket
+_COMMENT ticket used by TPM2_CertifyCreation() to validate that the creation data was produced by the TPM
+_TYPE TPM2B_NAME
+_NAME name
+_COMMENT the name of the created object
+_INPUT_START TPM2_HierarchyControl
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_HierarchyControl {NV E}
+_TYPE TPMI_RH_HIERARCHY
+_NAME authHandle
+_COMMENT TPM_RH_ENDORSEMENT, TPM_RH_OWNER or TPM_RH_PLATFORM+{PP} Auth Index: 1 Auth Role: USER
+_TYPE TPMI_RH_ENABLES
+_NAME enable
+_COMMENT the enable being modified TPM_RH_ENDORSEMENT, TPM_RH_OWNER, TPM_RH_PLATFORM, or TPM_RH_PLATFORM_NV
+_TYPE TPMI_YES_NO
+_NAME state
+_COMMENT YES if the enable should be SET, NO if the enable should be CLEAR
+_OUTPUT_START TPM2_HierarchyControl
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_SetPrimaryPolicy
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_SetPrimaryPolicy {NV}
+_TYPE TPMI_RH_HIERARCHY
+_NAME authHandle
+_COMMENT TPM_RH_ENDORSEMENT, TPM_RH_OWNER or TPM_RH_PLATFORM+{PP} Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_DIGEST
+_NAME authPolicy
+_COMMENT an authorization policy digest; may be the Empty Buffer If hashAlg is TPM_ALG_NULL, then this shall be an Empty Buffer.
+_TYPE TPMI_ALG_HASH+
+_NAME hashAlg
+_COMMENT the hash algorithm to use for the policy If the authPolicy is an Empty Buffer, then this field shall be TPM_ALG_NULL.
+_OUTPUT_START TPM2_SetPrimaryPolicy
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_ChangePPS
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ChangePPS {NV E}
+_TYPE TPMI_RH_PLATFORM
+_NAME authHandle
+_COMMENT TPM_RH_PLATFORM+{PP} Auth Index: 1 Auth Role: USER
+_OUTPUT_START TPM2_ChangePPS
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_ChangeEPS
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ChangeEPS {NV E}
+_TYPE TPMI_RH_PLATFORM
+_NAME authHandle
+_COMMENT TPM_RH_PLATFORM+{PP} Auth Handle: 1 Auth Role: USER
+_OUTPUT_START TPM2_ChangeEPS
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_Clear
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_Clear {NV E}
+_TYPE TPMI_RH_CLEAR
+_NAME authHandle
+_COMMENT TPM_RH_LOCKOUT or TPM_RH_PLATFORM+{PP} Auth Handle: 1 Auth Role: USER
+_OUTPUT_START TPM2_Clear
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_ClearControl
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ClearControl {NV}
+_TYPE TPMI_RH_CLEAR
+_NAME auth
+_COMMENT TPM_RH_LOCKOUT or TPM_RH_PLATFORM+{PP} Auth Handle: 1 Auth Role: USER
+_TYPE TPMI_YES_NO
+_NAME disable
+_COMMENT YES if the disableOwnerClear flag is to be SET, NO if the flag is to be CLEAR.
+_OUTPUT_START TPM2_ClearControl
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_HierarchyChangeAuth
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_HierarchyChangeAuth {NV}
+_TYPE TPMI_RH_HIERARCHY_AUTH
+_NAME authHandle
+_COMMENT TPM_RH_LOCKOUT, TPM_RH_ENDORSEMENT, TPM_RH_OWNER or TPM_RH_PLATFORM+{PP} Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_AUTH
+_NAME newAuth
+_COMMENT new authorization value
+_OUTPUT_START TPM2_HierarchyChangeAuth
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_DictionaryAttackLockReset
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_DictionaryAttackLockReset {NV}
+_TYPE TPMI_RH_LOCKOUT
+_NAME lockHandle
+_COMMENT TPM_RH_LOCKOUT Auth Index: 1 Auth Role: USER
+_OUTPUT_START TPM2_DictionaryAttackLockReset
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_DictionaryAttackParameters
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_DictionaryAttackParameters {NV}
+_TYPE TPMI_RH_LOCKOUT
+_NAME lockHandle
+_COMMENT TPM_RH_LOCKOUT Auth Index: 1 Auth Role: USER
+_TYPE UINT32
+_NAME newMaxTries
+_COMMENT count of authorization failures before the lockout is imposed
+_TYPE UINT32
+_NAME newRecoveryTime
+_COMMENT time in seconds before the authorization failure count is automatically decremented A value of zero indicates that DA protection is disabled.
+_TYPE UINT32
+_NAME lockoutRecovery
+_COMMENT time in seconds after a lockoutAuth failure before use of lockoutAuth is allowed A value of zero indicates that a reboot is required.
+_OUTPUT_START TPM2_DictionaryAttackParameters
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_PP_Commands
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_PP_Commands {NV}
+_TYPE TPMI_RH_PLATFORM
+_NAME auth
+_COMMENT TPM_RH_PLATFORM+PP Auth Index: 1 Auth Role: USER + Physical Presence
+_TYPE TPML_CC
+_NAME setList
+_COMMENT list of commands to be added to those that will require that Physical Presence be asserted
+_TYPE TPML_CC
+_NAME clearList
+_COMMENT list of commands that will no longer require that Physical Presence be asserted
+_OUTPUT_START TPM2_PP_Commands
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_SetAlgorithmSet
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_SetAlgorithmSet {NV}
+_TYPE TPMI_RH_PLATFORM
+_NAME authHandle
+_COMMENT TPM_RH_PLATFORM Auth Index: 1 Auth Role: USER
+_TYPE UINT32
+_NAME algorithmSet
+_COMMENT a TPM vendor-dependent value indicating the algorithm set selection
+_OUTPUT_START TPM2_SetAlgorithmSet
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_FieldUpgradeStart
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_FieldUpgradeStart
+_TYPE TPMI_RH_PLATFORM
+_NAME authorization
+_COMMENT TPM_RH_PLATFORM+{PP} Auth Index:1 Auth Role: ADMIN
+_TYPE TPMI_DH_OBJECT
+_NAME keyHandle
+_COMMENT handle of a public area that contains the TPM Vendor Authorization Key that will be used to validate manifestSignature Auth Index: None
+_TYPE TPM2B_DIGEST
+_NAME fuDigest
+_COMMENT digest of the first block in the field upgrade sequence
+_TYPE TPMT_SIGNATURE
+_NAME manifestSignature
+_COMMENT signature over fuDigest using the key associated with keyHandle (not optional)
+_OUTPUT_START TPM2_FieldUpgradeStart
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_FieldUpgradeData
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_FieldUpgradeData {NV}
+_TYPE TPM2B_MAX_BUFFER
+_NAME fuData
+_COMMENT field upgrade image data
+_OUTPUT_START TPM2_FieldUpgradeData
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMT_HA+
+_NAME nextDigest
+_COMMENT tagged digest of the next block TPM_ALG_NULL if field update is complete
+_TYPE TPMT_HA
+_NAME firstDigest
+_COMMENT tagged digest of the first block of the sequence
+_INPUT_START TPM2_FirmwareRead
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_FirmwareRead
+_TYPE UINT32
+_NAME sequenceNumber
+_COMMENT the number of previous calls to this command in this sequence set to 0 on the first call
+_OUTPUT_START TPM2_FirmwareRead
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_MAX_BUFFER
+_NAME fuData
+_COMMENT field upgrade image data
+_INPUT_START TPM2_ContextSave
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_COMMENT TPM_ST_NO_SESSIONS
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ContextSave
+_TYPE TPMI_DH_CONTEXT
+_NAME saveHandle
+_COMMENT handle of the resource to save Auth Index: None
+_OUTPUT_START TPM2_ContextSave
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMS_CONTEXT
+_NAME context
+_INPUT_START TPM2_ContextLoad
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_COMMENT TPM_ST_NO_SESSIONS
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ContextLoad
+_TYPE TPMS_CONTEXT
+_NAME context
+_COMMENT the context blob
+_OUTPUT_START TPM2_ContextLoad
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMI_DH_CONTEXT
+_NAME loadedHandle
+_COMMENT the handle assigned to the resource after it has been successfully loaded
+_INPUT_START TPM2_FlushContext
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_COMMENT TPM_ST_NO_SESSIONS
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_TYPE TPMI_DH_CONTEXT
+_NAME flushHandle
+_COMMENT TPM_CC_FlushContext the handle of the item to flush NOTE This is a use of a handle as a parameter.
+_OUTPUT_START TPM2_FlushContext
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_EvictControl
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_EvictControl {NV}
+_TYPE TPMI_RH_PROVISION
+_NAME auth
+_COMMENT TPM_RH_OWNER or TPM_RH_PLATFORM+{PP} Auth Handle: 1 Auth Role: USER
+_TYPE TPMI_DH_OBJECT
+_NAME objectHandle
+_COMMENT the handle of a loaded object Auth Index: None
+_TYPE TPMI_DH_PERSISTENT
+_NAME persistentHandle
+_COMMENT if objectHandle is a transient object handle, then this is the persistent handle for the object if objectHandle is a persistent object handle, then this shall be the same value as persistentHandle
+_OUTPUT_START TPM2_EvictControl
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_ReadClock
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_COMMENT TPM_ST_NO_SESSIONS
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ReadClock
+_OUTPUT_START TPM2_ReadClock
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMS_TIME_INFO
+_NAME currentTime
+_INPUT_START TPM2_ClockSet
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ClockSet {NV}
+_TYPE TPMI_RH_PROVISION
+_NAME auth
+_COMMENT TPM_RH_OWNER or TPM_RH_PLATFORM+{PP} Auth Handle: 1 Auth Role: USER
+_TYPE UINT64
+_NAME newTime
+_COMMENT new Clock setting in milliseconds
+_OUTPUT_START TPM2_ClockSet
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_ClockRateAdjust
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_ClockRateAdjust
+_TYPE TPMI_RH_PROVISION
+_NAME auth
+_COMMENT TPM_RH_OWNER or TPM_RH_PLATFORM+{PP} Auth Handle: 1 Auth Role: USER
+_TYPE TPM_CLOCK_ADJUST
+_NAME rateAdjust
+_COMMENT Adjustment to current Clock update rate
+_OUTPUT_START TPM2_ClockRateAdjust
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_GetCapability
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_GetCapability
+_TYPE TPM_CAP
+_NAME capability
+_COMMENT group selection; determines the format of the response
+_TYPE UINT32
+_NAME property
+_COMMENT further definition of information
+_TYPE UINT32
+_NAME propertyCount
+_COMMENT number of properties of the indicated type to return
+_OUTPUT_START TPM2_GetCapability
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPMI_YES_NO
+_NAME moreData
+_COMMENT flag to indicate if there are more values of this type
+_TYPE TPMS_CAPABILITY_DATA
+_NAME capabilityData
+_COMMENT the capability data
+_INPUT_START TPM2_TestParms
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_TestParms
+_TYPE TPMT_PUBLIC_PARMS
+_NAME parameters
+_COMMENT algorithm parameters to be validated
+_OUTPUT_START TPM2_TestParms
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_NV_DefineSpace
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_DefineSpace {NV}
+_TYPE TPMI_RH_PROVISION
+_NAME authHandle
+_COMMENT TPM_RH_OWNER or TPM_RH_PLATFORM+{PP} Auth Index: 1 Auth Role: USER
+_TYPE TPM2B_AUTH
+_NAME auth
+_COMMENT the authorization value
+_TYPE TPM2B_NV_PUBLIC
+_NAME publicInfo
+_COMMENT the public parameters of the NV area
+_OUTPUT_START TPM2_NV_DefineSpace
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_NV_UndefineSpace
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_UndefineSpace {NV}
+_TYPE TPMI_RH_PROVISION
+_NAME authHandle
+_COMMENT TPM_RH_OWNER or TPM_RH_PLATFORM+{PP} Auth Index: 1 Auth Role: USER
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT the NV Index to remove from NV space Auth Index: None
+_OUTPUT_START TPM2_NV_UndefineSpace
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_NV_UndefineSpaceSpecial
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_UndefineSpaceSpecial {NV}
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT Index to be deleted Auth Index: 1 Auth Role: ADMIN
+_TYPE TPMI_RH_PLATFORM
+_NAME platform
+_COMMENT TPM_RH_PLATFORM + {PP} Auth Index: 2 Auth Role: USER
+_OUTPUT_START TPM2_NV_UndefineSpaceSpecial
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_NV_ReadPublic
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_ReadPublic
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT the NV Index Auth Index: None
+_OUTPUT_START TPM2_NV_ReadPublic
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_NV_PUBLIC
+_NAME nvPublic
+_COMMENT the public area of the NV Index
+_TYPE TPM2B_NAME
+_NAME nvName
+_COMMENT the Name of the nvIndex
+_INPUT_START TPM2_NV_Write
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_Write {NV}
+_TYPE TPMI_RH_NV_AUTH
+_NAME authHandle
+_COMMENT handle indicating the source of the authorization value Auth Index: 1 Auth Role: USER
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT the NV Index of the area to write Auth Index: None
+_TYPE TPM2B_MAX_NV_BUFFER
+_NAME data
+_COMMENT the data to write
+_TYPE UINT16
+_NAME offset
+_COMMENT the offset into the NV Area
+_OUTPUT_START TPM2_NV_Write
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_NV_Increment
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_Increment {NV}
+_TYPE TPMI_RH_NV_AUTH
+_NAME authHandle
+_COMMENT handle indicating the source of the authorization value Auth Index: 1 Auth Role: USER
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT the NV Index to increment Auth Index: None
+_OUTPUT_START TPM2_NV_Increment
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_NV_Extend
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_Extend {NV}
+_TYPE TPMI_RH_NV_AUTH
+_NAME authHandle
+_COMMENT handle indicating the source of the authorization value Auth Index: 1 Auth Role: USER
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT the NV Index to extend Auth Index: None
+_TYPE TPM2B_MAX_NV_BUFFER
+_NAME data
+_COMMENT the data to extend
+_OUTPUT_START TPM2_NV_Extend
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_INPUT_START TPM2_NV_SetBits
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_SetBits {NV}
+_TYPE TPMI_RH_NV_AUTH
+_NAME authHandle
+_COMMENT handle indicating the source of the authorization value Auth Index: 1 Auth Role: USER
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT NV Index of the area in which the bit is to be set Auth Index: None
+_TYPE UINT64
+_NAME bits
+_COMMENT the data to OR with the current contents
+_OUTPUT_START TPM2_NV_SetBits
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 33.10.3 1 2 3
+_INPUT_START TPM2_NV_WriteLock
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_WriteLock {NV}
+_TYPE TPMI_RH_NV_AUTH
+_NAME authHandle
+_COMMENT handle indicating the source of the authorization value Auth Index: 1 Auth Role: USER
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT the NV Index of the area to lock Auth Index: None
+_OUTPUT_START TPM2_NV_WriteLock
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 33.11.3 1 2 3
+_INPUT_START TPM2_NV_GlobalWriteLock
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_GlobalWriteLock
+_TYPE TPMI_RH_PROVISION
+_NAME authHandle
+_COMMENT TPM_RH_OWNER or TPM_RH_PLATFORM+{PP} Auth Index: 1 Auth Role: USER
+_OUTPUT_START TPM2_NV_GlobalWriteLock
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 33.12.3 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26
+_INPUT_START TPM2_NV_Read
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_Read
+_TYPE TPMI_RH_NV_AUTH
+_NAME authHandle
+_COMMENT the handle indicating the source of the authorization value Auth Index: 1 Auth Role: USER
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT the NV Index to be read Auth Index: None
+_TYPE UINT16
+_NAME size
+_COMMENT number of octets to read
+_TYPE UINT16
+_NAME offset
+_COMMENT octet offset into the area This value shall be less than or equal to the size of the nvIndex data.
+_OUTPUT_START TPM2_NV_Read
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_TYPE TPM2B_MAX_NV_BUFFER
+_NAME data
+_COMMENT the data read 33.13.3 1 2 3
+_INPUT_START TPM2_NV_ReadLock
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_ReadLock
+_TYPE TPMI_RH_NV_AUTH
+_NAME authHandle
+_COMMENT the handle indicating the source of the authorization value Auth Index: 1 Auth Role: USER
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT the NV Index to be locked Auth Index: None
+_OUTPUT_START TPM2_NV_ReadLock
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 33.14.3 1 2 3
+_INPUT_START TPM2_NV_ChangeAuth
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_ChangeAuth {NV}
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT handle of the object Auth Index: 1 Auth Role: ADMIN
+_TYPE TPM2B_AUTH
+_NAME newAuth
+_COMMENT new authorization value
+_OUTPUT_START TPM2_NV_ChangeAuth
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT 33.15.3 1 2
+_INPUT_START TPM2_NV_Certify
+_TYPE TPMI_ST_COMMAND_TAG
+_NAME tag
+_TYPE UINT32
+_NAME commandSize
+_TYPE TPM_CC
+_NAME commandCode
+_COMMENT TPM_CC_NV_Certify
+_TYPE TPMI_DH_OBJECT+
+_NAME signHandle
+_COMMENT handle of the key used to sign the attestation structure Auth Index: 1 Auth Role: USER
+_TYPE TPMI_RH_NV_AUTH
+_NAME authHandle
+_COMMENT handle indicating the source of the authorization value for the NV Index Auth Index: 2 Auth Role: USER
+_TYPE TPMI_RH_NV_INDEX
+_NAME nvIndex
+_COMMENT Index for the area to be certified Auth Index: None
+_TYPE TPM2B_DATA
+_NAME qualifyingData
+_COMMENT user-provided qualifying data
+_TYPE TPMT_SIG_SCHEME+
+_NAME inScheme
+_COMMENT signing scheme to use if the scheme for signHandle is TPM_ALG_NULL
+_TYPE UINT16
+_NAME size
+_COMMENT number of octets to certify
+_TYPE UINT16
+_NAME offset
+_COMMENT octet offset into the area This value shall be less than or equal to the size of the nvIndex data.
+_OUTPUT_START TPM2_NV_Certify
+_TYPE TPM_ST
+_NAME tag
+_COMMENT see clause 8
+_TYPE UINT32
+_NAME responseSize
+_TYPE TPM_RC
+_NAME responseCode
+_COMMENT .
+_TYPE TPM2B_ATTEST
+_NAME certifyInfo
+_COMMENT the structure that was signed
+_TYPE TPMT_SIGNATURE
+_NAME signature
+_COMMENT the asymmetric signature over certifyInfo using the key referenced by signHandle 33.16.3 1 2 3 4
+_END

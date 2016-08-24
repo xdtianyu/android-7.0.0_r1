@@ -1,0 +1,30 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_ToolchainOptions"
+PURPOSE = """
+Verify that system ELF executables were compiled with a
+ hardened toolchain.
+"""
+CRITERIA = """
+Fail if we find any ELF files compiled without the following options:
+1. -fstack-protector-all
+2. -D_FORTIFY_SOURCE=2
+3. -Wl,-z,now
+4. -Wl,-z,relro
+5. -fPIE
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TEST_CLASS = "platform"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+TIME="MEDIUM"
+
+DOC = """
+Tests whether system ELF executables were compiled with a hardened toolchain.
+"""
+
+job.run_test("platform_ToolchainOptions", args=args)

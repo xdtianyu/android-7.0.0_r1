@@ -1,0 +1,25 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Tests that Chrontel ch7036 server is operational and available
+"""
+
+NAME = 'hardware_ch7036'
+PURPOSE = 'Tests that Chrontel ch7036 server is operational and available'
+CRITERIA = """
+Fails if upstart(initctl) can't be contacted or isn't running chrontel server
+Runs some DPMS commands in attempt to perturb server
+Fails if unable to find log open (via lsof)
+Fails if log doesn't locate i2c device
+Fails if log doesn't contain version string signifying fw loaded/operational
+Fails if server restarts (pid changes) while test is running
+"""
+TEST_CLASS = "hardware"
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'client'
+
+job.run_test('hardware_ch7036')

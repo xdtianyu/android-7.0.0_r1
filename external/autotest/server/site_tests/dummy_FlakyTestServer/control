@@ -1,0 +1,21 @@
+NAME = 'Flaky server side test'
+AUTHOR = 'scottz'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'General'
+TEST_TYPE = 'server'
+ATTRIBUTES = "suite:dummyflake"
+SUITE = 'dummyflake'
+RETRIES = 2
+
+
+DOC = """
+Test that randomly fails half the time. Will be attempted 3 times.
+"""
+
+from autotest_lib.client.common_lib import utils
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('flaky_test', disable_sysinfo=True)
+
+job.parallel_simple(run, machines)

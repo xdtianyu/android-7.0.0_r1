@@ -1,0 +1,19 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_CryptohomeTPMReOwn"
+PURPOSE = "Verify that cryptohome re-creates the user's vault directory when the TPM is re-owned."
+CRITERIA = "This will run a test of re-owning the TPM."
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functionality"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This test will verify that crytpohome will re-create the user's vault directory
+when the TPM is re-owned.
+"""
+
+job.run_test('platform_CryptohomeTPMReOwn')

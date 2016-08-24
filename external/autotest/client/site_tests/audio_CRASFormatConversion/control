@@ -1,0 +1,31 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'The Chromium OS Authors'
+NAME = 'audio_CRASFormatConversion'
+PURPOSE = 'Test playing audio with the CRAS test client.'
+CRITERIA = """
+Check that converting between different sample rates doesn't crash.
+"""
+TIME='SHORT'
+TEST_CATEGORY = 'PLAYBACKCAPTURE'
+TEST_CLASS = 'audio'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:audio"
+SUITE = 'audio'
+DEPENDENCIES = 'audio_loopback_dongle'
+
+DOC = """
+NOTE: For this test to pass you need to have the line out looped back to mic-in.
+This can be through a 3.5mm male-to-male cable or a loopback dongle depending on
+your device.
+"""
+
+TEST_SAMPLE_RATES = [
+        8000, 16000, 22050, 32000, 44100, 48000, 88200, 96000, 192000]
+
+job.run_test(
+        'audio_CRASFormatConversion',
+        test_sample_rates=TEST_SAMPLE_RATES,
+        constraints=['min_rms_value > 0.05'])

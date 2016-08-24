@@ -1,0 +1,24 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "EmptyLines"
+AUTHOR = "Chrome OS Team"
+ATTRIBUTES = "suite:kernel_daily_regression"
+SUITE = "kernel_daily_regression"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "server"
+
+DOC = """
+This test checks dmesg output for empty lines caused by double \n in
+printk format strings. It will reboot the host to check the output
+since boot.
+"""
+
+def run_kernel_empty_lines(machine):
+    host = hosts.create_host(machine)
+    job.run_test("kernel_EmptyLines", host=host)
+
+parallel_simple(run_kernel_empty_lines, machines)

@@ -1,0 +1,15 @@
+We build an equivalent of the jacoco-agent.jar which contains classes from org.jacoco.core,
+org.jacoco.agent and org.jacoco.agent.rt packages but also classes from asm 5.0.1.
+
+However, Jacoco depends on classes that do not exist in Android (java.lang.instrument.* or
+javax.management.*) for runtime instrumentation only. The ART compiler would reject those classes
+when they are either in the bootclasspath (core, frameworks, ...) or system apps.
+
+Since we only use offline instrumentation for code coverage (using Jack) and do not execute these
+classes at runtime, we simply not compile them here.
+
+We also need to modify the source code to cut dependencies to the classes that we exclude from the
+compilation. The changes are surrounded by "BEGIN android-change" and "END android-change". Here
+is the list of the changes:
+
+1) Remove the creation of JmxRegistration in org.jacoco.agent.rt.internal.Agent.

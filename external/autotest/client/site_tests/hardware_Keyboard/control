@@ -1,0 +1,15 @@
+NAME = 'hardware_Keyboard'
+AUTHOR = 'Chromium OS Authors'
+PURPOSE = 'Verify the prescence of a supported keyboard.'
+CRITERIA = 'Fails if the keyboard is not registered with the input subsystem.'
+TIME = 'SHORT'
+TEST_CLASS = 'Hardware'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'Client'
+DOC = """
+This test uses a modified version of evtest to probe for and test the keyboard.
+The test finds the keyboard event in /dev/input/, and queries to ensure that
+the driver presents all of the expected Chrome OS keyboard keys.
+"""
+
+job.run_test('hardware_Keyboard')

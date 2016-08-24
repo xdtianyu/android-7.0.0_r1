@@ -1,0 +1,14 @@
+from autotest_lib.server import crashcollect
+from autotest_lib.server import utils
+
+
+def crashinfo(machine):
+    if utils.machine_is_testbed(machine):
+        logging.info('testbed does not need to get crash info.')
+        return
+
+    host = hosts.create_host(machine, initialize=False, auto_monitor=False)
+    crashcollect.get_crashinfo(host, test_start_time)
+
+
+job.parallel_simple(crashinfo, machines, log=False)

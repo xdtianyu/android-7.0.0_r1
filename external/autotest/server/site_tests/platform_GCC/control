@@ -1,0 +1,20 @@
+# Copyright (c) 2009 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "GCC"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test runs the GCC test suite which uses the DejaGNU unittest framework. This test requires that DejaGNU be installed and that setup_board is run with FEATURES=noclean so that the toolchain files are available for testing.
+"""
+
+def run_server_tests(machine):
+  client = hosts.create_host(machine)
+  job.run_test("platform_GCC", host=client, args=args)
+
+job.parallel_on_machines(run_server_tests, machines)

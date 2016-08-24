@@ -1,0 +1,20 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'quiche, wiley, pstew'
+NAME = 'network_TwoShills'
+ATTRIBUTES = "suite:network_nightly"
+SUITE = 'network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Test that only one shill runs at a time.
+
+  Checks that shill is already running, and then tries to start a new
+  shill. Fails if the new shill process does not exit in a reasonable
+  amount of time.
+"""
+
+job.run_test('network_TwoShills')

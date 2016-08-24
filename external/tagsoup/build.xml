@@ -1,0 +1,160 @@
+<!--
+// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+//
+// TagSoup is licensed under the Apache License,
+// Version 2.0.  You may obtain a copy of this license at
+// http://www.apache.org/licenses/LICENSE-2.0 .  You may also have
+// additional legal rights not granted by this license.
+//
+// TagSoup is distributed in the hope that it will be useful, but
+// unless required by applicable law or agreed to in writing, TagSoup
+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+// OF ANY KIND, either express or implied; not even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+-->
+
+<project name="tagsoup" default="dist">
+
+  <!-- generic properties -->
+  <property file="etc/build/build.properties"/>
+  <!-- additional tasks -->
+  <taskdef file="etc/build/taskdefs.txt" classpath="bin"/>
+
+  <available property="transformer.factory"
+     classname="com.icl.saxon.TransformerFactoryImpl"
+     value="com.icl.saxon.TransformerFactoryImpl"/>
+  <available property="transformer.factory"
+     classname="net.sf.saxon.TransformerFactoryImpl"
+     value="net.sf.saxon.TransformerFactoryImpl"/>
+  <available property="transformer.factory"
+     classname="org.apache.xalan.processor.TransformerFactoryImpl"
+     value="org.apache.xalan.processor.TransformerFactoryImpl"/>
+  <available property="transformer.factory"
+     classname="com.sun.org.apache.xalan.processor.TransformerFactoryImpl"
+     value="com.sun.org.apache.xalan.processor.TransformerFactoryImpl"/>
+
+  <!-- some folder settings -->
+  <property name="bin" value="bin"/>
+  <property name="src" value="src"/>
+  <property name="build" value="build"/>
+  <property name="dist"  value="dist"/>
+  <property name="docs" value="docs"/>
+  <property name="tmp" value="tmp"/>
+
+
+  <!-- initialize project -->
+  <target name="init" description="Init project.">
+    <tstamp/>
+  </target>
+
+
+  <!-- ensure needed folders are available -->
+  <target name="prepare" description="Set up folders.">
+    <mkdir dir="${build}"/>
+    <mkdir dir="${tmp}"/>
+  </target>
+
+  <!-- Build a distribution jar file -->
+  <target name="dist" depends="init,compile"
+	  description="Build a binary distribution file.">
+    <antcall target="jar-release">
+      <param name="buildDir" value="build"/>
+      <param name="version" value="${tagsoup.version}"/>
+    </antcall>
+  </target>
+
+
+	<target name="jar-release" depends="init"
+			description="Build a release jar file.">
+	  <mkdir dir="${dist}/lib" />
+	  <jar jarfile="${dist}/lib/tagsoup-${tagsoup.version}.jar" basedir="${buildDir}">
+      <manifest>
+        <attribute name="Version" value="${tagsoup.version}"/>
+        <attribute name="Main-Class" value="org.ccil.cowan.tagsoup.CommandLine"/>
+      </manifest>
+    </jar>
+  </target>
+
+
+  <!-- compile java sources -->
+  <target name="compile" depends="init,prepare,build-parser"
+	  description="Compile java classes.">
+    <javac source="1.4" target="1.4" srcdir="${src}/java" destdir="${build}" deprecation="on" verbose="off" debug="on">
+      <src path="${src}/java"/>
+	  <src path="${tmp}/src"/>
+	</javac>
+  </target>
+
+<!-- prepare generation of the parser classes based on the definition files -->
+   <target depends="init,prepare" description="Prepare generation of parser classes." name="prepare-parser"> 
+
+     <echo>
+       Using ${transformer.factory} as the TransformerFactory
+     </echo>
+
+     <xslt in="${src}/definitions/html.tssl" out="${tmp}/HTMLModels.i" 
+style="tssl/tssl-models.xslt">
+       <factory name="${transformer.factory}"/>
+     </xslt>
+     <xslt in="${src}/definitions/html.tssl" out="${tmp}/HTMLSchema.i" 
+style="tssl/tssl.xslt">
+       <factory name="${transformer.factory}"/>
+     </xslt>
+     <xslt in="${src}/definitions/html.stml" out="${tmp}/HTMLScanner.i" 
+style="stml/stml.xslt">
+       <factory name="${transformer.factory}"/>
+     </xslt>
+   </target>
+
+
+
+  <!-- patch the parser class files -->
+  <target name="build-parser" depends="prepare-parser"
+	  description="Generate parser class files.">
+	<property name="parser.pkg-path" value="org/ccil/cowan/tagsoup"/>
+	<mkdir dir="${tmp}/src/${parser.pkg-path}"/>
+	<antcall target="patch-file">
+      <param name="file-pref" value="HTMLModels"/>
+      <param name="token" value="MODEL_DEFINITIONS"/>
+	</antcall>
+	<antcall target="patch-file">
+      <param name="file-pref" value="HTMLSchema"/>
+      <param name="token" value="SCHEMA_CALLS"/>
+	</antcall>
+	<antcall target="patch-file">
+      <param name="file-pref" value="HTMLScanner"/>
+      <param name="token" value="STATE_TABLE"/>
+	</antcall>
+  </target>
+
+
+  <!-- patch one parser class file -->
+  <target name="patch-file" depends="" description="Patch a parser class file.">
+	<copy file="${src}/templates/${parser.pkg-path}/${file-pref}.java" toDir="${tmp}/src/${parser.pkg-path}"/>
+    <loadfile property="patch" srcFile="${tmp}/${file-pref}.i"/>
+	<replace file="${tmp}/src/${parser.pkg-path}/${file-pref}.java" token="@@${token}@@" value="${patch}"/>
+  </target>
+
+  <!-- clean up the mess -->
+  <target name="clean" description="Clean up folders.">
+    <delete dir="${build}"/>
+    <delete dir="${tmp}"/>
+    <delete dir="${docs}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+
+  <!-- generate javadoc for the java classes -->
+  <target name="docs-api" depends="init"
+	  description="Generate javadoc documentation.">
+	<mkdir dir="${docs}/api"/>
+	<javadoc packagenames="org.*"
+		sourcepath="${src}/java" destdir="${docs}/api"
+		use="true"
+		windowtitle="TagSoup ${tagsoup.version} API">
+      <doctitle><![CDATA[<h1>TagSoup Package Documentation</h1>]]></doctitle>
+	  <bottom><![CDATA[<em>Licence</em>: <strong>Academic Free License 3.0</strong> and/or <strong>GPL 2.0</strong>]]></bottom>
+    </javadoc>
+  </target>
+
+</project>

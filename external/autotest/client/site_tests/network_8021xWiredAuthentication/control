@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "pstew@chromium.org"
+NAME = "network_8021xWiredAuthentication"
+PURPOSE = "Verify shill correctly authenticates to an 802.1x wired network"
+CRITERIA = """
+This test fails if the DUT cannot authenticate to a hostapd instance
+running 802.1x authentication on a virtual Ethernet interface.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Tests that we can complete EAP negotiation on an Ethernet interface.
+
+"""
+
+job.run_test('network_8021xWiredAuthentication')

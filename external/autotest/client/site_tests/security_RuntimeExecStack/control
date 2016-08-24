@@ -1,0 +1,20 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME = "SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = ("This test verifies that no running processes on the image have "
+    "an executable stack. This augments the platform_ToolchainOptions test "
+    "in that it will catch mprotect(..., PROT_EXEC, ...) calls too.")
+NAME = "security_RuntimeExecStack"
+PURPOSE = "To ensure running processes have non-executable stack"
+CRITERIA = ("Fail if a process has an executable stack")
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+job.run_test('security_RuntimeExecStack')

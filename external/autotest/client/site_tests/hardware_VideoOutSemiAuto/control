@@ -1,0 +1,33 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_VideoOutSemiAuto'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Verify external video ports are configurable with Chrome OS.'
+CRITERIA = """
+This test will fail under the following conditions:
+  - No external HDMI or VGA device is detected.
+  - monitor_reconfigure tool is not found
+  - xrandr is not found
+  - if the external video port is present but unable to be configured
+"""
+TIME='SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = "hardware"
+TEST_TYPE = 'client'
+
+DOC = """
+This is a semi-automated test that checks that the external video ports
+on the device can be configured with our software when a device is 
+connected to them.  Note:  do not connect devices to more than one port at a 
+time.  This test should be run for each external video port.
+
+This test depends on xrandr and monitor_reconfigure (the Chrome OS monitor
+configuration tool).
+"""
+#TODO(sosa@chromium.org) - Verify that set resolution is correct
+#TODO() - HDMI audio
+
+job.run_test('hardware_VideoOutSemiAuto')
+

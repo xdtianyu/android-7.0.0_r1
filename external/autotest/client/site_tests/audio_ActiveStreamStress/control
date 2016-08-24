@@ -1,0 +1,30 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "rohitbm@chromium.org"
+NAME = "audio_ActiveStreamStress"
+PURPOSE = "Verifies active audio streams"
+CRITERIA = """
+Test will fail if cras active stream count doesn't match to open active streams.
+"""
+ATTRIBUTES = "suite:stress_experimental"
+SUITE = "stress_experimental"
+TIME = "MEDIUM"
+TEST_CATEGORY = "General"
+TEST_CLASS = "audio"
+TEST_TYPE = "client"
+
+BUG_TEMPLATE = {
+    'owner': 'rohitbm@chromium.org',
+    'labels': ['Cr-OS-Kernel-Audio', 'OS-Chrome']
+}
+
+DOC = """
+Test opens/closes audio streams and verifies active stream.
+
+This is a stress test to ensure that cras works flawlessly while adding/removing
+streams for a long time.
+"""
+
+job.run_test('audio_ActiveStreamStress')

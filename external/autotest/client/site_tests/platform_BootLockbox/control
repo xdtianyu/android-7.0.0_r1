@@ -1,0 +1,27 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'dkrahn'
+NAME = 'platform_BootLockbox'
+PURPOSE = 'Tests the boot lockbox mechanism.'
+CRITERIA = 'Fails if the lockbox mechanism does not function as expected.'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'platform'
+TEST_TYPE = 'client'
+DEPENDENCIES = 'cleanup-reboot'
+BUG_TEMPLATE = {'owner': 'dkrahn@chromium.org'}
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = 'bvt-perbuild'
+JOB_RETRIES = 2
+
+DOC = """
+This test verifies that boot lockbox mechanism is functional.  It tests that
+lockbox data can be signed and verified before finalization but after
+finalization it can only be verified.  This test requires a reboot of the DUT
+before it runs so that it starts in a not-finalized state (thus the 'cleanup-
+reboot' dependency).
+"""
+
+job.run_test('platform_BootLockbox')

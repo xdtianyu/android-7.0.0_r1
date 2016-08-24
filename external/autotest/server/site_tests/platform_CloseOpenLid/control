@@ -1,0 +1,26 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_CloseOpenLid"
+PURPOSE = "Test suspend/resume in response to lid events."
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test uses servo to simulate lid close and open events. Device state is
+verified by pinging."""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("platform_CloseOpenLid", host=host, disable_sysinfo=True)
+
+parallel_simple(run, machines)

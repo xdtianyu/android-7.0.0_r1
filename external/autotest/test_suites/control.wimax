@@ -1,0 +1,57 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "wimax"
+PURPOSE = "Automated testing of WiMAX support on Chrome OS."
+CRITERIA = "All tests with SUITE=wimax must pass."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+Run automated tests on a DUT with a WiMAX module supported by Chrome OS to
+verify the WiMAX support on Chrome OS:
+- WiMAX kernel driver is present and loaded when a WiMAX module is detected
+- WiMAX firmware is present and loaded onto the WiMAX module
+- WiMAX manager is present and running, and is able to perform the expected
+  operations on the WiMAX module
+- shill is built with WiMAX support and is able to interact with WiMAX manager
+  properly over DBus
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on.  Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+# Values specified in this bug template will override default values when
+# filing bugs on tests that are a part of this suite. If left unspecified
+# the bug filer will fallback to it's defaults.
+_BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Systems-Mobile'],
+    'owner': 'benchan@chromium.org',
+    'status': None,
+    'summary': None,
+    'title': None,
+    'cc': ['agnescheng@chromium.org', 'alexpau@chromium.org']
+}
+
+# TODO(benchan): Enable auto bug filing when the tests are stable and no longer
+# marked as experimental.
+args_dict['add_experimental'] = True
+args_dict['bug_template'] = _BUG_TEMPLATE
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['name'] = NAME
+args_dict['job'] = job
+
+dynamic_suite.reimage_and_run(**args_dict)

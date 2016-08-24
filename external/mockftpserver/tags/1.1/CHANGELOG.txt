@@ -1,0 +1,19 @@
+MockFtpServer Change Log
+-------------------------------------------------------------------------------
+
+Changes in version 1.1 (20 Feb 2008)
+------------------------------------------
+- StubFtpServer: Allow configuring server control connection port other than the default (21).
+- AbstractTest: Add some test convenience methods.
+
+
+Changes in version 1.0 final (11 Dec 2007)
+------------------------------------------
+- Implement default CommandHandlers for NLST, REIN, SMNT, SITE, ABOR and ALLO commands.
+- Handle command names in any case.
+- CwdCommandHandler: Fix PATHNAME_KEY constant value; change to "pathname".
+
+
+Changes in version 1.0-RC1 (1 Nov 2007)
+---------------------------------------
+Initial release.

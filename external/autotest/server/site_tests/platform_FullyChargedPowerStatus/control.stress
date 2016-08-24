@@ -1,0 +1,42 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "ChromeOS team "
+NAME = "platform_FullyChargedPowerStatus.stress"
+PURPOSE = "Check power status after suspend, unplug, plug and resumed"
+CRITERIA = "This test will fail if power status disply as no on AC, discharging as state & less than 95%."
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+SUITE = "stress_experimental"
+DEPENDENCIES = "rpm, power:battery"
+
+DOC = """
+This test check fully charged power status after suspend and resume the device
+with multiple sets of power status changed before, between and after.
+
+The test fails if
+- online is 'no'
+- power status is 'discharging'
+- display percentage is < 95%
+"""
+
+args_dict = utils.args_to_dict(args)
+
+def run(machine):
+
+    host = hosts.create_host(machine)
+
+    power_status_sets = [(False, False, True),
+                         (True, False, True),
+                         (False, True, False),
+                         (True, False, False)]
+
+    job.run_test("platform_FullyChargedPowerStatus", host=host,
+                 disable_sysinfo=True, power_status_sets=power_status_sets)
+
+parallel_simple(run, machines)

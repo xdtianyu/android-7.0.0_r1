@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+DOC = """
+Verify that we can get low memory notification from /dev/chromeos-low-mem
+when we consume a lot of memory.
+Verify we no longer get it when some of the memory is freed.
+
+Run the platform_CompressedSwap test with the just_checking_lowmem flag.
+"""
+NAME = "kernel_LowMemNotify"
+PURPOSE = "Checks that /dev/chromeos-low-mem reports low-memory conditions."
+CRITERIA = """
+Fails if /dev/chromeos-low-mem does not exist or does not behave as expected.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+
+job.run_test('platform_CompressedSwap', just_checking_lowmem=True)

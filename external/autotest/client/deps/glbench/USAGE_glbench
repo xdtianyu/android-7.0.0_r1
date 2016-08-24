@@ -1,0 +1,66 @@
+GLBench runs a bunch of OpenGL or OpenGL ES performance tests and writes 
+performance numbers to stdout and resulting images to a directory for 
+verification.
+
+For the test to pass the performance numbers have to be better than a predefined 
+threshold, while the resulting images have to be found in a repository of 
+reference images. As the image name encodes the raw pixel MD5 this can be 
+done as a simple file existence check. If we ever get too much pixel 
+variation using a tool like perceptualdiff to waive small differences 
+should be acceptable.
+
+
+Executable options
+==================
+
+./glbench [-save [-outdir=<directory>]]
+
+
+Example
+=======
+
+./glbench -save -outdir=img
+# board_id: NVIDIA Corporation - Quadro FX 380/PCI/SSE2
+swap_swap                    =   214.77 us           [swap_swap.pixmd5-20dbc406b95e214a799a6a7f9c700d2f.png]
+clear_color                  =  4448.28 mpixels_sec  [clear_color.pixmd5-e3609de1022a164fe240a562c69367de.png]
+clear_depth                  = 10199.76 mpixels_sec  [clear_depth.pixmd5-e3609de1022a164fe240a562c69367de.png]
+clear_colordepth             =  3250.57 mpixels_sec  [clear_colordepth.pixmd5-e3609de1022a164fe240a562c69367de.png]
+clear_depthstencil           = 26447.22 mpixels_sec  [clear_depthstencil.pixmd5-e3609de1022a164fe240a562c69367de.png]
+[...]
+
+ls img
+clear_color.pixmd5-e3609de122a164fe240a562c69367de.png
+clear_colordepth.pixmd5-e3609de122a164fe240a562c69367de.png
+clear_colordepthstencil.pixmd5-e3609de122a164fe240a562c69367de.png
+compositing.pixmd5-7d02a16a7ac15cd6cbbc5c786f1.png
+[...]
+
+
+Running from the autotest harness
+=================================
+
+The autotest script graphics_GLBench.py will 
+0) run glbench -save
+1) first try to identify known buggy images by searching in 
+       deps/glbench/glbench_knownbad_images.txt
+2) then identify good images by searching in 
+       deps/glbench/glbench_reference_images.txt
+3) if it is unable to find the test image it will do a second lookup at
+       http://commondatastorage.googleapis.com/chromeos-localmirror/distfiles/glbench_*
+4) TODO(ihf) use perceptualdiff to do a fuzzy compare
+5) raise an error if the image is completely unknown
+6) report performance numbers back to the harness
+
+
+Handling of reference images
+============================
+
+Good reference images themselves are located at       ../glbench-images/glbench_reference_images/
+Images that have outstanding defects and an open bug filed are at ../glbench-images/glbench_knownbad_images/chromium-bug-NNNNN/
+When that bug is closed the directory should be moved to ../glbench-images/glbench_fixedbad_images/chromium-bug-NNNNN/
+
+To push out new reference images place them in the appropriate 
+directories (create a new bug if needed) and run 
+    > update_glbench_image_filelists.sh 
+
+to update the image filelists in deps/glbench/glbench_reference_images.txt etc.

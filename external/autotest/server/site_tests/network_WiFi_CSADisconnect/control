@@ -1,0 +1,33 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'zqiu, pstew, wiley, quiche'
+NAME = 'network_WiFi_CSADisconnect'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371'
+ATTRIBUTES = 'suite:wifi_matfunc, suite:wifi_matfunc_bcm4371'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test verifies that DUT can still connect to the AP when it is
+disconnected right after receiving a CSA message. This is to make sure the MAC
+80211 queues are not stuck after those two events.
+"""
+
+
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    configurations = [(64, 36)]
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_CSADisconnect',
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=configurations)
+
+
+parallel_simple(run, machines)
+

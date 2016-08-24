@@ -1,0 +1,41 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "gwendal"
+NAME = "StorageQualRetention"
+ATTRIBUTES = "suite:storage_qual"
+SUITE = "storage_qual"
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+
+DOC = """
+Sequence for testing the Storage Qual running from the fixed devices.
+This tests check retentions.
+"""
+from autotest_lib.server import sequence
+
+
+SERVER_SEQUENCES = [
+    sequence.SequenceJob(
+            'hardware_StorageQualBase',
+            { 'tag': 'before', 'client_tag': 'before'}),
+    sequence.SequenceJob(
+            'hardware_StorageStress',
+            {'tag': 'soak', 'power_command': 'nothing',
+             'storage_test_command': 'full_write'},
+            iteration=7 * sequence.DAY_IN_HOURS / 4,
+            duration=4 * sequence.HOUR_IN_SECS),
+    sequence.SequenceJob(
+            'hardware_StorageStress',
+            {'tag': 'suspend', 'power_command': 'suspend',
+             'suspend_duration': 12 * sequence.HOUR_IN_SECS},
+            duration=7 * sequence.DAY_IN_SECS),
+    sequence.SequenceJob(
+            'hardware_StorageQualBase',
+            { 'tag': 'after', 'client_tag': 'after'}),
+]
+
+sequence.sequence_schedule(job, machines, SERVER_SEQUENCES)

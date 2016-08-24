@@ -1,0 +1,31 @@
+; Copyright (c) 2010 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; A simulation of large sequential disk writes.
+;
+
+[seq_write_verified]
+; directory=${DIRNAME}
+filename=${FILENAME}
+size=${FILESIZE}
+overwrite=1
+unlink=1
+
+time_based
+runtime=${RUN_TIME}
+numjobs=1
+
+ioengine=libaio
+iodepth=4
+
+readwrite=write
+bs=1m
+
+; verify=crc32c-intel
+verify=crc32
+verify_pattern="ecryptfs"
+verify_backlog=1
+verifysort=1
+verify_fatal=1
+verify_async=1

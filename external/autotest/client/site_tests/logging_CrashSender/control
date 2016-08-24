@@ -1,0 +1,31 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "logging_CrashSender"
+PURPOSE = "Verify crash sender works."
+CRITERIA = """
+Fails if any of the following conditions occur:
+  - crash log messages are incorrect
+  - crash is sent without user consent
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:partners, suite:smoke"
+SUITE = "bvt-inline, smoke, partners"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "logging"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+Test that crash sender works correctly.
+"""
+
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'Cr-Internals-Logging', 'Cr-OS-Systems'],
+    'owner': 'vapier@chromium.org',
+    'cc': ['vapier@chromium.org', 'benchan@chromium.org'],
+}
+
+job.run_test('logging_CrashSender')

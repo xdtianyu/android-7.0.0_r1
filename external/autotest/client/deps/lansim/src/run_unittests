@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Runs the lansim unit tests.
+
+UNITTESTS="
+  pyiftun_unittest.py
+  py/tools_unittest.py
+"
+
+# Unittests that require creating a TUN/TAP interface (and thus access to
+# /dev/net/tun) need to be run as root.
+ROOT_UNITTESTS="
+  py/tuntap_unittest.py
+  py/simulator_unittest.py
+"
+
+set -e
+
+# Display help/usage message.
+usage() {
+  cat <<EOF
+Usage: ${0##*/} [OPTION]...
+Options:
+  -f  force running all unit test modules, regardless of failure
+  -h  display this help and exit
+EOF
+}
+
+# Parse command-line options.
+while getopts ":fh" opt; do
+  case $opt in
+    f)
+      force_all=1
+      ;;
+    h)
+      usage
+      exit
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))
+if [[ $# > 0 ]]; then
+  echo "Invalid argument: $1"
+  exit 1
+fi
+
+# Invoke unit test scripts.
+for unittest_script in $UNITTESTS; do
+  echo "Running $unittest_script:":
+  python ${unittest_script} || test ${force_all}
+done
+
+for unittest_script in $ROOT_UNITTESTS; do
+  echo "Running $unittest_script as root:"
+  sudo PYTHONPATH=${PYTHONPATH} python ${unittest_script} || test ${force_all}
+done
+
+exit 0

@@ -1,0 +1,21 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "rohitbm@chromium.org, chromeos-gfx"
+NAME = "graphics_WebGLAquarium.power"
+PURPOSE = "Execute the WebGL aquarium test suite to measure power."
+CRITERIA = "All suite tests must not crash/hang."
+TIME = "medium"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "graphics"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    "labels": ["Cr-OS-Kernel-Graphics"],
+}
+
+DOC = """
+This runs the WebGL aquarium test and measures power consumption.
+"""
+
+job.run_test("graphics_WebGLAquarium", power_test=True)

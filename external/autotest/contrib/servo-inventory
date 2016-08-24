@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Go through all hosts known to the database for cautotest or
+# cautotest-cq.  Find all hosts with a corresponding servo host.
+# Run servo-stat for each of those hosts.
+#
+# Output from servo-stat goes to stdout.  Starting and ending
+# timestamps are recorded on stderr.
+
+# readlink -f $0, in case $0 is a symlink from somewhere else
+cd $(dirname $(readlink -f $0))
+
+date >&2
+../cli/atest host list -w cautotest | awk '
+        $0 !~ /^Host / &&
+          $0 !~ /board:(parrot|butterfly)/ {print $1}
+    ' | sort | ./haveservo | xargs -l1 ./servo-stat
+date >&2

@@ -1,0 +1,33 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_MemoryThroughput.memory_qual'
+AUTHOR = 'puthik'
+PURPOSE = 'Benchmark sequential throughput for read, write, and copy'
+CRITERIA = 'This test is a benchmark for memory qualification.'
+TIME = 'MEDIUM'
+TEST_CATEGORY = 'Performance'
+TEST_CLASS = 'hardware'
+TEST_TYPE = 'client'
+
+DOC = """
+This uses the lmbench 3 bw_mem benchmark for reads, writes, and copy
+For write and copy it uses C standard library functions memcpy and
+memset, which are generally optimized for the target.
+"""
+
+job.run_test('hardware_MemoryThroughput',
+              tag='memory_qual', test='bcopy', warmup=100,
+              num_iterations=100, parallel=2,
+              sizes=[ 1024, 2048, 4096, 8192,
+                      15360, 16384, 24576,
+                      30720, 32768, 33792,
+                      49152, 65536, 98304,
+                      130048, 131072, 256000,
+                      262144, 393216, 524288,
+                      1048576, 1468006, 1572864,
+                      1966080, 2097152, 2228224,
+                      2621440, 3072000, 3145728,
+                      3276800, 4194304, 8388608,
+                      16777216, 33554432, 67108864])

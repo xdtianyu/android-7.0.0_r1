@@ -1,0 +1,22 @@
+; Copyright (c) 2009 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; 1m write for testing dd performance over ecryptfs.
+;
+
+[1m_write]
+filename=${FILENAME}
+size=${FILESIZE}
+
+time_based
+runtime=${RUN_TIME}
+
+ioengine=sync
+
+readwrite=write
+end_fsync=1
+
+bs=1m
+norandommap
+

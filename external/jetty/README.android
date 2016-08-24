@@ -1,0 +1,50 @@
+URL: http://www.eclipse.org/jetty/
+Version: 8.1.15.v20140411
+License: Apache 2 or Eclipse 1.0 (see NOTICE file for information on licensing for dependencies)
+
+Description
+-------------------
+Jetty is a lightweight, servlet container implementation in Java.
+
+The pom.xml_saved file is included as a reference for bringing down the complete, original source
+code and dependencies using maven. Note, the file structure generated with pom.xml_saved will
+not match the current file structure, as noted in the Local Modifcations section. Furthermore, not
+all of the original sources are compatible with the android runtime. Incompatible source files are
+listed in the Android.mk file under "NON_ANDROID_SRC" and the build.gradle file under nonAndroidSrc.
+
+Local Modifcations
+-------------------
+The complete original source code was downloaded using pom.xml_saved. The pom file creates a
+separate directory for each jetty package. the src directory of the relevant packages were merged
+into a single src directory. The relevant packages which were merged into the single src directory
+are:
+
+-jetty-client
+-jetty-continuation
+-jetty-http
+-jetty-io
+-jetty-security
+-jetty-server
+-jetty-servlet
+-jetty-servlets
+-jetty-util
+-jetty-webapp
+-jetty-websocket
+-jetty-xml
+
+All other packages were discarded. Prebuilt dependencies (SLF4J, the servlet api and jetty utils)
+were copied from the maven repository into the lib directory. pom files and sha1 files are included
+with the prebuilt dependencies for reference.
+
+The eclipse files were created manually. The .classpath file includes the prebuilt dependencies in
+the lib directory and excludes the source files that are not compatible with the android runtime
+(see "NON_ANDROID_SRC" in the Android.mk file or nonAndroidSrc in the build.gradle file). The
+.project file was copied from one of the .project files created by maven.
+
+Updating this Project
+-------------------
+To update this project, the updated packages should be fetched from maven and their src directories
+should be merged with the local src directory. Any new or updated prebuilt dependencies should be
+copied into the lib directory. The Android.mk file (.classpath file for eclipse) should be updated
+accordingly. It may be necessary to add more files to "NON_ANDROID_SRC" in the Android.mk file and
+nonAndroidSrc in the build.gradle file (the excluding element in .classpath for eclipse).

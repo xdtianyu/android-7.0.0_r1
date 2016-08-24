@@ -1,0 +1,19 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "kernel_HdParm"
+PURPOSE = "Use hdparm to measure disk performance."
+ATTRIBUTES = "suite:kernel_per-build_benchmarks"
+SUITE = "kernel_per-build_benchmarks"
+TIME = "SHORT"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+
+DOC = """
+This test uses hdparm to measure disk performance.
+"""
+
+job.run_test('kernel_HdParm')

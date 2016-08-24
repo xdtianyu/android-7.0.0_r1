@@ -1,0 +1,25 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+import logging
+
+from autotest_lib.client.common_lib import utils
+
+
+AUTHOR = 'garnold'
+NAME = 'brillo_FastbootTest'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:brillo-bvt'
+SUITE = 'brillo-bvt'
+
+DOC = """
+Tests whether a Brillo device can reboot into and out of the bootloader.
+"""
+
+def run(machine):
+    job.run_test('brillo_FastbootTest', host=hosts.create_host(machine))
+
+
+parallel_simple(run, machines)

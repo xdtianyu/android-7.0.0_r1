@@ -1,0 +1,20 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'example_UnitTest'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'This is a one line purpose of the test.'
+CRITERIA = """
+Any pass/fail criteria goes in this section.
+"""
+TIME='MEDIUM'
+TEST_CATEGORY = 'Performance'
+TEST_CLASS = "example"
+TEST_TYPE = 'client'
+
+DOC = """
+This is an example unit test.
+"""
+
+job.run_test('example_UnitTest')

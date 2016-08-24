@@ -1,0 +1,70 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        // this requires Gradle 2
+        classpath 'com.android.tools.build:gradle:1.0.1'
+        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
+    }
+}
+
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.library'
+
+ext.ddSnapshot = hasProperty('ddSnapshot')
+
+repositories {
+    jcenter()
+    if (ddSnapshot) {
+        // For development only - droiddriver SNAPSHOTs published here
+        maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local' }
+    }
+}
+
+dependencies {
+    if (ddSnapshot) {
+        // For development only.
+        compile 'io.appium:droiddriver:1.0.0-SNAPSHOT'
+    } else {
+        // This is broken now b/c droiddriver-1.0.0 is not published yet
+        compile 'io.appium:droiddriver:1.0.0'
+    }
+
+    compile 'com.android.support.test:testing-support-lib:0.1'
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:deprecation'
+}
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion '21.1.2'
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 21
+        versionCode 1
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+        }
+    }
+
+    lintOptions {
+        // Aborting on lint errors prevents jenkins from processing the Lint output
+        // https://wiki.jenkins-ci.org/display/JENKINS/Android%20Lint%20Plugin
+        abortOnError false
+    }
+}
+
+//TODO: add script for publishing

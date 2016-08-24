@@ -1,0 +1,24 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kdlucas@chromium.org (Kelly Lucas)"
+NAME = "hardware_Resolution"
+PURPOSE = "Determine if the current screen resolution is supported."
+CRITERIA = """
+Screen resolutions supported:
+  - 1280x800
+  - 1366x768
+"""
+ATTRIBUTES = "suite:hwqual"
+SUITE = "hwqual"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+
+DOC = """
+This test uses xrandr to gather the current display resolution.
+"""
+
+job.run_test('hardware_Resolution')

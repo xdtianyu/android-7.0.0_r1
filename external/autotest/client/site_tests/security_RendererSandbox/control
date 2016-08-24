@@ -1,0 +1,20 @@
+AUTHOR = "Chromium OS Team"
+NAME = "security_RendererSandbox"
+PURPOSE = "Basic check to ensure renderer is sandboxed/jailed in Chromium OS."
+CRITERIA = """
+This test will fail if (a) no renderer is found or (b) the requested URL is not 
+sandboxed/jailed.
+"""
+TIME = "SHORT"
+ATTRIBUTES = "suite:security"
+SUITE = "security"
+TEST_CATEGORY = "Security"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+
+DOC = """
+This test simply checks if a page is loaded within the sandboxed/jailed 
+environment inside Chromium OS.
+"""
+
+job.run_test("security_RendererSandbox")

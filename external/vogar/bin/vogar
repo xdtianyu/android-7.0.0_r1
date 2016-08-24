@@ -1,0 +1,32 @@
+#!/bin/bash
+
+vogar_jar=`dirname $0`/../build/vogar.jar
+if [ ! -f "${vogar_jar}" ]; then
+    echo "vogar: info: couldn't find prebuilt ${vogar_jar}; building ..."
+    
+    if [ -n "${ANDROID_BUILD_TOP}" ]; then
+        # We're in an Android build tree, so pull the latest sdk from there.
+        # <= ICS uses 'prebuilt', >= JB uses 'prebuilts'.
+        android_sdks_dir=`echo ${ANDROID_BUILD_TOP}/prebuilt*/sdk/`
+        latest_android_sdk=`ls -1 ${android_sdks_dir} | sort -n | tail -1`
+        android_platform_dir=${android_sdks_dir}${latest_android_sdk}
+    else
+        # See if there's an Android SDK on the path.
+        adb_path=`which adb`
+        if [ -n "${adb_path}" ]; then
+            android_tools_dir=`dirname ${adb_path}`
+            android_platforms_dir=${android_tools_dir}/../platforms
+            latest_android_platform=`ls -1 ${android_platforms_dir} | sort -n | tail -1`
+            android_platform_dir=${android_platforms_dir}/${latest_android_platform}
+        fi
+    fi
+    
+    if [ ! -d "${android_platform_dir}" ]; then
+        echo "vogar: error: couldn't find an SDK on the path, and don't appear to be in an Android build tree"
+        exit 1
+    fi
+    
+    ( cd `dirname $0`/.. ; ant -Dandroid.platform.dir=${android_platform_dir} jar ) || exit 1
+fi
+
+exec java -jar ${vogar_jar} "$@"

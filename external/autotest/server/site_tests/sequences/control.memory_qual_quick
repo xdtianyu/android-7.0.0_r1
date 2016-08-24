@@ -1,0 +1,55 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "puthik"
+NAME = "MemoryQual.quick"
+ATTRIBUTES = "suite:memory_qual_quick"
+SUITE = "memory_qual_quick"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+
+DOC = """
+Sequence for testing the Memory Qual running from the fixed devices.
+"""
+
+CLIENT_TESTS= [
+    ('platform_MemCheck', {}),
+    ('hardware_RamFio', {
+        'requirements': [('ram_suite', [])]}),
+    ('hardware_MemoryThroughput', {
+        'tag': 'quick', 'test': 'bcopy', 'warmup': 10, 'num_iterations': 5,
+        'parallel': 1, 'sizes' : [ 16 * 1024 * 1024]}),
+    ('hardware_MemoryLatency', {
+        'sample_size_kb': [ int(2), int(192), int(1024)]}),
+    ('hardware_Memtester', {
+        'tag' : 'quick', 'size' : 10 * 1024, 'loop' : 1}),
+    ('hardware_SAT', {
+        'tag' : 'quick', 'seconds' : 10}),
+    ('power_MemorySuspend', {
+        'tag' : 'quick', 'num_suspends' : 2}),
+]
+
+SERVER_TESTS= [
+    ('hardware_MemoryIntegrity', {
+        'tag' : 'quick', 'seconds' : 30, 'suspend': False}),
+]
+
+def run_client_test(machine):
+    client = hosts.create_host(machine)
+    client_at = autotest.Autotest(client)
+    for test, argv in CLIENT_TESTS:
+        client.reboot()
+        client_at.run_test(test, **argv)
+
+def run_server_test(machine):
+    client = hosts.create_host(machine)
+    for test, argv in SERVER_TESTS:
+        client.reboot()
+        job.run_test(test, client_ip=machine, **argv)
+
+
+job.parallel_on_machines(run_client_test, machines)
+parallel_simple(run_server_test, machines)

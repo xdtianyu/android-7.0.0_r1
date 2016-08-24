@@ -1,0 +1,28 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'owenlin@chromium.org, chromeos-video@google.com'
+NAME = 'hardware_VideoDecodeCapable.v4l2'
+PURPOSE = 'Verify formats availability for hardware offload.'
+CRITERIA = """
+This test will fail if reported supported formats are different from expected.
+For example, daisy should support hardware VP8 and H264 decode.
+
+This control file for Daisy/Snow.
+"""
+ATTRIBUTES = "suite:video"
+SUITE = 'video'
+TIME='FAST'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'hardware'
+TEST_TYPE = 'client'
+DEPENDENCIES = 'video_decode_v4l2'
+RETRIES = 1
+
+DOC = """
+V4L2 formats enumeration is done in C. It is built as a extension module
+(v4l2.so) during setup.
+"""
+
+job.run_test('hardware_VideoDecodeCapable')

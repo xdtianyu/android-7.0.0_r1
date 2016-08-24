@@ -1,0 +1,33 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "chromeos-chameleon"
+NAME = "display_Resolution.reboot"
+PURPOSE = "Remotely controlled display resolution test."
+CRITERIA = "This test will fail if the captured display checksum mismatches."
+ATTRIBUTES = "suite:chameleon_dp, suite:chameleon_hdmi, suite:chameleon_hdmi_nightly"
+SUITE = "chameleon_dp, chameleon_hdmi, chameleon_hdmi_nightly"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "display"
+TEST_TYPE = "server"
+DEPENDENCIES = 'chameleon'
+
+DOC = """
+This test remotely tests display resolution functions, by switching EDIDs
+and then performing reboot. DUT is expected to detect a new resolution
+after reboot.
+"""
+
+args_dict = utils.args_to_dict(args)
+chameleon_args = hosts.CrosHost.get_chameleon_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, chameleon_args=chameleon_args)
+    job.run_test("display_Resolution", host=host,
+                 test_reboot=True, tag="reboot")
+
+parallel_simple(run, machines)

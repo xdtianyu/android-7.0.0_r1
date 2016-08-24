@@ -1,0 +1,22 @@
+#!/usr/bin/python
+#
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import logging
+
+from autotest_lib.client.common_lib import error
+from autotest_lib.client.common_lib.cros import dev_server
+from autotest_lib.server import hosts
+
+# Url to server-side package staged on devserver.
+ssp_url = None
+# Only need to stage server side package once.
+for machine in machines:
+    try:
+        host = hosts.create_host(machine, initialize=False, auto_monitor=False)
+        ssp_url = host.stage_server_side_package(image)
+        break
+    except (error.AutoservError, dev_server.DevServerException) as e:
+        logging.error('Stage server-side package failed. %s', e)

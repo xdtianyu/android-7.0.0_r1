@@ -1,0 +1,171 @@
+/*
+ * Copyright 20078 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mockftpserver.core.command;
+
+import org.mockftpserver.core.CommandSyntaxException;
+import org.mockftpserver.core.util.Assert;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Represents a command received from an FTP client, containing a command name and parameters.
+ * Objects of this class are immutable.
+ *
+ * @author Chris Mair
+ * @version $Revision$ - $Date$
+ */
+public final class Command {
+
+    private String name;
+    private String[] parameters;
+
+    /**
+     * Construct a new immutable instance with the specified command name and parameters
+     *
+     * @param name       - the command name; may not be null
+     * @param parameters - the command parameters; may be empty; may not be null
+     */
+    public Command(String name, String[] parameters) {
+        Assert.notNull(name, "name");
+        Assert.notNull(parameters, "parameters");
+        this.name = name;
+        this.parameters = copy(parameters);
+    }
+
+    /**
+     * Construct a new immutable instance with the specified command name and parameters
+     *
+     * @param name       - the command name; may not be null
+     * @param parameters - the command parameters; may be empty; may not be null
+     */
+    public Command(String name, List parameters) {
+        this(name, (String[]) parameters.toArray(new String[parameters.size()]));
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @return the parameters
+     */
+    public String[] getParameters() {
+        return copy(parameters);
+    }
+
+    /**
+     * Get the String value of the parameter at the specified index
+     *
+     * @param index - the index
+     * @return the parameter value as a String
+     * @throws org.mockftpserver.core.util.AssertFailedException
+     *          if the parameter index is invalid or the value is not a valid String
+     */
+    public String getRequiredParameter(int index) {
+        assertValidIndex(index);
+        return parameters[index];
+    }
+
+    /**
+     * Get the String value of the parameter at the specified index; return null if no parameter exists for the index
+     *
+     * @param index - the index
+     * @return the parameter value as a String, or null if this Command does not have a parameter for that index
+     */
+    public String getParameter(int index) {
+        return (parameters.length > index) ? parameters[index] : null;
+    }
+
+    /**
+     * Get the String value of the parameter at the specified index; return null if no
+     * parameter exists for the index. This is an alias for {@link #getParameter(int)}.
+     *
+     * @param index - the index
+     * @return the parameter value as a String, or null if this Command does not have a parameter for that index
+     */
+    public String getOptionalString(int index) {
+        return getParameter(index);
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || !(obj instanceof Command)) {
+            return false;
+        }
+        return this.hashCode() == obj.hashCode();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        String str = name + Arrays.asList(parameters);
+        return str.hashCode();
+    }
+
+    /**
+     * Return the String representation of this object
+     *
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return "Command[" + name + ":" + Arrays.asList(parameters) + "]";
+    }
+
+    /**
+     * Return the name, normalized to a common format - convert to upper case.
+     *
+     * @return the name converted to upper case
+     */
+    public static String normalizeName(String name) {
+        return name.toUpperCase();
+    }
+
+    /**
+     * Construct a shallow copy of the specified array
+     *
+     * @param array - the array to copy
+     * @return a new array with the same contents
+     */
+    private static String[] copy(String[] array) {
+        String[] newArray = new String[array.length];
+        System.arraycopy(array, 0, newArray, 0, array.length);
+        return newArray;
+    }
+
+    /**
+     * Assert that the index is valid
+     *
+     * @param index - the index
+     * @throws org.mockftpserver.core.CommandSyntaxException
+     *          - if the parameter index is invalid
+     */
+    private void assertValidIndex(int index) {
+        if (index < 0 || index >= parameters.length) {
+            throw new CommandSyntaxException("The parameter index " + index + " is not valid for " + this);
+        }
+    }
+
+}

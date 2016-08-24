@@ -1,0 +1,40 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_SimpleConnect.wifi_checkTruncatedBeacon'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = ('suite:wifi_correctness_cros_core, suite:wifi_matfunc, '
+              'suite:wifi_matfunc_bcm4371, suite:wifi_release')
+SUITE = ('wifi_matfunc, wifi_matfunc_bcm4371, '
+         'wifi_correctness_cros_core, wifi_release')
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test attempts to verify that we can connect to a router that sends
+corrupted beacons.  In this particular case, the beacon data is truncated.
+"""
+
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    b_mode = hostap_config.HostapConfig.MODE_11B
+    # This is an incomplete vendor-specific beacon IE (one byte short).
+    beacon_footer = '\xdd\x0b\0\x1a\x11\x01\0\0\0\0\0\0'
+    configurations = [(hostap_config.HostapConfig(channel=1, mode=b_mode,
+                                                  beacon_footer=beacon_footer),
+                       xmlrpc_datatypes.AssociationParameters())]
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_SimpleConnect',
+                 tag=NAME.split('.')[1],
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=configurations)
+
+
+parallel_simple(run, machines)

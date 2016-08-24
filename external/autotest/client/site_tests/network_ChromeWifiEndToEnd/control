@@ -1,0 +1,24 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'harpreet, krisr, wiley'
+NAME = 'network_ChromeWifiEndToEnd'
+TIME = 'FAST'
+TEST_TYPE = 'client'
+
+DOC = """
+  Client side of the end to end WiFi test which is called by the
+  network_WiFi_ChromeEndToEnd server test that sets up the AP's in the wifi
+  cell to be used by this test.
+
+  Tests that Chrome can do the following using chrome.networkingPrivate:
+  * Find available wifi networks.
+  * Transition to a different, currently unconnected, network.
+  * Disable / Enable wifi.
+"""
+
+job.run_test('network_ChromeWifiEndToEnd',
+             ssid_1='ssid1',
+             ssid_2='ssid2',
+             test='test')

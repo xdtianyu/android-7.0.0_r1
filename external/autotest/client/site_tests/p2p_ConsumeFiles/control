@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME='FAST'
+AUTHOR = 'deymo,zeuthen,chromeos-installer'
+BUG_TEMPLATE = {
+    'cc': ['chromeos-installer-alerts@google.com'],
+    'labels': ['Cr-Internals-Installer'],
+}
+
+DOC = """\
+This test runs p2p-client on several common cases using a fake network of peers
+to check that it can discover files on this network. If p2p-client isn't able
+to discover and return URLs in this environment the test will fail. Among the
+tested scenarios, a case where p2p-client should hang (because there are too
+many connections) is included.
+"""
+NAME = 'p2p_ConsumeFiles'
+PURPOSE = 'Check that P2P can discover peers and download from them.'
+CRITERIA = 'Fails if p2p-client is not able to discover and get the URLs.'
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = 'bvt-cq'
+TEST_CLASS = 'platform'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+job.run_test('p2p_ConsumeFiles')

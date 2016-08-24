@@ -1,0 +1,69 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Team"
+NAME = "platform_OSLimits"
+PURPOSE = "Verify some kernel settings."
+CRITERIA = """
+Fail if we find unexpected values for resource limits:
+  - Max open files
+  - Max processes
+or unexpected values for sysctls:
+  - fs/file-max
+  - fs/leases-enable
+  - fs/nr_open
+  - kernel/kptr_restrict
+  - kernel/ngroups_max
+  - kernel/panic
+  - kernel/pid_max
+  - kernel/randomize_va_space
+  - kernel/suid_dumpable
+  - kernel/sysrq
+  - kernel/threads-max
+  - net/ipv4/tcp_syncookies
+  - vm/mmap_min_addr
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+DOC = """
+Verifies various system level limits and settings.
+
+The resources being verified are:
+  - Max open files: the maximum number of file descriptors a process can open.
+  - Max processes: the maximum number of processes that can be created for
+    the real user id of the calling process.
+
+The sysctls being verified are:
+  - fs/file-max: maximum number of file handles that the kernel will allocate.
+    The default value is usually about 10% of RAM in kilobytes.
+  - fs/leases-enable:
+    - 0: no leases on files allowed.
+    - 1: leases are allowed to be established on a file.
+  - fs/nr_open: the maximum number of file handles a process can allocate.
+    file-max cannot exceed this value.
+  - kernel/kptr_restrict: do not expose kernel addresses to userspace.
+  - kernel/ngroups_max: the number a groups a user may belong to.
+  - kernel/panic: number of seconds the kernel postpones rebooting when the
+    system experiences a kernel panic. 0 disables automatic rebooting.
+  - kernel/pid_max: the maximum value of a pid before it wraps.
+  - kernel/randomize_va_space:
+    - 0: no ASLR for userspace processes.
+    - 1: ASLR for stack and mmap (and exec if built PIE).
+    - 2: same as above except also randomize brk location.
+  - kernel/suid_dumpable:
+    - 0: core dump not produced for a process with changed cred.
+    - 1: all processes core dump when possible.
+    - 2: binary which is not normally dumped is dumped ro by root.
+  - kernel/sysrq: Activates the System Request Key when anything other than 0.
+  - kernel/threads-max: Maximum threads on system.
+  - net/ipv4/tcp_syncookies: make sure weird inbound TCP flooding is safe.
+  - vm/mmap_min_addr: make sure low memory cannot be allocated.
+"""
+
+job.run_test('platform_OSLimits')

@@ -1,0 +1,22 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "platform_DebugDaemonGetNetworkStatus"
+PURPOSE = "Verify that debugd's GetNetworkStatus works."
+
+CRITERIA = """
+GetNetworkStatus must return a valid, non-empty json object.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+Exercises the debugd GetNetworkStatus API. This test will only pass when run on
+a target with at least one network device.
+"""
+
+job.run_test('platform_DebugDaemonGetNetworkStatus')

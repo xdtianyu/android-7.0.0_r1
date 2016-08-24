@@ -1,0 +1,56 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "gwendal"
+NAME = 'hardware_DiskFirmwareUpgrade_Server'
+PURPOSE = 'Verify diskfirmware upgrade is not broken'
+TIME = 'SHORT'
+TEST_CLASS = 'hardware'
+TEST_TYPE = 'server'
+DEPENDENCIES = 'storage:ssd'
+ATTRIBUTES = "suite:experimental"
+SUITE = 'experimental'
+
+DOC = """
+The test uses a list of firmware packages and applies them to the DUT.
+Each package is in a directory listed below.
+Each directory normaly contains a rule file and bzipped firmware image.
+After each tries, the package present in the base image is applied, to be
+in a good state for the next package.
+For each package, a list of 2 parameters is needed:
+1 - the expected return code of chromeos-disk-firmware-update.sh:
+The test verifies the returned error code matches the expected value.
+2 - A boolean:
+ - True if the update script should upgrade the firmware on the SSD.
+ - False if the update script is not supposed to touch the firmware on the SSD.
+The tests depend on the storage device installed on the machine.
+A regex allows separating the tests based on the device installed.
+"""
+
+DISK_FW_PACKAGES = {
+    r'LITEONIT LSS-.*' : {
+        'broken_firmware_liteon': [0, True], # revert to previous firmware
+        'missing_firmware_liteon': [1, False], # package without fw image
+        'invalid_firmware_liteon': [5, False], # package with invalid fw image.
+        'invalid_revision_liteon': [121, True], # with wrong target revision.
+    },
+    # eMMC device in hexa:
+    # MAG2GC:      4d4147324743
+    # HBG4e\05:    484247346505
+    # DS2016:      445332303136
+    r'(4d4147324743|484247346505|445332303136|KINGSTON RBU-SUS.*|LITEON CS1-SP.*)' : {
+        'test_firmware' : [0, True], # revert to previous firmware
+    },
+    r'.*' : {
+        'missing_rules': [120, False], # rule file is missing.
+    }
+}
+
+def run_hardware_disk_firmware_upgrade(machine):
+    job.run_test('hardware_DiskFirmwareUpgrade',
+                 host=hosts.create_host(machine),
+                 disk_fw_packages=DISK_FW_PACKAGES)
+
+job.parallel_simple(run_hardware_disk_firmware_upgrade, machines)
+

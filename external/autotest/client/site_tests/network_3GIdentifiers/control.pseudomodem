@@ -1,0 +1,39 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GIdentifiers.pseudomodem"
+PURPOSE = "Verify cellular modem provides correct identification information."
+CRITERIA = """
+This test will fail if one of the following conditions occur:
+  - Cellular modem does not provide an identifier
+"""
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DOC = """
+  Tests that a cellular modem provides correct identification information
+
+  The test queries the modem for the following identifiers:
+    - MEID
+    - IMEI
+    - IMSI
+    - ICCID
+    - SIM operator ID
+"""
+
+import os
+
+from autotest_lib.client.cros.cellular import test_environment
+
+test_module_path = os.path.join(
+        job.testdir, 'network_3GIdentifiers', 'network_3GIdentifiers.py')
+test_env = test_environment.CellularPseudoMMTestEnvironment(
+        pseudomm_args=({'family': '3GPP',
+                        'test-module' : test_module_path,
+                        'test-sim-class' : 'TestSIM'},))
+job.run_test('network_3GIdentifiers',  tag='pseudomodem', test_env=test_env)

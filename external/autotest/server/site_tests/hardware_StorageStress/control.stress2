@@ -1,0 +1,52 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_StorageStress.stress'
+AUTHOR = 'mohsinally'
+PURPOSE = 'Run various storage stress tests'
+ATTRIBUTES = "suite:stress2"
+SUITE = "stress2"
+TIME = 'LONG'
+TEST_CLASS = 'stress'
+TEST_TYPE = 'server'
+
+DOC = """
+Variants of the test are run to simulate a number of scenarios while execising
+device storage.
+
+run_hardware_storage_stress_suspend:
+This test calls hardware_StorageFio to write data once and repeatedly verifies
+data in the storage for 20 minutes with machine suspended 1 minute between
+each verify.
+
+run_hardware_storage_stress:
+This test calls hardware_StorageFio to write data once and repeatedly verifies
+data in the storage for 5 minutes.
+
+While the test is running, we can corrupt the SSD and check the test is
+finding it with:
+
+ dd if=/dev/zero of=<tested partition> bs=512k
+
+run_hardware_storage_reboot:
+This test calls hardware_StorageFio to write data once and repeatedly verifies
+data in the storage for 5 minutes with machine rebooted between each verify.
+"""
+
+def run_hardware_storage_stress_suspend(machine):
+    job.run_test('hardware_StorageStress', client_ip=machine,
+        power_command='suspend', suspend_duration=60, duration=1200,
+        tag='suspend')
+
+def run_hardware_storage_stress(machine):
+    job.run_test('hardware_StorageStress', client_ip=machine,
+                 power_command='nothing', gap=5, duration=300, tag='bare')
+
+def run_hardware_storage_stress_reboot(machine):
+    job.run_test('hardware_StorageStress', client_ip=machine,
+                 gap=5, duration=300, tag='reboot')
+
+job.parallel_simple(run_hardware_storage_stress_suspend, machines)
+job.parallel_simple(run_hardware_storage_stress, machines)
+job.parallel_simple(run_hardware_storage_stress_reboot, machines)

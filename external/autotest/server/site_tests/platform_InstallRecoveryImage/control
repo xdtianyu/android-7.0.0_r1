@@ -1,0 +1,35 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.common_lib import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_InstallRecoveryImage"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Install"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test installs a specified recovery image onto a servo-connected DUT.
+This is useful for testing the recovery process and imaging servo-connected
+Devices under Test (DUTs).
+Here is the command to install a recovery image;
+test_that --args='image=<recovery_image_path_on_host>'
+          --board=<board name>
+          <IP addres>
+          platform_InstallRecoveryImage
+"""
+
+args_dict = utils.args_to_dict(args)
+image = args_dict.get('image', None)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    # Setup the client machine.
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("platform_InstallRecoveryImage", host=host,
+                 disable_sysinfo=True, image=image)
+
+parallel_simple(run, machines)

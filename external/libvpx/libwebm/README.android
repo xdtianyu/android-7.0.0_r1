@@ -1,0 +1,35 @@
+Name: libwebm
+URL: http://www.webmproject.org
+
+Commit: 5c50e310e7050192b952fe588186fd1dadc08b6e
+
+Description:
+Contains the sources used to compile libwebm's matroska parser.
+
+The libwebm source is from webmproject.org:
+  https://chromium.googlesource.com/webm/libwebm
+
+Notes on updating libwebm source code:
+
+Please follow these steps to update libvpx source code:
+
+1. Copy over the following files from the the libwebm checkout:
+     - mkvparser/mkvparser.cc
+     - mkvparser/mkvparser.h
+     - common/webmids.h
+
+2. Update README.android (this file) with the upstream hash.
+
+3. Copy the git log summary of changes by using the following in the libwebm
+   checkout: git log --pretty="%h %s" <previous_hash>...<current_hash>
+
+4. Commit the changes. The commit message should look like this:
+
+   libwebm: Pull from upstream
+
+   Current HEAD: <hash>
+
+   git log from upstream:
+   a6b2070 <git commit message 1>
+   08dabbc <git commit message 2>
+   c29fb02 <git commit message 3>

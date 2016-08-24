@@ -1,0 +1,20 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, quiche, wiley'
+NAME = 'network_ShillInitScripts'
+ATTRIBUTES = "suite:network_nightly"
+SUITE = 'network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+This test verifies that shill init and login / logout scripts work correctly
+and fails if file operations or DBus calls do not work as expected.  This test
+depends on the ifconfig utility to both disable and reenable a network
+interface.
+
+"""
+
+job.run_test('network_ShillInitScripts', iface_name='all', tag='all')

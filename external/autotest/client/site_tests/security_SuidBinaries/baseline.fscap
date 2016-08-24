@@ -1,0 +1,7 @@
+/bin/arping = cap_net_raw+ep
+/bin/ping = cap_net_raw+ep
+/bin/ping6 = cap_net_raw+ep
+/sbin/unix_chkpwd = cap_dac_override+ep
+/usr/bin/fusermount = cap_sys_admin+ep
+/usr/sbin/hostapd = cap_net_admin,cap_net_raw+ei
+/usr/sbin/dnsmasq = cap_net_bind_service,cap_net_admin,cap_net_raw+ei

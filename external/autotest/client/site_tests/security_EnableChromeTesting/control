@@ -1,0 +1,22 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "The Chromium OS Authors"
+NAME = "security_EnableChromeTesting"
+PURPOSE = "Verify that EnableChromeTesting is root only."
+CRITERIA = "Fail if the EnableChromeTesting DBus call can be called by chronos."
+TIME="SHORT"
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+Set our effective user ID and make the EnableChromeTesting DBus call. The call
+itself should fail, and Chrome should not restart.
+"""
+
+job.run_test("security_EnableChromeTesting")

@@ -1,0 +1,48 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.common_lib import utils
+
+AUTHOR = "sosa@chromium.org"
+NAME = "platform_RebootAfterUpdate"
+TIME = "SHORT"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+
+DOC = """
+This test checks the behavior of reboot after update. It specifically tests
+the amount of time it takes for a system to reboot both after an update and
+after first login.
+
+Arg:
+  job_repo_url: repo url to use to find image to update from -- assumes caller
+                has staged image. By default if host[repo_job_url] is set, it'll
+                use that. This overrides that value. This value must follow
+                the package_url_pattern in the global config.
+
+To run locally:
+  1) Setup your devserver in your shadow config that your DUT can reach.
+  2) Stage the image you want for example:
+     http://localhost:8080/download?archive_url=\
+     gs://chromeos-image-archive/x86-alex/R29-4165.0.0
+  3) Run with test_that etc passing
+     args="job_repo_url=http://<your_hostname>:8080/static/\
+     x86-alex/R29-4165.0.0/autotest/packages"
+"""
+
+args_dict = utils.args_to_dict(args)
+job_repo_url = args_dict.get('job_repo_url')
+
+def run_test(machine):
+    """Execute a test configuration on a given machine."""
+    host = hosts.create_host(machine)
+    job.run_test("platform_RebootAfterUpdate",
+                 host=host, job_repo_url=job_repo_url)
+
+
+# Invoke parallel tests.
+parallel_simple(run_test, machines)

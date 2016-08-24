@@ -1,0 +1,30 @@
+From 7103d3e8e0f9dc1804ba06ee66ee02753e8ce50e Mon Sep 17 00:00:00 2001
+From: Mike Frysinger <vapier@gentoo.org>
+Date: Fri, 23 Mar 2012 12:27:13 -0400
+Subject: [PATCH] kill: fix dependency on ipc subdir
+
+We need to use MAKE_DEPS to declare the ipc subdir depend otherwise
+attempting to do `make kill01` without building in the ipc subdir
+will fail, and we can hit race conditions in the overall `make`.
+
+Signed-off-by: Mike Frysinger <vapier@gentoo.org>
+---
+ testcases/kernel/syscalls/kill/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/testcases/kernel/syscalls/kill/Makefile b/testcases/kernel/syscalls/kill/Makefile
+index 6971d96..23dabfc 100644
+--- a/testcases/kernel/syscalls/kill/Makefile
++++ b/testcases/kernel/syscalls/kill/Makefile
+@@ -32,7 +32,7 @@ $(LIBDIR):
+ $(LIB): $(LIBDIR)
+ 	$(MAKE) -C $^ -f "$(abs_srcdir)/$^/Makefile" all
+ 
+-all: | $(LIB)
++MAKE_DEPS		:= $(LIB)
+ 
+ CPPFLAGS                += -I$(abs_srcdir)/$(LIBDIR)
+ 
+-- 
+1.7.8.5
+

@@ -1,0 +1,27 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kathrelkeld"
+NAME = "touch_TapSettings"
+PURPOSE = "Test that tap-to-click and tap dragging can be enabled/disabled."
+CRITERIA = """
+This test will fail if, after playback of touch events, tap-to-click or tap
+dragging does not work when supposed to or works when not supposed to.
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:touch"
+SUITE = "bvt-perbuild,touch"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "touch"
+TEST_TYPE = "client"
+DEPENDENCIES = "touchpad"
+
+DOC = """
+Uses javascript page to listen for mouse clicks and drags.  If tap-to-click is
+working, the click count will increase.  If tap dragging is working, movement
+will be detected during a click.  Enables and disables tap-to-click and tap
+dragging, checking whether they change.
+"""
+
+job.run_test('touch_TapSettings')

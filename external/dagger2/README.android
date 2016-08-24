@@ -1,0 +1,12 @@
+URL: https://github.com/google/dagger.git
+License: Apache 2
+Description: "Dagger 2 - A fast dependency injector for Android and Java"
+
+Version: 91f7d8bda5b1ef2fdf768758c88d3e5f069210ea
+
+Upstream depends (slightly) on Guava v19 but we only have Guava v18 in
+Android at the moment so we have reverted those changes that introduced
+a dependency on Guava v19.
+
+Local Patches:
+    Revert "Stop using deprecated Futures method." - upstream 0a2ca81c0f78c621968deb58f4b42117db43fec4

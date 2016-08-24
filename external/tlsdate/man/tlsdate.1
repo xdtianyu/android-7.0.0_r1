@@ -1,0 +1,95 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH TLSDATE 1 "OCTOBER 2012" Linux "User Manuals"
+.SH NAME
+tlsdate \- secure parasitic rdate replacement
+.SH SYNOPSIS
+.B tlsdate [\-hnvVstlw] [\-H [hostname]] [\-p [port]] [\-P [sslv23|sslv3|tlsv1]] \
+[\-\-certdir [dirname]] [\-x [\-\-proxy] proxy\-type://proxyhost:proxyport]
+.SH DESCRIPTION
+.B tlsdate
+is a tool for setting the system clock by hand or by communication
+with the network. It does not set the Real Time Clock. It is designed to be as
+secure as TLS (RFC 2246) but of course the security of TLS is often reduced to
+whichever CA racket you believe is trustworthy. By default, tlsdate trusts your
+local CA root store - so any of these companies could assist in a MITM attack
+against you and you'd be screwed.
+
+This tool is designed to be run by hand or as a system daemon. It must be
+run as root or otherwise have the proper caps; it will not be able to set
+the system time without running as root or another privileged user.
+.SH OPTIONS
+.IP "\-h | \-\-help"
+Print the help message
+.IP "\-s | \-\-skip\-verification"
+Skip certificate verification
+.IP "\-H | \-\-host [hostname|ip]"
+Set remote hostname (default: 'google.com')
+.IP "\-n | \-\-dont\-set\-clock"
+Do not set the system clock to the time of the remote server
+.IP "\-p | \-\-port [port]"
+Set remote port (default: '443')
+.IP "\-P | \-\-protocol [sslv23|sslv3|tlsv1]"
+Set protocol to use when communicating with server (default: 'tlsv1')
+.IP "\-C | \-\-certdir [dirname]"
+Set the local directory where certificates are located
+(default: '/etc/ssl/certs')
+This allows for certificate or certificate authority (CA) pinning. To ensure
+that signatures are only valid if they are signed by a specific CA or
+certificate, set the path to a directory containing only the desired
+certificates.
+.IP "\-x | \-\-proxy [proxy\-type://proxyhost:proxyport]"
+The proxy argument expects HTTP, SOCKS4A or SOCKS5 formatted as followed:
+
+ http://127.0.0.1:8118
+ socks4a://127.0.0.1:9050
+ socks5://127.0.0.1:9050
+
+The proxy support should not leak DNS requests and is suitable for use with Tor.
+.IP "\-v | \-\-verbose"
+Provide verbose output
+.IP "\-V | \-\-showtime [human|raw]"
+Show the time retrieved from the remote server in a human-readable format or as
+a raw time_t.
+.IP "\-t | \-\-timewarp"
+If the local clock is before RECENT_COMPILE_DATE; we set the clock to the
+RECENT_COMPILE_DATE. If the local clock is after RECENT_COMPILE_DATE, we leave
+the clock alone. Clock setting is performed as the first operation and will
+impact certificate verification. Specifically, this option is helpful if on
+first boot, the local system clock is set back to the era of Disco and Terrible
+Hair. This should ensure that X509_V_ERR_CERT_NOT_YET_VALID or
+X509_V_ERR_CERT_HAS_EXPIRED are not encountered because of a broken RTC or the
+lack of a local RTC; we assume that tlsdate is recompiled yearly and that all
+certificates are otherwise considered valid.
+.IP "\-l | \-\-leap"
+Normally, the passing of time or time yet to come ensures that SSL verify
+functions will fail to validate certificates. Commonly,
+X509_V_ERR_CERT_NOT_YET_VALID and X509_V_ERR_CERT_HAS_EXPIRED are painfully
+annoying but still very important error states. When the only issue with the
+certificates in question is the timing information, this option allows you to
+trust the remote system's time, as long as it is after RECENT_COMPILE_DATE and
+before MAX_REASONABLE_TIME. The connection will only be trusted if
+X509_V_ERR_CERT_NOT_YET_VALID and/or X509_V_OKX509_V_ERR_CERT_HAS_EXPIRED are
+the only errors encountered. The SSL verify function will not return X509_V_OK
+if there are any other issues, such as self-signed certificates or if the user
+pins to a CA that is not used by the remote server. This is useful if your RTC
+is broken on boot and you are unable to use DNSEC until you've at least had
+some kind of leap of cryptographically assured data.
+.IP "\-w | \-\-http"
+Run in web mode: look for the time in an HTTP "Date" header inside an
+HTTPS connection, rather than in the TLS connection itself.  The provided
+hostname and port must support HTTPS.
+.SH BUGS
+It's likely! Let us know by contacting jacob@appelbaum.net
+
+Note that
+.B tlsdate(1)
+is in Beta, and may not work as expected.
+.SH AUTHOR
+Jacob Appelbaum <jacob at appelbaum dot net>
+.SH "SEE ALSO"
+.B tlsdate(1),
+.B tlsdate-helper(1),
+.B tlsdated(8),
+.B tlsdated.conf(5)

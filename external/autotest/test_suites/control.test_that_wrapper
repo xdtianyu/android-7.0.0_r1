@@ -1,0 +1,74 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "akeshet, chromeos-lab-infrastructure"
+NAME = "test_that_wrapper"
+PURPOSE = "Wrapper for ad-hoc suites kicked of by test_that tool."
+CRITERIA = "All tests must pass."
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This is a wrapper suite for lab jobs that get kicked off by developers
+running the test_that tool on their desks, but targetting devices in the lab.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on. Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import logging, shlex
+
+import common
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+from autotest_lib.site_utils import test_runner_utils
+from autotest_lib.site_utils import test_that
+from autotest_lib.server.cros import provision
+
+# Values specified in this bug template will override default values when
+# filing bugs on tests that are a part of this suite. If left unspecified
+# the bug filer will fallback to it's defaults.
+_BUG_TEMPLATE = {
+    'labels': ['test_that_wrapper'],
+    'owner': '',
+    'status': None,
+    'summary': None,
+    'title': None,
+    'ccs': ['beeps@chromium.org']
+}
+
+
+try:
+   arguments = test_that.parse_arguments(shlex.split(suite_args))
+except SystemExit:
+    logging.error('Unable to parse test_that arguments %s, suite aborting',
+                  shlex.split(suite_args))
+    raise
+
+parsed_test_arguments = [test_runner_utils.get_predicate_for_test_arg(test_arg)
+                         for test_arg in arguments.tests]
+sub_predicates, descriptions = zip(*parsed_test_arguments)
+
+logging.info('This is a test_that triggered suite, consisting of:')
+for desc in descriptions:
+    logging.info('A %s.', desc)
+
+combined_predicate = lambda test: any(f(test) for f in sub_predicates)
+
+args_dict['name'] = NAME
+args_dict['max_runtime_mins'] = 20
+args_dict['predicate'] = combined_predicate
+args_dict['job'] = job
+args_dict['add_experimental'] = True
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['bug_template'] = _BUG_TEMPLATE
+
+dynamic_suite.reimage_and_run(**args_dict)

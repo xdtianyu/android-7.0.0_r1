@@ -1,0 +1,99 @@
+// If building from command line and you don't have the file local.properties that specifies
+// sdk.dir for the Android SDK path, you can run
+// $ ANDROID_HOME=/path/to/android-sdk gradle build
+
+// Gradle >= 2.4 required
+buildscript {
+    ext.bintrayUser    = project.hasProperty('bintrayUser') ? project.bintrayUser : System.getenv('BINTRAY_USER')
+    ext.bintrayKey     = project.hasProperty('bintrayKey')  ? project.bintrayKey  : System.getenv('BINTRAY_KEY')
+    ext.bintrayEnabled = project.bintrayUser && project.bintrayKey
+
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.0.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
+        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
+        if (bintrayEnabled) {
+            classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.0.3'
+            classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.1'
+        }
+    }
+}
+
+apply from: 'properties.gradle'
+group = ddGroup
+version = ddVersion
+
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.library'
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:deprecation'
+}
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion '21.1.2'
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 21
+        versionCode 1
+        versionName version
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+        }
+    }
+
+    lintOptions {
+        // Aborting on lint errors prevents jenkins from processing the Lint output
+        // https://wiki.jenkins-ci.org/display/JENKINS/Android%20Lint%20Plugin
+        abortOnError false
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    if (System.getProperty('java.specification.version') == '1.8') {
+        // '-quiet' is not related to -Xdoclint. In fact it is default for the Javadoc task.
+        // It is needed here because of a Gradle bug: addStringOption(String option) does not work.
+        // addStringOption(String option, String value) adds both option and value to the generated
+        // file javadoc.options, and value must be a valid javadoc command line option.
+        options.addStringOption('Xdoclint:all,-missing', '-quiet')
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+apply from: 'maven.gradle'
+
+if (bintrayEnabled) {
+    apply plugin: 'com.jfrog.bintray'
+    apply from: 'jcenter.gradle'
+    apply from: 'artifactory.gradle'
+}

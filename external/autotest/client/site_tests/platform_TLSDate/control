@@ -1,0 +1,19 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Tests features of the tlsdate{,d} tools.
+"""
+NAME = "platform_TLSDate"
+PURPOSE = "Regression and integration tests of tlsdate{,d}."
+CRITERIA = """
+Fail if any of the tlsdate{,d} features fail.
+"""
+TEST_CLASS = "platform"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+
+job.run_test("platform_TLSDate")

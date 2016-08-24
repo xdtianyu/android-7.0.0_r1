@@ -1,0 +1,29 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'The Chromium OS Authors'
+NAME = 'camera_V4L2'
+PURPOSE = 'Exercises v4l2 camera devices to verify required operations.'
+CRITERIA = """
+This is a complex text and tests many different functions. This test will fail
+if any of the following conditions occur:
+  - No v4L2 device is found
+  - If a mandatory control is not supported
+  - If streaming is not supported
+  - If a required resolution is not supported when capturing a stream
+"""
+ATTRIBUTES = "suite:hwqual"
+SUITE = "hwqual"
+TIME='MEDIUM'
+TEST_CATEGORY = 'V4L2'
+TEST_TYPE = 'client'
+DEPENDENCIES = 'webcam'
+
+DOC = """
+This test executes media_v4l2_test and media_v4l2_unittest binaries.
+For more information on V4L2 see:
+http://www.linuxfordevices.com/c/a/Linux-For-Devices-Articles/Intro-to-V4L2/
+"""
+
+job.run_test('camera_V4L2')

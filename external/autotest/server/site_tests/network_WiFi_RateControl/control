@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_RateControl'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:wifi_matfunc, suite:wifi_matfunc_bcm4371'
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test associates a DUT with several APs serving an open HT40 network.  The
+test then conducts a packet capture of some IP traffic, and checks that the DUT
+is transmitting at the highest possible 2x2 MCS rate (MCS index 15).  This
+check assumes that the test is being conducted under relatively good RF
+conditions.
+
+"""
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_RateControl',
+                 host=host, raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

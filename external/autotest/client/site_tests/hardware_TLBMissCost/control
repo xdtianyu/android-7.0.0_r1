@@ -1,0 +1,24 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Nemanja Vasic <nvasic@google.com>"
+NAME = "hardware_TLBMissCost"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+
+DOC = """
+Calculate cost of a TLB miss
+
+Arguments:
+  events: Events to pass to perf stat -e
+  program: Benchmark binary
+"""
+
+job.run_test('hardware_TLBMissCost', tag='TLBMissCost',
+             events=('cycles', 'iTLB-misses'),
+             program='iTLB_benchmark')

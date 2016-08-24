@@ -1,0 +1,42 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import logging
+
+from autotest_lib.client.common_lib import error
+from autotest_lib.client.common_lib import utils
+
+NAME = "factory_Basic"
+AUTHOR = "beeps@google.com, chromeos-test@google.com"
+ATTRIBUTES = "suite:factory"
+SUITE = "factory"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "server"
+
+DOC = """Basic factory tests."""
+
+# Set these variables to the path of a test list reachable within the chroot
+# and the name of the test list respectively. If the test list is already on
+# the DUT you don't need a test_list_path.Eg of a local test_list_path:/home/\
+# <username>/trunk/src/third_party/autotest/files/server/site_tests/\
+# factory_Basic/test_list.suspend_basic, for which the test_list_name
+# is suspend_basic.
+args_dict = utils.args_to_dict(args)
+test_list_path = args_dict.get('test_list_path', '')
+test_list_name = args_dict.get('test_list_name')
+
+def run(machine):
+    if test_list_name:
+        host = hosts.create_host(machine)
+        job.run_test("factory_Basic", host=host, disable_sysinfo=True,
+                     test_list_name=test_list_name,
+                     test_list_path=test_list_path)
+    else:
+        raise error.AutoservError('Please specify --args="test_list_path=<path '
+                        'to test list> test_list_name=<name of test list>" '
+                        'when invoking test_that. If your test_list is already '
+                        'on the DUT, just the test_list_name will suffice.')
+
+parallel_simple(run, machines)

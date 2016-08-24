@@ -1,0 +1,10 @@
+# These first entries are due to autotest noise. As you maintain this
+# list, consider offsetting it with a blacklist in
+# ensure_no_nonrelease_files.config.
+sshd *:ssh
+# Shill internal http proxy. crosbug.com/28235
+shill 127.0.0.1:DYNAMIC
+# TODO(ihf): Remove VNC server entry once nyan doesn't use X11 anymore (freon).
+# VNC server.
+x11vnc 127.0.0.1:5900
+x11vnc [::1]:5900

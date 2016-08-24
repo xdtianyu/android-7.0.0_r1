@@ -1,0 +1,18 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'quiche, pstew'
+NAME = 'network_DefaultProfileCreation'
+ATTRIBUTES = "suite:bvt-cq, subsystem:network"
+SUITE = 'bvt-cq'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+DOC = """
+  Tests that, when shill creats a default profile, it populates properties
+  with default values (where appropriate).
+"""
+
+job.run_test('network_DefaultProfileCreation')

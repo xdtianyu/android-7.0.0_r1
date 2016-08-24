@@ -1,0 +1,31 @@
+#!/bin/sh
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+# args: -u 1000 -g 1000 -c 2
+# note that 2 = CAP_DAC_OVERRIDE
+
+. "$(dirname "$0")"/common.sh
+
+needreuid 1000
+needregid 1000
+
+# Test we've kept CAP_DAC_OVERRIDE.
+[ ! -w "$0" ] && die "Can't write to '$0'"
+
+# Test we've lost everything else.
+mismatch=""
+matched=0
+while read line; do
+    if echo "$line" | grep -q '^CapEff:'; then
+        caps=$(echo "$line" | awk '{print $NF}')
+        if echo "$caps" | grep -q '^0000000000000002$'; then
+            matched=1
+        else
+            mismatch="$caps"
+        fi
+    fi
+done </proc/self/status
+[ $matched -eq 1 ] || die "Did not drop non-CAP_DAC_OVERRIDE caps: $mismatch"
+
+exit 0

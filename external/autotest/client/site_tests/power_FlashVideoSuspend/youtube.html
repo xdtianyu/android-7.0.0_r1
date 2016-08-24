@@ -1,0 +1,29 @@
+<html>
+  <body>
+    <iframe id="player_frame" type="text/html" width="640" height="390"
+        src=""
+        frameborder="0"></iframe>
+    <br>
+    <script>
+      function play(video_url) {
+        document.getElementById('player_frame').src = video_url;
+     }
+      var tag = document.createElement('script');
+      tag.src = "http://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      var player;
+      function onYouTubeIframeAPIReady() {
+        new YT.Player('player_frame', {
+          events: {
+            'onReady': onPlayerReady,
+          }
+        });
+      }
+      function onPlayerReady(event) {
+        player = event.target;
+        player.playVideo();
+      }
+    </script>
+  </body>
+</html>

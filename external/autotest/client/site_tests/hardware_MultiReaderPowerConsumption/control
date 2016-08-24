@@ -1,0 +1,54 @@
+# Copyright (c) 2012 Collabora Ltd. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "hardware_MultiReaderPowerConsumption"
+AUTHOR = "Vivia Nikolaidou <vivia.nikolaidou@collabora.co.uk>"
+PURPOSE = """Test card reader CPU power consumption to be within acceptable
+range while performing random r/w"""
+CRITERIA = """Fails if power consumption readings during heavy-duty random r/w
+fall outside predefined ranges"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+
+DOC = """
+This test runs a heavy-duty random read/write test, which is defined as
+running a `dd if=/dev/urandom` in parallel with a `tail -f`. The test is
+run three times: once on a ramdisk with the SD card mounted, once on the
+SD card with the ramdisk unmounted, and once on the ramdisk with the SD
+card unmounted. Power consumption is measured after each test and then
+reported. Preconditions:
+
+1) User must not be logged on to the GUI
+2) An empty SD card must be inserted and formatted with a single mountable
+   partition
+3) No other usb storage devices must be inserted.
+
+@param ramdisk_size: size of the ramdisk (integer in MiB).
+@param file_size: test file size (integer in MiB).
+@param ramdisk_path: path to the ramdisk mount point.
+@param fs_uuid: the UUID for the attached card. Use this parameter is
+       autodetection does not work as expected.
+@param drain_limit: maximum ratio between the card reader energy consumption
+       and each of the two ramdisk read/write test energy consumption values.
+       1.00 means the card reader test may not consume more energy than either
+       ramdisk test, 0.9 means it may consume no more than 90% of the ramdisk
+       value, and so forth. default is 1.05.
+"""
+
+from autotest_lib.client.cros import storage as storage_mod
+
+volume_filter, args_dict = storage_mod.args_to_storage_dict(args)
+ramdisk_size = int(args_dict.get("ramdisk_size", 513)) # MiB
+file_size = int(args_dict.get("file_size", 512)) # MiB
+drain_limit = float(args_dict.get("drain_limit", 1.05))
+if not volume_filter:
+    volume_filter = {"bus": "usb"}
+
+job.run_test("hardware_MultiReaderPowerConsumption",
+             ramdisk_size=ramdisk_size,
+             file_size=file_size,
+             drain_limit=drain_limit,
+             volume_filter=volume_filter)

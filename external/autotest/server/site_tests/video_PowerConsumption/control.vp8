@@ -1,0 +1,45 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "video_PowerConsumption.vp8"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "video"
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TEST_TYPE = "server"
+DEPENDENCIES = "rpm, power:battery"
+BUG_TEMPLATE = {
+    "labels": ["OS-Chrome", "VideoTestFailure"],
+}
+
+DOC = """
+The test outputs the video power consumption for VP8 video decode.
+"""
+
+import logging
+
+from autotest_lib.client.common_lib import error
+
+
+VIDEO_NAME = "traffic-1920x1080-ad53f821ff3cf8ffa7e991c9d2e0b854.vp8.webm"
+VIDEO_DESCRIPTION = "vp8_1080p"
+
+def _run_client_test(machine):
+    """Runs client test with battery actively discharging."""
+    client = hosts.create_host(machine)
+    if not client.has_power():
+        raise error.TestError("This test requires RPM support.")
+
+    client.power_off()
+    try:
+        client_at = autotest.Autotest(client)
+        client_at.run_test("video_PlaybackPerf", video_name=VIDEO_NAME,
+                           video_description=VIDEO_DESCRIPTION, power_test=True)
+    finally:
+        client.power_on()
+
+
+job.parallel_on_machines(_run_client_test, machines)

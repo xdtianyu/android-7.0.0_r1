@@ -1,0 +1,23 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "BootDevice"
+AUTHOR = "Chrome OS Team"
+ATTRIBUTES = "suite:stress"
+SUITE = "stress"
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test reboots the device continuously for a spedified number of iterations.
+This is useful for testing firmware.
+"""
+
+def run_bootdevice(machine):
+    host = hosts.create_host(machine)
+    job.run_test("platform_BootDevice", host=host, iterations=100)
+
+parallel_simple(run_bootdevice, machines)

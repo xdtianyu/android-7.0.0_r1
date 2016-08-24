@@ -1,0 +1,25 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kathrelkeld"
+NAME = "bluetooth_IDCheck"
+PURPOSE = "Check whether the chromebook is using a Google Bluetooth ID."
+CRITERIA = """
+This test will fail if the Bluetooth ID does not match the expected format.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "bluetooth"
+TEST_TYPE = "client"
+DEPENDENCIES = 'bluetooth'
+
+DOC = """
+Checks the Bluetooth ID of the system.  If it is not "00E0:24..:0400", the
+test will fail.  It does not check the platform-specific number.  A platform
+should not FSI without an assigned Bluetooth ID from Google.
+"""
+
+job.run_test('bluetooth_IDCheck')

@@ -1,0 +1,17 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "cmasone@chromium.org"
+NAME = "desktopui_HangDetector"
+ATTRIBUTES = "suite:regression"
+SUITE = "regression"
+TIME = "FAST"
+TEST_TYPE = "client"
+
+DOC = """
+Enable and verify session_manager-driven browser hang detection.
+"""
+
+job.run_test('desktopui_HangDetector')
+

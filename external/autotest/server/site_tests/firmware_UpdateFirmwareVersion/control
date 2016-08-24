@@ -1,0 +1,50 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_UpdateFirmwareVersion"
+PURPOSE = "Servo based firmware update test which checks the firmware version."
+CRITERIA = """
+Prerequirement is as follow:
+1. This test should run in normal mode.
+2. Fwid should match shellball's (/usr/sbin/chromeos-firmwareupdate) fwid,
+   unless this test use a given shellball.
+3. A USB disk should be plugged-in, which contains a Chrome OS test image.
+
+This test will fail if one of the following conditions is met:
+1. Firmware update fails.
+2. After firmware update, device restart with firmware A.
+3. Firmware version does not increase after firmware update.
+4. Firmware version does not recover to original version after recovery.
+"""
+# TODO(waihong): Add back to the regular FAFT suite when the TPM recovery
+# is added to the lab infrastructure.
+ATTRIBUTES = "suite:faft_lv5"
+SUITE = "faft_lv5"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+
+DOC = """
+This test requires a USB test image plugged in. The firmware id
+the current running firmware must matches the system shellball's, or user
+can provide a shellball to do this test. In this way, the client will be
+update with the given shellball first. On runtime, this test modifies the
+firmware version of the shellball and runs autoupdate. Check firmware
+version after boot with firmware B, and then recover firmware A and B to
+original shellball.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_updatefirmwareversion(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("firmware_UpdateFirmwareVersion", host=host, cmdline_args=args,
+                 disable_sysinfo=True)
+
+parallel_simple(run_updatefirmwareversion, machines)

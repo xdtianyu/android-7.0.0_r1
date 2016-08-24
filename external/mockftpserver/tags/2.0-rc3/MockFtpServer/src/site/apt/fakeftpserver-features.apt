@@ -1,0 +1,106 @@
+		--------------------------------------------------
+				FakeFtpServer Features and Limitations
+		--------------------------------------------------
+
+FakeFtpServer Features
+~~~~~~~~~~~~~~~~~~~~~~
+
+  * Standalone dummy FTP server. Run either within the same JVM as test code or in a different JVM.
+
+  * Implements common FTP server commands.
+
+  * Works out of the box with reasonable and expected behavior. Can simulate most mainline success and error scenarios.
+
+  * In most cases, requires little or no knowledge or understanding of FTP server commands and reply codes. 
+
+  * Provides a simulated server file system, including support for file and directory permissions and owner and
+   group authorization based on Unix. This file system can be populated at startup (or thereafter) with
+   directories and files (including arbitrary content) to be retrieved by an FTP client. Any files sent to the server
+   by an FTP client exist within that file system as well, and can be accessed through the file system API, or
+   can even be subsequently retrieved by an FTP client.
+
+  * Allows defining the set of user accounts that control which users can login to the FTP server, and their home
+    (default) directories.
+
+  * Supports active and passive mode data transfers.
+
+  * Fully supports configuration within the <<Spring Framework>> or other dependency-injection container.
+  
+  * Can be used to test FTP client code written in any language
+  
+FTP Scenarios Supported by FakeFtpServer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Some of the mainline success scenarios that you can simulate with <<FakeFtpServer>> include:
+
+    * Login (USER/PASS): with password, or when no password is required
+
+    * Retrieve existing file (RETR) from the server
+
+    * Send file to the server (STOR,STOU,APPE)
+
+    * List of file entries (LIST) and list of filenames (NLST)
+
+    * Print current working directory (PWD)
+
+    * Change current working directory (CWD)
+
+    * Rename an existing file (RNFR/RNTO)
+
+    * Delete an existing file (DELE)
+
+    * Create directory (MKD)
+
+    * Remove directory (RMD)
+
+    * Both active and passive mode (PASV) data transfers
+
+  Some of the error scenarios that you can simulate with <<FakeFtpServer>> include:
+
+    * Failed login (USER/PASS): no such user, wrong password
+
+    * Invalid client requests: missing required parameter, not logged in
+
+    * Failed retrieve (RETR): no such file, missing required access permissions for the current user
+
+    * Failed send (STOR,STOU,APPE): missing required access permissions for the current user
+
+    * Failed change current working directory (CWD): no such directory, missing required access permissions for the current user
+
+    * Failed delete an existing file (DELE): file does not exist, missing required access permissions for the current user
+
+    * Failed rename (RNFR/RNTO): no such file, missing required access permissions for the current user
+
+    * Failed create directory (MKD): parent directory does not exist, directory already exists, missing required access permissions for the current user
+
+    * Failed remove directory (RMD): no such directory, directory not empty, missing required access permissions for the current user
+
+
+FakeFtpServer Limitations
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Not all FTP features, error scenarios and reply codes can be simulated using <<FakeFtpServer>>. Features and
+  scenarios not supported include:
+
+  * Leaving the data connection open across multiple client requests.
+
+  * Transmission mode other than 'Stream'. The STRU command is implemented but has no effect (NOOP).
+
+  * Data Types other than ASCII and IMAGE (binary).
+
+  * Vertical Format Control other than the default (NON PRINT).
+
+  * Record Structure and Page Structure. The STRU command is implemented but has no effect (NOOP).
+
+  * Error Recovery and Restart. The REST command is implemented but has no effect (NOOP).
+
+  * Structure Mount. The SMNT command is implemented but has no effect (NOOP).
+
+  * Abort. The ABOR command is implemented but has no effect (NOOP).
+
+  * Allocate. The ALLO command is implemented but has no effect (NOOP).
+
+  []
+
+  For unsupported features, error scenarios and reply codes, consider using <<StubFtpServer>> instead, which
+  provides a lower-level abstraction and finer control over exact server reply codes and responses.

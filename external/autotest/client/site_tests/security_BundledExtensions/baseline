@@ -1,0 +1,175 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+{
+# Chrome Web Store ("ahfgeienlihckogmohjhadlkjgocpleb"),
+# Virtual Keyboard ("mppnpdlheglhdfmldimlhpnegondlapf"),
+# Files ("hhaomjibdihmijegdhdafkllkbggdgoj"), and
+# Bookmark Manager ("eemcgdkfndhakfknompkggombfjjjeno") are
+# already tracked and reviewed on the Chrome side. Ignore them
+# in our test, otherwise it's just a baseline maintenance treadmill.
+  "ignored_extension_ids": [
+    "ahfgeienlihckogmohjhadlkjgocpleb",
+    "mppnpdlheglhdfmldimlhpnegondlapf",
+    "hhaomjibdihmijegdhdafkllkbggdgoj",
+    "eemcgdkfndhakfknompkggombfjjjeno"
+  ],
+  "bundled_crx_baseline": [],
+  "component_extension_baseline": [
+    { "id": "idddmepepmjcgiedknnmlbadcokidhoa",
+      "name": "NCDLauncher",
+      "effectiveHostPermissions": [],
+      "apiPermissions": []
+    },
+    { "id": "pmfjbimdmchhbnneeidfognadeopoehp",
+      "name": "Image Loader",
+      "effectiveHostPermissions": ["https://www.googledrive.com/*"],
+      "apiPermissions": ["fileBrowserHandler",
+                         "fileBrowserHandlerInternal",
+                         "fileBrowserPrivate"]
+    },
+    { "id": "obklkkbkpaoaejdabbfldmcfplpdgolj",
+      "name": "Wallpaper Picker",
+      "effectiveHostPermissions": ["https://storage.googleapis.com/*",
+                                   "https://commondatastorage.googleapis.com/*"],
+      "apiPermissions": ["alarms",
+                         "fileSystem",
+                         "fileSystem.write",
+                         "storage",
+                         "unlimitedStorage",
+                         "wallpaperPrivate"]
+    },
+    { "id": "iadeocfgjdjdmpenejdbfeaocpbikmab",
+      "name": "Mobile Activation",
+      "effectiveHostPermissions": [],
+      "apiPermissions": []
+    },
+    { "id": "nkoccljplnhpfnfiajclkommnmllphnl",
+      "name": "crosh_builtin",
+      "effectiveHostPermissions": [],
+      "apiPermissions": ["terminalPrivate",
+                         "storage",
+                         "clipboardWrite",
+                         "clipboardRead",
+                         "unlimitedStorage"]
+    },
+    { "id": "kddnkjkcjddckihglkfcickdhbmaodcn",
+      "name": "Chrome Goodies",
+      "effectiveHostPermissions": ["https://*/*"],
+      "apiPermissions": ["alarms",
+                         "cookies",
+                         "chromeosInfoPrivate",
+                         "echoPrivate",
+                         "notifications"]
+    },
+    { "id": "mgndgikekgjfcpckkfioiadnlibdjbkf",
+      "name": "Chrome",
+      "effectiveHostPermissions": [],
+      "apiPermissions": []
+    },
+    { "id": "hiahncppkeponhognffoakpacfndjdhm",
+      "name": "Networks",
+      "effectiveHostPermissions": ["chrome://resources/*"],
+      "apiPermissions": ["networkingPrivate"]
+    },
+    { "id": "mlbmkoenclnokonejhlfakkeabdlmpek",
+      "name": "TimeScapes",
+      "boards": ["link"],
+      "effectiveHostPermissions": [],
+      "apiPermissions": []
+    },
+    { "id": "kodldpbjkkmmnilagfdheibampofhaom",
+      "name": "Connectivity Diagnostics",
+      "effectiveHostPermissions": ["http://*.google.com/*",
+                                   "https://*.google.com/*"],
+      "apiPermissions": ["clipboardWrite",
+                         "dns",
+                         "diagnostics",
+                         "experimental",
+                         "metricsPrivate",
+                         "networkingPrivate",
+                         "socket"]
+    },
+    { "id": "gfdkimpbcpahaombhbimeihdjnejgicl",
+      "name": "Feedback",
+      "effectiveHostPermissions": ["chrome://resources/*"],
+      "apiPermissions": ["feedbackPrivate"]
+    },
+    { "id": "ljoammodoonkhnehlncldjelhidljdpi",
+      "name": "Get Help",
+      "effectiveHostPermissions": [
+          "https://commondatastorage.googleapis.com/*",
+          "https://storage.googleapis.com/*",
+          "https://www-googleapis-test.sandbox.google.com/*",
+          "https://www.google-analytics.com/*",
+          "https://www.googleapis.com/*",
+          "https://www.google.com/*",
+          "https://*.ytimg.com/*"],
+      "apiPermissions": ["chromeosInfoPrivate",
+                         "identity",
+                         "management",
+                         "storage",
+                         "unlimitedStorage",
+                         "webRequestInternal",
+                         "webview"]
+    },
+    { "id": "bpmcpldpdmajfigpchkicefoigmkfalc",
+      "name": "Quickoffice (Beta)",
+      "effectiveHostPermissions": ["https://www.google-analytics.com/*"],
+      "apiPermissions": ["fileBrowserHandler",
+                         "fileBrowserHandlerInternal",
+                         "fileSystem",
+                         "fileSystem.write",
+                         "clipboardWrite",
+                         "clipboardRead",
+                         "metricsPrivate",
+                         "storage",
+                         "streamsPrivate",
+                         "unlimitedStorage"]
+    },
+    { "name": "Help",
+      "id": "honijodknafkokifofgiaalefdiedpko",
+      "effectiveHostPermissions": [],
+      "apiPermissions": []
+    },
+    { "name": "Hangout Services",
+      "id": "nkeimhogjdpnpccoofpliimaahmaaome",
+      "effectiveHostPermissions": [],
+      "apiPermissions": ["alarms",
+                         "desktopCapture",
+                         "system.cpu",
+                         "webConnectable",
+                         "webrtcAudioPrivate",
+                         "webrtcLoggingPrivate"]
+    },
+    { "name": "Google Now",
+      "id": "pafkbggdmjlpgkdkcbjmhmfcdpncadgh",
+      "effectiveHostPermissions": [
+          "<all_urls>",
+          "chrome://favicon/*"],
+      "apiPermissions": ["preferencesPrivate",
+                         "pushMessaging",
+                         "tabs",
+                         "metricsPrivate",
+                         "storage",
+                         "notifications",
+                         "location",
+                         "alarms",
+                         "webstorePrivate",
+                         "identity"]
+    },
+    { "name": "Welcome",
+      "id": "jdgcneonijmofocbhmijhacgchbihela",
+      "effectiveHostPermissions": ["chrome://theme/*",
+                                   "chrome://resources/*"],
+      "apiPermissions": ["firstRunPrivate"]
+    },
+    { "name": "Chrome OS text-to-speech component extension",
+      "id": "gjjabgpgjpampikjhjpfhneeoapjbjaf",
+      "effectiveHostPermissions": [],
+      "apiPermissions": ["ttsEngine",
+                         "unlimitedStorage"]
+    }
+  ],
+  "official_components": []
+}

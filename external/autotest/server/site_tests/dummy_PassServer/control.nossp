@@ -1,0 +1,27 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "dummy_PassServer_nossp"
+PURPOSE = "Demonstrate success methods of autotests."
+CRITERIA = "This test will always succeed."
+ATTRIBUTES = "suite:dummy_server"
+SUITE = "dummy_server"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "dummy"
+TEST_TYPE = "server"
+# Force not to use server side package for this test.
+REQUIRE_SSP = False
+
+DOC = """
+This is a helper test that will succeed and force not to use server side
+packaging.
+"""
+
+def run(machine):
+    job.run_test('dummy_PassServer',
+                 host=hosts.create_host(machine))
+
+parallel_simple(run, machines)

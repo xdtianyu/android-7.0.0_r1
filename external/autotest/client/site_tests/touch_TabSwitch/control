@@ -1,0 +1,29 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kathrelkeld"
+NAME = "touch_TabSwitch"
+PURPOSE = "Test that three-finger touchpad gesture can switch tabs."
+CRITERIA = """
+This test will fail if, after playback of three finger left/right swipes,
+the active tab does not change as expected.
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:touch"
+SUITE = "bvt-perbuild,touch"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "touch"
+TEST_TYPE = "client"
+DEPENDENCIES = "touchpad"
+
+DOC = """
+Plays back touchpad gestures (if present) and checks for tab switching.
+Ignores devices without touchpads and devices that do not support 3+ fingers.
+Checks that the Australian scrolling setting does not affect swipe direction.
+Swiping left moves to the tabs to the left and to the right to the tabs on the
+right.
+
+"""
+
+job.run_test('touch_TabSwitch')

@@ -1,0 +1,10 @@
+load_base_board_description "unix"
+
+# Set hostname and username. # Make sure SSH keys are set up prior to run.
+set_board_info hostname $env(DEJAGNU_HOSTNAME)
+set_board_info username root
+
+set_board_info shell_prompt "dejagnu>"
+set_board_info rsh_prog "$env(DEJAGNU_SCRIPTS)/dejagnu_ssh"
+set_board_info rcp_prog "$env(DEJAGNU_SCRIPTS)/dejagnu_scp"
+

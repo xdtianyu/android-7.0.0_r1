@@ -1,0 +1,29 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = 'ejcaruso, samueltan, snanda'
+NAME = 'network_WiFi_WakeOnDisconnect'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell, servo, lucidsleep'
+ATTRIBUTES = 'suite:wifi_correctness_cros_core, suite:wifi_lucidsleep'
+SUITE = 'wifi_correctness_cros_core, wifi_lucidsleep'
+
+DOC = """
+This test verifies that the NIC wakes the DUT up in dark resume upon getting
+disconnected from an AP that the DUT was connected to when it last suspended.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test('network_WiFi_WakeOnDisconnect',
+                 host=host,
+                 raw_cmdline_args=args)
+
+parallel_simple(run, machines)

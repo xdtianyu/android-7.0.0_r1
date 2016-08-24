@@ -1,0 +1,18 @@
+AUTHOR = 'The Chromium OS Authors'
+NAME = "autoupdate_ParameterizedJob"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+TIME = "SHORT"
+BUG_TEMPLATE = {
+    'cc': ['chromeos-installer-alerts@google.com'],
+    'labels': ['Cr-Internals-Installer'],
+}
+
+DOC = """
+This is a dummy test simply add a test parameter in the autotest db for future 
+user.
+"""
+
+TEST_PARAMETERS = "image"
+

@@ -1,0 +1,13 @@
+WebGL performance test
+
+- Current version is 23e327b39bc0 released 03/29/2012.
+  http://hg.mozilla.org/users/bjacob_mozilla.com/webgl-perf-tests/
+
+To update test binaries:
+
+1) cd scripts
+2) ./update-tarball
+3) Rename patch version and check if it is still working, otherwise manual three way merge.
+4) Copy webgl-performance.tar.bz2 to
+   https://sandbox.google.com/storage/?arg=chromeos-localmirror/&pli=1#chromeos-localmirror%2Fdistfiles
+   Make sure to go to the last page, select the uploaded binary and check "share publicly".

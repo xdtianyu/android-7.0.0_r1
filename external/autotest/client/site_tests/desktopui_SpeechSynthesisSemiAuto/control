@@ -1,0 +1,21 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Team"
+NAME = "desktopui_SpeechSynthesisSemiAuto"
+PURPOSE = "Verify that text strings are synthesized correctly."
+CRITERIA = """
+This test fails if the text string is not heard correctly by a tester.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+
+DOC = """
+This tests that a specified text string is correctly synthesized.
+Please confirm manually that the text "Welcome to Chromium O S" is heard.
+"""
+
+job.run_test('desktopui_SpeechSynthesisSemiAuto')

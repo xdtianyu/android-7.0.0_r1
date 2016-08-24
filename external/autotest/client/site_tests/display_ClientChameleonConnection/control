@@ -1,0 +1,22 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'chromeos-chameleon'
+NAME = 'display_ClientChameleonConnection'
+PURPOSE = 'Chameleon connection test from client-side.'
+CRITERIA = 'This test fails if DUT and Chameleon are not connected properly.'
+ATTRIBUTES = "suite:chameleon_dp, suite:chameleon_hdmi, suite:chameleon_vga"
+SUITE = 'chameleon_dp,chameleon_hdmi,chameleon_vga'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'display'
+TEST_TYPE = 'client'
+DEPENDENCIES = 'chameleon'
+
+DOC = """
+This test checks the connection between DUT and Chameleon.
+"""
+
+host = next(iter(job.hosts))
+job.run_test('display_ClientChameleonConnection', host=host, args=args)

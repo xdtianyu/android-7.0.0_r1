@@ -1,0 +1,5 @@
+hosts = [hosts.create_host(h, initialize=False) for h in machines]
+
+for host in hosts:
+    print host.hostname
+    print host.run('uname -a').stdout.rstrip()

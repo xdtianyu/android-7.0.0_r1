@@ -1,0 +1,38 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_Perf.11a_tkip'
+ATTRIBUTES = 'suite:wifi_perf, suite:wifi_perf_bcm4371'
+SUITE = 'wifi_perf, wifi_perf_bcm4371'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test uses netperf to measure the maximal receiving and transmitting
+throughput on a DUT with an 802.11a network with TKIP encryption.
+"""
+
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_security_types
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    mode = hostap_config.HostapConfig.MODE_11A
+    wpa_config = xmlrpc_security_types.WPAConfig(
+            psk='chromeos',
+            wpa_mode=xmlrpc_security_types.WPAConfig.MODE_PURE_WPA,
+            wpa_ciphers=[xmlrpc_security_types.WPAConfig.CIPHER_TKIP])
+    configs = [hostap_config.HostapConfig(channel=channel, mode=mode,
+                                          security_config=wpa_config)
+               for channel in (44,)]
+    job.run_test('network_WiFi_Perf', tag=NAME.split('.')[1],
+                 host=host, raw_cmdline_args=args,
+                 additional_params=configs)
+
+
+parallel_simple(run, machines)

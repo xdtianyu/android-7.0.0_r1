@@ -1,0 +1,20 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_DhcpNonAsciiParameter'
+ATTRIBUTES = "suite:network_nightly"
+SUITE = 'network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that we can negotiate a lease on an IPv4 address via DHCP.
+
+  This test fails if dhcpcd is unable to negotiate and renew a DHCP lease if
+  the server returns a string parameter with non-ASCII parameters, which need
+  to be sanitized before sending to DBus.
+"""
+
+job.run_test('network_DhcpNonAsciiParameter')

@@ -1,0 +1,10 @@
+#!/bin/sh
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+# setup: mkdir -p "%T/c/bin" "%T/c/lib64" "%T/c/lib" "%T/c/usr/lib" "%T/c/usr/local"
+# args: -b /bin,/bin -b /lib,/lib -b /usr/lib,/usr/lib -b /usr/local,/usr/local -C "%T/c" -f "%T/c/pidfile"
+# args64: -b /lib64,/lib64
+
+read pid < pidfile
+[ "$$" -eq "$pid" ]

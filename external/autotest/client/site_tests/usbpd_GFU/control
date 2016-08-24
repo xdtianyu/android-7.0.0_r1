@@ -1,0 +1,15 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+NAME = 'usbpd_GFU'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Test USB-PD Google Firmware Update (GFU)'
+DOC = """
+Integration test for USB-PD Google Firmware Update (GFU).
+"""
+TIME='MEDIUM'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'usbpd'
+TEST_TYPE = 'client'
+
+job.run_test('usbpd_GFU', ro_reps=1)

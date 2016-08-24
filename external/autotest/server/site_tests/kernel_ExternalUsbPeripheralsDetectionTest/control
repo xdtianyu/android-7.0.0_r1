@@ -1,0 +1,78 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "jimishs@google.com"
+NAME = "kernel_ExternalUsbPeripheralsDetectionTest"
+PURPOSE = "Kernel USB detection test"
+CRITERIA = "This test will fail if any of the actions or checks fail."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform, kernel"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:kernel_usb"
+SUITE = "kernel_usb"
+DEPENDENCIES = "servo, kernel_usb"
+
+DOC = """
+This test uses servo to connect USB devices.
+This test verifies if drivers are created for each USB device or not.
+
+The test fails if
+- if USB device is not detected in lsusb command
+- if driver for USB device is not created
+- USB detected peripherals are different than expected
+- there is no servo board attached
+
+Set1 is set of four USB peripherals plugged
+- LG Android phone
+- USB 3G dongle
+- USB HD Webcam - should be Logitech HD Pro Webcam C920
+- USB3.0 Card Reader
+- USB Headphone
+- USB Mouse
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+
+    usb_checks = {
+        # Microsoft Headphone
+        str("lsusb -v -d 045e:070f") :
+            ["idVendor\s+0x045e\s+Microsoft", "Audio"],
+        # Huawei 3G USB modem/dongle
+        str("lsusb -v -d 12d1:1506") :
+            ["idVendor\s+0x12d1\s+Huawei", "idProduct\s+0x1506\s+Modem"],
+        # LG Android phone (commenting out due to crbug.com/488667)
+        #str("lsusb -v -d 1004:61fa") :
+        #    ["idVendor\s+0x1004\s+LG\s+Elect", "iProduct.*LGE\s+Android"],
+        # Webcam
+        str("lsusb -v -d 058f:") :
+            ["idVendor\s+0x058f\s+Alcor", "iProduct.*(TeckNet|2.0 PC Camera)"],
+        # Mouse
+        str("lsusb -v -d 04f2:0939") :
+            ["idVendor\s+0x04f2\s+Chicony", "iProduct.*Optical\s+Mouse"],
+        # Card Reader
+        str("lsusb -v -d 0bda:0306") :
+            ["idVendor\s+0x0bda\s+Realtek", "iProduct.*USB3.0\s+Card\s+Reader"],
+        }
+
+    vendor_id_dict_control_file = {'045e': 'Microsoft Headphone',
+                                   '12d1': 'Huawei 3G modem/dongle',
+                                   #commenting out due to crbug.com/488667
+                                   #'1004': 'LG Android phone',
+                                   '058f': 'Webcam',
+                                   '04f2': 'Mouse',
+                                   '0bda': 'Card Reader',
+                                  }
+
+    job.run_test("kernel_ExternalUsbPeripheralsDetectionTest", host=host,
+                 disable_sysinfo=True, usb_checks=usb_checks,
+                 vendor_id_dict_control_file=vendor_id_dict_control_file)
+
+parallel_simple(run, machines)

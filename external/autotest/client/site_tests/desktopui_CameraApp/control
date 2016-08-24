@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "mtomasz@chomium.org, chromeos-team-tok@google.com"
+NAME = "desktopui_CameraApp"
+PURPOSE = "Verifies if the ToT Camera App works."
+CRITERIA = """
+This test will fail if the webcam stream in the Camera App is not acquired,
+or the app is not launched correctly.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+
+DOC = """
+This integration test verifies if the ToT version of the Camera App works fine.
+"""
+
+job.run_test('desktopui_CameraApp')
+

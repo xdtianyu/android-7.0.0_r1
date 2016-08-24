@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_StorageFio.integrity_full_disk'
+AUTHOR = 'puthik'
+PURPOSE = 'Verify that data written to disk remains valid after 72 hours.'
+TIME = 'LENGTHY'
+TEST_TYPE = 'client'
+
+DOC = """
+Test full drive integrity for internal disk.
+
+This test uses FIO to spawn a number of threads to perform a particular type of
+I/O. This test will do data integrity checks by first running a workload that
+writes data to the spare root partition and then verifying, after 72 hours,
+that the data on storage is still valid.
+
+NOTE: Must boot from USB or SD card to run this test.
+"""
+
+job.run_test(url='hardware_StorageFio', filesize=0, integrity='True',
+             wait=60 * 60 * 72, max_run_time_mins=60 * 73)

@@ -1,0 +1,24 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'harpreet, krisr, wiley'
+TIME = 'SHORT'
+NAME = 'network_WiFi_ChromeEndToEnd'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+WiFi_ChromeEndToEnd test configures two APs and runs the client side
+network_ChromeWifiEndToEnd test which uses these APs to test the UI.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_ChromeEndToEnd',
+                 host=host,
+                 raw_cmdline_args=args,
+                 test='all')
+
+
+parallel_simple(run, machines)

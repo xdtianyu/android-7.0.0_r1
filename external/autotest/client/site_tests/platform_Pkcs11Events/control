@@ -1,0 +1,20 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Authors"
+NAME = "platform_Pkcs11Events"
+PURPOSE = "Tests the response of the PKCS #11 system to login events."
+CRITERIA = "Fails if the PKCS #11 system does not respond correctly to events."
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+TIME = "SHORT"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This tests the response of the PKCS #11 system to login events.
+"""
+
+job.run_test('platform_Pkcs11Events', num_tokens=2, num_events=20)

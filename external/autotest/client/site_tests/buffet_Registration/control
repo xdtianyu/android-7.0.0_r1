@@ -1,0 +1,17 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, avakulenko, zeuthen'
+NAME = 'buffet_Registration'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:tendo_experimental"
+SUITE = 'tendo_experimental'
+
+DOC = """
+Check that Buffet goes through the basic registration process as expected.
+"""
+
+
+job.run_test('buffet_Registration')

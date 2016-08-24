@@ -1,0 +1,39 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "scunningham"
+NAME = "policy_ImagesBlockedForUrls"
+ATTRIBUTES = "suite:regression"
+SUITE = "regression"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "enterprise"
+TEST_TYPE = "client"
+
+DOC = """
+Verify effects of ImagesBlockedForUrls policy on client look and feel.
+
+This test verifies the effect of the ImagesBlockedForUrls user policy on
+Chrome OS client behavior and appearance when the DefaultImagesSetting policy
+is 1 or undefined. It exercises a range of policy values using four unique
+test cases, named: NotSet, 1Url, 2Urls, and 3Urls. See the test file for a
+full description of what each test case does.
+
+In general, a test case shall pass if the browser only blocks images on a test
+page that is in an domain listed in the ImagesBlockedForUrls policy. A test
+case shall fail if the browser allows images to be shown on a page where they
+should be blocked, or blocks images on a page where they should be shown.
+
+Usage example:
+$ test_that <IPAddress> ImagesBlockedForUrls --args="mode=single case=2Urls
+env=dm-test dms_name=xot-dmst username=test@crosprqa1.com password=test1234"
+
+Runs a single test case (e.g., 2Urls) using the specified test DM Server
+environment, signing in with the specified username and password. Expectation
+is that the image on the page will be allowed (not blocked).
+
+"""
+
+job.run_test("policy_ImagesBlockedForUrls", args=args)
+

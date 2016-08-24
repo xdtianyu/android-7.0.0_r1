@@ -1,0 +1,26 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_DMVerityBitCorruption"
+PURPOSE = "Ensure dm-verity fails on failed integrity checks or integrity data"
+CRITERIA = """
+dm-verity should cause errors to be generated. On test builds, it
+should return IO errors on bad data.
+"""
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Platform"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+ATTRIBUTES = "suite:bvt-inline"
+SUITE = "bvt-inline"
+
+DOC = """
+Ensures the dm-verity module is properly failing on invalid data
+"""
+
+job.run_test('platform_DMVerityBitCorruption', tag='first', bit_loc='first')
+job.run_test('platform_DMVerityBitCorruption', tag='middle', bit_loc='middle')
+job.run_test('platform_DMVerityBitCorruption', tag='last', bit_loc='last')

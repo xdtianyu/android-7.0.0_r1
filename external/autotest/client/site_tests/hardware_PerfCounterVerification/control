@@ -1,0 +1,47 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "David Sharp <dhsharp@chromium.org>"
+NAME = "hardware_PerfCounterVerification"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+
+BUG_TEMPLATE = {
+    'owner': 'dhsharp@chromium.org',
+    'cc': ['cwp-team@google.com']
+}
+
+DOC = """
+Verify performance counters
+
+Arguments:
+  events: Events to pass to perf's -e argument. Events are passed in together,
+    so multiplexing may occur if more than one is specified.
+  perf_cmd: Which perf command to use to collect events. Supported values are
+    "stat" and "record -b" (for branch record).
+  program: Benchmark binary
+  multiplier: Multiplier on the number of loop iterations passed to the
+    benchmark binary. i.e., run 1*multiplier, 2*multiplier, etc loop iterations.
+"""
+
+job.run_test('hardware_PerfCounterVerification', tag='cycles_instructions',
+             perf_cmd='stat', events=('cycles', 'instructions'),
+             program='noploop', multiplier=10000000)
+
+job.run_test('hardware_PerfCounterVerification', tag='LBR',
+             perf_cmd='record -b', events=('br_inst_retired.all_branches',),
+             program='noploop', multiplier=10000000)
+
+job.run_test('hardware_PerfCounterVerification', tag='iTLB_misses',
+             perf_cmd='stat', events=('iTLB-misses','cycles'),
+             program='iTLB_benchmark', multiplier=100)
+
+job.run_test('hardware_PerfCounterVerification', tag='dTLB_misses',
+             perf_cmd='stat', events=('dTLB-misses','cycles'),
+             program='dTLB_benchmark', multiplier=10000)

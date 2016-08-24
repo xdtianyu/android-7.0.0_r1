@@ -1,0 +1,161 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import logging
+from autotest_lib.client.common_lib import error, utils
+from autotest_lib.client.cros import constants
+from autotest_lib.server import host_attributes
+
+AUTHOR = "Chromium OS"
+NAME = "autoupdate_EndToEndTest"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+JOB_RETRIES = 1
+BUG_TEMPLATE = {
+    'cc': ['chromeos-installer-alerts@google.com'],
+    'labels': ['Cr-Internals-Installer'],
+}
+
+# Disable server-side packaging support for this test.
+# This control file is used as the template for paygen_au_canary suite, which
+# creates the control files during paygen. Therefore, autotest server package
+# does not have these test control files for paygen_au_canary suite.
+REQUIRE_SSP = False
+
+DOC = """
+This is an end-to-end update test of Chrome OS releases. Given a test
+configuration, it will perform an end-to-end test of a Chrome OS update
+payload. A test configuration can be given as command-line arguments (see
+below) or instantiated inline as local varibles.
+
+To invoke this test locally:
+
+  test_that --args="<ARGLIST>" <DUT-IPADDR> autoupdate_EndToEndTest
+
+where ARGLIST is a whitespace separated list of the following key=value pairs.
+Values pertaining to the test case include:
+
+  name=TAG           name tag for the test (e.g. 'nmo', 'npo' or 'fsi')
+  update_type=full|delta  type of update being applied, either 'full' or 'delta'
+  source_release=REL      source image release version (e.g. 2672.0.0)
+  target_release=REL      target image release version (e.g. 2673.0.0)
+  source_payload_uri=URI  URI of the source full payload. None means don't
+                          install a source image (assume it's preinstalled).
+  source_archive_uri=URI  (optional) URI of where the artifacts for the source
+                          image (e.g.  stateful update) are located. If not
+                          provided, the test will attempt using the same
+                          location as source_payload_uri.  This is required for
+                          any test where the location of the full (source)
+                          payload is separate from that of its build artifacts
+                          (e.g. it is in gs://chromeos-releases/).
+  target_payload_uri=URI  URI of the target payload
+  target_archive_uri=URI  (optional) URI of where the artifacts for the target
+                          image (e.g. stateful update) are located. If not
+                          provided, the test will attempt using the test job's
+                          repo ID (if present), otherwise default to the same
+                          location as target_payload_uri.  Normally, this is
+                          only needed for local (non-AFE) runs where the
+                          payload location is separate from that of the build
+                          artifacts (e.g. it is in gs://chromeos-releases).
+
+Please note, this test spawns omaha server instances (devserver) on a devserver
+configured in your global_config using autotest's ssh mechanism. This means that
+if you are running this locally and intend to use a local devserver, you will
+need to setup your ssh keys for public key authentication e.g. create keys,
+ssh-add the private key, add the public key to your authorized keys and finally
+enable public key authentication in your sshd config.
+
+To run locally:
+  Create src/third_party/autotest/files/shadow_config.ini:
+    [CROS]
+    devserver_dir = <full repo path>/src/platform/dev
+    dev_server = http://<hostname>:8080
+
+  Configure SSH for passwordless loopback access to your account.
+    ssh-keygen (If you don't already have SSH keys setup)
+    cp ~/.ssh/id_rsa chroot/home/<user>/.ssh/
+
+    # This is NOT permanent, you'll have to redo it about once a day.
+    sudo sed -i 's/PubkeyAuthentication no/PubkeyAuthentication yes/' \
+        /etc/ssh/sshd_config
+    sudo /etc/init.d/ssh restart
+
+    Enter a chroot, and ssh to <hostname>. If it doesn't work, fix that.
+
+  Make sure you have your gsutil permissions (your .boto file).
+    Your .boto file must be available inside the chroot.
+    cp ~/.boto chroot/home/<user>/
+
+  Make sure the gsutil command is available outside the chroot (note:
+  the gsutil package in Ubuntu is not what you're looking for.)
+
+  Start a devserver (outside the chroot):
+    src/platform/dev/devserver.py
+
+  (Note: DO NOT use start_devserver! Even though it gives the impression of
+  running the server outside the chroot, it actually starts a chroot and runs
+  the server inside of it.)
+
+  To make sure your test edits are used:
+    cros_sdk
+    cros_workon start autotest
+
+  Example:
+    cros_sdk
+    test_that <dut_ip> autoupdate_EndToEndTest \
+      --args="target_release=<Target Build Id> \
+              source_payload_uri=<Full Payload URI> \
+              target_payload_uri=<Tested Payload URI>"
+
+  Sample full payload URL:
+    gs://chromeos-image-archive/lumpy-release/R30-4462.0.0/
+    chromeos_R30-4462.0.0_lumpy_full_dev.bin
+
+  Sample target build id:
+    4463.0.0
+
+  Sample test payload URL:
+    gs://chromeos-image-archive/lumpy-release/R30-4463.0.0/
+    chromeos_R30-4462.0.0_R30-4463.0.0_lumpy_delta_dev.bin
+"""
+
+TEST_CONF_KEYS = (
+    'name', 'update_type', 'source_release', 'target_release',
+    'source_payload_uri', 'source_archive_uri', 'target_payload_uri',
+    'target_archive_uri')
+
+
+args_dict = utils.args_to_dict(args)
+
+# Create test configuration based on command-line arguments (higher precedence,
+# for test_that invocation) and local variables (lower precedence,
+# for Autotest front-end invocation).
+test_conf = {}
+for key in TEST_CONF_KEYS:
+    test_conf[key] = args_dict.get(key) or locals().get(key)
+
+
+def run_test(machine):
+    """Execute a test configuration on a given machine."""
+    host = hosts.create_host(machine)
+    # Save preserved log after autoupdate is completed.
+    job.sysinfo.add_logdir(constants.AUTOUPDATE_PRESERVE_LOG)
+    try:
+        job.run_test(
+                "autoupdate_EndToEndTest",
+                tag='%s_%s' % (test_conf['name'], test_conf['update_type']),
+                host=host, test_conf=test_conf)
+    except Exception as e:
+        if not issubclass(type(e), error.TestBaseException):
+            error_msg = 'Received test error: %s' % e
+            logging.error(error_msg)
+            raise error.TestError(error_msg)
+
+        raise
+
+
+# Invoke parallel tests.
+parallel_simple(run_test, machines)

@@ -1,0 +1,23 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "chromeos-gfx"
+NAME = "graphics_Stress.restart"
+PURPOSE = "Execute a graphics stress test."
+CRITERIA = "All tests must not crash/hang the GPU."
+ATTRIBUTES = "suite:graphics, suite:graphics_browser, suite:graphics_per-day"
+SUITE = 'graphics_per-day, graphics, graphics_browser'
+TIME = "LENGTHY"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "graphics"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+This test runs a graphics stress restarting ui.
+"""
+
+job.run_test('graphics_Stress', subtest='restart')

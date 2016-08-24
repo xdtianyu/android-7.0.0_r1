@@ -1,0 +1,32 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "cellular_MbimComplianceDataTransfer.DTS01"
+PURPOSE = """
+MBIM Compliance Test: Validation for alternate setting 1 of the
+communication interface.
+"""
+CRITERIA = """
+This test will fail if the modem is not MBIM compliant.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+ATTRIBUTES = "suite:cellular_mbim_compliance"
+SUITE="cellular_mbim_compliance"
+
+DOC = """
+DTS_01 Test listed in the MBIM Compliance Test Suite specification.
+Validation for alternate setting 1 of the communication interface.
+
+This test sets the data interface of the modem in loopback mode
+(specified by MBIM spec) and verifies that an ICMP packet can be
+routed through the data interface in alternate setting 1 of the
+communication interface.
+"""
+
+job.run_test('cellular_MbimComplianceDataTransfer',
+             subtest_name='cellular_MbimComplianceDTS01')

@@ -1,0 +1,28 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "derat@chromium.org, chromeos-power"
+NAME = "power_DeferForFlashrom"
+TIME = "SHORT"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:power_build"
+SUITE = "power_build"
+
+DOC = """
+This test verifies that flashrom creates a lockfile while performing
+potentially-destructive write operations and that powerd defers suspend or
+reboot requests while the lockfile exists.
+
+It fails if:
+1. powerd suspends or reboots the system while flashrom is running instead of
+   waiting until it's exited.
+2. After flashrom exits, powerd fails to honor pending suspend or reboot
+   requests.
+3. The system fails to resume or come back up after rebooting.
+"""
+
+def run(machine):
+    job.run_test("power_DeferForFlashrom", host=hosts.create_host(machine))
+
+parallel_simple(run, machines)

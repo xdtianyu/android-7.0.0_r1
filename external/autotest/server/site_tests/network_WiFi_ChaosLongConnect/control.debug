@@ -1,0 +1,45 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'asnagarajan, wiley, jabele'
+NAME = 'network_WiFi_ChaosLongConnect.debug'
+TIME = 'LONG'
+TEST_TYPE = 'server'
+
+DOC = """
+This script iterates through all of the access points in the AP compatibility
+lab and has a chrome device connect to each in series. This test must be
+performed in the AP compatibility lab. This test would hold the connection with
+AP and performs some work during the connection.
+"""
+
+from autotest_lib.server.cros.ap_configurators import ap_spec
+from autotest_lib.server.cros.chaos_lib import chaos_runner
+from autotest_lib.server.cros.network import connection_worker
+
+def run_chaos_debug(machine):
+    host = hosts.create_host(machine)
+    # List of specific APs to debug. Please verify the APs indeed support PSK.
+    # Add your APs here.
+    debug_aps = ['chromeos3-row2-rack1-host3', 'chromeos3-row2-rack1-host7']
+    # IP or DNS name of host to use as a packet capturing device.
+    # capturer_hostname = 'chromeos3-row1-rack1-host15.cros'
+    # IP or DNS name of host to use as a work client device.
+    # work_client_hostname = 'chromeos3-row1-rack1-host12.cros'
+    ap_specs = [ap_spec.APSpec(security=ap_spec.SECURITY_TYPE_WPA2PSK,
+                               band=ap_spec.BAND_2GHZ,
+                               hostnames=debug_aps),
+                ap_spec.APSpec(security=ap_spec.SECURITY_TYPE_WPA2PSK,
+                               band=ap_spec.BAND_5GHZ,
+                               hostnames=debug_aps)]
+    # Note that duration_sec of 10s is to make debuging faster. This is not
+    # going to capture re-keying events. See crbug.com/339222
+    conn_worker = connection_worker.ConnectionDuration(duration_sec=10)
+    for spec in ap_specs:
+        runner = chaos_runner.ChaosRunner(
+                'network_WiFi_ChaosLongConnect', host, spec)
+        runner.run(job, batch_size=2, conn_worker=conn_worker)
+
+
+parallel_simple(run_chaos_debug, machines)

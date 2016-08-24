@@ -1,0 +1,20 @@
+# Copyright 2016 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'toddpoynor'
+NAME = 'brillo_ProcLibMemoryInventory'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'Server'
+ATTRIBUTES = ''
+SUITE = ''
+
+DOC = """
+Take inventory of process and shared lib unique RSS on a Brillo device.
+"""
+
+def run(machine):
+    job.run_test(NAME, host=hosts.create_host(machine))
+
+parallel_simple(run, machines)

@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "desktopui_CrashyRebootServer"
+AUTHOR = "cmasone, jrbarnette"
+ATTRIBUTES = "suite:gpu_hang"
+SUITE = "gpu_hang"
+TIME = "MEDIUM"
+TEST_TYPE = "server"
+
+DOC = """
+This test verifies that the logic we put in place to reboot the device in the
+face of a too-crashy UI functions as intended:
+
+If the UI crashes too much too fast, the device will eventually reboot
+to attempt to mitigate the problem. If the device determines that it's
+already tried that some number of times, it will shut down the UI and
+remain up.
+
+This test deploys the client test desktop_CrashyReboot in order to drive the
+device into the desired states.
+"""
+
+def run_bootperf(machine):
+    host = hosts.create_host(machine)
+    job.run_test("desktopui_CrashyRebootServer", host=host)
+
+parallel_simple(run_bootperf, machines)

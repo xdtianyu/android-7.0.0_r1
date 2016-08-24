@@ -1,0 +1,25 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kathrelkeld"
+NAME = "accessibility_ChromeVoxSound"
+PURPOSE = "Enable ChromeVox and check for sound."
+CRITERIA = """
+This test will fail if ChromeVox is not running or produces insufficient sound.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "accessibility"
+TEST_TYPE = "client"
+DEPENDENCIES = 'audio_loopback_dongle'
+
+DOC = """
+Uses audio loopback to record snippets of audio, checking whether there was any
+actual sound.  Test performs actions such as enabling Chromevox, navigating to
+a page, and opening a new tab - checking for audio after each.
+"""
+
+job.run_test('accessibility_ChromeVoxSound')

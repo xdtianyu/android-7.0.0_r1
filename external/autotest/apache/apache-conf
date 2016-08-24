@@ -1,0 +1,27 @@
+<IfVersion >= 2.4>
+   <Location />
+      Require all granted
+   </Location>
+</IfVersion>
+<IfVersion < 2.2.99>
+   <Location />
+      Order allow,deny
+      allow from all
+   </Location>
+</IfVersion>
+
+<IfVersion >= 2.4>
+   <Location /server-status>
+      Require ip 127.0.0.1 172.22.64.0/24 172.22.67.0/24
+   </Location>
+</IfVersion>
+<IfVersion < 2.2.99>
+   <Location /server-status>
+      SetHandler server-status
+      Order deny,allow
+      Deny from all
+      Allow from 127.0.0.1 172.22.64.0/24 172.22.67.0/24
+   </Location>
+</IfVersion>
+
+Include "/usr/local/autotest/apache/conf/all-directives"

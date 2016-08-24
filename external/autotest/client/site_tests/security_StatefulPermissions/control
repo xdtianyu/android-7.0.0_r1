@@ -1,0 +1,23 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Accounts for various permissions on the contents of the stateful parititon.
+"""
+NAME = "security_StatefulPermissions"
+PURPOSE = "To maintain a vetted, minimized set of attack surfaces in stateful."
+CRITERIA = """
+Fail if any files are found which are unaccounted for by given owner-specific
+criteria.
+"""
+ATTRIBUTES = "suite:bvt-inline"
+SUITE = "bvt-inline"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+job.run_test("security_StatefulPermissions")

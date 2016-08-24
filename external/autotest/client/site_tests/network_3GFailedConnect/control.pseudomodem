@@ -1,0 +1,46 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GFailedConnect.pseudomodem"
+PURPOSE = "Verify that a failed modem connect attempt puts the service in a failed state."
+CRITERIA = """
+This test will fail if a connect failure does not immediately cause the
+service to enter the Failed state.
+"""
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Tests that 3G connect failures are handled by cromo & flimflam properly
+
+  This test will fail if a connect failure does not immediately cause the
+  service to enter the Failed state.  It requires a machine with a modem
+  that has been factory reset and cannot start a data session.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+test_module_path = os.path.join(
+        job.testdir, 'network_3GFailedConnect', 'network_3GFailedConnect.py')
+
+# 3GPP
+test_env = test_environment.CellularPseudoMMTestEnvironment(
+        pseudomm_args=({'test-module' : test_module_path,
+                        'test-modem-class' : 'GetFailConnectModem',
+                        'test-modem-arg' : ['3GPP']},))
+job.run_test('network_3GFailedConnect', tag='pseudomodem_3GPP',
+             test_env=test_env)
+
+# CDMA
+test_env = test_environment.CellularPseudoMMTestEnvironment(
+        pseudomm_args=({'test-module' : test_module_path,
+                        'test-modem-class' : 'GetFailConnectModem',
+                        'test-modem-arg' : ['CDMA']},))
+job.run_test('network_3GFailedConnect', tag='pseudomodem_CDMA',
+             test_env=test_env)

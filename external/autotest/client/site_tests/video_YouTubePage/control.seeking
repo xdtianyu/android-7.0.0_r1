@@ -1,0 +1,27 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dunno@chromium.org"
+NAME = "video_YouTubePage.seeking"
+PURPOSE = "Verify that YouTube page HTML5 video seek works"
+CRITERIA = """
+This test will fail if YouTube page HTML5 video fails to seek.
+"""
+ATTRIBUTES = "suite:youtube_page"
+SUITE = "youtube_page"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['VideoTestFailure', 'OS-Chrome'],
+}
+
+DOC = """
+This test verifies YouTube video can seek.
+"""
+
+_TEST_NAME = 'seeking'
+job.run_test('video_YouTubePage', subtest_name=_TEST_NAME,
+             subdir_tag=_TEST_NAME)

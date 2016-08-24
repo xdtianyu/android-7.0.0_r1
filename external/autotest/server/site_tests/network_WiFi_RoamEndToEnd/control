@@ -1,0 +1,27 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'bmahadev, harpreet, krisr'
+TIME = 'SHORT'
+NAME = 'network_WiFi_RoamEndToEnd'
+TEST_TYPE = 'Server'
+ATTRIBUTES = ('suite:wifi_endtoend, suite:wifi_matfunc_bcm4371,' 
+              'suite:wifi_release')
+SUITE = 'wifi_endtoend, wifi_matfunc_bcm4371, wifi_release'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+WiFi_RoamEndToEnd test configures two APs with the same ssid and runs the
+client side network_RoamWifiEndToEnd test which uses these APs to test
+WiFi roaming between two Open Networks.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_RoamEndToEnd',
+                 host=host,
+                 raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

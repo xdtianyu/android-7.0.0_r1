@@ -1,0 +1,39 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, avakulenko, keybuk'
+NAME = 'tendo_experimental'
+PURPOSE = 'Staging ground for Tendo BVT candidates'
+CRITERIA = 'Failures in this suite do not block release of a build'
+
+TIME = 'SHORT'
+TEST_CATEGORY = 'General'
+TEST_CLASS = 'suite'
+TEST_TYPE = 'Server'
+
+DOC = """
+Before a test is added to the BVT, it must demonstrate a track
+record of stability running in the lab.  The track record is
+created by adding it to a suite and allowing it to run.  This suite
+groups Tendo related tests for this purpose.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on. Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+
+args_dict['add_experimental'] = False
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['name'] = NAME
+args_dict['job'] = job
+
+dynamic_suite.reimage_and_run(**args_dict)

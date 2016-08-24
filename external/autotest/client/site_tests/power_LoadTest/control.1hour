@@ -1,0 +1,35 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_LoadTest.1hour"
+PURPOSE = "Measure power draw when system is under load."
+CRITERIA = "This test is a benchmark."
+TIME = "LONG"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+This test runs a load test consisting of cycling though web pages, playing
+videos, etc. and measures battery power draw. The duration of this test is
+determined by the seconds variable.
+
+
+The following manual steps need to be performed on the device under test
+before this test can be run:
+  - make sure that Ethernet cable is disconnected and WiFi is connected
+  - disconnect power cable
+
+You are now ready to run the test.
+"""
+
+# TODO (bleung): Find a way to do automatic Facebook login for test account.
+# TODO (tbroch): Find way to not replicate all these parameters that are common
+# between this control file and the original
+loop_time = 3600
+loop_count = 1
+
+job.run_test('power_LoadTest', loop_time=loop_time, loop_count=loop_count,
+             test_low_batt_p=6)

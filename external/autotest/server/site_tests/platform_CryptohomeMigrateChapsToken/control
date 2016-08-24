@@ -1,0 +1,19 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "usanghi"
+NAME = "platform_CryptohomeMigrateChapsToken"
+TIME = "SHORT"
+TEST_CATEGORY = "Experimental"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test verifies that a user's pkcs11 signing keys are preserved
+through a device upgrade
+"""
+
+
+job.run_test("platform_CryptohomeMigrateChapsToken",
+             host=hosts.create_host(machines[0]))

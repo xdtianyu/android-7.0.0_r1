@@ -1,0 +1,19 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_Thermal'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Ensure the temp sensor is working.'
+CRITERIA = 'Fails if the temp sensor is not in reasonable range.'
+TIME='SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = "hardware"
+TEST_TYPE = 'client'
+
+DOC = """
+This is a hardware test for temp sensor.  The test uses mosys to read temp
+sensor value and check it's in reasonable range.
+"""
+
+job.run_test('hardware_Thermal')

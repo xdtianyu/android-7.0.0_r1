@@ -1,0 +1,456 @@
+# vim:ft=automake
+
+src_tlsdate_SOURCES=
+src_tlsdate_LDADD=
+
+src_tlsdate_helper_CFLAGS=
+src_tlsdate_helper_SOURCES=
+src_tlsdate_helper_LDADD=
+
+include src/compat/include.am
+
+# Our main program
+if TARGET_LINUX
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+if HAVE_SECCOMP_FILTER
+src_tlsdate_helper_SOURCES+= src/seccomp.c
+endif
+
+sbin_PROGRAMS+= src/tlsdated
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+
+if HAVE_ANDROID
+src_conf_unittest_SOURCES+= src/common/fmemopen.c
+endif
+
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif  # TARGET_LINUX
+
+if TARGET_GNUKFREEBSD
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif
+
+if TARGET_FREEBSD
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif
+
+if TARGET_NETBSD
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+
+# XXX This conditional should apply for any system where we're building
+# conf_unittest, but I don't know how to tell that to automake.
+if !HAVE_FMEMOPEN
+if HAVE_FUNOPEN
+src_conf_unittest_SOURCES+= src/common/fmemopen-funopen.c
+endif
+endif
+
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif
+
+if TARGET_OPENBSD
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+src_conf_unittest_SOURCES+= src/common/fmemopen.c
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif
+
+if TARGET_DRAGONFLYBSD
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif
+
+if TARGET_BSD
+if !TARGET_FREEBSD
+if !TARGET_NETBSD
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif
+endif
+endif
+
+if TARGET_GNUHURD
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif
+
+if TARGET_CYGWIN
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif
+
+if TARGET_MINGW
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif
+
+if TARGET_HAIKU
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif
+
+if TARGET_OSX
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+endif
+
+src_tlsdate_SOURCES+= src/tlsdate.c
+src_tlsdate_CFLAGS = -DBUILDING_TLSDATE
+
+src_tlsdate_helper_CFLAGS+= @SSL_CFLAGS@
+src_tlsdate_helper_LDADD+= @SSL_LIBS@
+src_tlsdate_helper_LDADD+= src/compat/libtlsdate_compat.la
+src_tlsdate_helper_SOURCES+= src/tlsdate-helper.c
+
+if POLARSSL
+src_tlsdate_helper_SOURCES+= src/proxy-polarssl.c
+else
+# OpenSSL is our default if we're not using PolarSSL
+src_tlsdate_helper_SOURCES+= src/proxy-bio.c
+endif
+src_tlsdate_helper_SOURCES+= src/util.c
+
+if !HAVE_STRNLEN
+src_tlsdate_helper_SOURCES+= src/common/strnlen.c
+endif
+
+# This doesn't work on Mac OS X
+if TARGET_LINUX
+
+src_tlsdated_CFLAGS = $(DBUS_CFLAGS) $(LIBEVENT_CFLAGS) @SSL_CFLAGS@
+src_tlsdated_CPPFLAGS = -DTLSDATED_MAIN -DWITH_EVENTS
+if SECCOMP_FILTER_DEBUG
+src_tlsdated_CPPFLAGS += -DSECCOMP_FILTER_DEBUG=1
+endif
+src_tlsdated_LDADD = @SSL_LIBS@ $(RT_LIB) $(DBUS_LIBS) $(LIBEVENT_LIBS)
+src_tlsdated_SOURCES = src/conf.c
+
+# This doesn't work on Mac OS X or FreeBSD
+if TARGET_LINUX
+src_tlsdated_SOURCES+= src/routeup.c
+endif
+
+if HAVE_DBUS
+src_tlsdated_SOURCES+= src/dbus.c
+endif
+if HAVE_CROS
+src_tlsdated_SOURCES+= src/platform-cros.c
+endif
+if HAVE_SECCOMP_FILTER
+src_tlsdated_SOURCES+= src/seccomp.c
+endif
+src_tlsdated_SOURCES+= src/tlsdate-monitor.c
+src_tlsdated_SOURCES+= src/tlsdate-setter.c
+src_tlsdated_SOURCES+= src/tlsdated.c
+src_tlsdated_SOURCES+= src/util.c
+src_tlsdated_SOURCES+= src/events/check_continuity.c
+src_tlsdated_SOURCES+= src/events/kickoff_time_sync.c
+src_tlsdated_SOURCES+= src/events/route_up.c
+src_tlsdated_SOURCES+= src/events/run_tlsdate.c
+src_tlsdated_SOURCES+= src/events/sigterm.c
+src_tlsdated_SOURCES+= src/events/sigchld.c
+src_tlsdated_SOURCES+= src/events/save.c
+src_tlsdated_SOURCES+= src/events/time_set.c
+src_tlsdated_SOURCES+= src/events/tlsdate_status.c
+
+src_tlsdated_unittest_CFLAGS = $(DBUS_CFLAGS) $(LIBEVENT_CFLAGS)
+src_tlsdated_unittest_CPPFLAGS = -DWITH_EVENTS
+if SECCOMP_FILTER_DEBUG
+src_tlsdated_unittest_CPPFLAGS += -DSECCOMP_FILTER_DEBUG=1
+endif
+src_tlsdated_unittest_LDADD = @SSL_LIBS@ $(RT_LIB) $(DBUS_LIBS) $(LIBEVENT_LIBS)
+src_tlsdated_unittest_SOURCES = src/tlsdated-unittest.c
+src_tlsdated_unittest_SOURCES+= $(src_tlsdated_SOURCES)
+
+check_PROGRAMS+= src/tlsdated_unittest
+noinst_PROGRAMS+= src/tlsdated_unittest
+endif
+
+# This doesn't work on Mac OS X
+if TARGET_LINUX
+if !POLARSSL
+src_proxy_bio_unittest_LDADD = @SSL_LIBS@
+src_proxy_bio_unittest_SOURCES = src/proxy-bio.c
+src_proxy_bio_unittest_SOURCES+= src/proxy-bio-unittest.c
+src_proxy_bio_unittest_SOURCES+= src/test-bio.c
+src_proxy_bio_unittest_SOURCES+= src/util.c
+if HAVE_SECCOMP_FILTER
+src_proxy_bio_unittest_SOURCES+= src/seccomp.c
+endif
+check_PROGRAMS+= src/proxy-bio_unittest
+noinst_PROGRAMS+= src/proxy-bio_unittest
+endif
+endif
+
+if TARGET_FREEBSD
+if !POLARSSL
+src_proxy_bio_unittest_LDADD = @SSL_LIBS@
+src_proxy_bio_unittest_SOURCES = src/proxy-bio.c
+src_proxy_bio_unittest_SOURCES+= src/proxy-bio-unittest.c
+src_proxy_bio_unittest_SOURCES+= src/test-bio.c
+src_proxy_bio_unittest_SOURCES+= src/util.c
+check_PROGRAMS+= src/proxy-bio_unittest
+noinst_PROGRAMS+= src/proxy-bio_unittest
+endif
+# XXX This conditional should apply for any system where we're building
+# conf_unittest, but I don't know how to tell that to automake.
+if !HAVE_FMEMOPEN
+if HAVE_FUNOPEN
+src_conf_unittest_SOURCES+= src/common/fmemopen-funopen.c
+endif
+endif
+endif
+
+if TARGET_NETBSD
+if !POLARSSL
+src_proxy_bio_unittest_LDADD = @SSL_LIBS@
+src_proxy_bio_unittest_SOURCES = src/proxy-bio.c
+src_proxy_bio_unittest_SOURCES+= src/proxy-bio-unittest.c
+src_proxy_bio_unittest_SOURCES+= src/test-bio.c
+src_proxy_bio_unittest_SOURCES+= src/util.c
+
+# XXX This conditional should apply for any system where we're building
+# proxy_bio_unittest, but I don't know how to tell that to automake.
+if !HAVE_STRNLEN
+src_proxy_bio_unittest_SOURCES+= src/common/strnlen.c
+endif
+
+check_PROGRAMS+= src/proxy-bio_unittest
+noinst_PROGRAMS+= src/proxy-bio_unittest
+endif
+endif
+
+if TARGET_OPENBSD
+if !POLARSSL
+src_proxy_bio_unittest_LDADD = @SSL_LIBS@
+src_proxy_bio_unittest_SOURCES = src/proxy-bio.c
+src_proxy_bio_unittest_SOURCES+= src/proxy-bio-unittest.c
+src_proxy_bio_unittest_SOURCES+= src/test-bio.c
+src_proxy_bio_unittest_SOURCES+= src/util.c
+src_proxy_bio_unittest_SOURCES+= src/common/fmemopen.c
+check_PROGRAMS+= src/proxy-bio_unittest
+noinst_PROGRAMS+= src/proxy-bio_unittest
+endif
+endif
+
+if TARGET_DRAGONFLYBSD
+if !POLARSSL
+src_proxy_bio_unittest_LDADD = @SSL_LIBS@
+src_proxy_bio_unittest_SOURCES = src/proxy-bio.c
+src_proxy_bio_unittest_SOURCES+= src/proxy-bio-unittest.c
+src_proxy_bio_unittest_SOURCES+= src/test-bio.c
+src_proxy_bio_unittest_SOURCES+= src/util.c
+check_PROGRAMS+= src/proxy-bio_unittest
+noinst_PROGRAMS+= src/proxy-bio_unittest
+endif
+endif
+
+if TARGET_BSD
+if !POLARSSL
+if !TARGET_FREEBSD
+if !TARGET_NETBSD
+src_proxy_bio_unittest_LDADD = @SSL_LIBS@
+src_proxy_bio_unittest_SOURCES = src/proxy-bio.c
+src_proxy_bio_unittest_SOURCES+= src/proxy-bio-unittest.c
+src_proxy_bio_unittest_SOURCES+= src/test-bio.c
+src_proxy_bio_unittest_SOURCES+= src/util.c
+check_PROGRAMS+= src/proxy-bio_unittest
+noinst_PROGRAMS+= src/proxy-bio_unittest
+endif
+endif
+endif
+endif
+
+if TARGET_GNUHURD
+if !POLARSSL
+src_proxy_bio_unittest_LDADD = @SSL_LIBS@
+src_proxy_bio_unittest_SOURCES = src/proxy-bio.c
+src_proxy_bio_unittest_SOURCES+= src/proxy-bio-unittest.c
+src_proxy_bio_unittest_SOURCES+= src/test-bio.c
+src_proxy_bio_unittest_SOURCES+= src/util.c
+check_PROGRAMS+= src/proxy-bio_unittest
+noinst_PROGRAMS+= src/proxy-bio_unittest
+endif
+endif
+
+if TARGET_CYGWIN
+if !POLARSSL
+src_proxy_bio_unittest_LDADD = @SSL_LIBS@
+src_proxy_bio_unittest_SOURCES = src/proxy-bio.c
+src_proxy_bio_unittest_SOURCES+= src/proxy-bio-unittest.c
+src_proxy_bio_unittest_SOURCES+= src/test-bio.c
+src_proxy_bio_unittest_SOURCES+= src/util.c
+check_PROGRAMS+= src/proxy-bio_unittest
+noinst_PROGRAMS+= src/proxy-bio_unittest
+endif
+endif
+
+if TARGET_MINGW
+if !POLARSSL
+src_proxy_bio_unittest_LDADD = @SSL_LIBS@
+src_proxy_bio_unittest_SOURCES = src/proxy-bio.c
+src_proxy_bio_unittest_SOURCES+= src/proxy-bio-unittest.c
+src_proxy_bio_unittest_SOURCES+= src/test-bio.c
+src_proxy_bio_unittest_SOURCES+= src/util.c
+check_PROGRAMS+= src/proxy-bio_unittest
+noinst_PROGRAMS+= src/proxy-bio_unittest
+endif
+endif
+
+if TARGET_HAIKU
+if !POLARSSL
+src_proxy_bio_unittest_LDADD = @SSL_LIBS@
+src_proxy_bio_unittest_SOURCES = src/proxy-bio.c
+src_proxy_bio_unittest_SOURCES+= src/proxy-bio-unittest.c
+src_proxy_bio_unittest_SOURCES+= src/test-bio.c
+src_proxy_bio_unittest_SOURCES+= src/util.c
+check_PROGRAMS+= src/proxy-bio_unittest
+noinst_PROGRAMS+= src/proxy-bio_unittest
+endif
+endif
+
+# We're not shipping headers
+noinst_HEADERS+= src/routeup.h
+noinst_HEADERS+= src/test_harness.h
+noinst_HEADERS+= src/tlsdate-helper.h
+noinst_HEADERS+= src/seccomp.h
+noinst_HEADERS+= src/seccomp-compat.h
+noinst_HEADERS+= src/tlsdate.h
+noinst_HEADERS+= src/util.h
+noinst_HEADERS+= src/visibility.h
+noinst_HEADERS+= src/proxy-bio.h
+noinst_HEADERS+= src/proxy-polarssl.h
+noinst_HEADERS+= src/test-bio.h
+noinst_HEADERS+= src/conf.h
+noinst_HEADERS+= src/dbus.h
+noinst_HEADERS+= src/platform.h
+
+# This is our explicit target list
+# We do not attempt to build with PolarSSL
+if !POLARSSL
+if !TARGET_LINUX
+if !TARGET_OSX
+if !TARGET_OPENBSD
+if !TARGET_NETBSD
+if !TARGET_FREEBSD
+if !TARGET_DRAGONFLYBSD
+if !TARGET_HAIKU
+if !TARGET_GNUHURD
+if !TARGET_CYGWIN
+if !TARGET_MINGW
+if !TARGET_BSD
+bin_PROGRAMS+= src/tlsdate
+bin_PROGRAMS+= src/tlsdate-helper
+
+src_conf_unittest_SOURCES = src/conf.c
+src_conf_unittest_SOURCES+= src/conf-unittest.c
+check_PROGRAMS+= src/conf_unittest
+noinst_PROGRAMS+= src/conf_unittest
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+
+if !POLARSSL
+if !TARGET_LINUX
+if !TARGET_OSX
+if !TARGET_OPENBSD
+if !TARGET_NETBSD
+if !TARGET_FREEBSD
+if !TARGET_GNUKFREEBSD
+if !TARGET_DRAGONFLYBSD
+if !TARGET_HAIKU
+if !TARGET_GNUHURD
+if !TARGET_CYGWIN
+if !TARGET_MINGW
+if !TARGET_BSD
+src_proxy_bio_unittest_LDADD = @SSL_LIBS@
+src_proxy_bio_unittest_SOURCES = src/proxy-bio.c
+src_proxy_bio_unittest_SOURCES+= src/proxy-bio-unittest.c
+src_proxy_bio_unittest_SOURCES+= src/test-bio.c
+src_proxy_bio_unittest_SOURCES+= src/util.c
+check_PROGRAMS+= src/proxy-bio_unittest
+noinst_PROGRAMS+= src/proxy-bio_unittest
+
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+
+
+check_PROGRAMS+= src/test/proxy-override src/test/check-host-1 \
+                 src/test/check-host-2 src/test/sleep-wrap \
+                 src/test/return-argc src/test/emit

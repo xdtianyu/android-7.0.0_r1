@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "BootPerfServer"
+AUTHOR = "Chrome OS Team"
+ATTRIBUTES = "suite:kernel_per-build_benchmarks"
+SUITE = "kernel_per-build_benchmarks"
+TIME = "SHORT"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test reboots the client and uses the client-side platform_BootPerf test
+to collect boot performance metrics.
+"""
+
+def run_bootperf(machine):
+    host = hosts.create_host(machine)
+    job.run_test("platform_BootPerfServer", host=host, iterations=10)
+
+parallel_simple(run_bootperf, machines)

@@ -1,0 +1,10 @@
+# Init file for starting tlsdated on Android.
+
+on post-fs-data
+    mkdir /data/misc/tlsdated 0755 root system
+
+service tlsdated /system/bin/tlsdated -c /data/misc/tlsdated -G dbus,inet -- /system/bin/tlsdate -C /system/etc/security/cacerts -l
+    class late_start
+    # This daemon needs to start as root and drops privileges early on.
+    user root
+    group system

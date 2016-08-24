@@ -1,0 +1,16 @@
+NAME = 'Server Sleeptest'
+AUTHOR = 'mbligh@google.com (Martin Bligh)'
+TIME = 'SHORT'
+TEST_CLASS = 'Software'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'server'
+
+DOC = """
+runs sleep for one second on the list of machines.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('sleeptest')
+
+job.parallel_simple(run, machines)

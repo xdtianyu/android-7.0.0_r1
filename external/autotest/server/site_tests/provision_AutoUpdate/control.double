@@ -1,0 +1,68 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+
+AUTHOR = 'fdeng, chromeos-lab-infrastructure'
+NAME = 'provision_AutoUpdate.double'
+PURPOSE = 'Verify autoupdate works by provisioning a host to its current build'
+TIME = 'MEDIUM'
+TEST_CATEGORY = 'System'
+TEST_CLASS = 'provision'
+TEST_TYPE = 'Server'
+ATTRIBUTES = "suite:bvt-inline, suite:push_to_prod"
+SUITE = 'push_to_prod, bvt-inline'
+# This test is expensive, just retry once
+JOB_RETRIES = 2
+
+DOC = """
+This test is to ensure that we can provision out of a given build.
+When running this test with a cros-version label, the scheduler
+does the first-round provision by scheduling a provision special task
+on the host. And then this test is run to enforce a second-round
+provision that verifies the auto-update actually works.
+
+What does the failure of this test mean?
+
+If this test fails, any DUT with this build is likely going to require
+re-imaging from USB. We decided to add this test to bvt-inline and run it
+in parrallel with other tests, which means by the time this test reports
+failure, many duts in the pool will have been imaged with the bad build.
+
+We are taking the risk because
+1) Blocking all testing until this test ran would impose a per-build
+   performance cost we don't want to pay.
+2) History suggests that bugs of this sort are very rare.
+3) We hope that in future, servo will be sufficiently reliable to offset
+   this kind of failure.
+"""
+
+
+from autotest_lib.client.common_lib import error
+from autotest_lib.client.cros import constants
+from autotest_lib.server import afe_utils
+from autotest_lib.server import utils as server_utils
+
+
+def run(machine):
+    # This test will try to access cautotest to get cros-label
+    # of the host and also update the label. This will fail
+    # when the test is kicked of by test_that on people's desk.
+    # As a workaround, we will check whether the test is running
+    # inside a chroot (as test_that requires chroot), if so,
+    # skip the test.
+    if server_utils.is_inside_chroot():
+        is_test_na = True
+        host = None
+        value = None
+    else:
+        is_test_na = False
+        # Save preserved log after autoupdate is completed.
+        job.sysinfo.add_logdir(constants.AUTOUPDATE_PRESERVE_LOG)
+        host = hosts.create_host(machine)
+        value = afe_utils.get_build(host)
+    job.run_test('provision_AutoUpdate', host=host, value=value, force=True,
+                 disable_sysinfo=False, tag='double', is_test_na=is_test_na)
+
+
+job.parallel_simple(run, machines)

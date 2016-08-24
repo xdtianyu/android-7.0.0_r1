@@ -1,0 +1,20 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_UiResume"
+PURPOSE = "Measure the amount of time it takes to resume from suspend."
+CRITERIA = "This test is a benchmark."
+ATTRIBUTES = "suite:kernel_per-build_benchmarks"
+SUITE = "kernel_per-build_benchmarks"
+TIME = "SHORT"
+TEST_CATEGORY = "Logging"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """Suspends the system by sending a request to power manager via dbus.
+After resume calculate and report the time it took to suspend and resume .
+"""
+
+job.run_test('power_UiResume')

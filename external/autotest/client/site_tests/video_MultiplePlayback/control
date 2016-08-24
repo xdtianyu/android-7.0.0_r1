@@ -1,0 +1,26 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project"
+NAME = "video_MultiplePlayback"
+PURPOSE = "Verify that simultaneous playback works fine in all opened tabs."
+CRITERIA = """
+This test will fail if video playback fails in any tab.
+"""
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This test verify video playback simultaneously in three tabs.
+"""
+
+job.run_test('video_MultiplePlayback')

@@ -1,0 +1,10 @@
+!!org.yaml.snakeyaml.issues.issue73.Blog
+labels: !!set {Java: null, SnakeYAML: null, YAML: null}
+name: Test Me!
+numbers: !!set {19: null, 17: null}
+posts: !!set
+  ? {text: text 1, title: Title1}
+  : null
+  ? {text: text text 2, title: Title2}
+  : null
+

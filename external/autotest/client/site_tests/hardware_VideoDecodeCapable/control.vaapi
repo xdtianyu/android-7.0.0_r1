@@ -1,0 +1,31 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'The Chromium OS Authors,chromeos-video@google.com'
+NAME = 'hardware_VideoDecodeCapable.vaapi'
+PURPOSE = 'Probe for the video decoding capability'
+CRITERIA = """
+This test fails when the video decoding capabilities are different from expected.
+
+This control file is for platforms supporting VAAPI. We expect the following
+Profiles are supported: H264_BASELINE, H264_MAIN, and H264_HIGH
+
+For each of the profiles, we expect it has the VLD entrypoint and supports
+YUV420 for the RT format.
+"""
+ATTRIBUTES = "suite:video"
+SUITE = 'video'
+TIME='FAST'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'hardware'
+TEST_TYPE = 'client'
+DEPENDENCIES = 'vaapi'
+RETRIES = 1
+
+DOC = """
+VAAPI capabilities probing is done in C. It is built as an extension module
+(vaapi.so) during setup.
+"""
+
+job.run_test('hardware_VideoDecodeCapable', type='vaapi')

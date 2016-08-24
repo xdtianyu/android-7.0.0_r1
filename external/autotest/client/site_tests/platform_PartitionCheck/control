@@ -1,0 +1,22 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_PartitionCheck"
+PURPOSE = "Verify size of rootfs are as expected."
+CRITERIA = "Fail if rootfs partitions are not of our reference size."
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = "bvt-cq"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+Checks a hard-coded list of partitions to check that their sizes are the same
+as a hard-coded expected rootfs size.
+"""
+
+job.run_test('platform_PartitionCheck')

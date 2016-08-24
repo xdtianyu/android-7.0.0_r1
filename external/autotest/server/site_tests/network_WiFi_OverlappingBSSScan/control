@@ -1,0 +1,33 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, wiley, quiche'
+NAME = 'network_WiFi_OverlappingBSSScan'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:wifi_matfunc, suite:wifi_matfunc_bcm4371'
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test case verifies that OBSS scan aborts and/or backs off when
+there is consistent outgoing traffic.  This test is similar to the
+current BgscanBackoff test, except that scans are triggered by the
+802.11n Overlapping BSS detection scans as opposed to wpa_supplicant's
+background scan mechanism.  To do so, we add configuration to
+wpa_supplicant to request that clients perform these scans, then
+test both that the client performs the scan (by monitoring the hostapd
+log) and that these scans do not disrupt the latency.
+
+"""
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_OverlappingBSSScan',
+                 host=host,
+                 raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

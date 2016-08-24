@@ -1,0 +1,31 @@
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = 'krisr@chromium.org'
+NAME = 'network_WiFi_ChaosConfigSniffer'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'network'
+TEST_TYPE = 'server'
+
+DOC = """
+Searches for particular SSIDs and generates the config block to be added
+to the chaos_dynamic_ap_list.conf file.
+"""
+
+from autotest_lib.server.cros.network import wifi_client
+
+
+def run_chaos_sniffer(machine):
+    host = hosts.create_host(machine)
+    client = wifi_client.WiFiClient(host, './debug', False)
+    # Add list of SSIDs here
+    ssids = ['airport_express_n_a_ch44_wpa2']
+    job.run_test('network_WiFi_ChaosConfigSniffer', wifi_client=client,
+                 ssids=ssids)
+
+
+parallel_simple(run_chaos_sniffer, machines)

@@ -1,0 +1,33 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_RoamSuspendTimeout.11a'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = "suite:wifi_flaky"
+SUITE = 'wifi_flaky'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test verifies that DUT can reconnect to an open 802.11a network
+on channel 48 after deauthentication while the DUT is suspended.
+"""
+
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    a_mode = hostap_config.HostapConfig.MODE_11A
+    job.run_test('network_WiFi_RoamSuspendTimeout',
+                 tag=NAME.split('.')[1],
+                 host=hosts.create_host(machine),
+                 raw_cmdline_args=args,
+                 additional_params=hostap_config.HostapConfig(channel=48,
+                                                              mode=a_mode))
+
+
+parallel_simple(run, machines)

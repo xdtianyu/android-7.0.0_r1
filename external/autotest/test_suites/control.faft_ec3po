@@ -1,0 +1,59 @@
+# Copyright 2016 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "faft_ec3po"
+PURPOSE = "Test hard-to-automate firmware and ec scenarios using EC-3PO."
+CRITERIA = "All tests with SUITE=faft_ec3po must pass."
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This is the same suite as faft_ec, but instead uses the EC-3PO console
+interpreter inside of servod.  This suite should be removed when satisfied with
+the results.
+
+This is a faft (FULLY AUTOMATED FIRMWARE TEST) suite. The tests in this suite
+verify the Chrome OS EC operation, that valid boot scenarios progress properly
+(with state progress checks) and that error scenarios (corrupted blobs) are
+caught as expected. Some of these test failures should close the tree as they
+may imply that the system is unbootable and further tests will only become
+hung or blocked. Other tests verify all of the features (some of them security
+related) are functioning.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on.  Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+# Values specified in this bug template will override default values when
+# filing bugs on tests that are a part of this suite. If left unspecified
+# the bug filer will fallback to it's defaults.
+_BUG_TEMPLATE = {
+    'labels': ['FW-labblocker', 'Restrict-View-Google'],
+    'owner': 'aaboagye@chromium.org',
+    'status': None,
+    'summary': None,
+    'title': None,
+}
+
+args_dict['file_bugs'] = True
+args_dict['name'] = 'faft_ec3po'
+args_dict['job'] = job
+args_dict['add_experimental'] = True
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['bug_template'] = _BUG_TEMPLATE
+
+dynamic_suite.reimage_and_run(**args_dict)

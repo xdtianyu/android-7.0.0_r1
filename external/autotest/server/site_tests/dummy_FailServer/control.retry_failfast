@@ -1,0 +1,22 @@
+NAME = 'dummy_FailServer_Flaky'
+AUTHOR = 'scottz'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'General'
+TEST_TYPE = 'server'
+ATTRIBUTES = "suite:dummyflake"
+SUITE = 'dummyflake'
+RETRIES = 5
+
+
+DOC = """
+Test that always fails. Despite having nonzero RETRIES, will fail
+after first run due to failure not being of type TestFailRetry.
+"""
+
+from autotest_lib.client.common_lib import utils
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('dummy_FailServer', disable_sysinfo=True)
+
+job.parallel_simple(run, machines)

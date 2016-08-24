@@ -1,0 +1,39 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GDisconnectFailure"
+PURPOSE = """
+Tests that a disconnect failure at the modemmanager level is handled properly
+by shill.
+
+"""
+CRITERIA = """
+The test will fail if the cellular service exposed by shill is in an
+incorrect state upon certain failures of a Disconnect call.
+
+"""
+
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+The test uses the pseudo modem manager to simulate two failure scenarios of a
+Disconnect call: failure while the modem state is DISCONNECTING and failure
+while it is CONNECTED. The expected behavior of shill is to do nothing if the
+modem state is DISCONNECTING and to clean up the service otherwise.
+
+"""
+
+# 3GPP
+job.run_test('network_3GDisconnectFailure', tag='3GPP')
+
+# CDMA
+job.run_test('network_3GDisconnectFailure',
+             pseudomodem_family='CDMA',
+             tag='CDMA')

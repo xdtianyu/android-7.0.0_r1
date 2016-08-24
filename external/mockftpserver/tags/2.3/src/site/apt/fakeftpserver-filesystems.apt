@@ -1,0 +1,235 @@
+		--------------------------------------------------
+				FakeFtpServer Filesystems
+		--------------------------------------------------
+
+FakeFtpServer Filesystems
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  <<FakeFtpServer>> provides a simulated server file system, including support for file and directory permissions
+  and owner and group authorization based on Unix. This file system can be populated at startup (or thereafter) with
+  directories and files (including arbitrary content) to be retrieved by an FTP client. Any files sent to the server
+  by an FTP client exist within that file system as well, and can be accessed through the file system API, or
+  can even be subsequently retrieved by an FTP client.
+
+  The filesystem abstraction is accessed through the <<<FileSystem>>> interface in the
+  <<<org.mockftpserver.fake.filesystem>>> package. Two implementations of this interface are provided:
+  <<<WindowsFakeFileSystem>>> and <<<UnixFakeFileSystem>>>. They both manage the files and directories in memory,
+  simulating a real file system. You are also free to implement your own <<<FileSystem>>> implementation.
+
+  Note that both <<<WindowsFakeFileSystem>>> and <<<UnixFakeFileSystem>>> are <virtual> file systems, and do
+  not depend on the <real> operating systems or file systems on which <<FakeFtpServer>> is running. In other
+  words, you can configure and run a <<FakeFtpServer>> with a <<<WindowsFakeFileSystem>>> on top of a <real>
+  Unix system, or run a <<FakeFtpServer>> with a <<<UnixFakeFileSystem>>> on top of a <real> Windows system.
+
+  See the javadoc for these classes for more information.
+
+
+* WindowsFakeFileSystem
+~~~~~~~~~~~~~~~~~~~~~~~
+
+  <<WindowsFakeFileSystem>> is an implementation of the <<<FileSystem>>> interface that simulates a Microsoft
+  Windows file system. The rules for file and directory names include:
+
+    * Filenames are case-insensitive
+
+    * Either forward slashes (/) or backward slashes (\) are valid path separators (but are normalized to '\')
+
+    * An absolute path starts with a drive specifier (e.g. 'a:' or 'c:') followed by '\' or '/',
+      or else it starts with "\\"</li>
+
+
+* UnixFakeFileSystem
+~~~~~~~~~~~~~~~~~~~~
+
+  <<UnixFakeFileSystem>> is an implementation of the <<<FileSystem>>> interface that simulates a Unix
+  file system. The rules for file and directory names include:
+
+    * Filenames are case-sensitive
+
+    * Forward slashes (/) are the only valid path separators
+
+
+* WindowsFakeFileSystem and UnixFakeFileSystem: Common Behavior and Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Both <<<WindowsFakeFileSystem>>> and <<<UnixFakeFileSystem>>> are subclasses of <<<AbstractFakeFileSystem>>>. They
+  manage the files and directories in memory, simulating a real file system.
+
+  If the <createParentDirectoriesAutomatically> property is set to <true>,
+  then creating a directory or file will automatically create any parent directories (recursively)
+  that do not already exist. If <false>, then creating a directory or file throws an
+  exception if its parent directory does not exist. This value defaults to <true>.
+
+  The <directoryListingFormatter> property holds an instance of <<DirectoryListingFormatter>>,
+  used by the <formatDirectoryListing> method to format directory listings in a
+  filesystem-specific manner. This property is initialized by concrete subclasses.
+
+
+* File Permissions, Owners and Groups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Each <file> or <directory> entry within a <<<FileSystem>>> has associated <owner>, <group> and <permissions>
+  attributes. All of these attributes are optional. If none are specified for a file or directory, then full
+  access by all users is the default.
+
+  If, however, these values are specified for a filesystem entry, then they affect whether a file can be created,
+  read, written or deleted, and whether a directory can be created, listed or deleted.
+
+  This approach for access control is conceptually (and somewhat loosely) based on the Unix file system, but
+  don't expect a comprehensive implementation fully matching Unix's capabilities.
+
+
+** Permissions
+~~~~~~~~~~~~~~
+
+  The permissions for a file or directory entry in the filesystem are represented by a 9-character string of
+  the form "rwxrwxrwx", consisting of three "rwx" triples. Each triple indicates the READ ("r"), WRITE ("w") and
+  EXECUTE ("x") permissions for a specific set of users. Each position can alternatively contain a "-" to
+  indicate no READ/WRITE/EXECUTE access, depending on its position.
+
+  The first "rwx" triple indicates the READ, WRITE and EXECUTE permissions for the owner of the file. The
+  second triple indicates the permissions for the group associated with the file. The third triple
+  indicates the permissions for the rest of the world.
+
+  For example, the permissions string "rwx--xrw-" is interpreted to mean that users have READ/WRITE/EXECUTE access,
+  the group has only EXECUTE, and the world has only READ and WRITE.
+
+  There are plenty of good tutorials and references for understanding Unix file permissions, including
+  {{{http://www.dartmouth.edu/~rc/help/faq/permissions.html}this one}}.
+
+  The <<<Permissions>>> class represents and encapsulates the read/write/execute permissions for a file or
+  directory. Its constructor takes a 9-character "rwx" String as described above.
+
+  The <<<AbstractFileSystemEntry>>> contains a <permissions> attribute, so that every file and directory in the
+  file system can be assigned a unique set of permissions from a <<<Permissions>>> object. There is also a
+  <<<setPermissionsFromString()>>> convenience setter that allows setting the permissions directly from a String.
+
+
+**  FileSystem Access Rules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***  When Are READ, WRITE or EXECUTE Access Required?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  If the <permissions> are configured for a file or directory within the <<<FileSystem>>>, then
+  those permissions affect whether and how that file/directory can be accessed.
+  Here are the rules for applying permissions for file access:
+
+*------------------------*-------------------------------------------------------------------*
+| <<Operation>>          | <<Required Permissions>>                                          |
+*------------------------*-------------------------------------------------------------------*
+| Create a new file      | EXECUTE access to the directory and WRITE access to the directory |
+*------------------------*-------------------------------------------------------------------*
+| Read a file            | EXECUTE access to the directory and READ access to the file       |
+*------------------------*-------------------------------------------------------------------*
+| Write a file           | EXECUTE access to the directory and WRITE access to the file      |
+*------------------------*-------------------------------------------------------------------*
+| Delete a file          | WRITE access to the directory                                     |
+*------------------------*-------------------------------------------------------------------*
+| Rename a file          | READ access to the FROM file and WRITE access to the directory    |
+*------------------------*-------------------------------------------------------------------*
+| Create a directory     | WRITE and EXECUTE acccess to the parent directory                 |
+*------------------------*-------------------------------------------------------------------*
+| List a directory       | READ acccess to the directory/file                                |
+*------------------------*-------------------------------------------------------------------*
+| CD to a directory      | EXECUTE acccess to the directory                                  |
+*------------------------*-------------------------------------------------------------------*
+| Delete a directory     | WRITE acccess to the parent directory                             |
+*------------------------*-------------------------------------------------------------------*
+
+*** How Do Owner and Group Affect Access?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Each file and directory in the filesystem (subclass of <<<AbstractFileSystemEntry>>>) contains <owner>
+  and <group> attributes. These attributes are optional.
+
+  If the <owner> is configured for a file/directory, AND the <permissions> are configured as well,
+  then the <<owner>> triple from the <permissions> are applied if and only if the <<<UserAccount>>> for the
+  currently logged in FTP user (client) matches the <owner> configured for the file/directory.
+
+  Similarly, if the <group> is configured for a file/directory, AND the <permissions> are configured as well,
+  then the <<group>> triple from the <permissions> are applied if and only if <groups> configured for the
+  <<<UserAccount>>> for the currently logged in FTP user (client) contain the <group> configured for the file/directory.
+
+  Otherwise, the <<world>> triple from the <permissions> are applied.
+
+* Example Code
+~~~~~~~~~~~~~~
+
+  This example illustrates setting the permissions, owner and group for directories and files within the
+  <<<FakeFtpServer>>> filesystem. In this case, the filesystem is an instance of <<<WindowsFakeFileSystem>>>,
+  but the code would be almost exactly the same for <<<UnixFakeFileSystem>>> as well.
+
++------------------------------------------------------------------------------
+  final String USER1 = "joe";
+  final String USER2 = "mary";
+  final String GROUP = "dev";
+  final String CONTENTS = "abcdef 1234567890";
+
+  FileSystem fileSystem = new WindowsFakeFileSystem();
+  DirectoryEntry directoryEntry1 = new DirectoryEntry("c:\\");
+  directoryEntry1.setPermissions(new Permissions("rwxrwx---"));
+  directoryEntry1.setOwner(USER1);
+  directoryEntry1.setGroup(GROUP);
+
+  DirectoryEntry directoryEntry2 = new DirectoryEntry("c:\\data");
+  directoryEntry2.setPermissions(Permissions.ALL);
+  directoryEntry2.setOwner(USER1);
+  directoryEntry2.setGroup(GROUP);
+
+  FileEntry fileEntry1 = new FileEntry("c:\\data\\file1.txt", CONTENTS);
+  fileEntry1.setPermissionsFromString("rw-rw-rw-");
+  fileEntry1.setOwner(USER1);
+  fileEntry1.setGroup(GROUP);
+
+  FileEntry fileEntry2 = new FileEntry("c:\\data\\run.exe");
+  fileEntry2.setPermissionsFromString("rwxrwx---");
+  fileEntry2.setOwner(USER2);
+  fileEntry2.setGroup(GROUP);
+
+  fileSystem.add(directoryEntry1);
+  fileSystem.add(directoryEntry2);
+  fileSystem.add(fileEntry1);
+  fileSystem.add(fileEntry2);
+
+  FakeFtpServer fakeFtpServer = new FakeFtpServer();
+  fakeFtpServer.setFileSystem(fileSystem);
++------------------------------------------------------------------------------
+
+  Things to note about the above example:
+
+  * The <<<FakeFtpServer>>> instance is configured with a <<<WindowsFakeFileSystem>>> and a "c:\" root
+    directory with a "data" sub-directory containing two files. Permissions and owner/group are specified for
+    both directories and both files.
+
+  * The permissions for the directories are specified using the "permissions" setter, which takes an
+    instance of the <<<Permissions>>> class. The permissions for both files are specified using the
+    "permissionsFromString" shortcut method. Either way is fine -- use whichever method you prefer on
+    both files and directories.
+
+  []
+
+  When you want to retrieve and/or verify the contents of the <<<FakeFtpServer>>> filesystem, you can use
+  the <<<FileSystem#getEntry(String path)>>> method, as shown in the following code.
+
++------------------------------------------------------------------------------
+  DirectoryEntry dirEntry = (DirectoryEntry)fileSystem.getEntry("c:/data");
+
+  FileEntry fileEntry = (FileEntry)fileSystem.getEntry("c:/data/file1.txt");
+
+  FileEntry newFileEntry = (FileEntry)fileSystem.getEntry("c:/data/new.txt");
+  InputStream inputStream = newFileEntry.createInputStream();
+  // read the file contents using inputStream
++------------------------------------------------------------------------------
+
+  See the javadoc for <<<FileSystem>>>, <<<FileEntry>>> and <<<DirectoryEntry>>> for more information
+  on the methods available.
+
+
+** Example Using Spring Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  See the {{{fakeftpserver-getting-started.html#Spring}FakeFtpServer Getting Started - Spring Configuration}}
+  for an example of how to configure a <<<FakeFtpServer>>> instance and associated filesystem in the
+  {{{http://www.springframework.org/}Spring Framework}}.
+  

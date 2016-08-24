@@ -1,0 +1,23 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "audio_AudioCorruption"
+PURPOSE = "Verify that Chrome can handle corrupted mp3 audio"
+CRITERIA = """
+This test will fail if Chrome can't catch error for playing corrupted mp3 audio.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "audio"
+TEST_TYPE = "client"
+
+DOC = """
+This test verifies Chrome can catch error for playing corrupted mp3 audio.
+"""
+
+audio = 'http://commondatastorage.googleapis.com/chromiumos-test-assets-public/audio_AudioCorruption/corrupted.mp3'
+job.run_test('audio_AudioCorruption', audio=audio)

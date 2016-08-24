@@ -1,0 +1,42 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chromium OS Team"
+NAME = "PowerStatusStress"
+PURPOSE = "Checks the Power line / Battery status when AC is plugged/unplugged"
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:stress5"
+SUITE = "stress5"
+DEPENDENCIES = "servo, power:battery"
+
+DOC = """
+Power stress test would be:
+-Connect power adapter to device
+-Check powerd that the device is charging
+-Remove power adapter
+-Check powerd that the device is discharging
+-Repeat
+The test should fail if the powerd status does not correspond to the RPM/PDU
+status.
+Arguments the test accepts:
+-loop_count - number of iterations to go through power on/off and checks
+-suspend_time - timeout for suspend wakealarm; default is 0 - no suspending
+(for each iteration)
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    loop_count = int(args_dict.get('loop_count', 20))
+    job.run_test("platform_PowerStatusStress", host=host,
+                 disable_sysinfo=True, loop_count=loop_count)
+
+parallel_simple(run, machines)

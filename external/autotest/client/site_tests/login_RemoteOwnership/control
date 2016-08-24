@@ -1,0 +1,20 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "cmasone, mnissler"
+NAME = "login_RemoteOwnership"
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME="SHORT"
+TEST_CLASS = "login"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+Tests to ensure that the Ownership API can be used, as an enterprise might,
+to set device policies.
+"""
+
+job.run_test("login_RemoteOwnership")

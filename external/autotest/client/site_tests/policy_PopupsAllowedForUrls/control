@@ -1,0 +1,38 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "scunningham"
+NAME = "policy_PopupsAllowedForUrls"
+ATTRIBUTES = "suite:regression"
+SUITE = "regression"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "enterprise"
+TEST_TYPE = "client"
+
+DOC = """
+Verify effects of PopupsAllowedForUrls policy on client behavior.
+
+This test verifies the effect of the PopupsAllowedForUrls user policy on
+Chrome OS client behavior when the DefaultPopupsSetting policy is set to 2.
+It exercises a range of policy values using four unique test cases, named:
+NotSet_Blocked, 1Url_Allowed, 2Urls_Blocked, and 3Urls_Allowed. See the test
+file for a full description of what each test case does.
+
+In general, a test shall pass if the browser only allows popups on a test page
+that is in a domain listed in the PopupsAllowedForUrls policy. A test shall
+fail if the browser blocks popups on a page where they should be allowed, or
+allows popups on a page where they should be blocked.
+
+Usage example:
+$ test_that <IPAddress> PopupsAllowedForUrls
+
+Runs all the test cases against a device with the specified IP address, using
+the DM Test environment with the given DM Server name, and signing in to the
+device with the given username and password.
+
+"""
+
+job.run_test("policy_PopupsAllowedForUrls", args=args)
+

@@ -1,0 +1,28 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GFailedConnect"
+PURPOSE = "Verify that a failed modem connect attempt puts the service in a failed state."
+CRITERIA = """
+This test will fail if a connect failure does not immediately cause the
+service to enter the Failed state.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Tests that 3G connect failures are handled by cromo & flimflam properly
+
+  This test will fail if a connect failure does not immediately cause the
+  service to enter the Failed state.  It requires a machine with a modem
+  that has been factory reset and cannot start a data session.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+test_env = test_environment.CellularOTATestEnvironment()
+job.run_test('network_3GFailedConnect', test_env=test_env)

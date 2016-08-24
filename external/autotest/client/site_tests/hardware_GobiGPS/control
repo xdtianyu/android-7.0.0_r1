@@ -1,0 +1,24 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "hardware_GobiGPS"
+PURPOSE = "Verify basic functionality of a Gobi GPS device."
+CRITERIA = """
+Pass if within ~1 minute, either fix has been aquired, or least 2
+satellites have been seen enough to get signal quality measured, or 5
+satellites have been seen overall.
+Fail if no GPS is found, or if above criteria is not fulfilled.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+
+DOC = """
+This is a an automated test that checks the basic functionality of the
+Gobi GPS device. Before running the test, make sure the modem is enabled.
+"""
+
+job.run_test('hardware_GobiGPS')

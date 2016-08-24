@@ -1,0 +1,25 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_PlaybackPerf.power_vp8"
+PURPOSE = "Test the power consumption of VP8 video playback"
+CRITERIA = """
+The test outputs the power consumption of VP8 video playback.
+"""
+TIME = "MEDIUM"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+
+DOC = """
+This test measures the power consumption of VP8 video playback for hardware
+decode and software decode.
+"""
+
+VIDEO_NAME = 'traffic-1920x1080-ad53f821ff3cf8ffa7e991c9d2e0b854.vp8.webm'
+VIDEO_DESCRIPTION = 'vp8_1080p'
+job.run_test('video_PlaybackPerf', video_name=VIDEO_NAME,
+             video_description=VIDEO_DESCRIPTION, power_test=True)
+

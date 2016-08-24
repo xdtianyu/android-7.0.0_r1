@@ -1,0 +1,19 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors (chromium-os-dev@chromium.org)"
+DOC = """
+Tests that OpenSSL (in the default configuration) works.
+"""
+NAME = "platform_OpenSSLActual"
+PURPOSE = "Real-world integration test for openssl"
+CRITERIA = """
+Fail if curl (which uses openssl) fails to actually fetch https://www.google.com
+"""
+TEST_CLASS = "platform"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+
+job.run_test("platform_OpenSSLActual")

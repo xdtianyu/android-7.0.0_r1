@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<!--
+Copyright 2016 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+-->
+<link rel="import" href="/dashboard/elements/chart-container.html">
+<link rel="import" href="/dashboard/elements/login-warning.html">
+<link rel="import" href="/dashboard/elements/overlay-message.html">
+<link rel="import" href="/dashboard/elements/test-picker.html">
+<link rel="import" href="/dashboard/static/simple_xhr.html">
+<link rel="import" href="/dashboard/static/uri.html">
+
+<polymer-element name="report-page" attributes="hasChart charts">
+  <template>
+    <style>
+      #nav-container {
+        display: flex;
+        margin: 5px;
+      }
+      overlay-message {
+        top: 0px;
+      }
+    </style>
+    <template if="{{warningMessage}}">
+      <overlay-message id="warning-message"
+                       opened="true"
+                       autoCloseDisabled
+                       duration="-1">
+      {{warningMessage}}
+      <template if="{{warningBug}}">
+        <a href="https://github.com/catapult-project/catapult/issues/{{warningBug}}">See
+          bug #{{warningBug}}.</a>
+      </template>
+      </overlay-message>
+    </template>
+
+    <login-warning id="login-warning" loginLink="{{loginUrl}}"
+                   hidden?="{{isInternalUser}}">
+    </login-warning>
+
+    <div id="nav-container">
+      <test-picker id="test-picker" xsrfToken="{{xsrfToken}}"
+                   testSuites="{{testSuites}}"></test-picker>
+    </div>
+    <section id="charts-container"></section>
+
+  </template>
+
+  <script>
+    'use strict';
+    Polymer('report-page', {
+
+      ready: function() {
+        simple_xhr.send('/report', uri.getAllParameters(),
+          function(response) {
+            this.isInternalUser = response['is_internal_user'];
+            this.loginUrl = response['login_url'];
+            this.revisionInfo = response['revision_info'];
+            this.warningBug = response['warning_bug'];
+            this.warningMessage = response['warning_message'];
+            this.xsrfToken = response['xsrf_token'];
+            this.testSuites = response['test_suites'];
+            for (var i = 0; i < this.charts.length; i++) {
+              this.setChartData(this.charts[i]);
+            }
+          }.bind(this),
+          function(error) {
+
+          }.bind(this));
+        this.charts = [];
+        this.graphParams = {};
+
+        window.addEventListener('uriload', this.onUriLoad.bind(this));
+        this.uriController = new uri.Controller(this.getPageState.bind(this));
+        this.uriController.load();
+
+        window.addEventListener('pagestaterequest',
+                                this.onPageStateRequest.bind(this));
+
+        this.testPicker = this.$['test-picker'];
+        this.testPicker.addEventListener(
+            'add', this.onAddChartButtonClicked.bind(this));
+      },
+
+      /**
+       * On 'uriload' event, adds charts from the current query parameters.
+       * @param {Object} event Event object.
+       */
+      onUriLoad: function(event) {
+        var params = event.detail.params;
+        var pageState = event.detail.state;
+        if (!pageState) {
+          return;
+        }
+        // Set page level parameters.
+        this.graphParams = {};
+        for (var key in params) {
+          this.graphParams[key] = params[key];
+        }
+
+        // Add charts.
+        var chartStates = pageState['charts'];
+        for (var i = 0; i < chartStates.length; i++) {
+          this.addChart(chartStates[i], false);
+        }
+      },
+
+      /**
+       * Updates chart data with member variables.
+       * TODO(sullivan): this should be done with polymer templates, not
+       * JS code.
+       */
+      setChartData: function(chart) {
+        chart.isInternalUser = this.isInternalUser;
+        chart.testSuites = this.testSuites;
+        chart.revisionInfo = this.revisionInfo;
+        chart.xsrfToken = this.xsrfToken;
+        chart.graphParams = this.graphParams;
+      },
+
+      /**
+       * Adds a chart.
+       * @param {Array.<Array>} testPathAndSelected A list of two-element
+       *     Arrays, each containing a test path and selected series to plot.
+       * @param {boolean} isPrepend True for prepend, false for append.
+       */
+      addChart: function(testPathAndSelected, isPrepend) {
+        // TODO(sullivan): This should be done with a polymer template, not
+        // JavaScript-built DOM!!
+        var container = this.$['charts-container'];
+        var chart = document.createElement('chart-container');
+        if (isPrepend) {
+          this.charts.unshift(chart);
+          container.insertBefore(chart, container.firstChild);
+        } else {
+          this.charts.push(chart);
+          container.appendChild(chart);
+        }
+
+        chart.addEventListener(
+            'chartclosed', this.onChartClosed.bind(this), true);
+        chart.addEventListener(
+            'chartstatechanged',
+            this.uriController.onPageStateChanged.bind(this.uriController));
+        chart.addEventListener(
+            'revisionrange', this.onRevisionRangeChanged.bind(this));
+        this.setChartData(chart);
+        chart.addSeriesGroup(testPathAndSelected, true);
+        this.testPicker.hasChart = true;
+      },
+
+      /**
+       * On chart closed, update URI.
+       */
+      onChartClosed: function(event) {
+        var chart = event.target;
+        var index = this.charts.indexOf(chart);
+        if (index > -1) {
+          this.charts.splice(index, 1);
+        }
+
+        this.fireNumChartChangedEvent();
+      },
+
+      /**
+       * Triggers page state change handler with 'numchartchanged' event.
+       */
+      fireNumChartChangedEvent: function() {
+        // Send page state change event.
+        var event = document.createEvent('Event');
+        event.initEvent('numchartchanged', true, true);
+        event.detail = {
+          'stateName': 'numchartchanged',
+          'params': this.graphParams,
+          'state': {}
+        };
+
+        if (this.charts.length == 0) {
+          event.detail['params'] = null;
+          this.graphParams = {};
+          this.testPicker.hasChart = false;
+        }
+
+        this.uriController.onPageStateChanged(event);
+      },
+
+      /**
+       * When the revision range changes for one graph, update the rest of
+       * the graphs and the URI.
+       */
+      onRevisionRangeChanged: function(event) {
+        for (var i = 0; i < this.charts.length; i++) {
+          var chart = this.charts[i];
+          if (chart == event.target) {
+            continue;
+          }
+          chart.onRevisionRange(event, event['detail'], null);
+        }
+      },
+
+      /**
+       * On 'Add' button clicked, add a chart for the current selection.
+       */
+      onAddChartButtonClicked: function(event) {
+        var selection = this.testPicker.getCurrentSelection();
+        if (selection && selection.isValid()) {
+          this.addChart(selection.getTestPathAndSelectedSeries(), true);
+        }
+        this.fireNumChartChangedEvent();
+      },
+
+      /**
+       * Gets report page state.
+       *
+       * @return {Object} Dictionary of page state data.
+       */
+      getPageState: function() {
+        var chartStates = [];
+        for (var i = 0; i < this.charts.length; i++) {
+          var chart = this.charts[i];
+          chartStates.push(chart.getState());
+        }
+
+        if (chartStates.length === 0) {
+          return null;
+        }
+
+        return {
+          'charts': chartStates
+        };
+      },
+
+      /**
+       * Handles displaying loading messages on 'pagestaterequest' event.
+       */
+      onPageStateRequest: function(event) {
+        var status = event.detail.status;
+        var messageBar = document.getElementById('message-bar');
+        var messageConfig = {
+          'autoCloseDisabled': true,
+          'duration': 0,
+          'delay': 200
+        };
+        if (status == 'loading') {
+          messageBar.updateContent('Saving report...', messageConfig);
+        } else if (status == 'complete') {
+          messageBar['hide']();
+        } else if (status == 'error') {
+          messageBar.updateContent(
+              '<span style="color: red;">Failed to save report</span>',
+              messageConfig);
+        }
+      }
+    });
+  </script>
+</polymer-element>

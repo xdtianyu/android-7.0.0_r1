@@ -1,0 +1,20 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_CryptohomeChangePassword"
+PURPOSE = "Verify that cryptohome can change a password for an ecrypted vault."
+CRITERIA = "This test will fail if cryptohome fails to re-wrap the vault key with the new password."
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This test checks that cryptohome can change a password for an encrypted vault.
+"""
+
+job.run_test('platform_CryptohomeChangePassword')

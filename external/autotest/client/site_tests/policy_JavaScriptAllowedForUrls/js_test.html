@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>JavaScript Status</title>
+<script type="text/javascript">
+var jsAllowed = false;
+
+function onLoad() {
+    jsAllowed = true;
+    document.writeln("JavaScript Status: Allowed");
+}
+</script>
+<noscript>
+    <div class="noscriptmsg">
+    JavaScript Status: Blocked
+    </div>
+</noscript>
+</head>
+<body onload="onLoad()">
+</body>
+</html>

@@ -1,0 +1,26 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GDormancyDance"
+PURPOSE = "Stress-test all connman 3G operations, waiting for dormancy."
+CRITERIA = """
+This test will fail if any DBus call times out or flimflam crashes.
+"""
+
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Stress-tests all connman 3G operations.
+
+  This test runs a long series of 3G operations in a fixedorder. All of these 3G
+  operations must return a succesful result. When we connect, we wait for the
+  modem to declare dormancy, then immediately request a disconnect; in all other
+  cases we request operations after the previous one completes.
+"""
+
+job.run_test('network_3GDormancyDance')

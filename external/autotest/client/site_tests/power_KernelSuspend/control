@@ -1,0 +1,24 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.common_lib import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_KernelSuspend"
+ATTRIBUTES = "suite:jailed_build"
+SUITE = "jailed_build"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+Simple system suspend. This is the most basic suspend test.
+"""
+
+args_dict = utils.args_to_dict(args)
+seconds = int(args_dict.get('seconds', 10))
+
+job.add_sysinfo_logfile('/sys/kernel/debug/suspend_stats', on_every_test=True)
+job.run_test('power_KernelSuspend', seconds=seconds)

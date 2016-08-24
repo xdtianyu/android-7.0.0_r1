@@ -1,0 +1,35 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+#from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_FMap"
+PURPOSE = "Check the existence of BIOS and EC FMap and the required FMap areas"
+CRITERIA = "This test will fail if the required FMap areas not existed"
+ATTRIBUTES = "suite:faft, suite:faft_bios, suite:faft_normal, suite:faft_lv1, suite:faft_bios_ec3po"
+SUITE = "faft,faft_normal,faft_bios,faft_lv1,faft_bios_ec3po"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+JOB_RETRIES = 4
+
+DOC = """
+This test checks the active BIOS and EC firmware contains the required
+FMap areas and verifies their hierarchies. It relies on flashrom to dump
+the active BIOS and EC firmware and dump_fmap to decode them.
+"""
+
+from autotest_lib.client.common_lib import utils
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_fmap(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test('firmware_FMap', host=host, cmdline_args=args,
+                 dev_mode=False, tag="normal")
+
+parallel_simple(run_fmap, machines)

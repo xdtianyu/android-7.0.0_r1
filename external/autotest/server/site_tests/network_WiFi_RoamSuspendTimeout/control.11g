@@ -1,0 +1,34 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_RoamSuspendTimeout.11g'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = "suite:wifi_flaky"
+SUITE = 'wifi_flaky'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test attempts to verify that we can reconnect to a router over 802.11g
+on channel 11 (2.4 Ghz band) and correctly send IP traffic after
+deauthentication while the DUT is suspended.
+"""
+
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    g_mode = hostap_config.HostapConfig.MODE_11G
+    job.run_test('network_WiFi_RoamSuspendTimeout',
+                 tag=NAME.split('.')[1],
+                 host=hosts.create_host(machine),
+                 raw_cmdline_args=args,
+                 additional_params=hostap_config.HostapConfig(channel=11,
+                                                              mode=g_mode))
+
+
+parallel_simple(run, machines)

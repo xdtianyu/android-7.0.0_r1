@@ -1,0 +1,25 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_CompareInstalledToShellBall"
+PURPOSE = "Compare the firmware version to that in the shellball"
+CRITERIA = "This test will pass if installed and available firmware match."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+
+DOC = """
+This test compares the installed BIOS and EC versions to those in the
+shallball.  If they are not the same it will fail.  This test is used
+to determine if devices in the lab need to be updated.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+
+    job.run_test('firmware_CompareInstalledToShellBall', host=host)
+
+parallel_simple(run, machines)

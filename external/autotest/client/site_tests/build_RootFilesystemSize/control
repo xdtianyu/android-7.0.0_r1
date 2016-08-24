@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "build_RootFilesystemSize"
+PURPOSE = "Report the production size of the rootfs."
+CRITERIA = """
+This test will fail if the size of the rootfs size cannot be obtained.
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:crosbolt_perf_perbuild"
+SUITE = "bvt-inline,crosbolt_perf_perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "build"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test returns the root image size for tracking bloat over time.
+"""
+
+job.run_test('build_RootFilesystemSize')

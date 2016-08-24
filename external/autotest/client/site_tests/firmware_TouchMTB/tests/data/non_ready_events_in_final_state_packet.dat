@@ -1,0 +1,138 @@
+Input driver version is 1.0.1
+Input device ID: bus 0x18 vendor 0x0 product 0x0 version 0x0
+Input device name: "Atmel maXTouch Touchscreen"
+Supported events:
+  Event type 0 (EV_SYN)
+  Event type 1 (EV_KEY)
+    Event code 330 (BTN_TOUCH)
+  Event type 3 (EV_ABS)
+    Event code 0 (ABS_X)
+      Value   2077
+      Min        0
+      Max     4095
+      Resolution      20
+    Event code 1 (ABS_Y)
+      Value   1296
+      Min        0
+      Max     4095
+      Resolution      20
+    Event code 24 (ABS_PRESSURE)
+      Value      0
+      Min        0
+      Max      255
+    Event code 47 (ABS_MT_SLOT)
+      Value      0
+      Min        0
+      Max       15
+    Event code 48 (ABS_MT_TOUCH_MAJOR)
+      Value      0
+      Min        0
+      Max     1366
+    Event code 53 (ABS_MT_POSITION_X)
+      Value      0
+      Min        0
+      Max     4095
+      Resolution      20
+    Event code 54 (ABS_MT_POSITION_Y)
+      Value      0
+      Min        0
+      Max     4095
+      Resolution      20
+    Event code 57 (ABS_MT_TRACKING_ID)
+      Value      0
+      Min        0
+      Max    65535
+    Event code 58 (ABS_MT_PRESSURE)
+      Value      0
+      Min        0
+      Max      255
+Testing ... (interrupt to exit)
+If the display isn't showing, this command may help:
+echo 0 > /sys/module/i915/parameters/i915_enable_fbc
+Event: time 1412888976.728764, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value 100
+Event: time 1412888976.728764, type 3 (EV_ABS), code 53 (ABS_MT_POSITION_X), value 2076
+Event: time 1412888976.728764, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 1294
+Event: time 1412888976.728764, type 3 (EV_ABS), code 58 (ABS_MT_PRESSURE), value 0
+Event: time 1412888976.728764, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 1
+Event: time 1412888976.728764, type 3 (EV_ABS), code 0 (ABS_X), value 2076
+Event: time 1412888976.728764, type 3 (EV_ABS), code 1 (ABS_Y), value 1294
+Event: time 1412888976.728764, -------------- SYN_REPORT ------------
+Event: time 1412888976.771869, type 3 (EV_ABS), code 58 (ABS_MT_PRESSURE), value 65
+Event: time 1412888976.771869, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 65
+Event: time 1412888976.771869, -------------- SYN_REPORT ------------
+Event: time 1412888976.802749, type 3 (EV_ABS), code 58 (ABS_MT_PRESSURE), value 74
+Event: time 1412888976.802749, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 74
+Event: time 1412888976.802749, -------------- SYN_REPORT ------------
+Event: time 1412888976.998665, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value -1
+Event: time 1412888976.998665, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 0
+Event: time 1412888976.998665, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 0
+Event: time 1412888976.998665, -------------- SYN_REPORT ------------
+Event: time 1412888977.357703, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value 101
+Event: time 1412888977.357703, type 3 (EV_ABS), code 53 (ABS_MT_POSITION_X), value 2077
+Event: time 1412888977.357703, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 1291
+Event: time 1412888977.357703, type 3 (EV_ABS), code 58 (ABS_MT_PRESSURE), value 69
+Event: time 1412888977.357703, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 1
+Event: time 1412888977.357703, type 3 (EV_ABS), code 0 (ABS_X), value 2077
+Event: time 1412888977.357703, type 3 (EV_ABS), code 1 (ABS_Y), value 1291
+Event: time 1412888977.357703, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 69
+Event: time 1412888977.357703, -------------- SYN_REPORT ------------
+Event: time 1412888977.388636, type 3 (EV_ABS), code 58 (ABS_MT_PRESSURE), value 81
+Event: time 1412888977.388636, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 81
+Event: time 1412888977.388636, -------------- SYN_REPORT ------------
+Event: time 1412888977.577522, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value -1
+Event: time 1412888977.577522, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 0
+Event: time 1412888977.577522, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 0
+Event: time 1412888977.577522, -------------- SYN_REPORT ------------
+Event: time 1412888977.716634, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value 102
+Event: time 1412888977.716634, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 1316
+Event: time 1412888977.716634, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 1
+Event: time 1412888977.716634, type 3 (EV_ABS), code 1 (ABS_Y), value 1316
+Event: time 1412888977.716634, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 81
+Event: time 1412888977.716634, -------------- SYN_REPORT ------------
+Event: time 1412888977.752577, type 3 (EV_ABS), code 58 (ABS_MT_PRESSURE), value 70
+Event: time 1412888977.752577, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 70
+Event: time 1412888977.752577, -------------- SYN_REPORT ------------
+Event: time 1412888977.788637, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value -1
+Event: time 1412888977.788637, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 0
+Event: time 1412888977.788637, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 0
+Event: time 1412888977.788637, -------------- SYN_REPORT ------------
+Event: time 1412888978.590826, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value 103
+Event: time 1412888978.590826, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 1323
+Event: time 1412888978.590826, type 3 (EV_ABS), code 58 (ABS_MT_PRESSURE), value 80
+Event: time 1412888978.590826, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 1
+Event: time 1412888978.590826, type 3 (EV_ABS), code 1 (ABS_Y), value 1323
+Event: time 1412888978.590826, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 80
+Event: time 1412888978.590826, -------------- SYN_REPORT ------------
+Event: time 1412888978.610968, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 1307
+Event: time 1412888978.610968, type 3 (EV_ABS), code 1 (ABS_Y), value 1307
+Event: time 1412888978.610968, -------------- SYN_REPORT ------------
+Event: time 1412888978.616108, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 1306
+Event: time 1412888978.616108, type 3 (EV_ABS), code 1 (ABS_Y), value 1306
+Event: time 1412888978.616108, -------------- SYN_REPORT ------------
+Event: time 1412888978.620980, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 1305
+Event: time 1412888978.620980, type 3 (EV_ABS), code 1 (ABS_Y), value 1305
+Event: time 1412888978.620980, -------------- SYN_REPORT ------------
+Event: time 1412888978.633524, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 1304
+Event: time 1412888978.633524, type 3 (EV_ABS), code 1 (ABS_Y), value 1304
+Event: time 1412888978.633524, -------------- SYN_REPORT ------------
+Event: time 1412888978.653806, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 1303
+Event: time 1412888978.653806, type 3 (EV_ABS), code 1 (ABS_Y), value 1303
+Event: time 1412888978.653806, -------------- SYN_REPORT ------------
+Event: time 1412888978.748877, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value -1
+Event: time 1412888978.748877, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 0
+Event: time 1412888978.748877, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 0
+Event: time 1412888978.748877, -------------- SYN_REPORT ------------
+Event: time 1412888979.661754, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value 104
+Event: time 1412888979.661754, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 1299
+Event: time 1412888979.661754, type 3 (EV_ABS), code 58 (ABS_MT_PRESSURE), value 65
+Event: time 1412888979.661754, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 1
+Event: time 1412888979.661754, type 3 (EV_ABS), code 1 (ABS_Y), value 1299
+Event: time 1412888979.661754, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 65
+Event: time 1412888979.661754, -------------- SYN_REPORT ------------
+Event: time 1412888979.697687, type 3 (EV_ABS), code 58 (ABS_MT_PRESSURE), value 67
+Event: time 1412888979.697687, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 67
+Event: time 1412888979.697687, -------------- SYN_REPORT ------------
+Event: time 1412888979.733526, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value -1
+Event: time 1412888979.733526, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 0
+Event: time 1412888979.733526, type 3 (EV_ABS), code 24 (ABS_PRESSURE), value 0
+Event: time 1412888979.733526, -------------- SYN_REPORT ------------

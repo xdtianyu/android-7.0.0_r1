@@ -1,0 +1,27 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kathrelkeld"
+NAME = "accessibility_Sanity"
+PURPOSE = "Sanity test for accessibility features."
+CRITERIA = """
+This test will fail if features are not set or if Chrome crashes.  It will
+also fail if ChromeVox extension is not enabled/disabled or if ChromeVox
+indicators are not present.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "accessibility"
+TEST_TYPE = "client"
+
+DOC = """
+This is a test which enables then disables accessibility features via the
+accessibilityFeatures API.  It also performs specific tests for ChromeVox by
+looking at the value of management.get.enabled and checking for the presence
+of cvox_indicator_container elements.
+"""
+
+job.run_test('accessibility_Sanity')

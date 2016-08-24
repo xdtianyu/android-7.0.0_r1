@@ -1,0 +1,22 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dkrahn"
+NAME = "platform_Pkcs11InitOnLogin"
+PURPOSE = "Tests PKCS#11 initialization on login"
+CRITERIA = "Fails if initialization fails during login."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+
+DOC = """
+This tests if initialization of a user PKCS #11 token succeeds during login. It
+also tests whether objects stored in the token persist through to a subsequent
+login.
+"""
+
+job.run_test('platform_Pkcs11InitOnLogin')

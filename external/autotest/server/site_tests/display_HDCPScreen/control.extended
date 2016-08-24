@@ -1,0 +1,32 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "chromeos-chameleon"
+NAME = "display_HDCPScreen.extended"
+PURPOSE = "Remotely controlled display to enable HDCP and check screen."
+CRITERIA = "This test will fail if Chameleon sees a wrong screen."
+# HDCP control/query is broken on DUT. Disable the test until it is fixed.
+#ATTRIBUTES = "suite:chameleon_hdmi"
+#SUITE = "chameleon_hdmi"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "display"
+TEST_TYPE = "server"
+DEPENDENCIES = "chameleon"
+
+DOC = """
+This test forces CrOS to enable HDCP and compares screens between CrOS
+and Chameleon.
+"""
+
+args_dict = utils.args_to_dict(args)
+chameleon_args = hosts.CrosHost.get_chameleon_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, chameleon_args=chameleon_args)
+    job.run_test('display_HDCPScreen', host=host, tag='extended')
+
+parallel_simple(run, machines)

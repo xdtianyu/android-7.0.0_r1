@@ -1,0 +1,56 @@
+<!-- This is a test html file for video test. -->
+<html>
+<body>
+    <video id='testvideo' controls autoplay muted name='media'>
+        <source src=''>
+    </video>
+</body>
+
+<script type="text/javascript">
+var NUM_FAST_SEEKS = 16;
+var NUM_SEEKS = 100;
+
+var fast_seeks = 0;
+var seeks = 0;
+
+var testvideo = document.getElementById('testvideo');
+
+function loadSourceAndRunSeekTest(video) {
+  testvideo.src = video;
+  testvideo.play();
+
+  // Random seek forward and backward until reaching NUM_SEEKS.
+  // The next seek will be immediately tirggered after getting the "seeking"
+  // event for NUM_FAST_SEEKS times. After that, we will wait for the "seeked"
+  // event and repeat for NUM_SEEKS times.
+  fast_seeks = 0;
+  seeks = 0;
+  testvideo.addEventListener('seeking', function() {
+      fast_seeks++;
+      if (fast_seeks < NUM_FAST_SEEKS)
+        randomSeek();
+  });
+
+  testvideo.addEventListener('seeked', function() {
+      seeks++;
+      fast_seeks = 0;
+      if (seeks < NUM_SEEKS)
+        randomSeek();
+  });
+
+  // Start the first seek only after the video is ready.
+  testvideo.addEventListener("loadeddata", function() { randomSeek(); });
+}
+
+function randomSeek() {
+  testvideo.currentTime = Math.random() * testvideo.duration;
+}
+
+function getSeekTestStatus() {
+  if (seeks == NUM_SEEKS)
+    return 'pass'
+
+  return testvideo.currentTime + '/' + testvideo.duration + '/' + seeks;
+}
+</script>
+</html>

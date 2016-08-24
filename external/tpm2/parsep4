@@ -1,0 +1,78 @@
+#!/usr/bin/python
+
+import sys
+import re
+
+header = '''// This file was extracted from the TCG Published
+// Trusted Platform Module Library
+// Part 4: Supporting Routines
+// Family "2.0"
+// Level 00 Revision 01.16
+// October 30, 2014
+
+'''
+
+head_spaces = re.compile('^\s*[0-9]+\s{0,4}')
+sec_num_in_comments = re.compile('^//\s+([A-D0-9]\.([0-9]\.?)+)')
+source_lines = open(sys.argv[1], 'r').read().splitlines()
+
+def postprocess_lines(buffer):
+    # get rid of heading line numbers and spaces.
+    postproc_buffer = []
+    for big_line in buffer:
+        big_line = head_spaces.sub('', big_line)
+        for line in big_line.splitlines():
+            m = sec_num_in_comments.match(line)
+            if m:
+                line = line.replace(m.groups()[0], '')
+            postproc_buffer.append(line)
+
+    return header + '\n'.join(postproc_buffer) + '\n'
+
+text = []
+for line in source_lines:
+    text.append(line)
+    if line == '' and text[-2].startswith('') and text[-5] == '':
+        text = text[:-5]
+
+func_file = None
+file_name = ''
+prev_num = 0
+line_buffer = []
+output_buffer = []
+for line in text:
+    f = re.match('^\s*[A-D0-9]+\.([0-9]+|([0-9]+\.)+)\s+(\S+\.[ch])$', line)
+    if not f:
+        f = re.match('^\s*[A-D0-9]+\.([0-9]+|([0-9]+\.)+)\s+[^\(]+\((\S+\.[ch])\)$', line)
+    if f:
+        file_name = f.groups(0)[2]
+        continue
+
+    num = re.match('^\s{0,3}([0-9]+)\s', line + ' ')
+    if num:
+        line_num = int(num.groups(0)[0])
+        if line_num == 1:
+            # this is the first line of a file
+            if func_file:
+                func_file.write(postprocess_lines(output_buffer))
+                func_file.close()
+            if file_name:
+                func_file = open('%s' % file_name, 'w')
+            output_buffer = [line,]
+            prev_num = 1
+            line_buffer = []
+            continue
+        if line_num == prev_num + 1:
+            if line_buffer:
+                output_buffer.append('\n'.join(line_buffer))
+                line_buffer = []
+            output_buffer.append(line)
+            prev_num = line_num
+        continue
+    if not '//' in line:
+        line = '//' + line
+    line_buffer.append(line)
+
+if func_file:
+    func_file.write(postprocess_lines(output_buffer))
+    func_file.close()

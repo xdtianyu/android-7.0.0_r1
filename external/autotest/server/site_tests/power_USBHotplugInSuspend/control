@@ -1,0 +1,31 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "abrestic, tbroch"
+NAME = "power_USBHotplugInSuspend"
+PURPOSE = "Tests USB hot-plugging during suspend."
+CRITERIA = "Fails if hotplug of a USB device during suspend is not detected."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "server"
+DEPENDENCIES = "servo"
+
+DOC = """
+This tests both hotplug insertion and removal of a USB device while the DUT
+is suspended.  The DUT is suspended using the client test power_KernelSuspend.
+Servo is then used to power on/off the USB key.  After the client resumes, it
+should detect the change.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("power_USBHotplugInSuspend", host=host)
+
+parallel_simple(run, machines)

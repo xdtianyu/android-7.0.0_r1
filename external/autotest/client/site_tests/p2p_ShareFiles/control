@@ -1,0 +1,27 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME='FAST'
+AUTHOR = 'deymo,zeuthen,chromeos-installer'
+BUG_TEMPLATE = {
+    'cc': ['chromeos-installer-alerts@google.com'],
+    'labels': ['Cr-Internals-Installer'],
+}
+
+DOC = """\
+This test runs the p2p-server daemon on the DUT and checks that a peer on the
+network can discover both the P2P service and the files shared on this service
+simulating a fake client on the network.
+"""
+NAME = 'p2p_ShareFiles'
+PURPOSE = 'Check that P2P daemon shares files on the network.'
+CRITERIA = "Fails if p2p-server doesn't announce its shared files via mDNS."
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = 'bvt-cq'
+TEST_CLASS = 'platform'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+job.run_test('p2p_ShareFiles')

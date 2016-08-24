@@ -1,0 +1,24 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "dummy_Fail.dependency"
+PURPOSE = """
+Test if dependency is properly processed, the test should be shown as TEST_NA in
+suite job result.
+"""
+CRITERIA = "This test will never succeed."
+ATTRIBUTES = "suite:push_to_prod"
+SUITE = "push_to_prod"
+DEPENDENCIES = "no_such_dependency"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "dummy"
+TEST_TYPE = "client"
+
+DOC = """
+This is a helper test that will fail in a number of ways.
+"""
+
+job.run_test('dummy_Fail', tag='Error', to_throw='TestError')

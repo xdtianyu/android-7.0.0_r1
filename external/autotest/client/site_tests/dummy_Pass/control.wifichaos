@@ -1,0 +1,24 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "dummy_Pass.wifichaos"
+PURPOSE = "To re-image chaos_dut machines nightly."
+CRITERIA = "This test will always succeed."
+ATTRIBUTES = "suite:wifichaos"
+SUITE = "wifichaos"
+DEPENDENCIES = "chaos_dut"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "dummy"
+TEST_TYPE = "client"
+
+DOC = """
+This is a placeholder test for allowing the scheduler to install tests on the
+chaos_dut machines
+"""
+
+job.run_test('dummy_Pass', tag='wifichaos')
+
+

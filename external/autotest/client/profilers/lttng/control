@@ -1,0 +1,5 @@
+# trace syscall entry/exit, irq entry/exit, trap entry/exit,
+# and context switches
+job.profilers.add('lttng')
+job.run_test('sleeptest', seconds=1)
+job.profilers.delete('lttng')

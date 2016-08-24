@@ -1,0 +1,75 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_LoadTest.video_1hour"
+PURPOSE = "Measure power draw when system is under load."
+CRITERIA = "This test is a benchmark."
+TIME = "LONG"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+This test runs a load test consisting of cycling though web pages, playing
+videos, etc. and measures battery power draw. The duration of this test is
+determined by the seconds variable.
+
+
+The following manual steps need to be performed on the device under test
+before this test can be run:
+  - make sure that Ethernet cable is disconnected and WiFi is connected
+  - disconnect power cable
+
+You are now ready to run the test.
+"""
+
+# TODO (bleung): Find a way to do automatic Facebook login for test account.
+# TODO (tbroch): Find way to not replicate all these parameters that are common
+# between this control file and the original
+loop_time = 3600
+loop_count = 1
+
+# Task format:
+# This sets the tasks variable in the extension directly via javascript.
+#
+# Args:
+# type: [window, cycle] Window will open a window with tabs for the duration of
+# the window. Cycle will cycle through the urls for the duration of the window
+# every delay ms.
+# name: name of the window
+# start: start time (ms)
+# duration: duration of task (ms)
+# delay: time for each url for the cycle type (ms)
+# timeout: time before loading a url times out for the cycle type (ms)
+# focus: whether the window should be in the foreground
+# tabs: list of urls for the window type
+# urls: list of urls to cycle through for the cycle type
+
+tasks='[{' + \
+'    type: \'window\',' + \
+'    name: \'background\',' + \
+'    start: 0,' + \
+'    duration: 3600000,' + \
+'    focus: false,' + \
+'    tabs: [' + \
+'     \'http://www.google.com\',' + \
+'     \'http://news.google.com\',' + \
+'     \'http://finance.yahoo.com\',' + \
+'     \'http://clothing.shop.ebay.com/Womens-Shoes-/63889/i.html\',' + \
+'     \'http://www.facebook.com\'' + \
+'    ]}, {' + \
+'    type: \'window\',' + \
+'    name: \'video\',' + \
+'    start: 1000,' + \
+'    duration: 3600000,' + \
+'    focus: true,' + \
+'    tabs: [' + \
+'     \'http://www.youtube.com/embed/YE7VzlLtp-4?autoplay=1&loop=1&' + \
+'playlist=YE7VzlLtp-4\'' + \
+'    ]}]'
+
+
+job.run_test('power_LoadTest', loop_time=loop_time, loop_count=loop_count,
+             test_low_batt_p=6, tasks=tasks)

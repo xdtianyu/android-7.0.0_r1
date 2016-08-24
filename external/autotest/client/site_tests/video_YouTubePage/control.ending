@@ -1,0 +1,27 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dunno@chromium.org"
+NAME = "video_YouTubePage.ending"
+PURPOSE = "Verify that YouTube page HTML5 video end works"
+CRITERIA = """
+This test will fail if YouTube page HTML5 video fails to end.
+"""
+ATTRIBUTES = "suite:youtube_page"
+SUITE = "youtube_page"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['VideoTestFailure', 'OS-Chrome'],
+}
+
+DOC = """
+This test verifies a YouTube video ends in a correct fashion.
+"""
+
+_TEST_NAME = 'ending'
+job.run_test('video_YouTubePage', subtest_name=_TEST_NAME,
+             subdir_tag=_TEST_NAME)

@@ -1,0 +1,30 @@
+NAME = "platform_CompressedSwap"
+PURPOSE = "Verify compressed swap is configured and basically works."
+CRITERIA = """
+This test will fail if:
+  - compressed swap is not configured.
+  - oom events occur before swap space is mostly consumed.
+"""
+AUTHOR = "bfreed@chromium.org (Bryan Freed)"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+DOC = """
+Verify compressed swap is configured and basically works.
+
+The resources being verified are:
+
+MemTotal
+MemFree
+SwapTotal
+SwapFree
+
+Memory hogs are started to allocate and touch pages to consume free memory.
+As free memory approaches 0, swap space starts to be used.
+Verify we can consume most of swap without hitting any oom conditions.
+Verify we get low memory notification.
+Verify low memory notification goes away after some memory is freed.
+"""
+
+job.run_test('platform_CompressedSwap')

@@ -1,0 +1,4 @@
+# From:
+# openssl x509 -in src/cert.pem -fingerprint -sha1 -noout \
+#     | cut -f2 -d= | tr -d : | tr A-F a-f
+sha1 76ed0e8933ffe95e0a22820ae674c5ec5b70ffec

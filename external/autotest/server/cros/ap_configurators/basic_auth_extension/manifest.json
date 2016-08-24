@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+
+  "name": "Basic HTTP Auth Extension",
+  "version": "1.1",
+  "description": "Send credentials to basic HTTP auth pages.",
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "tabs",
+    "https://*/*",
+    "http://*/*"
+  ]
+}

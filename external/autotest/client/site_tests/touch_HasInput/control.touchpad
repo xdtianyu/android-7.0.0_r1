@@ -1,0 +1,24 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kathrelkeld"
+NAME = "touch_HasInput.touchpad"
+PURPOSE = "Check whether a touchpad is present as an input source."
+CRITERIA = """
+This test will fail if the device does not have touchpad input.
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:touch"
+SUITE = "bvt-perbuild,touch"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "touch"
+TEST_TYPE = "client"
+DEPENDENCIES = "touchpad"
+
+DOC = """
+If there is no /dev/input/event* that is a touchpad, test will fail.  Test
+should only be run on devices with a touchpad.
+"""
+
+job.run_test('touch_HasInput', input_type='touchpad')

@@ -1,0 +1,27 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_VideoCorruption.vp8"
+PURPOSE = "Verify that Chrome can handle corrupted webm video"
+CRITERIA = """
+This test will fail if Chrome fails to catch error for playing corrupted webm video.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This test verifies Chrome can catch error for playing corrupted webm video.
+"""
+
+video = 'http://commondatastorage.googleapis.com/chromiumos-test-assets-public/video_VideoCorruption/corrupted.webm'
+job.run_test('video_VideoCorruption', video=video)

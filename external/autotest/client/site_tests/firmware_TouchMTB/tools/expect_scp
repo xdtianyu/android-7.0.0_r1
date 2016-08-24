@@ -1,0 +1,55 @@
+#!/usr/bin/expect
+# usage: expect_scp <remote-ip-addr>:<remote-path> <local-path>
+
+# Sometimes, the network connection time may be more than the default
+# timeout duration of expect, i.e., 10 seconds. Hence, set a longer timeout.
+set timeout 20
+
+set local_path [lindex $argv 1]
+set remote_path [lindex $argv 0]
+spawn scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile="/tmp/null" \
+      "$local_path" "$remote_path"
+
+# The prompts from the remote machine are not deterministic.
+# For example, it may prompt (yes/no) for 0, 1, or even 2 times;
+# it may or may not prompt the user for a password, etc.
+# We used a loop to handle various combinations of such possibilities.
+expect {
+  # The remote machine has closed the connection.
+  eof {
+    puts "Has copied the .version file to the remote machine."
+    exit 0
+  }
+
+  # The scp connection times out.
+  timeout {
+    send_error "Error: scp timeout!";
+    exit 1
+  }
+
+  -nocase "(yes/no)?" {
+    send "yes\r";
+    exp_continue
+  }
+
+  -nocase "password:" {
+    send "test0000\r";
+    exp_continue
+  }
+
+  -nocase "Permanently added" {}
+
+  # This exception may occur when the .version file was not created for any
+  # reason. This causes the spawned process for scp to abort and thus
+  # this script was killed in a cascaded way.
+  -nocase "killed by signal" {
+    send_error "Error: the spawned scp process was killed.\n";
+    exit 1
+  }
+
+  # This exception may occur when the machine IP is incorrect.
+  -nocase "lost connection" {
+    send_error "Error: lost connection to the chromebook machine.\n";
+    exit 1
+  }
+}

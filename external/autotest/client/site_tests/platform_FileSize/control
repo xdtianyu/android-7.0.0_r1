@@ -1,0 +1,15 @@
+AUTHOR = "kdlucas@chromium.org, Kelly Lucas"
+DOC = "Verifies large file creation on stateful and tmp partitions."
+NAME = "platform_FileSize"
+PURPOSE = "Verify that key filesystems support large file sizes."
+CRITERIA = """
+Fails if any of the following fail:
+  - creating a 1gb file on the stateful_partition
+  - creatng a 100mb file on /tmp
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+job.run_test('platform_FileSize')

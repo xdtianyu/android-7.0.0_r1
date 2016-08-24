@@ -1,0 +1,963 @@
+# setup (you can ignore this)
+# ###########################
+
+# a bit of setup to allow overriding rpc_interace with an RPC proxy
+# (to use RPC, we would say
+#   import rpc_client_lib
+#   rpc_interface = rpc_client_lib.get_proxy(
+#                             'http://hostname:8000/afe/server/noauth/rpc/')
+# )
+>>> if 'rpc_interface' not in globals():
+...   from autotest_lib.frontend.afe import rpc_interface, models
+...   from autotest_lib.frontend import thread_local
+...   # set up a user for us to "login" as
+...   user = models.User(login='debug_user')
+...   user.access_level = 100
+...   user.save()
+...   thread_local.set_user(user)
+...
+>>> from autotest_lib.frontend.afe import model_logic
+
+# get directory of this test file; we'll need it later
+>>> import common
+>>> from autotest_lib.frontend.afe import test
+>>> import os, datetime
+>>> test_path = os.path.join(os.path.dirname(test.__file__),
+...                                          'doctests')
+>>> test_path = os.path.abspath(test_path)
+
+# disable logging
+>>> from autotest_lib.client.common_lib import logging_manager
+>>> logging_manager.logger.setLevel(100)
+
+>>> drone_set = models.DroneSet.default_drone_set_name()
+>>> if drone_set:
+...     _ = models.DroneSet.objects.create(name=drone_set)
+
+# mock up tko rpc_interface
+>>> from autotest_lib.client.common_lib.test_utils import mock
+>>> mock.mock_god().stub_function_to_return(rpc_interface.tko_rpc_interface,
+...                                         'get_status_counts',
+...                                         None)
+
+# basic interface test
+######################
+
+# echo a comment
+>>> rpc_interface.echo('test string to echo')
+'test string to echo'
+
+# basic object management
+# #######################
+
+# create a label
+>>> rpc_interface.add_label(name='test_label')
+1
+
+# we can modify the label by referencing its ID...
+>>> rpc_interface.modify_label(1, kernel_config='/my/kernel/config')
+
+# ...or by referencing it's name
+>>> rpc_interface.modify_label('test_label', platform=True)
+
+# we use get_labels to retrieve object data
+>>> data = rpc_interface.get_labels(name='test_label')
+>>> data == [{'id': 1,
+...           'name': 'test_label',
+...           'platform': 1,
+...           'kernel_config': '/my/kernel/config',
+...           'only_if_needed' : False,
+...           'invalid': 0,
+...           'atomic_group': None}]
+True
+
+# get_labels return multiple matches as lists of dictionaries
+>>> rpc_interface.add_label(name='label1', platform=False)
+2
+>>> rpc_interface.add_label(name='label2', platform=True)
+3
+>>> rpc_interface.add_label(name='label3', platform=False)
+4
+>>> data = rpc_interface.get_labels(platform=False)
+>>> data == [{'id': 2, 'name': 'label1', 'platform': 0, 'kernel_config': '',
+...           'only_if_needed': False, 'invalid': 0, 'atomic_group': None},
+...          {'id': 4, 'name': 'label3', 'platform': 0, 'kernel_config': '',
+...           'only_if_needed': False, 'invalid': 0, 'atomic_group': None}]
+True
+
+# delete_label takes an ID or a name as well
+>>> rpc_interface.delete_label(3)
+>>> rpc_interface.get_labels(name='label2')
+[]
+>>> rpc_interface.delete_label('test_label')
+>>> rpc_interface.delete_label('label1')
+>>> rpc_interface.delete_label('label3')
+>>> rpc_interface.get_labels()
+[]
+
+# all the add*, modify*, delete*, and get* methods work the same way
+# hosts...
+>>> rpc_interface.add_host(hostname='ipaj1', locked=True, lock_reason='Locked device on creation')
+1
+>>> data = rpc_interface.get_hosts()
+
+# delete the lock_time field, since that can't be reliably checked
+>>> del data[0]['lock_time']
+>>> data == [{'id': 1,
+...           'hostname': 'ipaj1',
+...           'locked': 1,
+...           'synch_id': None,
+...           'status': 'Ready',
+...           'labels': [],
+...           'atomic_group': None,
+...           'acls': ['Everyone'],
+...           'platform': None,
+...           'attributes': {},
+...           'invalid': 0,
+...           'protection': 'No protection',
+...           'locked_by': 'debug_user',
+...           'dirty': True,
+...           'leased': 1,
+...           'shard': None,
+...           'lock_reason': 'Locked device on creation'}]
+True
+>>> rpc_interface.modify_host(id='ipaj1', status='Hello')
+Traceback (most recent call last):
+ValidationError: {'status': 'Host status can not be modified by the frontend.'}
+>>> rpc_interface.modify_host(id='ipaj1', hostname='ipaj1000')
+>>> rpc_interface.modify_hosts(
+...     host_filter_data={'hostname': 'ipaj1000'},
+...     update_data={'locked': False})
+>>> data = rpc_interface.get_hosts()
+>>> bool(data[0]['locked'])
+False
+
+# test already locked/unlocked failures
+>>> rpc_interface.modify_host(id='ipaj1000', locked=False)
+Traceback (most recent call last):
+ValidationError: {'locked': u'Host ipaj1000 already unlocked.'}
+>>> rpc_interface.modify_host(id='ipaj1000', locked=True, lock_reason='Locking a locked device')
+>>> try:
+...     rpc_interface.modify_host(id='ipaj1000', locked=True)
+... except model_logic.ValidationError, err:
+...     pass
+>>> assert ('locked' in err.message_dict
+...         and err.message_dict['locked'].startswith('Host ipaj1000 already locked'))
+>>> rpc_interface.delete_host(id='ipaj1000')
+>>> rpc_interface.get_hosts() == []
+True
+
+# tests...
+>>> rpc_interface.add_test(name='sleeptest', test_type='Client', author='Test',
+...                        description='Sleep Test', test_time=1,
+...                        test_category='Functional',
+...                        test_class='Kernel', path='sleeptest')
+1
+>>> rpc_interface.modify_test('sleeptest', path='/my/path')
+>>> data = rpc_interface.get_tests()
+>>> data == [{'id': 1,
+...           'name': 'sleeptest',
+...           'author': 'Test',
+...           'description': 'Sleep Test',
+...           'dependencies': '',
+...           'experimental': 1,
+...           'sync_count': 1,
+...           'test_type': 'Client',
+...           'test_class': 'Kernel',
+...           'test_time': 'SHORT',
+...           'run_verify': 0,
+...           'run_reset': 1,
+...           'test_category': 'Functional',
+...           'path': '/my/path',
+...           'test_retry': 0}]
+True
+>>> rpc_interface.delete_test('sleeptest')
+>>> rpc_interface.get_tests() == []
+True
+
+# profilers...
+>>> rpc_interface.add_profiler(name='oprofile')
+1
+>>> rpc_interface.modify_profiler('oprofile', description='Oh profile!')
+>>> data = rpc_interface.get_profilers()
+>>> data == [{'id': 1,
+...           'name': 'oprofile',
+...           'description': 'Oh profile!'}]
+True
+>>> rpc_interface.delete_profiler('oprofile')
+>>> rpc_interface.get_profilers() == []
+True
+
+
+# users...
+>>> rpc_interface.add_user(login='showard')
+2
+>>> rpc_interface.modify_user('showard', access_level=1)
+>>> data = rpc_interface.get_users(login='showard')
+>>> data == [{'id': 2,
+...           'login': 'showard',
+...           'access_level': 1,
+...           'reboot_before': 'If dirty',
+...           'reboot_after': 'Never',
+...           'drone_set': None,
+...           'show_experimental': False}]
+True
+>>> rpc_interface.delete_user('showard')
+>>> rpc_interface.get_users(login='showard') == []
+True
+
+# acl groups...
+# 1 ACL group already exists, named "Everyone" (ID 1)
+>>> rpc_interface.add_acl_group(name='my_group')
+2
+>>> rpc_interface.modify_acl_group('my_group', description='my new acl group')
+>>> data = rpc_interface.get_acl_groups(name='my_group')
+>>> data == [{'id': 2,
+...           'name': 'my_group',
+...           'description': 'my new acl group',
+...           'users': ['debug_user'],
+...           'hosts': []}]
+True
+>>> rpc_interface.delete_acl_group('my_group')
+>>> data = rpc_interface.get_acl_groups()
+>>> data == [{'id': 1,
+...           'name': 'Everyone',
+...           'description': '',
+...           'users': ['debug_user'],
+...           'hosts': []}]
+True
+
+
+# managing many-to-many relationships
+# ###################################
+
+# first, create some hosts and labels to play around with
+>>> rpc_interface.add_host(hostname='host1')
+2
+>>> rpc_interface.add_host(hostname='host2')
+3
+>>> rpc_interface.add_label(name='label1')
+2
+>>> rpc_interface.add_label(name='label2', platform=True)
+3
+
+# add hosts to labels
+>>> rpc_interface.host_add_labels(id='host1', labels=['label1'])
+>>> rpc_interface.host_add_labels(id='host2', labels=['label1', 'label2'])
+
+# check labels for hosts
+>>> data = rpc_interface.get_hosts(hostname='host1')
+>>> data[0]['labels']
+[u'label1']
+>>> data = rpc_interface.get_hosts(hostname='host2')
+>>> data[0]['labels']
+[u'label1', u'label2']
+>>> data[0]['platform']
+u'label2'
+
+# check host lists for labels -- use double underscore to specify fields of
+# related objects
+>>> data = rpc_interface.get_hosts(labels__name='label1')
+>>> [host['hostname'] for host in data]
+[u'host1', u'host2']
+>>> data = rpc_interface.get_hosts(labels__name='label2')
+>>> [host['hostname'] for host in data]
+[u'host2']
+
+# remove a host from a label
+>>> rpc_interface.host_remove_labels(id='host2', labels=['label2'])
+>>> data = rpc_interface.get_hosts(hostname='host1')
+>>> data[0]['labels']
+[u'label1']
+>>> rpc_interface.get_hosts(labels__name='label2')
+[]
+
+# Cleanup
+>>> rpc_interface.host_remove_labels(id='host2', labels=['label1'])
+>>> rpc_interface.host_remove_labels(id='host1', labels=['label1'])
+
+
+# Other interface for new CLI
+# add hosts to labels
+>>> rpc_interface.label_add_hosts(id='label1', hosts=['host1'])
+>>> rpc_interface.label_add_hosts(id='label2', hosts=['host1', 'host2'])
+
+# check labels for hosts
+>>> data = rpc_interface.get_hosts(hostname='host1')
+>>> data[0]['labels']
+[u'label1', u'label2']
+>>> data = rpc_interface.get_hosts(hostname='host2')
+>>> data[0]['labels']
+[u'label2']
+>>> data[0]['platform']
+u'label2'
+
+# check host lists for labels -- use double underscore to specify fields of
+# related objects
+>>> data = rpc_interface.get_hosts(labels__name='label1')
+>>> [host['hostname'] for host in data]
+[u'host1']
+>>> data = rpc_interface.get_hosts(labels__name='label2')
+>>> [host['hostname'] for host in data]
+[u'host1', u'host2']
+
+# remove a host from a label
+>>> rpc_interface.label_remove_hosts(id='label2', hosts=['host2'])
+>>> data = rpc_interface.get_hosts(hostname='host1')
+>>> data[0]['labels']
+[u'label1', u'label2']
+>>> data = rpc_interface.get_hosts(labels__name='label2')
+>>> [host['hostname'] for host in data]
+[u'host1']
+
+# Remove multiple hosts from a label
+>>> rpc_interface.label_add_hosts(id='label2', hosts=['host2'])
+>>> data = rpc_interface.get_hosts(labels__name='label2')
+>>> [host['hostname'] for host in data]
+[u'host1', u'host2']
+>>> rpc_interface.label_remove_hosts(id='label2', hosts=['host2', 'host1'])
+>>> rpc_interface.get_hosts(labels__name='label2')
+[]
+
+
+# ACL group relationships work similarly
+# note that all users are a member of 'Everyone' by default, and that hosts are
+# automatically made a member of 'Everyone' only when they are a member of no
+# other group
+>>> data = rpc_interface.get_acl_groups(hosts__hostname='host1')
+>>> [acl_group['name'] for acl_group in data]
+[u'Everyone']
+
+>>> rpc_interface.add_user(login='showard', access_level=0)
+2
+>>> rpc_interface.add_acl_group(name='my_group')
+2
+
+>>> rpc_interface.acl_group_add_users('my_group', ['showard'])
+>>> rpc_interface.acl_group_add_hosts('my_group', ['host1'])
+>>> data = rpc_interface.get_acl_groups(name='my_group')
+>>> data[0]['users']
+[u'debug_user', u'showard']
+>>> data[0]['hosts']
+[u'host1']
+>>> data = rpc_interface.get_acl_groups(users__login='showard')
+>>> [acl_group['name'] for acl_group in data]
+[u'Everyone', u'my_group']
+
+# note host has been automatically removed from 'Everyone'
+>>> data = rpc_interface.get_acl_groups(hosts__hostname='host1')
+>>> [acl_group['name'] for acl_group in data]
+[u'my_group']
+
+>>> rpc_interface.acl_group_remove_users('my_group', ['showard'])
+>>> rpc_interface.acl_group_remove_hosts('my_group', ['host1'])
+>>> data = rpc_interface.get_acl_groups(name='my_group')
+>>> data[0]['users'], data[0]['hosts']
+([u'debug_user'], [])
+>>> data = rpc_interface.get_acl_groups(users__login='showard')
+>>> [acl_group['name'] for acl_group in data]
+[u'Everyone']
+
+# note host has been automatically added back to 'Everyone'
+>>> data = rpc_interface.get_acl_groups(hosts__hostname='host1')
+>>> [acl_group['name'] for acl_group in data]
+[u'Everyone']
+
+
+# host attributes
+
+>>> rpc_interface.set_host_attribute('color', 'red', hostname='host1')
+>>> data = rpc_interface.get_hosts(hostname='host1')
+>>> data[0]['attributes']
+{u'color': u'red'}
+
+>>> rpc_interface.set_host_attribute('color', None, hostname='host1')
+>>> data = rpc_interface.get_hosts(hostname='host1')
+>>> data[0]['attributes']
+{}
+
+
+# host bulk modify
+##################
+
+>>> rpc_interface.modify_hosts(
+...     host_filter_data={'hostname__in': ['host1', 'host2']},
+...     update_data={'locked': True, 'lock_reason': 'Locked for testing'})
+>>> data = rpc_interface.get_hosts(hostname__in=['host1', 'host2'])
+
+>>> data[0]['locked']
+True
+>>> data[1]['locked']
+True
+
+>>> rpc_interface.modify_hosts(
+...     host_filter_data={'id': 2},
+...     update_data={'locked': False})
+>>> data = rpc_interface.get_hosts(hostname__in=['host1', 'host2'])
+
+>>> data[0]['locked']
+False
+>>> data[1]['locked']
+True
+
+
+# job management
+# ############
+
+# note that job functions require job IDs to identify jobs, since job names are
+# not unique
+
+# add some entries to play with
+>>> rpc_interface.add_label(name='my_label', kernel_config='my_kernel_config')
+5
+>>> test_control_path = os.path.join(test_path, 'test.control')
+>>> rpc_interface.add_test(name='sleeptest', test_type='Client', author='Test',
+...                        test_category='Test',
+...                        test_class='Kernel', path=test_control_path)
+1
+>>> test_control_path = os.path.join(test_path, 'test.control.2')
+>>> rpc_interface.add_test(name='my_test', test_type='Client', author='Test',
+...                        test_category='Test',
+...                        test_class='Kernel', path=test_control_path)
+2
+>>> rpc_interface.add_host(hostname='my_label_host1')
+4
+>>> rpc_interface.add_host(hostname='my_label_host2')
+5
+>>> rpc_interface.label_add_hosts(id='my_label', hosts=['my_label_host1', 'my_label_host2'])
+
+# generate a control file
+>>> cf_info = rpc_interface.generate_control_file(
+...     tests=['sleeptest', 'my_test'],
+...     kernel=[{'version': '2.6.18'}, {'version': '2.6.18-blah.rpm'},
+...             {'version': '2.6.26', 'cmdline': 'foo bar'}],
+...     label='my_label')
+>>> print cf_info['control_file'] #doctest: +NORMALIZE_WHITESPACE
+kernel_list = [{'version': '2.6.18', 'config_file': u'my_kernel_config'}, {'version': '2.6.18-blah.rpm', 'config_file': None}, {'cmdline': 'foo bar', 'version': '2.6.26', 'config_file': u'my_kernel_config'}]
+def step_init():
+    for kernel_info in kernel_list:
+        job.next_step(boot_kernel, kernel_info)
+        job.next_step(step_test, kernel_info['version'])
+    if len(kernel_list) > 1:
+        job.use_sequence_number = True  # include run numbers in directory names
+def boot_kernel(kernel_info):
+    # remove kernels (and associated data) not referenced by the bootloader
+    for host in job.hosts:
+        host.cleanup_kernels()
+    testkernel = job.kernel(kernel_info['version'])
+    if kernel_info['config_file']:
+        testkernel.config(kernel_info['config_file'])
+    testkernel.build()
+    testkernel.install()
+    cmdline = ' '.join((kernel_info.get('cmdline', ''), ''))
+    testkernel.boot(args=cmdline)
+def step_test(kernel_version):
+    global kernel
+    kernel = kernel_version  # Set the global in case anyone is using it.
+    if len(kernel_list) > 1:
+        # this is local to a machine, safe to assume there's only one host
+        host, = job.hosts
+        job.automatic_test_tag = host.get_kernel_ver()
+    job.next_step('step0')
+    job.next_step('step1')
+def step0():
+    job.run_test('testname')
+def step1():
+    job.run_test('testname')
+>>> cf_info['is_server'], cf_info['synch_count'], cf_info['dependencies']
+(False, 1, [])
+
+# generate a control file from existing body text.
+>>> cf_info_pi = rpc_interface.generate_control_file(
+...     kernel=[{'version': '3.1.41'}], label='my_label',
+...     client_control_file='print "Hi"\n')
+>>> print cf_info_pi['control_file'] #doctest: +NORMALIZE_WHITESPACE
+kernel_list = [{'version': '3.1.41', 'config_file': u'my_kernel_config'}]
+def step_init():
+    for kernel_info in kernel_list:
+        job.next_step(boot_kernel, kernel_info)
+        job.next_step(step_test, kernel_info['version'])
+    if len(kernel_list) > 1:
+        job.use_sequence_number = True  # include run numbers in directory names
+def boot_kernel(kernel_info):
+    # remove kernels (and associated data) not referenced by the bootloader
+    for host in job.hosts:
+        host.cleanup_kernels()
+    testkernel = job.kernel(kernel_info['version'])
+    if kernel_info['config_file']:
+        testkernel.config(kernel_info['config_file'])
+    testkernel.build()
+    testkernel.install()
+    cmdline = ' '.join((kernel_info.get('cmdline', ''), ''))
+    testkernel.boot(args=cmdline)
+def step_test(kernel_version):
+    global kernel
+    kernel = kernel_version  # Set the global in case anyone is using it.
+    if len(kernel_list) > 1:
+        # this is local to a machine, safe to assume there's only one host
+        host, = job.hosts
+        job.automatic_test_tag = host.get_kernel_ver()
+    job.next_step('step0')
+def step0():
+    print "Hi"
+    return locals()
+
+# create a job to run on host1, host2, and any two machines in my_label
+>>> rpc_interface.create_job(name='my_job',
+...                          priority=10,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Client',
+...                          hosts=['host1', 'host2'],
+...                          meta_hosts=['my_label', 'my_label'])
+1
+
+# get job info - this does not include status info for particular hosts
+>>> data = rpc_interface.get_jobs()
+>>> data = data[0]
+>>> data['id'], data['owner'], data['name'], data['priority']
+(1, u'debug_user', u'my_job', 10)
+>>> data['control_file'] == cf_info['control_file']
+True
+>>> data['control_type']
+'Client'
+
+>>> today = datetime.date.today()
+>>> data['created_on'].startswith(
+...         '%d-%02d-%02d' % (today.year, today.month, today.day))
+True
+
+# get_num_jobs - useful when dealing with large numbers of jobs
+>>> rpc_interface.get_num_jobs(name='my_job')
+1
+
+# check host queue entries for a job
+>>> data = rpc_interface.get_host_queue_entries(job=1)
+>>> len(data)
+4
+
+# get rid of created_on, it's nondeterministic
+>>> data[0]['job']['created_on'] = data[2]['job']['created_on'] = None
+
+# get_host_queue_entries returns full info about the job within each queue entry
+>>> job = data[0]['job']
+>>> job == {'control_file': cf_info['control_file'], # the control file we used
+...         'control_type': 'Client',
+...         'created_on': None,
+...         'id': 1,
+...         'name': 'my_job',
+...         'owner': 'debug_user',
+...         'priority': 10,
+...         'synch_count': 0,
+...         'timeout': 24,
+...         'timeout_mins': 1440,
+...         'max_runtime_mins': 1440,
+...         'max_runtime_hrs' : 72,
+...         'run_verify': False,
+...         'run_reset': True,
+...         'email_list': '',
+...         'reboot_before': 'If dirty',
+...         'reboot_after': 'Never',
+...         'parse_failed_repair': True,
+...         'drone_set': drone_set,
+...         'parameterized_job': None,
+...         'test_retry': 0,
+...         'parent_job': None,
+...         'shard': None,
+...         'require_ssp': None}
+True
+
+# get_host_queue_entries returns a lot of data, so let's only check a couple
+>>> data[0] == (
+... {'active': 0,
+...  'complete': 0,
+...  'host': {'hostname': 'host1', # full host info here
+...           'id': 2,
+...           'invalid': 0,
+...           'locked': 0,
+...           'status': 'Ready',
+...           'synch_id': None,
+...           'protection': 'No protection',
+...           'locked_by': None,
+...           'lock_time': None,
+...           'lock_reason': 'Locked for testing',
+...           'dirty': True,
+...           'leased': 1,
+...           'shard': None},
+...  'id': 1,
+...  'job': job, # full job info here
+...  'meta_host': None,
+...  'status': 'Queued',
+...  'deleted': 0,
+...  'execution_subdir': '',
+...  'atomic_group': None,
+...  'aborted': False,
+...  'started_on': None,
+...  'finished_on': None,
+...  'full_status': 'Queued'})
+True
+>>> data[2] == (
+... {'active': 0,
+...  'complete': 0,
+...  'host': None,
+...  'id': 3,
+...  'job': job,
+...  'meta_host': 'my_label',
+...  'status': 'Queued',
+...  'deleted': 0,
+...  'execution_subdir': '',
+...  'atomic_group': None,
+...  'aborted': False,
+...  'started_on': None,
+...  'finished_on': None,
+...  'full_status': 'Queued'})
+True
+>>> rpc_interface.get_num_host_queue_entries(job=1)
+4
+>>> rpc_interface.get_hqe_percentage_complete(job=1)
+0.0
+
+# get_jobs_summary adds status counts to the rest of the get_jobs info
+>>> data = rpc_interface.get_jobs_summary()
+>>> counts = data[0]['status_counts']
+>>> counts
+{u'Queued': 4}
+
+# abort the job
+>>> data = rpc_interface.abort_host_queue_entries(job__id=1)
+>>> data = rpc_interface.get_jobs_summary(id=1)
+>>> data[0]['status_counts']
+{u'Aborted (Queued)': 4}
+
+# Remove the two hosts in my_label
+>>> rpc_interface.delete_host(id='my_label_host1')
+>>> rpc_interface.delete_host(id='my_label_host2')
+
+
+# extra querying parameters
+# #########################
+
+# get_* methods can take query_start and query_limit arguments to implement
+# paging and a sort_by argument to specify the sort column
+>>> data = rpc_interface.get_hosts(query_limit=1)
+>>> [host['hostname'] for host in data]
+[u'host1']
+>>> data = rpc_interface.get_hosts(query_start=1, query_limit=1)
+>>> [host['hostname'] for host in data]
+[u'host2']
+
+# sort_by = ['-hostname'] indicates sorting in descending order by hostname
+>>> data = rpc_interface.get_hosts(sort_by=['-hostname'])
+>>> [host['hostname'] for host in data]
+[u'host2', u'host1']
+
+
+# cloning a job
+# #############
+
+>>> job_id = rpc_interface.create_job(name='my_job_to_clone',
+...                                   priority=50,
+...                                   control_file=cf_info['control_file'],
+...                                   control_type='Client',
+...                                   hosts=['host2'],
+...                                   synch_count=1)
+>>> info = rpc_interface.get_info_for_clone(job_id, False)
+>>> info['atomic_group_name']
+>>> info['meta_host_counts']
+{}
+>>> info['job']['dependencies']
+[]
+>>> info['job']['priority']
+50
+
+
+# advanced usage
+# ##############
+
+# synch_count
+>>> job_id = rpc_interface.create_job(name='my_job',
+...                          priority=10,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Server',
+...                          synch_count=2,
+...                          hosts=['host1', 'host2'])
+
+>>> data = rpc_interface.get_jobs(id=job_id)
+>>> data[0]['synch_count']
+2
+
+# get hosts ACL'd to a user
+>>> hosts = rpc_interface.get_hosts(aclgroup__users__login='debug_user')
+>>> sorted([host['hostname'] for host in hosts])
+[u'host1', u'host2']
+
+>>> rpc_interface.add_acl_group(name='mygroup')
+3
+>>> rpc_interface.acl_group_add_users('mygroup', ['debug_user'])
+>>> rpc_interface.acl_group_add_hosts('mygroup', ['host1'])
+>>> data = rpc_interface.get_acl_groups(name='Everyone')[0]
+>>> data['users'], data['hosts']
+([u'debug_user', u'showard'], [u'host2'])
+>>> data = rpc_interface.get_acl_groups(name='mygroup')[0]
+>>> data['users'], data['hosts']
+([u'debug_user'], [u'host1'])
+
+>>> hosts = rpc_interface.get_hosts(aclgroup__users__login='debug_user')
+>>> sorted([host['hostname'] for host in hosts])
+[u'host1', u'host2']
+>>> hosts = rpc_interface.get_hosts(aclgroup__users__login='showard')
+>>> [host['hostname'] for host in hosts]
+[u'host2']
+
+>>> rpc_interface.delete_acl_group('mygroup')
+>>> data = rpc_interface.get_acl_groups(name='Everyone')[0]
+>>> sorted(data['hosts'])
+[u'host1', u'host2']
+
+# atomic groups
+# #############
+
+# Add an atomic group and associate some labels and new hosts with it.
+>>> mini_rack_group_id = rpc_interface.add_atomic_group(
+...         name='mini rack',
+...         max_number_of_machines=10,
+...         description='a partial rack-o-machines')
+
+>>> label_id = rpc_interface.add_label(name='one-label')
+>>> rpc_interface.modify_label(label_id, atomic_group='mini rack')
+>>> labels = rpc_interface.get_labels(id=label_id)
+>>> assert labels[0]['atomic_group']['id'] == mini_rack_group_id, labels
+>>> rpc_interface.modify_label(label_id, atomic_group=None)
+>>> labels = rpc_interface.get_labels(id=label_id)
+>>> assert not labels[0]['atomic_group'], labels
+>>> rpc_interface.modify_label(label_id, atomic_group='mini rack')
+>>> labels = rpc_interface.get_labels(id=label_id)
+>>> assert labels[0]['atomic_group']['id'] == mini_rack_group_id, labels
+>>> data = rpc_interface.get_labels(atomic_group__name='mini rack')
+>>> assert len(data) == 1
+>>> assert data[0]['name'] == 'one-label', data
+>>> assert data[0]['atomic_group']['id'] == mini_rack_group_id, data
+
+>>> data = rpc_interface.get_atomic_groups()
+>>> assert len(data) == 1
+>>> assert data[0]['id'] == mini_rack_group_id, data
+>>> assert data[0]['max_number_of_machines'] == 10, data
+>>> assert data[0]['description'] == 'a partial rack-o-machines', data
+
+>>> rpc_interface.modify_atomic_group(1, max_number_of_machines=8)
+>>> data = rpc_interface.get_atomic_groups()
+>>> assert data[0]['max_number_of_machines'] == 8, data
+
+>>> unused = rpc_interface.add_host(hostname='ahost1')
+>>> unused = rpc_interface.add_host(hostname='ahost2')
+>>> unused = rpc_interface.add_host(hostname='ah3-blue')
+>>> unused = rpc_interface.add_host(hostname='ah4-blue')
+>>> two_id = rpc_interface.add_label(name='two-label')
+>>> rpc_interface.label_add_hosts(
+...        id=two_id, hosts=['ahost1', 'ahost2', 'ah3-blue', 'ah4-blue'])
+>>> unused = rpc_interface.add_label(name='red-label')
+>>> blue_id = rpc_interface.add_label(name='blue-label')
+>>> rpc_interface.label_add_hosts(id=blue_id, hosts=['ah3-blue', 'ah4-blue'])
+
+>>> rpc_interface.atomic_group_add_labels(mini_rack_group_id,
+...                                       ['one-label', 'two-label',
+...                                        'red-label'])
+>>> ag_labels = rpc_interface.get_labels(atomic_group__name='mini rack')
+>>> len(ag_labels)
+3
+>>> hosts_in_two = rpc_interface.get_hosts(multiple_labels=['two-label'])
+>>> list(sorted(h['hostname'] for h in hosts_in_two))
+[u'ah3-blue', u'ah4-blue', u'ahost1', u'ahost2']
+>>> rpc_interface.atomic_group_remove_labels(mini_rack_group_id, ['red-label'])
+>>> ag_labels = rpc_interface.get_labels(atomic_group__name='mini rack')
+>>> sorted(label['name'] for label in ag_labels)
+[u'one-label', u'two-label']
+
+>>> host_list = rpc_interface.get_hosts()
+>>> hosts_by_name = {}
+>>> for host in host_list:
+...     hosts_by_name[host['hostname']] = host
+...
+>>> hosts_by_name['host1']['atomic_group']
+>>> hosts_by_name['ahost1']['atomic_group']
+u'mini rack'
+>>> hosts_by_name['ah3-blue']['atomic_group']
+u'mini rack'
+>>> host_list = rpc_interface.get_hosts(labels__atomic_group__name='mini rack')
+>>> list(sorted(h['hostname'] for h in host_list))
+[u'ah3-blue', u'ah4-blue', u'ahost1', u'ahost2']
+
+
+
+## Test creation of a job in an atomic group without specifying any
+## hosts or meta_hosts.
+
+>>> sleep_cf_info = rpc_interface.generate_control_file(
+...         tests=['sleeptest'],  kernel=[{'version': '2.6.18'}],
+...         label='two-label')
+>>> job_id = rpc_interface.create_job(
+...         name='atomic_sleeptest', priority=30,
+...         control_file=sleep_cf_info['control_file'],
+...         control_type='Server', synch_count=1,
+...         atomic_group_name='mini rack')
+
+## Test creation of a job in an atomic group by specifying the atomic group
+## name as a meta_host rather than explicitly using the atomic_group_name
+## parameter.
+
+>>> job_id = rpc_interface.create_job(
+...         name='atomic_sleeptest', priority=30,
+...         control_file=sleep_cf_info['control_file'],
+...         control_type='Server', synch_count=1,
+...         meta_hosts=['mini rack'])
+>>> job_id = rpc_interface.create_job(
+...         name='atomic_sleeptest', priority=30,
+...         control_file=sleep_cf_info['control_file'],
+...         control_type='Server', synch_count=1,
+...         meta_hosts=['mini rack'],
+...         atomic_group_name='Different')
+Traceback (most recent call last):
+ValidationError: {'meta_hosts': 'Label "mini rack" not found.  If assumed to be an atomic group it would conflict with the supplied atomic group "Different".'}
+
+## Test job creation with an atomic group.
+
+# fail to create a job in an atomic group.  one_time_hosts not allowed.
+>>> rpc_interface.create_job(name='my_atomic_job',
+...                          priority=50,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Server',
+...                          one_time_hosts=['hostX', 'hostY'],
+...                          synch_count=2,
+...                          atomic_group_name='mini rack')
+Traceback (most recent call last):
+ValidationError: {'one_time_hosts': 'One time hosts cannot be used with an Atomic Group.'}
+
+# fail to create a job in an atomic group.  Synch count larger than max
+>>> rpc_interface.create_job(name='my_atomic_job',
+...                          priority=50,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Server',
+...                          synch_count=25,
+...                          atomic_group_name='mini rack')
+Traceback (most recent call last):
+ValidationError: {'atomic_group_name': 'You have requested a synch_count (25) greater than the maximum machines in the requested Atomic Group (8).'}
+
+# fail to create a job in an atomic group.  not enough hosts due to host list.
+>>> rpc_interface.create_job(name='my_atomic_job',
+...                          priority=50,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Server',
+...                          hosts=['ahost1', 'ahost2'],
+...                          synch_count=3,
+...                          atomic_group_name='mini rack')
+Traceback (most recent call last):
+ValidationError: {'hosts': 'only 2 hosts provided for job with synch_count = 3'}
+
+# fail to create a job in an atomic group.  hosts not in atomic group.
+>>> rpc_interface.create_job(name='my_atomic_job',
+...                          priority=50,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Server',
+...                          hosts=['host1', 'host2'],
+...                          synch_count=2,
+...                          atomic_group_name='mini rack')
+Traceback (most recent call last):
+ValidationError: {'hosts': u'Hosts "host1, host2" are not in Atomic Group "mini rack"'}
+
+# fail to create a job in an atomic group.  not enough hosts due to meta_hosts.
+>>> rpc_interface.create_job(name='my_atomic_job',
+...                          priority=50,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Server',
+...                          meta_hosts=['blue-label'],
+...                          synch_count=4,
+...                          atomic_group_name='mini rack')
+Traceback (most recent call last):
+ValidationError: {'atomic_group_name': u'Insufficient hosts in Atomic Group "mini rack" with the supplied dependencies and meta_hosts.'}
+
+# fail to create a job in an atomic group.  not enough hosts.
+>>> rpc_interface.create_job(name='my_atomic_job',
+...                          priority=50,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Server',
+...                          synch_count=5,
+...                          atomic_group_name='mini rack')
+Traceback (most recent call last):
+ValidationError: {'atomic_group_name': u'Insufficient hosts in Atomic Group "mini rack" with the supplied dependencies and meta_hosts.'}
+
+# create a job in an atomic group.
+>>> job_id = rpc_interface.create_job(name='my_atomic_job',
+...                                   priority=50,
+...                                   control_file=cf_info['control_file'],
+...                                   control_type='Server',
+...                                   hosts=['ahost1', 'ahost2'],
+...                                   meta_hosts=['blue-label'],
+...                                   synch_count=4,
+...                                   atomic_group_name='mini rack')
+
+>>> data = rpc_interface.get_host_queue_entries(job__id=job_id)
+>>> data[0]['atomic_group']['id']
+1
+
+# create a job using hosts in an atomic group but forget to specify the group.
+>>> rpc_interface.create_job(name='poke_foo',
+...                          priority=10,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Client',
+...                          hosts=['ahost1', 'ahost2'])
+Traceback (most recent call last):
+ValidationError: {'hosts': u'Host(s) "ahost1, ahost2" are atomic group hosts but no atomic group was specified for this job.'}
+
+# Create a job using a label in an atomic group as the meta-host but forget
+# to specify the group.  The frontend should figure this out for us.
+>>> job_id = rpc_interface.create_job(name='created_without_explicit_ag',
+...                          priority=50,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Client',
+...                          meta_hosts=['two-label'])
+
+>>> job_id = rpc_interface.create_job(
+...         name='atomic_sleeptest', priority=30,
+...         control_file=sleep_cf_info['control_file'],
+...         control_type='Server', synch_count=1,
+...         meta_hosts=['two-label'],
+...         dependencies=['blue-label'])
+>>> peon_user = models.User(login='peon_user')
+>>> peon_user.access_level = 0
+>>> from autotest_lib.client.common_lib.test_utils import mock
+>>> god = mock.mock_god()
+>>> god.stub_function(models.User, "current_user")
+>>> models.User.current_user.expect_call().and_return(peon_user)
+>>> rpc_interface.abort_host_queue_entries(job__id=job_id)
+Traceback (most recent call last):
+AclAccessViolation: You cannot abort the following job entries: 8-debug_user/two-label
+>>> god.check_playback()
+>>> god.unstub_all()
+
+>>> rpc_interface.create_job(name='never_run2',
+...                          priority=50,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Client',
+...                          meta_hosts=['blue-label'],
+...                          dependencies=['two-label'])
+Traceback (most recent call last):
+ValidationError: {'atomic_group_name': "Dependency u'two-label' requires an atomic group but no atomic_group_name or meta_host in an atomic group was specified for this job."}
+
+>>> invisible_group_id = rpc_interface.add_atomic_group(
+...         name='invisible rack',
+...         max_number_of_machines=3,
+...         description='a hidden rack-o-machines')
+>>> rpc_interface.atomic_group_add_labels(invisible_group_id,
+...                                       ['blue-label'])
+>>> rpc_interface.create_job(name='never_run3',
+...                          priority=50,
+...                          control_file=cf_info['control_file'],
+...                          control_type='Client',
+...                          meta_hosts=['two-label'],
+...                          atomic_group_name='invisible rack')
+Traceback (most recent call last):
+ValidationError: {'atomic_group_name': "meta_hosts or dependency u'two-label' requires atomic group u'mini rack' instead of the supplied atomic_group_name=u'invisible rack'."}
+
+# we're done testing atomic groups, clean up
+>>> rpc_interface.delete_atomic_group(invisible_group_id)
+>>> rpc_interface.delete_atomic_group(mini_rack_group_id)
+>>> assert len(rpc_interface.get_atomic_groups()) == 0

@@ -1,0 +1,26 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "fdeng, chromeos-lab-infrastructure"
+NAME = "dummy_PassServer.sanity"
+PURPOSE = "An empty control file that does nothing."
+CRITERIA = "This test will always succeed."
+ATTRIBUTES = "suite:sanity"
+SUITE = "sanity"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "dummy"
+TEST_TYPE = "server"
+
+DOC = """
+It belongs to sanity suite, which verifies provisioning.
+The only purpose of this test is to trigger a provision task.
+We explicitly make it not call job.runtest to avoid overhead of
+installing/uninstalling autotest packages.
+"""
+
+# We need to record the state, so that tko paser can still parse it
+# as a test.
+job.record('START', None, NAME)
+job.record('END GOOD', None, NAME)

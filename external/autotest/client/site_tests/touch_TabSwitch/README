@@ -1,0 +1,8 @@
+touch_TabSwitch test uses two gesture files that scroll. All scrolls
+recorded should be unaccelerated and done in a single motion (i.e. do not
+lift fingers and continue to scroll). Having the scroll stop in the middle of
+the test would break the test. The gesture files for each device recorded are:
+
+<DEVICE NAME>_touchpad_Touch ID_three-finger-swipe-left  - Three finger scroll on touchpad to switch to another tab in left direction.
+<DEVICE NAME>_touchpad_Touch ID_three-finger-swipe-right  - Three finger scroll on touchpad to switch to another tab in right direction.
+

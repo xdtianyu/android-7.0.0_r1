@@ -1,0 +1,20 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_Smartctl'
+AUTHOR = 'puthik'
+PURPOSE = 'Read S.M.A.R.T attribute for root device'
+TIME = 'SHORT'
+TEST_CLASS = 'hardware'
+TEST_TYPE = 'client'
+
+DOC = """
+Run smartctl to retrieve S.M.A.R.T attribute and report in keyval format.
+Note: Usage of this test case is to be called by server test during the
+storage stress test to determine status of the SSD
+"""
+
+job.run_test('hardware_Smartctl', iteration=1000)
+
+

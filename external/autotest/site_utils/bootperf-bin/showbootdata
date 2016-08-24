@@ -1,0 +1,165 @@
+#!/usr/bin/python
+
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""A command to display summary statistics from runs of 'bootperf'.
+
+Command line options allow selecting from one of four sets of
+performance statistics:
+ 1. boot time statistics (selected by --keyset boot) measure time
+    spent since kernel startup;
+ 2. disk statistics (selected by --keyset disk) measure total bytes
+    read from the boot device since kernel startup;
+ 3. firmware time statistics (selected by --keyset firmware) measure
+    time spent since CPU power on.
+ 4. reboot time statistics (selected by --keyset reboot) measure
+    time spent since the shutdown request immediately preceding
+    the request.
+
+The various statistics are recorded as cumulative time (or disk read)
+since kernel startup (or CPU power on), sampled when specific events
+occur during boot.  Events include such things as 'startup', (the
+moment when the upstart 'startup' job begins running), and 'login',
+(when the Chrome OS login screen is displayed).  By default, all
+recorded events are included in the output; command line options
+allow restricting the view to a selected subset of events.
+
+Separate command line options allow selecting from one of two
+different display modes.  When --averages is selected, the display
+shows the average value and sample standard deviation (as a percent
+of the average) for all selected events.  The --averages display
+also calculates the difference (in time or bytes) between adjacent
+events, and shows the average and sample standard deviation of the
+differences.
+
+The --rawdata display shows the raw data value associated with each
+event for each boot:  Each line of output represents the event values
+for one boot iteration.
+
+"""
+
+import sys
+import optparse
+
+import perfprinter
+import resultsdir
+import resultset
+
+
+_USAGE = "%prog [options] [results-directory ...]"
+_DESCRIPTION = """\
+Summarize boot time performance results.  The result directory
+arguments are directories previously specified as output for the
+'bootperf' script.
+"""
+
+
+def _SetupOptions():
+  """Create an OptionParser for the command line."""
+  optparser = optparse.OptionParser(usage=_USAGE, description=_DESCRIPTION)
+
+  optgroup = optparse.OptionGroup(
+      optparser, "Statistics selection")
+
+  keyset_help = ("Selects the set of statistics to display; "
+                    "choose one of ")
+  keyset_help += "'" + resultset.TestResultSet.AVAILABLE_KEYSETS[0] + "'"
+  for keyset in resultset.TestResultSet.AVAILABLE_KEYSETS[1:-1]:
+    keyset_help += ", '" + keyset + "'"
+  keyset_help += (", or '" +
+                  resultset.TestResultSet.AVAILABLE_KEYSETS[-1] + "'.")
+  keyset_default = resultset.TestResultSet.BOOTTIME_KEYSET
+  keyset_help += "  (Default is '" + keyset_default + "'.)"
+  optgroup.add_option(
+      "-k", "--keyset", action="store", dest="keyset", type="choice",
+      choices=resultset.TestResultSet.AVAILABLE_KEYSETS,
+      help=keyset_help)
+  optparser.add_option_group(optgroup)
+  optparser.set_defaults(keyset=keyset_default)
+
+  optgroup = optparse.OptionGroup(optparser, "Event selection")
+  optgroup.add_option(
+      "-e", "--event", action="append",
+      dest="eventnames",
+      help="Restrict statistics to the comma-separated list of events.")
+  optparser.add_option_group(optgroup)
+
+  optgroup = optparse.OptionGroup(
+      optparser, "Display mode selection (choose one)")
+  optgroup.add_option(
+      "-a", "--averages", action="store_true",
+      dest="print_averages",
+      help="Display a summary of the averages of chosen statistics (default).")
+  optgroup.add_option(
+      "-r", "--rawdata", action="store_true",
+      dest="print_raw",
+      help="Display raw data from all boot iterations.")
+  optparser.add_option_group(optgroup)
+  optparser.set_defaults(print_averages=False)
+  optparser.set_defaults(print_raw=False)
+  return optparser
+
+
+def _ProcessDisplayOptions(options):
+  """Determine options controlling the display format.
+
+  Command options allow choosing either raw data format, or summary
+  statistics format.  The default option is the summary format.
+  It's not allowed to select both formats.
+
+  @param options Parsed command line options data.
+
+  """
+  display_count = 0
+  if options.print_averages:
+    display_count += 1
+    printfunc = perfprinter.PrintStatisticsSummary
+  if options.print_raw:
+    display_count += 1
+    printfunc = perfprinter.PrintRawData
+  if display_count == 0:
+    printfunc = perfprinter.PrintStatisticsSummary
+  elif display_count > 1:
+    print >>sys.stderr, "Can't use -a and -r together.\n"
+    return None
+  return printfunc
+
+
+def _ProcessEventlistOptions(options):
+  """Determine whether we'll display all events, or a subset.
+
+  Command options allow restricting a chosen key set to a
+  list of specific events.  If the option is present, return
+  the list of events.  Otherwise, return `None`.
+
+  @param options Parsed command line options data.
+
+  """
+  if not options.eventnames:
+    return None
+  eventlist = []
+  for kl in options.eventnames:
+    eventlist.extend(kl.split(','))
+  return eventlist
+
+
+def main(argv):
+  """Canonical main routine."""
+  optparser = _SetupOptions()
+  (options, args) = optparser.parse_args(argv)
+  printfunc = _ProcessDisplayOptions(options)
+  keyset_type = options.keyset
+  eventlist = _ProcessEventlistOptions(options)
+  if printfunc is None or keyset_type is None:
+    optparser.print_help()
+    sys.exit(1)
+  if not args:
+    args = ["."]
+  printfunc(resultsdir.ReadResultsDirectory,
+            args, keyset_type, eventlist)
+
+
+if __name__ == "__main__":
+  main(sys.argv[1:])

@@ -1,0 +1,30 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = 'harpreet'
+TIME = 'SHORT'
+NAME = 'cellular_ChromeEndToEnd.autoconnectCellular'
+TEST_TYPE = 'Server'
+ATTRIBUTES = ('suite:network3g_att, suite:network3g_tmobile,'
+              'suite:network3g_verizon, suite:network3g')
+SUITE = 'network3g_att, network3g_tmobile, network3g_verizon, network3g'
+DEPENDENCIES = 'servo'
+
+DOC = """
+Tests that the device auto connects to cellular network..
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test('cellular_ChromeEndToEnd',
+                 host=host,
+                 raw_cmdline_args=args,
+                 test='autoconnectCellular')
+
+parallel_simple(run, machines)

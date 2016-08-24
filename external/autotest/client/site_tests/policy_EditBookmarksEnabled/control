@@ -1,0 +1,43 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "scunningham"
+NAME = "policy_EditBookmarksEnabled"
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "enterprise"
+TEST_TYPE = "client"
+
+DOC = """
+Verify effects of EditBookmarksEnabled policy on client behavior & appearance.
+
+This test verifies the effect of the EditBookmarksEnabled user policy on
+Chrome OS client behavior and appearance. It exercises all valid policy
+values across three test cases: True_Enabled, False_Disabled, and
+NotSet_Enabled.
+
+A test case shall pass if the Manage Bookmarks page allows (or forbids) the
+user to add a new bookmark when the policy is true/notset (or false). A test
+case shall fail if the above behavior is not enforced.
+
+Default usage example:
+$ test_that <IPAddress> EditBookmarksEnabled
+
+Runs all three test cases using the local AutoTest fake DM server, and with
+the policy json and expected values defined by each test case.
+
+Arguments usage example:
+$ test_that <IPAddress> EditBookmarksEnabled --args="env=prod
+mode=single case=True username=test@crosprqa1.com password=test1234"
+
+Runs a single test case (e.g., True) against the production environment, with
+a specific username and password.
+
+See accompanying README file for additional usage instructions and examples.
+
+"""
+
+job.run_test("policy_EditBookmarksEnabled", args=args)

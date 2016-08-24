@@ -1,0 +1,58 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'samueltan, ejcaruso'
+NAME = 'network_WiFi_ReconnectInDarkResume.Stress'
+TIME = 'MEDIUM'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'servo, wificell, lucidsleep'
+ATTRIBUTES = 'suite:wifi_correctness_cros_core, suite:wifi_lucidsleep'
+SUITE = 'wifi_correctness_cros_core, wifi_lucidsleep'
+
+DOC = """
+This test verifies that the DUT successfully reconnects to a network in dark
+resume after getting disconnected from that same network while suspended.
+This test simulates the cases where multiple disconnect and SSID appearance
+events take place over a single period of suspension. The test is conducted as
+follows:
+
+1) AP ("AP 1") is brought up, and DUT connects to it
+2) AP 1 is brought down, disconnecting the DUT from it
+3) Another AP ("AP 2") is brought up, and DUT connects to it
+4) DUT suspends while connected to AP 2
+5) AP 2 is brought down, disconnecting the DUT from it while suspended
+6) AP 2 is brought up again
+7) Repeat steps 5-6 another 4 times (for 5 total iterations)
+8) The DUT is woken from suspend
+9) Verify that the DUT is connected to AP 2 upon resuming from suspend
+
+We verify the connectivity status of the DUT on resume by parsing shill logs,
+since the delays involved in waking a DUT from suspend using autotest framework
+make real-time checks inaccurate.
+
+Note: this test suspends the DUT for long periods of time, which may lead to
+flakiness if the ssh connection from the autotest host to the DUT has a
+ServerAliveInterval setting that is too low (i.e. less than the total suspend
+time). This test was verified stable with the ServerAliveInterval set to 900.
+"""
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.client.common_lib.cros.network import xmlrpc_security_types
+from autotest_lib.server.cros.network import hostap_config
+from autotest_lib.server import utils
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test('network_WiFi_ReconnectInDarkResume',
+                 host=host,
+                 tag=NAME.split('.')[1],
+                 disconnect_before_suspend=False,
+                 reconnect_to_same_ap=True,
+                 num_iterations=5,
+                 raw_cmdline_args=args)
+
+parallel_simple(run, machines)

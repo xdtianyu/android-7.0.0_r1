@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Check how statfs/statfs64 syscalls are traced.
+
+. "${srcdir=.}/init.sh"
+
+# this test probes /proc/self/status
+[ -f /proc/self/status ] ||
+        framework_skip_ '/proc/self/status is not available'
+
+run_prog
+run_strace -efile $args
+match_grep
+
+exit 0

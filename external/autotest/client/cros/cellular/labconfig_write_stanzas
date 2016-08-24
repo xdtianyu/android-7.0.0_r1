@@ -1,0 +1,60 @@
+#!/usr/bin/python
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DOCS="""Print DHCP and /etc/hosts stanzas for hosts in a specified cell."""
+
+import exceptions, io, sys
+import labconfig_data
+
+
+def usage(message=''):
+    print '%s:\n\t%s\n' % (sys.argv[0], DOCS)
+    print '%susage: %s CELLNAME' % (message, sys.argv[0])
+    sys.exit(1)
+
+
+def find_names(visitor, root):
+    """Traverse config tree, calling visitor on dicts with 'name' field."""
+    if type(root) == dict and 'name' in root:
+        visitor(root)
+    if type(root) == dict:
+        for child in root.values():
+            find_names(visitor, child)
+    elif hasattr(root, '__iter__'):
+        for entry in root:
+            find_names(visitor, entry)
+
+
+class Formatter(object):
+    def __init__(self):
+        self.dns = io.StringIO()
+        self.dhcp = io.StringIO()
+
+    def Visit(self, d):
+        if 'address' in d and 'name' in d:
+            self.dns.write(u'%(address)s\t%(name)s\n' % d)
+        else:
+            return
+        if 'ethernet_mac' in d:
+            self.dhcp.write((u'host %(name)s {\n' +
+                              '\thardware ethernet %(ethernet_mac)s;\n' +
+                              '\tfixed-address %(address)s;\n' +
+                              '}\n') % d)
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        usage()
+
+    [cell] = sys.argv[1:]
+    if cell not in labconfig_data.CELLS:
+        usage('Could not find cell %s\n' % cell)
+
+    f = Formatter()
+    find_names(f.Visit, labconfig_data.CELLS[cell])
+
+    print f.dhcp.getvalue()
+    print '\n'
+    print f.dns.getvalue()

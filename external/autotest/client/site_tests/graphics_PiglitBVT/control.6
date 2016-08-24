@@ -1,0 +1,31 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'graphics_PiglitBVT'
+AUTHOR = 'chromeos-gfx'
+PURPOSE = 'Collection of automated tests for OpenGL implementations.'
+CRITERIA = 'All tests in a slice have to pass, otherwise it will fail.'
+TIME='SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'graphics'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+Piglit is a collection of automated tests for OpenGL implementations.
+
+The goal of Piglit is to help improve the quality of open source OpenGL drivers
+by providing developers with a simple means to perform regression tests.
+
+This control file runs slice 6 out of 20 slices of a passing subset of the
+original collection.
+
+http://piglit.freedesktop.org
+"""
+
+job.run_test('graphics_PiglitBVT', test_slice=6)

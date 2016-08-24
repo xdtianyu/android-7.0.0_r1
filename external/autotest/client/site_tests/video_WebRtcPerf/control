@@ -1,0 +1,31 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_WebRtcPerf"
+PURPOSE = "Measure the CPU usage and decode time of WebRTC"
+CRITERIA = "This is a performance test and does not fail."
+ATTRIBUTES = "suite:crosbolt_perf_perbuild"
+SUITE = "crosbolt_perf_perbuild"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    "labels": ["OS-Chrome", "VideoTestFailure"],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This test outputs the CPU usage and decode time of WebRTC with and without
+hardware acceleration to the performance dashboard. The test runs on all the
+devices. The output can be used to compare the performance between using
+hardware and software. It can also be used to compare the performance among
+different devices.
+"""
+
+job.run_test("video_WebRtcPerf",
+             decode_time_test=True,
+             cpu_test=True,
+             power_test=False)

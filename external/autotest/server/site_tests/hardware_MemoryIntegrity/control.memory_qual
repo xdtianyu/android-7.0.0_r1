@@ -1,0 +1,32 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_MemoryIntegrity.memory_qual'
+AUTHOR = 'puthik'
+PURPOSE = 'Check memory integrity after long idle/suspend'
+TIME = 'LENGTHY'
+TEST_CLASS = 'hardware'
+TEST_TYPE = 'server'
+
+DOC = """
+This test call hardware_StorageFio to write data once to the ramfs and
+then after idle for an hour, verify the integrity of that data.
+"""
+
+HOUR_IN_SECS=60*60
+
+SERVER_TESTS= [
+    ('hardware_MemoryIntegrity', {
+        'tag' : 'idle', 'seconds' : HOUR_IN_SECS, 'suspend': False}),
+    ('hardware_MemoryIntegrity', {
+        'tag' : 'suspend', 'seconds' : HOUR_IN_SECS, 'suspend': True}),
+]
+
+def run_hardware_MemoryIntegrity_test(machine):
+    client = hosts.create_host(machine)
+    for test, argv in SERVER_TESTS:
+        client.reboot()
+        job.run_test(test, client_ip=machine, **argv)
+
+parallel_simple(run_hardware_MemoryIntegrity_test, machines)

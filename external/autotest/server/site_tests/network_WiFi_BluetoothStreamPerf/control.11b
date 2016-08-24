@@ -1,0 +1,33 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'bfreed'
+NAME = 'network_WiFi_BluetoothStreamPerf.11b'
+TIME = 'MEDIUM'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell, chameleon, audio_board'
+
+DOC = """
+This test uses netperf to measure the maximal receiving and transmitting
+throughput on a DUT with an open 802.11b network while operating bluetooth.
+"""
+
+
+from autotest_lib.server import utils
+from autotest_lib.server.cros.network import hostap_config
+
+args_dict = utils.args_to_dict(args)
+chameleon_args = hosts.CrosHost.get_chameleon_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, chameleon_args=chameleon_args)
+    mode = hostap_config.HostapConfig.MODE_11B
+    configs = [hostap_config.HostapConfig(channel=channel, mode=mode)
+               for channel in (6,)]
+    job.run_test('network_WiFi_BluetoothStreamPerf', tag=NAME.split('.')[1],
+                 host=host, raw_cmdline_args=args,
+                 additional_params=configs)
+
+
+parallel_simple(run, machines)

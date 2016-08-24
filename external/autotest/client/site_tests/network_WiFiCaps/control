@@ -1,0 +1,28 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_WiFiCaps"
+PURPOSE = 'Verify that WiFi devices have the required capabilities.'
+CRITERIA = """
+If the following requirements are not present the test case will fail:
+  - station mode
+  - 2.4GHz band
+  - 5 GHz band
+  - 802.11n
+  - HT40
+  - Short GI in HT40
+"""
+ATTRIBUTES = "suite:network_nightly"
+SUITE = 'network_nightly'
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+The test uses the iw tool to query device capabilities.
+"""
+
+job.run_test('network_WiFiCaps')

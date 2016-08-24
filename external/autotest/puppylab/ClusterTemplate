@@ -1,0 +1,68 @@
+Vagrant.configure("2") do |config|
+  config.puppet_install.puppet_version = "3.8.4"
+
+  # Base machine config
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+  config.vm.provider :virtualbox do |virtualbox|
+    virtualbox.customize ["modifyvm", :id, "--memory", "8048"]
+    virtualbox.customize ["modifyvm", :id, "--cpuexecutioncap", "100"]
+    virtualbox.customize ["modifyvm", :id, "--cpus", "10"]
+  end
+
+  # Rsync config, triggered on every vagrant refresh
+  config.vm.synced_folder "/usr/local/autotest", "/usr/local/autotest", type: "rsync",
+    owner: "chromoes-test", group: "root",
+    rsync__args: ["--chmod=ug=rwX,o=rxX", "-r"],
+    rsync__exclude: ["site-packages/", "logs/", "results/", "containers/", "shadow_config.ini", ".git/", "chromeos-admin/", "*.box"]
+
+  # Chown autotest, triggered via vagrant provision --provision-with shell
+  config.vm.provision :shell do |shell|
+    shell.inline = "sudo chown -R chromeos-test /usr/local/autotest"
+  end
+
+  # Master config
+  # Port mappings:
+  #  80: tcp port, access the master afe via http://localhost:master_port on host
+  #  3306: mysql port, access the master db via 'mysql --host localhost --port 8002' on host
+  # both these will be autocorrected if the ports are occupied.
+  config.vm.define "%(master)s" do |%(master)s|
+      %(master)s.vm.network "forwarded_port", guest: 80, host: %(master_port)s, auto_correct: true
+      %(master)s.vm.network "forwarded_port", guest: 3306, host: 8002, auto_correct: true
+      %(master)s.vm.box = "chromeos_lab_core_cluster"
+      %(master)s.vm.hostname = "%(master)s"
+      ip = "172.17.8.103"
+      %(master)s.vm.network "private_network", ip: ip
+      %(master)s.vm.provision :puppet do |puppet|
+        puppet.manifests_path = "%(manifest_path)s"
+        puppet.manifest_file = "nodes.pp"
+        puppet.module_path = "%(module_path)s"
+        #puppet.options = "--verbose --debug "
+        puppet.facter = {
+          "is_vagrant" => "1",
+          "server_type" => "testing-shard-master",
+        }
+      end
+  end
+
+  # Shard configs, extend by duplicating this section
+  # Port mappings:
+  #  80: tcp port, access the master afe via http://localhost:shard1_port on host
+  config.vm.define "%(shard1)s" do |%(shard1)s|
+      %(shard1)s.vm.network "forwarded_port", guest: 80, host: %(shard1_port)s, auto_correct: true
+      %(shard1)s.vm.box = "chromeos_lab_core_cluster"
+      %(shard1)s.vm.hostname = "%(shard1)s"
+      ip = "172.17.8.104"
+      %(shard1)s.vm.network "private_network", ip: ip
+      %(shard1)s.vm.provision :puppet do |puppet|
+        puppet.manifests_path = "%(manifest_path)s"
+        puppet.manifest_file = "nodes.pp"
+        puppet.module_path = "%(module_path)s"
+        #puppet.options = "--verbose --debug "
+        puppet.facter = {
+          "is_vagrant" => "1",
+          "shard_hostname" => "%(shard1_shadow_config_hostname)s",
+          "server_type" => "testing-shard",
+        }
+      end
+  end
+end

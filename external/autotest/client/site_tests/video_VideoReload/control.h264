@@ -1,0 +1,26 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_VideoReload.h264"
+PURPOSE = "Verify that Chrome can reload mp4 video"
+CRITERIA = """
+This test will fail if Chrome fails to reload mp4 video.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This test verifies Chrome can reload mp4 video after reloading the page.
+"""
+
+job.run_test('video_VideoReload', tag='h264', html='mp4video.html')

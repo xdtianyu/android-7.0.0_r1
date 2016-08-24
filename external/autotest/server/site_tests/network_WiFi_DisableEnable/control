@@ -1,0 +1,24 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, wiley, quiche'
+NAME = 'network_WiFi_DisableEnable'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = ('suite:wifi_matfunc, suite:wifi_matfunc_bcm4371, '
+              'suite:wificell-pre-cq')
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371, wificell-pre-cq'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test attempts to verify that we can disable and enable the WiFi
+device and it will re-connect to the AP it was previously connected to.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_DisableEnable', host=host, raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

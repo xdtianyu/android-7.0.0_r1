@@ -1,0 +1,15 @@
+AUTHOR = "kdlucas@chromium.org (Kelly Lucas)"
+DOC = "Verifies large qty of file creation on stateful and tmp partitions."
+NAME = "platform_FileNum"
+PURPOSE = "Verify a directory can contain a large number of files."
+CRITERIA = """
+Fails if any of the following conditions is not met:
+  - /mnt/stateful_partition contains 100,000 files
+  - /tmp contains 1000 files
+"""
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+job.run_test('platform_FileNum')

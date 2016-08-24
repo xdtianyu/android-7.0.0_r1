@@ -1,0 +1,19 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_TouchMTBSetup"
+PURPOSE = "Install firmware_TouchMTB and version info to the remote machine."
+CRITERIA = "This test will fail if it fails to install the version info."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+
+DOC = """
+This test installs the version info of the client-side test firmware_TouchMTB
+to the remote machine.
+"""
+
+job.run_test("firmware_TouchMTBSetup", host=hosts.create_host(machines[0]))

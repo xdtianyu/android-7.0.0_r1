@@ -1,0 +1,25 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_Ipv6SimpleNegotiation"
+PURPOSE = "Verify IPv6 negotiation can succeed in the most normal case"
+CRITERIA = """
+This test fails if the kernel IPv6 code cannot successfully negotiate a
+globally scoped address and obtain IPv6 DNS server addresses through
+RDNSS via an IPv6 router.
+"""
+ATTRIBUTES = "suite:network_nightly"
+SUITE = "network_nightly"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Tests that we can acquire an IPv6 globally scoped address and IPv6 DNS
+  server addresses via router announcements.
+"""
+
+job.run_test('network_Ipv6SimpleNegotiation')

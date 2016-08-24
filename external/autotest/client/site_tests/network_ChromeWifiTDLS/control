@@ -1,0 +1,24 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_ChromeWifiTDLS"
+PURPOSE = "Verify that chrome.networkingPrivate recognizes TDLS enable call."
+CRITERIA = """
+  This test will fail if the Shill fails to respond to a TDLS configure call.
+"""
+ATTRIBUTES = "suite:network_ui"
+SUITE = "network_ui"
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DOC = """
+  Tests that Shill responds to a Device.PerformTDLSOperation call via the
+  networikingPrivate API. It does not assume that configuration will actually
+  succeed (since that will depend on the environment), just that the call itself
+  succeeds and the callback is invoked.
+"""
+
+job.run_test('network_ChromeWifiTDLS')

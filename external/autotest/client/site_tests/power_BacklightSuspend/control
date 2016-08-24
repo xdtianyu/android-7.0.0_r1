@@ -1,0 +1,23 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_BacklightSuspend"
+PURPOSE = "Test the backlight's resume brightness feature."
+CRITERIA = "This test is a benchmark."
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+ATTRIBUTES = "suite:kernel_per-build_regression, suite:partners"
+SUITE = "kernel_per-build_regression, partners"
+
+DOC = """
+This test requests a brightness level to be set after resume.  It then triggers
+a suspend/resume and checks that the brightness has indeed been set to the
+requested level.
+"""
+
+job.run_test('power_BacklightSuspend')

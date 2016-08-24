@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "kernel_ProtocolCheck"
+PURPOSE = "Check if the kernel supports the required network protocols."
+CRITERIA = "Fails if any of the required protocols are not available."
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = "bvt-cq"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+Determines the protocols supported by a kernel by inspecting
+/proc/net/protocols.
+"""
+
+job.run_test('kernel_ProtocolCheck')

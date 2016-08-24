@@ -1,0 +1,19 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "hardware_TPMttci"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Exercise TPM TTCI board modules with TPM"
+CRITERIA = "Check TTCI module functionality and TPM sanity check"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Hardware"
+TEST_TYPE = "Client"
+
+DOC = """
+This test exercises the two modules on TTCI board and performs basic sanity
+check of the TPM (Trusted Platform Module) module (version & self-test).
+"""
+
+job.run_test('hardware_TPMttci')

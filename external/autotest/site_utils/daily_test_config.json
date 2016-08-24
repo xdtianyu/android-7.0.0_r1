@@ -1,0 +1,69 @@
+{
+    "__base__": "chromeos_test_config.json",
+
+    "boards": {
+        "x86-alex-release": {
+            "platforms": [
+                {"platform": "alex",
+                 "extra_groups": ["kernel_daily"]}
+            ]
+        },
+
+        "x86-mario-release": {
+            "platforms": [
+                {"platform": "mario"}
+            ]
+        },
+
+        "x86-zgb-release": {
+            "platforms": [
+                {"platform": "zgb",
+                 "extra_groups": ["kernel_daily"]}
+            ]
+        },
+
+        "stumpy-release": {
+            "platforms": [
+                {"platform": "stumpy",
+                 "extra_groups": ["kernel_daily"]}
+            ]
+        },
+
+        "lumpy-release": {
+            "platforms": [
+                {"platform": "lumpy",
+                 "extra_groups": ["kernel_daily"]}
+            ]
+        }
+    },
+
+    "default_groups": ["daily", "power_daily"],
+
+    "groups": {
+        "daily": [
+            {"name": "benchmarks",
+             "control": "server/site_tests/suites/control.benchmarks",
+             "count": 3,
+             "sync": true},
+
+            {"name": "hwqual",
+             "control": "server/site_tests/suites/control.hwqual_auto"}
+        ],
+
+        "kernel_daily": [
+            {"name": "kernel_daily_regression",
+             "control": "server/site_tests/suites/control.kernel_daily_regression"},
+
+            {"name": "kernel_daily_benchmarks",
+             "control": "server/site_tests/suites/control.kernel_daily_benchmarks"}
+        ],
+
+       "power_daily": [
+            {"name": "power_daily",
+             "control": "server/site_tests/suites/control.power_daily",
+             "count": 2,
+             "sync": true,
+             "labels": ["powerswitch_controlled"]}
+        ]
+    }
+}

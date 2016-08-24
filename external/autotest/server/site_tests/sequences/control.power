@@ -1,0 +1,91 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "Power"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+DEPENDENCIES = "rpm"
+
+DOC = """
+This test suite runs automated power tests that should all pass and that
+require the power to be connected with a remote power manager.
+"""
+
+from autotest_lib.server import site_host_attributes
+from autotest_lib.client.common_lib import error
+
+# Run power tests that don't take a long time
+TESTS = [
+  'power_Backlight',
+  'power_CPUFreq',
+  'power_CPUIdle',
+  'power_Draw',
+  'power_Idle',
+  'power_StatsCPUFreq',
+  'power_StatsCPUIdle',
+  'power_StatsUSB',
+  'power_x86Settings'
+]
+
+
+def run_client_test(machine):
+  client = hosts.create_host(machine)
+  client_attributes = site_host_attributes.HostAttributes(machine)
+  client_at = autotest.Autotest(client)
+
+  if client.has_power():
+    client.power_on()
+  else:
+    raise error.TestNAError("No power switch configured")
+
+  # Run power_x86Settings test with AC power connected
+  client_at.run_test('power_x86Settings', tag='AC_ONLINE')
+
+  # Charge battery to at least 50% first
+  client_at.run_test('power_BatteryCharge', percent_target_charge=50,
+                     max_run_time=60*60*4, tag='CHARGE_50')
+
+  client.power_off()
+  try:
+    for test in TESTS:
+        client_at.run_test(test)
+
+    if not client_attributes.has_resume_bug:
+        client_at.run_test('power_Resume')
+
+  finally:
+    client.power_on()
+
+  # Run the 60/20/10/10 load test
+  # Charge the battery to at least 99% in preparation for the load
+  # test. Charging the battery from empty to full can take up to 4 hours.
+  client_at.run_test('power_BatteryCharge', percent_target_charge=99,
+                     max_run_time=60*60*5, tag='CHARGE_99')
+
+  # Turn off power and run power_LoadTest. The power_LoadTest can take
+  # up to 9 hours to run to completion
+  # TODO (snanda):
+  # 1. Make the test run over wifi instead of ethernet
+  # 2. Make the test login automatically to facebook and gmail
+  # 3. Add audiovideo_V4L2 webcam test
+  client.power_off()
+
+  try:
+    if hasattr(client_attributes, 'wifi'):
+      wifi_ap, wifi_sec, wifi_pw = client_attributes.wifi.split(',')
+
+      client_at.run_test('power_LoadTest', loop_count=9, loop_time=3600,
+                         force_wifi=True, wifi_ap=wifi_ap, wifi_sec=wifi_sec,
+                         wifi_pw=wifi_pw, tag='WIFI')
+    else:
+      client_at.run_test('power_LoadTest', loop_count=9, loop_time=3600,
+                         check_network=False, tag='WIRED')
+  finally:
+    client.power_on()
+
+
+job.parallel_on_machines(run_client_test, machines)

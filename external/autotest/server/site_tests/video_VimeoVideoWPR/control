@@ -1,0 +1,40 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "mussa, chromeos-video"
+NAME = "video_VimeoVideoWPR"
+PURPOSE = "Verify that Vimeo (html5) video works"
+CRITERIA = ""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "server"
+
+# TODO(crbug.com/470962) This test can not use server-side package until gsutil
+# is supported in container.
+REQUIRE_SSP = False
+
+DOC = """
+Pulls WebPageReplay archives from storage onto devices, and uses them to verify
+that vimeo videos play.
+
+"""
+
+from autotest_lib.server.cros import gsutil_wrapper
+from autotest_lib.server import autotest
+
+def run(machine):
+    host = hosts.create_host(machine)
+
+    gsutil_wrapper.copy_private_bucket(host=host,
+                                       bucket='gs://chrome-partner-telemetry',
+                                       filename='insight.wpr',
+                                       destination='/usr/local')
+
+    at = autotest.Autotest(host)
+    at.run_test('video_VimeoVideo')
+
+parallel_simple(run, machines)

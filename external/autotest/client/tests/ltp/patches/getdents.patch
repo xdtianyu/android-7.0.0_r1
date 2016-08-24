@@ -1,0 +1,338 @@
+From ec19461cecdac81c48bbbe4783624167754349a2 Mon Sep 17 00:00:00 2001
+From: Mike Frysinger <vapier@gentoo.org>
+Date: Thu, 8 Mar 2012 17:40:52 -0500
+Subject: [PATCH] getdents: rewrite syscall handling completely
+
+The inline asm has many problems, but rather than attempt to fix
+them, just use syscall() for everyone.  This allows us to drop the
+i386-specific checks and have the tests run on all arches.
+
+Further, add a layer between the kernel and the dirent struct that
+the tests uses.  The kernel packs the results, so we need to expand
+the raw buffer returned by the kernel into the userland structs we
+pass around.
+
+Signed-off-by: Mike Frysinger <vapier@gentoo.org>
+---
+ testcases/kernel/syscalls/getdents/getdents.h   |   73 +++++++++++++++++------
+ testcases/kernel/syscalls/getdents/getdents01.c |   20 +-----
+ testcases/kernel/syscalls/getdents/getdents02.c |   27 +--------
+ testcases/kernel/syscalls/getdents/getdents03.c |   27 +--------
+ testcases/kernel/syscalls/getdents/getdents04.c |   26 +-------
+ 5 files changed, 67 insertions(+), 106 deletions(-)
+
+diff --git a/testcases/kernel/syscalls/getdents/getdents.h b/testcases/kernel/syscalls/getdents/getdents.h
+index 3ab3fd2..a5ddfea 100644
+--- a/testcases/kernel/syscalls/getdents/getdents.h
++++ b/testcases/kernel/syscalls/getdents/getdents.h
+@@ -23,25 +23,62 @@
+ 
+ #ifndef __GETDENTS_H
+ #define __GETDENTS_H	1
++
++#include <dirent.h>
++#include <stdio.h>
++#include <string.h>
++#include <unistd.h>
+ #include <sys/syscall.h>
+ 
+-#ifdef __i386__
+-	#define GETDENTS_ASM() ({ int __rval;				\
+-				__asm__ __volatile__("			\
+-					movl	%4, %%edx \n		\
+-					movl	%3, %%ecx \n		\
+-					movl	%2, %%ebx \n		\
+-					movl	%1, %%eax \n		\
+-					int	$0x80 \n		\
+-					movl	%%eax, %0"		\
+-				: "=a" (__rval)				\
+-				: "a" (cnum), "b" (fd), "c" (dirp), "d" (count)\
+-				: "memory"				\
+-				);					\
+-				__rval;					\
+-		    	})
+-#else
+-	#define GETDENTS_ASM() 0
+-#endif /* __i386__ */
++/*
++ * The dirent struct that the C library exports is not the same
++ * as the kernel ABI, so we can't include dirent.h and use the
++ * dirent struct from there.  Further, since the Linux headers
++ * don't export their vision of the struct either, we have to
++ * declare our own here.  Wheeeeee.
++ */
++
++struct linux_dirent {
++	unsigned long   d_ino;
++	unsigned long   d_off;
++	unsigned short  d_reclen;
++	char            d_name[];
++};
++
++static inline int
++getdents(unsigned int fd, struct dirent *dirp, unsigned int count)
++{
++	union {
++		struct linux_dirent *dirp;
++		char *buf;
++	} ptrs;
++	char buf[count];
++	long ret;
++	unsigned int i;
++
++	ptrs.buf = buf;
++	ret = syscall(SYS_getdents, fd, buf, count);
++	if (ret < 0)
++		return ret;
++
++#define kdircpy(field) memcpy(&dirp[i].field, &ptrs.dirp->field, sizeof(dirp[i].field))
++
++	i = 0;
++	while (i < count && i < ret) {
++		unsigned long reclen;
++
++		kdircpy(d_ino);
++		kdircpy(d_reclen);
++		reclen = dirp[i].d_reclen;
++		kdircpy(d_off);
++		strcpy(dirp[i].d_name, ptrs.dirp->d_name);
++
++		ptrs.buf += reclen;
++
++		i += reclen;
++	}
++
++	return ret;
++}
+ 
+ #endif /* getdents.h */
+diff --git a/testcases/kernel/syscalls/getdents/getdents01.c b/testcases/kernel/syscalls/getdents/getdents01.c
+index 266a9c0..8afb08a 100644
+--- a/testcases/kernel/syscalls/getdents/getdents01.c
++++ b/testcases/kernel/syscalls/getdents/getdents01.c
+@@ -81,17 +81,6 @@ int main(int ac, char **av)
+ 	char *dir_name = NULL;
+ 	struct dirent *dirp;
+ 
+-	/*
+-	 * Here's a case where invoking the system call directly
+-	 * doesn't seem to work.  getdents.h has an assembly
+-	 * macro to do the job.
+-	 *
+-	 * equivalent to  - getdents(fd, dirp, count);
+-	 * if we could call getdents that way.
+-	 */
+-
+-#define getdents(arg1, arg2, arg3) syscall(__NR_getdents, arg1, arg2, arg3)
+-
+ 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+ 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+ 
+@@ -120,17 +109,14 @@ int main(int ac, char **av)
+ 		rval = getdents(fd, dirp, count);
+ 		if (rval < 0) {
+ 
+-			rval *= -1;
+-			TEST_ERROR_LOG(rval);
++			TEST_ERROR_LOG(errno);
+ 
+-			tst_resm(TFAIL, "%s call failed - errno = %d "
+-				 ": %s", TCID, rval, strerror(rval));
++			tst_resm(TFAIL|TERRNO, "getdents failed unexpectedly");
+ 			continue;
+ 		}
+ 
+ 		if (rval == 0) {
+-			tst_resm(TFAIL, "%s call failed - returned "
+-				 "end of directory", TCID);
++			tst_resm(TFAIL, "getdents failed - returned end of directory");
+ 			continue;
+ 		}
+ 
+diff --git a/testcases/kernel/syscalls/getdents/getdents02.c b/testcases/kernel/syscalls/getdents/getdents02.c
+index 46d1133..af826d1 100644
+--- a/testcases/kernel/syscalls/getdents/getdents02.c
++++ b/testcases/kernel/syscalls/getdents/getdents02.c
+@@ -69,21 +69,12 @@ int TST_TOTAL = 1;
+ 
+ int exp_enos[] = { EBADF, 0 };	/* 0 terminated list of expected errnos */
+ 
+-#ifndef __i386__
+-int main(void)
+-{
+-	tst_brkm(TCONF, NULL, "this test will only run on i386");
+-	tst_exit();
+-}
+-#else
+-
+ int main(int ac, char **av)
+ {
+ 	int lc;
+ 	char *msg;
+ 	int rval, fd;
+ 	int count;
+-	const int cnum = __NR_getdents;
+ 	size_t size = 0;
+ 	char *dir_name = NULL;
+ 	struct dirent *dirp;
+@@ -109,25 +100,15 @@ int main(int ac, char **av)
+ 
+ 		fd = -5;
+ 
+-		/*
+-		 * here's a case where invoking the system call directly
+-		 * doesn't seem to work.  getdents.h has an assembly
+-		 * macro to do the job.
+-		 *
+-		 * equivalent to  - getdents(fd, dirp, count);
+-		 * if we could call getdents that way.
+-		 */
+-
+-		rval = GETDENTS_ASM();
++		rval = getdents(fd, dirp, count);
+ 
+ 		/*
+ 		 * Hopefully we get an error due to the bad file descriptor.
+ 		 */
+ 		if (rval < 0) {
+-			rval *= -1;
+-			TEST_ERROR_LOG(rval);
++			TEST_ERROR_LOG(errno);
+ 
+-			switch (rval) {
++			switch (errno) {
+ 			case EBADF:
+ 				tst_resm(TPASS,
+ 				    "failed as expected with EBADF");
+@@ -170,5 +151,3 @@ void cleanup(void)
+ 
+ 	tst_rmdir();
+ }
+-
+-#endif /* __i386__ */
+diff --git a/testcases/kernel/syscalls/getdents/getdents03.c b/testcases/kernel/syscalls/getdents/getdents03.c
+index 8582346..ffd137f 100644
+--- a/testcases/kernel/syscalls/getdents/getdents03.c
++++ b/testcases/kernel/syscalls/getdents/getdents03.c
+@@ -72,21 +72,12 @@ int TST_TOTAL = 1;
+ 
+ int exp_enos[] = { EINVAL, 0 };	/* 0 terminated list of expected errnos */
+ 
+-#ifndef __i386__
+-int main(void)
+-{
+-	tst_brkm(TCONF, NULL, "this test will only run on i386");
+-	tst_exit();
+-}
+-#else
+-
+ int main(int ac, char **av)
+ {
+ 	int lc;
+ 	char *msg;
+ 	int rval, fd;
+ 	int count;
+-	const int cnum = __NR_getdents;
+ 	size_t size = 0;
+ 	char *dir_name = NULL;
+ 	struct dirent *dirp;
+@@ -114,26 +105,16 @@ int main(int ac, char **av)
+ 		if ((fd = open(dir_name, O_RDONLY)) == -1)
+ 			tst_brkm(TBROK, cleanup, "open of directory failed");
+ 
+-		/*
+-		 * here's a case where invoking the system call directly
+-		 * doesn't seem to work.  getdents.h has an assembly
+-		 * macro to do the job.
+-		 *
+-		 * equivalent to  - getdents(fd, dirp, count)
+-		 * if we could call getdents that way.
+-		 */
+-
+-		rval = GETDENTS_ASM();
++		rval = getdents(fd, dirp, count);
+ 
+ 		/*
+ 		 * Hopefully we get an error due to the small buffer.
+ 		 */
+ 
+ 		if (rval < 0) {
+-			rval *= -1;
+-			TEST_ERROR_LOG(rval);
++			TEST_ERROR_LOG(errno);
+ 
+-			switch (rval) {
++			switch (errno) {
+ 			case EINVAL:
+ 				tst_resm(TPASS,
+ 				    "getdents failed with EINVAL as expected");
+@@ -181,5 +162,3 @@ void cleanup(void)
+ 
+ 	tst_rmdir();
+ }
+-
+-#endif /* __i386__ */
+diff --git a/testcases/kernel/syscalls/getdents/getdents04.c b/testcases/kernel/syscalls/getdents/getdents04.c
+index 5dd1634..141d3da 100644
+--- a/testcases/kernel/syscalls/getdents/getdents04.c
++++ b/testcases/kernel/syscalls/getdents/getdents04.c
+@@ -73,20 +73,11 @@ int TST_TOTAL = 1;
+ 
+ int exp_enos[] = { ENOTDIR, 0 };	/* 0 terminated list of expected errnos */
+ 
+-#ifndef __i386__
+-int main(void)
+-{
+-	tst_brkm(TCONF, NULL, "this test will only run on i386");
+-	tst_exit();
+-}
+-#else
+-
+ int main(int ac, char **av)
+ {
+ 	int lc;
+ 	char *msg;
+ 	int count, rval, fd;
+-	const int cnum = 141;
+ 	size_t size = 0;
+ 	char *dir_name = NULL;
+ 	struct dirent *dirp;
+@@ -131,15 +122,7 @@ int main(int ac, char **av)
+ 		if (S_ISDIR(sbuf->st_mode))
+ 			tst_brkm(TBROK, cleanup, "fd is a directory");
+ 
+-		/*
+-		 * here's a case where invoking the system call directly
+-		 * doesn't seem to work.  getdents.h has an assembly
+-		 * macro to do the job.
+-		 *
+-		 * equivalent to getdents(fd, dirp, count);
+-		 */
+-
+-		rval = GETDENTS_ASM();
++		rval = getdents(fd, dirp, count);
+ 
+ 		/*
+ 		 * Calling with a non directory file descriptor should give
+@@ -147,10 +130,9 @@ int main(int ac, char **av)
+ 		 */
+ 
+ 		if (rval < 0) {
+-			rval *= -1;
+-			TEST_ERROR_LOG(rval);
++			TEST_ERROR_LOG(errno);
+ 
+-			switch (rval) {
++			switch (errno) {
+ 			case ENOTDIR:
+ 				tst_resm(TPASS,
+ 				    "getdents failed as expected with ENOTDIR");
+@@ -198,5 +180,3 @@ void cleanup(void)
+ 
+ 	tst_rmdir();
+ }
+-
+-#endif /* __i386__ */
+-- 
+1.7.8.4
+

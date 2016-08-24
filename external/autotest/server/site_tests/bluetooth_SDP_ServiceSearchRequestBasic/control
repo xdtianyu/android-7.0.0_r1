@@ -1,0 +1,50 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'arakhov@chromium.org'
+NAME = 'bluetooth_SDP_ServiceSearchRequestBasic'
+ATTRIBUTES = "suite:bluetooth, suite:bluetooth_qualification"
+SUITE = 'bluetooth,bluetooth_qualification'
+TIME = 'SHORT'
+TEST_CLASS = 'bluetooth'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'bluetooth,wificell'
+
+DOC = """
+Verify the correct behaviour of the device when searching for services.
+
+The tester sends a Service Search Request to the DUT, searching the UUID of
+SDP Server Service, which is known to exist.
+Tester also searchs for Service Class ID = 0x0001, which should never exist.
+In order to verify the correct behaviour of continuation state, some number of
+fake Bluetooth services are registered on the device. This is needed to create
+a request with a very long response, and to force the SDP server on the device
+to use this continuation state functionality.
+The tester also sends Service Search Requests with intentionally invalid PDU
+size parameter and with generally incorrect syntax to verify that the IUT reacts
+correctly in these cases.
+
+This test covers the following Bluetooth SIG test cases:
+TP/SERVER/SS/BV-01-C
+TP/SERVER/SS/BV-03-C
+TP/SERVER/SS/BV-04-C
+TP/SERVER/SS/BI-01-C
+TP/SERVER/SS/BI-02-C
+"""
+
+from autotest_lib.server.cros.bluetooth import bluetooth_tester
+from autotest_lib.server import utils
+
+
+args_dict = utils.args_to_dict(args)
+
+def run(machine):
+    device_host = hosts.create_host(machine)
+    tester_host = bluetooth_tester.create_host_from(device_host, args=args_dict)
+    job.run_test('bluetooth_SDP_ServiceSearchRequestBasic',
+                 device_host=device_host,
+                 tester_host=tester_host,
+                 interactive=False)
+
+parallel_simple(run, machines)

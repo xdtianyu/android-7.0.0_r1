@@ -1,0 +1,31 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Mussa Kiroga"
+NAME = "ui_SettingsPage"
+PURPOSE = "Collects settings page images as data to examine default icons"
+CRITERIA = """
+
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "ui"
+TEST_TYPE = "client"
+DEPENDENCIES = "board:link"
+
+DOC = """
+Collects screenshots of settings page. Goal is to observe how the settings page
+looks over multiple builds before writing image comparison based tests.
+
+This test is currently only run on link so the mask points are link
+specific.
+
+mask_points is two coordinates [x, y, x, y]. The top left and bottom right of
+ the mask.
+
+"""
+
+job.run_test('ui_SettingsPage', mask_points=[90, 1388, 203, 1477])

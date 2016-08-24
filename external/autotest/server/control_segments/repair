@@ -1,0 +1,49 @@
+import logging
+import os
+
+from autotest_lib.server import crashcollect
+from autotest_lib.server import utils
+from autotest_lib.server.cros import provision
+
+
+# A string of the form 'label1,label2:value,label3'.
+job_labels = locals().get('job_labels') or ','.join(args)
+labels_list = [l.strip() for l in job_labels.split(',') if l]
+
+
+def repair(machine):
+    try:
+        hostname = utils.get_hostname_from_machine(machine)
+        job.record('START', None, 'repair')
+        target = hosts.create_target_machine(machine, initialize=False,
+                                             auto_monitor=False,
+                                             try_lab_servo=True)
+        # We don't need to collect logs or crash info if we're an ADBHost or
+        # testbed since they're not applicable (yet).
+        if isinstance(target, hosts.CrosHost):
+            # Collect logs before the repair, as it might destroy all
+            # useful logs.
+            local_log_dir = os.path.join(job.resultdir, hostname,
+                                         'before_repair')
+            target.collect_logs('/var/log', local_log_dir, ignore_errors=True)
+            # Collect crash info.
+            crashcollect.get_crashinfo(target, None)
+
+        target.repair()
+        logging.debug('Repair with labels list %s', labels_list)
+        provision.run_special_task_actions(job, target, labels_list,
+                                           provision.Repair)
+    except Exception as e:
+        logging.exception(e)
+        job.record('END FAIL', None, 'repair')
+        # See the provision control segment for the explanation of why we're
+        # doing this.
+        raise Exception('')
+    else:
+        job.record('END GOOD', None, 'repair',
+                   '%s repaired successfully' % machine)
+
+
+job.parallel_simple(repair, machines)
+
+# vim: set syntax=python :

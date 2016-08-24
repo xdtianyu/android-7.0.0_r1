@@ -1,0 +1,33 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "rohitbm@chromium.org ChromeOS Audio"
+NAME = "audio_MediaBasicVerification.m4a"
+PURPOSE = "Verify m4a audio formats playback quality"
+CRITERIA = "This test will fail if the captured audio does not match original file."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "audio"
+TEST_TYPE = "server"
+SUITE = "chameleon_audio_nightly, chameleon_audio"
+ATTRIBUTES = "suite:chameleon_audio_nightly, suite:chameleon_audio"
+DEPENDENCIES = "chameleon, audio_board"
+
+DOC = """
+This test remotely tests audio quality over headphone.
+"""
+
+args_dict = utils.args_to_dict(args)
+chameleon_args = hosts.CrosHost.get_chameleon_arguments(args_dict)
+test_file = ('http://commondatastorage.googleapis.com/chromiumos-test-assets-'
+             'public/audio_test/chameleon/Headphone/test_256_16.m4a')
+
+def run(machine):
+    host = hosts.create_host(machine, chameleon_args=chameleon_args)
+    job.run_test("audio_MediaBasicVerification", host=host,
+                 audio_test_file=test_file)
+
+parallel_simple(run, machines)

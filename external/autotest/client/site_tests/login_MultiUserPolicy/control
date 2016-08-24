@@ -1,0 +1,23 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "joaodasilva, cmasone"
+NAME = "login_MultiUserPolicy"
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "login"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test signs in two users at the session_manager over dbus, and verifies that
+both can store and retrieve their respective user policies.
+
+Fails if users that sign-in after the first sign-in aren't able to store and
+retrieve their policies.
+"""
+
+job.run_test('login_MultiUserPolicy')

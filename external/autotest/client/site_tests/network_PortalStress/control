@@ -1,0 +1,44 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'The Chromium OS Authors'
+DOC = """
+This test puts the network interfaces through hundred(s) of
+connect/disconnect cycles and verifies that flimflam properly detects
+that the service is either in online or portal state.
+
+Use test_that with --args=service_name=cell to test the
+portal code on cellular devices.
+"""
+NAME = 'network_PortalStress'
+PURPOSE = 'Stress test the portal detection code.'
+CRITERIA = """
+    Fails if portal code detects portal state when
+    clients3.google.com is accessible or if portal code detects online
+    when clients3.google.com is not accessible.
+"""
+TIME = 'LONG'
+TEST_CATEGORY = 'Stress'
+TEST_CLASS = 'network'
+TEST_TYPE = 'client'
+
+import logging
+logging.info('args = %s' % args)
+
+if args:
+    args = args[0].split(':')
+
+if args:
+    dict_args = dict([x.split('=') for x in args])
+else:
+    dict_args = {}
+
+# Run online cycle for hundred(s) of iterations because this is fast
+job.run_test('network_Portal',
+             force_portal=False, tag='online', test_iterations=100, **dict_args)
+
+# Run the portal cycle for fewer iterations because each test must time
+# out and that makes it exceedingly slow (15 seconds/iteration)
+job.run_test('network_Portal',
+             force_portal=True, tag='portal', test_iterations=20, **dict_args)

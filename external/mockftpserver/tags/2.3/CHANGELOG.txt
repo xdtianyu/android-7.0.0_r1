@@ -1,0 +1,153 @@
+MockFtpServer Change Log
+-------------------------------------------------------------------------------
+
+Changes in version 2.3 (05 Jun 2011)
+------------------------------------------
+- FEATURE #2996739: Use a dynamically chosen free port number ("ephemeral")for the server control port
+  if you specify 0 for the serverControlPort property of FakeFtpServer or StubFtpServer. Then call
+  getServerControlPort() AFTER start() has been called to determine the actual port number being used.
+  This is useful if you are running on a system where the default port (21) is already in use or cannot
+  be bound from a user process (such as Unix).
+- FEATURE #3304849: Add a new readData(int numBytes) to Session
+- BUG #3103132: shutting down takes too long.
+ 
+
+Changes in version 2.2 (23 Mar 2010)
+------------------------------------------
+- FakeFtpServer: Support renaming of directories.
+    * BUG FIX: #2823519 "The RnfrCommandHandler is currently set to only support renaming of files": https://sourceforge.net/tracker/?func=detail&atid=1006533&aid=2823519&group_id=208647.
+    * Change fake RNTO and RNFR CommandHandlers to allow renaming directories.
+- BUG FIX: #2828362: "Unit tests using FakeFtpServer are slow" https://sourceforge.net/tracker/?func=detail&atid=1006533&aid=2828362&group_id=208647. DefaultSession.readCommand().
+    * Reduce default socket read interval time to 20ms.
+- BUG FIX: #2953392: "AbstractFtpServer waits endless if binding to port fails" https://sourceforge.net/tracker/?func=detail&atid=1006533&aid=2953392&group_id=208647.
+- FakeFtpServer (AbstractFakeFileSystem): Change rename() to fail if the TO file already exists.
+- Add sample directory listing(s) to online docs for StubFtpServer ListCommandHandler. Update online docs/javadoc describing that multiple directory entries in a file listing can be simulated.
+- PatternUtil: Support plus sign ('+') within wildcard strings. See convertStringWithWildcardsToRegex().
+- TESTS: Rename AbstractTest to AbstractTestCase and AbstractGroovyTest to AbstractGroovyTestCase.
+
+
+Changes in version 2.1 (16 Jun 2009)
+------------------------------------------
+- Added support for IPv6 (EPRT and EPSV commands) to FakeFtpServer and StubFtpServer. Thanks to Fernando Martinez for testing.
+- BUG FIX: #2696898: “WindowsFakeFilesystem DirectoryEntry case sensitivity” (https://sourceforge.net/tracker/?func=detail&atid=1006533&aid=2696898&group_id=208647).
+- BUG FIX: #2797980: “UnixFakeFileSystem IsValidName Regex incorrect” (https://sourceforge.net/tracker/?func=detail&atid=1006533&aid=2797980&group_id=208647).
+- Add getServerControlPort() to AbstractFtpServer.
+- Create HostAndPort class. Refactor both PortCommandHandler(s) and the PortParser classes to use HostAndPort.
+- TESTS: Convert PortParserTest to Groovy.
+
+
+Changes in version 2.0.2 (09 Mar 2009)
+------------------------------------------
+- BUG FIX: #2654577: 'month' in UnixDirectoryListingFormatter is Locale specific. http://sourceforge.net/tracker/index.php?func=detail&aid=2654577&group_id=208647&atid=1006533.
+- BUG FIX: #2653626: Cannot start() server after calling stop(). https://sourceforge.net/tracker2/index.php?func=detail&aid=2653626&group_id=208647&atid=1006533.
+
+
+Changes in version 2.0.1 (09 Feb 2009)
+------------------------------------------
+- BUG FIX: #2543193 “"cd .." and "pwd" don't work properly together” (https://sourceforge.net/tracker2/?func=detail&aid=2543193&group_id=208647&atid=1006533).
+- BUG FIX: #2540548 “Missing new line on directory listing” (https://sourceforge.net/tracker2/?func=detail&aid=2540548&group_id=208647&atid=1006533).
+- BUG FIX: #2540366 “FileEntry.setContents( byte [] contents ) change the content” (https://sourceforge.net/tracker2/?func=detail&aid=2540366&group_id=208647&atid=1006533).
+ - AbstractFtpServer: Use entrySet() to iterate through sessions (From Rijk van Haaften).
+
+
+Changes in version 2.0 (03 Jan 2009)
+------------------------------------------
+- BUG FIX: #2462794 filesystem.pathDoesNotExist key is missing from the ReplyText resource bundle. See https://sourceforge.net/tracker2/?func=detail&aid=2462794&group_id=208647&atid=1006533
+- BUG FIX: #2462973 FileEntry.cloneWithNewPath doesn't clone out field. See https://sourceforge.net/tracker/index.php?func=detail&aid=2462973&group_id=208647&atid=1006533
+- Add note to online doc about requiring Log4J configuration file if you want to see log output.
+
+
+Changes in version 2.0-rc3 (14 Dec 2008)
+------------------------------------------
+- BUG FIX: ClassCastException in AbstractFtpServer during server cleanup.
+- Reorganize sample code and include in online doc.
+
+
+Changes in version 2.0-rc2 (12 Dec 2008)
+------------------------------------------
+- BUG FIX: AbstractFtpServer: Fix bug when iterating through sessions.
+- [BREAKING CHANGE] Move ConnectCommandHandler into core package.
+- [BREAKING CHANGE] Unify Fake and Stub CommandHandlers. Change ServerConfiguration to remove getReplyTextBundle(); make AbstractFakeCommandHandler implement ReplyTextBundleAware instead. Change FakeFtpServer to check for ReplyTextBundleAware and set replyTextBundle. Pull common from stub/fake into AbstractCommandHandler.
+- [BREAKING CHANGE] Rename AbstractCommandHandler to AbstractTrackingCommandHandler.
+- Create AbstractStaticReplyCommandHandler, and make both AbstractStubCommandHandler and StaticReplyCommandHandler subclasses.
+- Create new UnrecognizedCommandHandler, and use to return 502 reply from FakeFtpServer and StubFtpServer when a requested command is not supported.
+- Add support for STAT command; Add systemStatus property to FakeFtpServer.
+- Add support for SMNT command to FakeFtpServer;
+- AbstractFtpServer: Add createSession() method. Make some attributes protected.
+- StubFtpServer: Introduce AbstractStorCommandHandler. Remove final from stub CommandHandler classes.
+- Cleanup code and javadoc
+- DOCS:	Add “Requirements” section to main (index) page. Also “Maven” section.
+- DOCS: Add "Configuring CommandHandler for New (Unsupported) Command" and “Creating Your Own Custom CommandHandler Class” sections to StubFtpServer Getting Started Guide.
+- DOCS: Add "Configuring Custom CommandHandlers" section to Getting Started Guide (FakeFtpServer).
+- TESTS: Move AbstractCommandHandlerTest into core package.
+- TESTS: Create sample test of FakeFtpServer with StaticReplyCommandHandler command handler(s).
+- Create source jar during package and include within assemblies.
+- Change "assembly.xml" to include "fakeftpserver*.xml" files.
+
+
+Changes in version 2.0-rc1 (23 Nov 2008)
+------------------------------------------
+NEW FakeFtpServer.
+  This is an alternative "mock" FTP server implementation. FakeFtpServer provides a higher-level abstraction
+  than StubFtpServer. You define a virtual file system, including directories and files, as well as a set of
+  valid user accounts and credentials. The FakeFtpServer then responds with appropriate replies and reply
+  codes based on that configuration. See online documentation for more information.
+StubFtpServer
+- StubFtpServer: Refactored to inherit from common AbstractFtpServer superclass.
+- Change default org.mockftpserver.stub.command.CdupCommandHandler CDUP reply code from 250 to 200.
+- Rename ReplyCodes.SEND_DATA_INITIAL_OK and SEND_DATA_FINAL_OK to TRANSFER_DATA_.. indicate bi-directionality.
+- Rename Command.getRequiredString(int) to getRequiredParameter(int).
+- Change StubFtpServer CommandHandlers to reply with 501 if required command parameters are missing. Changed AbstractCommandHandler and AbstractCommandHandlerTest.
+- Refactor (Stub)PortCommandHandler - pull out common logic into PortParser util class.
+
+
+Changes in version 1.2.4 (01 Sep 2008)
+------------------------------------------
+- BUG FIX: StubFtpServer: Only execute serverSocket.close() if serverSocket != null.
+- BUG FIX: Terminate replies with <CRLF> (\r\n).
+- DOCS: Fix Getting Started Guide code example: setOverrideFinalReplyCode() to setFinalReplyCode().
+- DOCS: Add note to Getting Started Guide about calling setServerControlPort() if on Unix system.
+
+
+Changes in version 1.2.3 (13 Aug 2008)
+------------------------------------------
+- BUG FIX: Tracker item #2047355. Parse host IP numbers as unsigned bytes.
+  See https://sourceforge.net/tracker/index.php?func=detail&aid=2047355&group_id=208647&atid=1006533
+
+
+Changes in version 1.2.2 (27 May 2008)
+------------------------------------------
+- BUG FIX: Move serverThread.start() into synchronized block to avoid server hang if
+  server thread runs faster than main thread.
+  See https://sourceforge.net/tracker/?func=detail&atid=1006533&aid=1925590&group_id=208647
+
+
+Changes in version 1.2.1 (10 Mar 2008)
+------------------------------------------
+- Change Maven POM (pom.xml) to enable sync-ing with central Maven repository (ibiblio).
+
+Changes in version 1.2 (29 Feb 2008)
+------------------------------------------
+- BUG FIX: StubFtpServer: Add wait/notify to ensure that the server starts up and opens the server 
+  control port before the start() method returns. This fixes a potential race condition, which
+  shows up on some Linux systems. (Thanks to Aasman Bajaj for identifying the problem and providing the fix)
+- Modify tests to make server port configurable (through "ftp.server.port" system property), allowing 
+  tests to run on non-Windows systems. 
+
+
+Changes in version 1.1 (20 Feb 2008)
+------------------------------------------
+- StubFtpServer: Allow configuring server control connection port other than the default (21).
+- AbstractTest: Add some test convenience methods.
+
+
+Changes in version 1.0 final (11 Dec 2007)
+------------------------------------------
+- Implement default CommandHandlers for NLST, REIN, SMNT, SITE, ABOR and ALLO commands.
+- Handle command names in any case.
+- CwdCommandHandler: Fix PATHNAME_KEY constant value; change to "pathname".
+
+
+Changes in version 1.0-RC1 (1 Nov 2007)
+---------------------------------------
+Initial release.

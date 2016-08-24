@@ -1,0 +1,28 @@
+{
+  "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQD69MHTFB90q+MCBlimEUDAwv9aAUS5Utkfs8YNSJein64VxlZKNFSCO501ork0MB92uH02Ic5CzwGkfAucdaj/KBM0vg7HJINZUzKYJjBXgaeOO00WCT29VilNdKyEkXLSHGuK9gIK/i72FNEldHJJ6JvWSvXUbZyBP4ZaxQsgtwIDAQAB",
+  "manifest_version": 2,
+  "name": "Power Test",
+  "version": "2.0",
+  "browser_action": {
+    "default_icon": "skin/chrome_bug.png",
+    "default_title": "test the web with the web"
+  },
+  "icons": { "48": "skin/chrome_bug.png",
+          "128": "skin/chrome_bug.png" },
+  "permissions": [
+    "http://*/", "https://*/", "tabs"
+  ],
+  "background": {
+    "persistent": true,
+    "page": "bg.html"
+  },
+  "description": "GoogleTest",
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["ct.js"],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ]
+}

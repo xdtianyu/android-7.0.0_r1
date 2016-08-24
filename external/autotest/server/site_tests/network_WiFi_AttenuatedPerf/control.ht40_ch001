@@ -1,0 +1,36 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_AttenuatedPerf.ht40_ch001'
+ATTRIBUTES = "suite:wifi_atten_perf"
+SUITE = 'wifi_atten_perf'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test uses netperf to measure the maximal receiving and transmitting
+throughput on a DUT with an open HT40 802.11n network across multiple
+attenuation levels.
+"""
+
+
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    ap_config = hostap_config.HostapConfig(
+            channel=1,
+            n_capabilities=[hostap_config.HostapConfig.N_CAPABILITY_HT40_PLUS],
+            mode=hostap_config.HostapConfig.MODE_11N_PURE)
+    job.run_test('network_WiFi_AttenuatedPerf',
+                 tag=NAME.split('.')[1],
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=ap_config)
+
+
+parallel_simple(run, machines)

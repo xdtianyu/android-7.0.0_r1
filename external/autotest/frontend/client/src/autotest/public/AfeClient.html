@@ -1,0 +1,323 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Autotest Web Frontend</title>
+    <script type='text/javascript' src='autotest.AfeClient.nocache.js'>
+    </script>
+  </head>
+
+  <body>
+    <!-- gwt history support -->
+    <iframe src="javascript:''" id="__gwt_historyFrame"
+            style="width:0;height:0;border:0"></iframe>
+
+
+    <div class="nav-header">
+      <span class="links-box">
+        Frontend |
+        <a href="server/admin">Admin interface</a> |
+        <a href="/new_tko">Results database</a> |
+        <a href="http://www.chromium.org/chromium-os/testing">Chromium OS Testing</a> |
+        <a href="/results/dashboard">Dashboard</a>
+        <span id="wmatrix" class="hidden">
+         | <a id="wmatrix-link">WMatrix</a>
+        </span>
+        <span id="moblab_setup" class="hidden">
+         | <a href="/moblab_setup">Moblab Setup</a>
+         | <a id="mobmonitor_link" href="">Mob* Monitor</a>
+        </span>
+        <div id="motd" class="motd"></div>
+      </span>
+      <img alt="Autotest" src="header.png" class="logo" />
+      <h1> Web Frontend</h1>
+    </div>
+
+    <div id="tabs" class="hidden">
+      <div id="job_list" title="Job List">
+        <!--  Table is necessary here to get the right layout with the filter widgets -->
+        <table class="job-control">
+          <tr>
+            <td>Status:</td><td id="job_status_controls"></td>
+          </tr>
+          <tr>
+            <td class="has-tooltip">
+              <span>Type:</span>
+              <span id="job_type_tooltip"></span>
+            </td>
+            <td id="job_type_controls"></td>
+          </tr>
+          <tr>
+            <td>Owner:</td><td id="user_list"></td>
+          </tr>
+          <tr>
+            <td>Name:</td><td id="jl_name_search"></td>
+          </tr>
+        </table>
+        <div id="job_table"></div>
+      </div>
+
+      <div id="recurring_list" title="Recurring Job">
+        <div id="recurring_user_list"></div>
+        <div id="recurring_table"></div>
+        <div id="recurring_create_panel" class="box" width="0"></div>
+      </div>
+
+      <div id="view_job"  title="View Job">
+        <span id="job_id_fetch" class="box-full">Fetch job by ID:
+          <span id="job_id_fetch_controls"></span>
+        </span><br><br>
+        <div id="view_title" class="title"></div><br>
+        <div id="view_data">
+          <span id="view_abort"></span><span id="view_clone"></span>
+          <span id="view_recurring"></span><br>
+          <table class="data-table data-table-outlined">
+            <tr class="data-row">
+              <td><span class="field-name">Label:</span></td>
+              <td><span id="view_label"></span></td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Owner:</span></td>
+              <td><span id="view_owner"></span></td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">Parent job id:</span></td>
+              <td><a id="view_parent"></a></td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Test retries:</span></td>
+              <td><span id="view_test_retry"></span></td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">Priority:</span></td>
+              <td><span id="view_priority"></span></td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Created:</span></td>
+              <td><span id="view_created"></span></td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">Timeout:</span></td>
+              <td><span id="view_timeout"></span> minutes</td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Image (Build Name):</span></td>
+              <td><span id="view_image_url"></span></td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">Max runtime:</span></td>
+              <td><span id="view_max_runtime"></span> minutes</td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Email List:</span></td>
+              <td><span id="view_email_list"></span></td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">Run verify:</span></td>
+              <td><span id="view_run_verify"></span></td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Reboot options:</span></td>
+              <td>
+                <span id="view_reboot_before"></span> before job,
+                <span id="view_reboot_after"></span> after job
+              </td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">Include failed repair results:</span></td>
+              <td><span id="view_parse_failed_repair"></span></td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Dependencies:</span></td>
+              <td><span id="view_dependencies"></span></td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">Synchronization count:</span></td>
+              <td><span id="view_synch_count"></span></td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">Require server-side packaging:</span></td>
+              <td><span id="view_require_ssp"></span></td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Status:</span></td>
+              <td><span id="view_status"></span></td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Job on shard:</span></td>
+              <td><a id="view_job_on_shard" target="_blank"></a></td>
+            </tr>
+            <tr class="data-row" id="view_drone_set_wrapper">
+              <td><span class="field-name">Drone set:</span></td>
+              <td><span id="view_drone_set"></span></td>
+            </tr>
+          </table><br>
+
+          <div id="view_control_file"></div><br>
+
+          <span class="field-name">
+            Full results
+            <a id="old_results_link" target="_blank">(open in new window)</a>
+            <a id="results_link" target="_blank">(new results interface)</a>
+            <a id="triage_failures_link" target="_blank">(triage failures)</a>
+            <a id="raw_results_link" target="_blank">(raw results logs)</a><br>
+          </span>
+          <span id="tko_results"></span><br><br>
+
+          <span class="field-name">Hosts for this job</span>
+          <div id="job_hosts_table"></div><br>
+
+          <span class="field-name">Child jobs</span>
+          <div id="child_jobs_table"></div><br>
+
+          <span class="field-name">Job history</span>
+          <span id="view_get_job_history" />
+          <div id="job_history_table"></div><br>
+        </div>
+      </div>
+
+
+      <div id="create_job"  title="Create Job">
+        <table class="data-table data-table-outlined-gray panel-boundedwidth">
+          <tr class="data-row">
+            <td class="field-name">Job name:</td>
+            <td class="has-tooltip" id="create_job_name"></td>
+            <td><!-- Dummy cell so background colour fills entire row !--></td>
+          </tr>
+          <tr class="data-row data-row-alternate">
+            <td class="field-name">Image URL/Build: (optional)</td>
+            <td class="has-tooltip" id="create_image_url"></td>
+          </tr>
+        </table>
+        <br>
+
+        <div id="create_firmware_build_options"></div>
+        <br>
+
+        <table class="data-table data-table-outlined-gray panel-boundedwidth">
+          <tr class="data-row data-row-alternate">
+            <td class="field-name">Test source build: (optional)</td>
+            <td class="has-tooltip" id="create_test_source_build"></td>
+            <td class="button" id="fetch_image_tests"></td>
+          </tr>
+        </table>
+        <br>
+
+        <span class="field-name">Select Tests to Run:</span>
+        <span id="create_tests"></span>
+        <br>
+
+        <div id="create_advanced_options"></div>
+        <br>
+
+        <span class="field-name">Control File:</span>
+        <div id="create_edit_control"></div>
+        <br>
+
+        <span id="create_host_selector"></span>
+        <br>
+
+        <span>
+          <span id="create_submit"></span>
+          <span id="create_template_job"></span>
+          <span id="create_reset"></span>
+        </span>
+
+        <table>
+          <tr id="create_drone_set_wrapper" class="data-row data-row-alternate">
+            <td class="field-name">Drone set:</td>
+            <td id="create_drone_set"></td>
+          </tr>
+        </table>
+        <br>
+
+      </div>
+
+      <div id="hosts" title="Host List">
+        <div id="hosts_list"></div>
+      </div>
+
+      <div id="view_host" title="View Host">
+        <span id="view_host_fetch" class="box-full">Fetch host by hostname:
+          <span id="view_host_fetch_controls" class="hidden"></span>
+          <span id="view_host_fetch_by_hostname_controls"></span>
+        </span><br><br>
+        <div id="view_host_title" class="title"></div>
+        <div>
+          <span id="view_host_reverify_button"></span>
+          <span id="view_host_reinstall_button"></span>
+          <span id="view_host_repair_button"></span>
+        </div>
+        <div id="view_host_data">
+          <table class="data-table data-table-outlined">
+            <tr class="data-row">
+              <td><span class="field-name">Platform:</span></td>
+              <td><span id="view_host_platform"></span></td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Other labels:</span></td>
+              <td><span id="view_host_labels"></span></td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">ACLs:</span></td>
+              <td><span id="view_host_acls"></span></td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Status:</span></td>
+              <td><span id="view_host_status"></span></td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">Locked:</span></td>
+              <td>
+                <span id="view_host_locked"></span>
+                <span id="view_host_lock_button"></span>
+              </td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Lock Reason:</span></td>
+              <td>
+                <span id="view_host_lock_reason_input"></span>
+              </td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">Protection level:</span></td>
+              <td><span id="view_host_protection"></span></td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Shard:</span></td>
+              <td><a id="view_host_shard" target="_blank"></a></td>
+            </tr>
+            <tr class="data-row">
+              <td><span class="field-name">Current Job:</span></td>
+              <td><a id="view_host_current_job" target="_blank"></a></td>
+            </tr>
+            <tr class="data-row data-row-alternate">
+              <td><span class="field-name">Current Special Task:</span></td>
+              <td><a id="view_host_current_special_task" target="_blank"></a></td>
+            </tr>
+          </table>
+          <br>
+          <span class="field-name">Jobs for this host:</span>
+          <div id="view_host_jobs_table"></div>
+        </div>
+      </div>
+
+      <div id="user_preferences" title="User Preferences">
+        <div id="user_preferences_table"></div>
+      </div>
+    </div>
+    <br>
+    <div id="error_log"></div>
+
+    <!--  for debugging only -->
+    <div id="error_display"></div>
+
+    <div id="footer">
+      <span class="links-box">
+        <a href="https://code.google.com/p/chromium/issues/list?q=label%3Aafe">Known Issues</a> |
+        <a href="https://code.google.com/p/chromium/issues/entry?template=Defect%20report%20from%20developer&labels=Type-Bug,Hardware-Lab,OS-Chrome,afe">Report AFE Bug</a> |
+        <a href="https://code.google.com/p/chromium/issues/entry?template=Defect%20report%20from%20developer&labels=Type-Bug,Hardware-Lab,OS-Chrome,Proj-Moblab">Report Moblab Bug</a> |
+        <a href="mailto:chromeos-lab-infrastructure@google.com">Email the developers</a>
+      </span>
+    </div>
+  </body>
+</html>

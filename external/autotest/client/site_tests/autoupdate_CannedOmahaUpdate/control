@@ -1,0 +1,24 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME='MEDIUM'
+AUTHOR = 'Chromium OS'
+BUG_TEMPLATE = {
+    'cc': ['chromeos-installer-alerts@google.com'],
+    'labels': ['Cr-Internals-Installer'],
+}
+
+DOC = """
+Client-side mechanism to update a DUT with a given image. It is used
+in server-side tests such as server/autoupdate_CatchBadSignatures.
+"""
+
+NAME = 'autoupdate_CannedOmahaUpdate'
+PURPOSE = 'Update client with a canned Omaha response.'
+CRITERIA = 'Do not run this test. See server/autoupdate_CatchBadSignatures.'
+TEST_CLASS = 'platform'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'client'
+
+job.run_test('autoupdate_CannedOmahaUpdate')

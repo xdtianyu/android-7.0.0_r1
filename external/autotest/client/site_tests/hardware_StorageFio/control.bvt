@@ -1,0 +1,30 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_StorageFio.bvt'
+AUTHOR = 'puthik'
+PURPOSE = 'Make sure that hardware StorageFio work'
+TIME = 'FAST'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:experimental"
+SUITE = 'experimental'
+JOB_RETRIES = 2
+
+DOC = """
+This test uses FIO test to make sure that test work correctly.
+Use following test over 64 MB area.
+- QD4 64K random write
+- QD4 64K random read
+- QD1 512K seq write
+- QD1 512K seq read
+"""
+
+job.run_test(url=NAME.split('.')[0], filesize=64 * 1024 * 1024,
+             tag=NAME.split('.')[1], requirements = [('bvt_job', [])],
+             constraints=[
+                 '_64k_read_read_clat_max <= 2000000',
+                 '_64k_write_write_clat_max <= 2000000',
+                 '_seq_read_read_bw >= 5 * 1024',
+                 '_seq_write_write_bw >= 5 * 1024'
+             ])

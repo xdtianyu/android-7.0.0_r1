@@ -1,0 +1,48 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "Benchmarks"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+
+DOC = """
+This test suite runs automated benchmark tests that should all pass. 1 machine
+should complete this suite in ~3:00, 3 machine in ~1:00.  3+ machines won't
+speed up the completion time as the longest test is 1:00.
+"""
+
+"""List of client tests with parameters.
+
+Note: In this case it is important to list the tests with the longest runtime
+first. This helps the suite complete as quickly as possible by enabling as much
+parallelization as possible.  If the long running tests were last in the list
+they would be last to run.  By having them first other machines are able to
+work on quicker tests while the longest running tests are running.
+"""
+TESTS = [
+  ('unixbench', {}),            # Runtime 1:00
+  ('hardware_StorageFio', {}),  # Runtime 1:00
+  ('compilebench', {}),         # Runtime 0:35
+  ('dbench', {}),               # Runtime 0:15
+  ('disktest', {}),             # Runtime 0:05
+  ('graphics_Sanity', {}),      # Runtime 0:02
+  ('graphics_GLBench', {}),                        # Runtime 0:05
+  ('graphics_SanAngeles', {'creds': '$backdoor'}), # Runtime 0:03
+  ('graphics_WebGLConformance', {}),               # Runtime 0:05
+  ('graphics_WebGLPerformance', {}),               # Runtime 0:03
+  ('graphics_GLMark2', {}),                        # Runtime 0:05
+  ('graphics_GpuReset', {}),                       # Runtime 0:03
+  #-----------------------------------------------------------------------------
+  # Tests which leave the system in a strange state below. Don't add anything to
+  # this section unless you know what you're doing.
+  #-----------------------------------------------------------------------------
+  # graphics_Piglit can crash many of the UI processes, so schedule it last and
+  # make sure the machine is in a fresh state before starting.
+  ('graphics_Piglit', {}, [], [], ['reboot_before']),  # Runtime 0:21
+]
+
+job.distribute_across_machines(TESTS, machines, continuous_parsing=True)

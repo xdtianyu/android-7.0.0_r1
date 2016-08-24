@@ -1,0 +1,30 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME='MEDIUM'
+AUTHOR = 'gwendal'
+PURPOSE = 'Stress test the ecryptfs home directory across power state changes.'
+CRITERIA = 'This test is a stress test. Expected success, no crashes.'
+DOC = """This test uses fio and a basic configuration to test and
+validate writes to the ecryptfs vault. It does not create a login
+session, but mounts a special user dir for the test.
+"""
+NAME = 'platform_CryptohomeFio.dirty_setting'
+TEST_CLASS = 'platform'
+TEST_CATEGORY = 'Stress'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:experimental"
+SUITE = 'experimental'
+
+sysctls_list = [
+    { 'vm/dirty_background_ratio': 1 },
+    { 'vm/dirty_background_ratio': 5 }, # the current default at the end.
+]
+
+job.run_test('platform_CryptohomeFio',
+        script='1m_write',
+        tag=NAME.split('.')[1],
+        disk_configs=['crypto', 'plain'],
+        runtime=120,
+        sysctls_list=sysctls_list)

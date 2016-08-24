@@ -1,0 +1,27 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "BootMessagesServer"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "server"
+
+DOC = """
+This test reboots the client and checks dmesg for warnings.
+"""
+
+def run_bootmessages(machine):
+    host = hosts.create_host(machine)
+    job.run_test("kernel_BootMessagesServer", host=host,
+        constraints=['coldboot_memfree_mb > 0',
+                     'coldboot_anonpages_mb > 0',
+                     'coldboot_buffers_mb >= 0',
+                     'coldboot_cached_mb > 0',
+                     'coldboot_active_mb > 0',
+                     'coldboot_inactive_mb > 0'
+                     ])
+
+parallel_simple(run_bootmessages, machines)

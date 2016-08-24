@@ -1,0 +1,50 @@
+; Copyright (c) 2009 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; A simulation of disk traffic from login to loading a chrome browser showing
+; gmail over wired ethernet.  This data is an average collected over 3 boots.
+; It does include a sync at the end of the trace.
+;
+
+[login]
+filename=${FILENAME}
+size=${FILESIZE}
+
+time_based
+runtime=5m
+
+ioengine=libaio
+iodepth=4
+
+readwrite=randrw
+; 202,135 KiB (5,494 ios) Read  5,936 KiB (435 ios) Written
+; rwmixwrite = 7.336% by ios
+rwmixwrite=7
+
+; Probabilities merged down to the 8 most common sizes.
+; Read
+;   4k: 36.525 %
+;   8k:  4.311 %
+;  12k:  3.166 %
+;  16k: 13.891 %
+;  32k: 12.595 %
+;  68k:  9.046 %
+;  80k:  9.647 %
+; 128k: 10.819 %
+; Write
+;   4k: 65.110 %
+;   8k: 13.022 %
+;  12k:  3.884 %
+;  16k:  2.313 %
+;  24k:  2.304 %
+;  28k:  2.219 %
+;  36k:  2.868 %
+;  44k:  6.262 %
+; 204k:  2.018 %
+
+; Fudge numbers to add up to 100%
+bssplit=4k/36:8k/4:12k/3:16k/14:32k/13:68k/9:80k/10:128k/11,4k/65:8k/13:12k/4:16k/2:24k/3:28k/2:36k/3:44k/6:204k/2
+
+norandommap
+

@@ -1,0 +1,20 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "The Chromium OS Authors"
+NAME = "hardware_TPMCheck"
+ATTRIBUTES = "suite:kernel_per-build_regression"
+SUITE = "kernel_per-build_regression"
+PURPOSE = "Basic check of the TPM state"
+CRITERIA = "Check that the TPM is in the expected state for use in Chrome OS."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Hardware"
+TEST_TYPE = "Client"
+
+DOC = """
+    A basic sanity check of the state of the TPM (Trusted Platform Module)
+"""
+
+job.run_test('hardware_TPMCheck')

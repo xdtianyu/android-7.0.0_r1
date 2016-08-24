@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>tar.gz</format>
+    <format>zip</format>
+  </formats>
+  <includeSiteDirectory>false</includeSiteDirectory>
+
+  <files>
+    <file>
+      <source>README.txt</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+  </files>
+  
+  <fileSets>
+    <fileSet>
+      <includes>
+        <include>CHANGELOG*</include>
+        <include>LICENSE*</include>
+        <include>NOTICE*</include>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>target</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>src</directory>
+      <useDefaultExcludes>true</useDefaultExcludes>
+    </fileSet>
+    <fileSet>
+      <directory>target/site</directory>
+      <outputDirectory>docs</outputDirectory>
+      <includes>
+        <include>apidocs/**</include>
+        <include>css/**</include>
+        <include>images/**</include>
+        <include>stubftpserver-*.html</include>
+        <include>index.html</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>

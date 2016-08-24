@@ -1,0 +1,19 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_StorageTrim'
+AUTHOR = 'puthik'
+PURPOSE = 'Measure write performance before and after trim. (for SSD)'
+TIME = 'LENGTHY'
+TEST_CLASS = 'hardware'
+TEST_TYPE = 'client'
+
+DOC = """
+This test done the following. Fill the drive 2 times using random write.
+Measure write performance. Trim all the disk. Measure write performance.
+"""
+
+job.run_test('hardware_StorageTrim')
+
+

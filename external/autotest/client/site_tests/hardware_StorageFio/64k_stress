@@ -1,0 +1,27 @@
+; Copyright (c) 2013 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; 64k random with verify and mix read write.
+;
+[64k_stress]
+readwrite=randrw
+bs=64K
+ioengine=libaio
+iodepth=32
+time_based
+runtime=30m
+norandommap
+bwavgtime=5000
+iopsavgtime=5000
+direct=1
+thread=1
+numjobs=8
+rwmixread=15
+do_verify=0
+verify=meta
+verify_interval=4k
+
+filename=${FILENAME}
+size=${FILESIZE}
+

@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+TIME = 'SHORT'
+NAME = 'network_WiFi_RoamSuspend'
+TEST_TYPE = 'Server'
+DOC = """
+The RoamSuspend test verifies that the connection manager is able
+to join a new AP (new frequency, new BSSID, but same SSID as previously
+connected AP) when the previous AP goes away while the DUT is suspended.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_RoamSuspend',
+                 host=host,
+                 raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

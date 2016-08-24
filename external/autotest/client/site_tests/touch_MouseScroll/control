@@ -1,0 +1,25 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kathrelkeld"
+NAME = "touch_MouseScroll"
+PURPOSE = "Test that USB mouse scrolling occurs and in the correct direction."
+CRITERIA = """
+This test will fail if, after playback of emulated mouse events, the scrolling
+does not match the expected direction or behavior.
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:touch"
+SUITE = "bvt-perbuild,touch"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "touch"
+TEST_TYPE = "client"
+
+DOC = """
+Uses a mouse description file to emulate a USB mouse.  Plays back a single
+scroll wheel tick (both up and down) and measures the page scroll delta.
+Plays back a fast scroll and a slow scroll and compares them.
+"""
+
+job.run_test('touch_MouseScroll')

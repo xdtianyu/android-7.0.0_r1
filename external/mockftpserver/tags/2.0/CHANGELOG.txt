@@ -1,0 +1,104 @@
+MockFtpServer Change Log
+-------------------------------------------------------------------------------
+
+Changes in version 2.0 (03 Jan 2009)
+------------------------------------------
+- BUG FIX: #2462794 filesystem.pathDoesNotExist key is missing from the ReplyText resource bundle. See https://sourceforge.net/tracker2/?func=detail&aid=2462794&group_id=208647&atid=1006533
+- BUG FIX: #2462973 FileEntry.cloneWithNewPath doesn't clone out field. See https://sourceforge.net/tracker/index.php?func=detail&aid=2462973&group_id=208647&atid=1006533
+- Add note to online doc about requiring Log4J configuration file if you want to see log output.
+
+
+Changes in version 2.0-rc3 (14 Dec 2008)
+------------------------------------------
+- BUG FIX: ClassCastException in AbstractFtpServer during server cleanup.
+- Reorganize sample code and include in online doc.
+
+
+Changes in version 2.0-rc2 (12 Dec 2008)
+------------------------------------------
+- BUG FIX: AbstractFtpServer: Fix bug when iterating through sessions.
+- [BREAKING CHANGE] Move ConnectCommandHandler into core package.
+- [BREAKING CHANGE] Unify Fake and Stub CommandHandlers. Change ServerConfiguration to remove getReplyTextBundle(); make AbstractFakeCommandHandler implement ReplyTextBundleAware instead. Change FakeFtpServer to check for ReplyTextBundleAware and set replyTextBundle. Pull common from stub/fake into AbstractCommandHandler.
+- [BREAKING CHANGE] Rename AbstractCommandHandler to AbstractTrackingCommandHandler.
+- Create AbstractStaticReplyCommandHandler, and make both AbstractStubCommandHandler and StaticReplyCommandHandler subclasses.
+- Create new UnrecognizedCommandHandler, and use to return 502 reply from FakeFtpServer and StubFtpServer when a requested command is not supported.
+- Add support for STAT command; Add systemStatus property to FakeFtpServer.
+- Add support for SMNT command to FakeFtpServer;
+- AbstractFtpServer: Add createSession() method. Make some attributes protected.
+- StubFtpServer: Introduce AbstractStorCommandHandler. Remove final from stub CommandHandler classes.
+- Cleanup code and javadoc
+- DOCS:	Add “Requirements” section to main (index) page. Also “Maven” section.
+- DOCS: Add "Configuring CommandHandler for New (Unsupported) Command" and “Creating Your Own Custom CommandHandler Class” sections to StubFtpServer Getting Started Guide.
+- DOCS: Add "Configuring Custom CommandHandlers" section to Getting Started Guide (FakeFtpServer).
+- TESTS: Move AbstractCommandHandlerTest into core package.
+- TESTS: Create sample test of FakeFtpServer with StaticReplyCommandHandler command handler(s).
+- Create source jar during package and include within assemblies.
+- Change "assembly.xml" to include "fakeftpserver*.xml" files.
+
+
+Changes in version 2.0-rc1 (23 Nov 2008)
+------------------------------------------
+NEW FakeFtpServer.
+  This is an alternative "mock" FTP server implementation. FakeFtpServer provides a higher-level abstraction
+  than StubFtpServer. You define a virtual file system, including directories and files, as well as a set of
+  valid user accounts and credentials. The FakeFtpServer then responds with appropriate replies and reply
+  codes based on that configuration. See online documentation for more information.
+StubFtpServer
+- StubFtpServer: Refactored to inherit from common AbstractFtpServer superclass.
+- Change default org.mockftpserver.stub.command.CdupCommandHandler CDUP reply code from 250 to 200.
+- Rename ReplyCodes.SEND_DATA_INITIAL_OK and SEND_DATA_FINAL_OK to TRANSFER_DATA_.. indicate bi-directionality.
+- Rename Command.getRequiredString(int) to getRequiredParameter(int).
+- Change StubFtpServer CommandHandlers to reply with 501 if required command parameters are missing. Changed AbstractCommandHandler and AbstractCommandHandlerTest.
+- Refactor (Stub)PortCommandHandler - pull out common logic into PortParser util class.
+
+
+Changes in version 1.2.4 (01 Sep 2008)
+------------------------------------------
+- BUG FIX: StubFtpServer: Only execute serverSocket.close() if serverSocket != null.
+- BUG FIX: Terminate replies with <CRLF> (\r\n).
+- DOCS: Fix Getting Started Guide code example: setOverrideFinalReplyCode() to setFinalReplyCode().
+- DOCS: Add note to Getting Started Guide about calling setServerControlPort() if on Unix system.
+
+
+Changes in version 1.2.3 (13 Aug 2008)
+------------------------------------------
+- BUG FIX: Tracker item #2047355. Parse host IP numbers as unsigned bytes.
+  See https://sourceforge.net/tracker/index.php?func=detail&aid=2047355&group_id=208647&atid=1006533
+
+
+Changes in version 1.2.2 (27 May 2008)
+------------------------------------------
+- BUG FIX: Move serverThread.start() into synchronized block to avoid server hang if
+  server thread runs faster than main thread.
+  See https://sourceforge.net/tracker/?func=detail&atid=1006533&aid=1925590&group_id=208647
+
+
+Changes in version 1.2.1 (10 Mar 2008)
+------------------------------------------
+- Change Maven POM (pom.xml) to enable sync-ing with central Maven repository (ibiblio).
+
+Changes in version 1.2 (29 Feb 2008)
+------------------------------------------
+- BUG FIX: StubFtpServer: Add wait/notify to ensure that the server starts up and opens the server 
+  control port before the start() method returns. This fixes a potential race condition, which
+  shows up on some Linux systems. (Thanks to Aasman Bajaj for identifying the problem and providing the fix)
+- Modify tests to make server port configurable (through "ftp.server.port" system property), allowing 
+  tests to run on non-Windows systems. 
+
+
+Changes in version 1.1 (20 Feb 2008)
+------------------------------------------
+- StubFtpServer: Allow configuring server control connection port other than the default (21).
+- AbstractTest: Add some test convenience methods.
+
+
+Changes in version 1.0 final (11 Dec 2007)
+------------------------------------------
+- Implement default CommandHandlers for NLST, REIN, SMNT, SITE, ABOR and ALLO commands.
+- Handle command names in any case.
+- CwdCommandHandler: Fix PATHNAME_KEY constant value; change to "pathname".
+
+
+Changes in version 1.0-RC1 (1 Nov 2007)
+---------------------------------------
+Initial release.

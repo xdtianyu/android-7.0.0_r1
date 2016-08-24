@@ -1,0 +1,21 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'kernel_fs_Inplace'
+AUTHOR = 'The Chromium OS Authors'
+ATTRIBUTES = "suite:kernel_per-build_regression"
+SUITE = "kernel_per-build_regression"
+TIME = 'SHORT'
+TEST_CLASS = 'kernel'
+TEST_CATEGORY = 'Performance'
+TEST_TYPE = 'client'
+
+DOC = '''
+Does inplace preads and pwrites.
+'''
+
+job.run_test('kernel_fs_Inplace', tag='inplace',
+             dir='/tmp', scratch='/tmp/.inplace')
+job.run_test('kernel_fs_Inplace', tag='ecrypt',
+             dir='/tmp', scratch='/home/chronos/user/.ecrypt')

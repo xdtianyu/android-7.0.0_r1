@@ -1,0 +1,31 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "deymo, chromeos-installer@google.com"
+NAME = "platform_Powerwash"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:au"
+SUITE = "au"
+BUG_TEMPLATE = {
+    'cc': ['chromeos-installer-alerts@google.com'],
+    'labels': ['Cr-Internals-Installer'],
+}
+
+DOC = """
+Tests that a device runs powerwash on the first reboot after the powerwash was
+signaled. The test verifies that a given file on the stateful partition is
+deleted during powerwash and that the powerwash counter is increased.
+
+Example usage:
+test_that platform_Powerwash <eureka/cros/beaglobonedevice ip> --board=<board>
+"""
+
+def run_test(machine):
+    host = hosts.create_host(machine)
+    job.run_test("platform_Powerwash", host=host, disable_sysinfo=True)
+
+parallel_simple(run_test, machines)

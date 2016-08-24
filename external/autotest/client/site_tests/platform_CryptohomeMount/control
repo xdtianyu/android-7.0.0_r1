@@ -1,0 +1,19 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "wad, dkrahn"
+NAME = "platform_CryptohomeMount"
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test checks that cryptohome can create and mount an encrypted vault.
+"""
+
+job.run_test('platform_CryptohomeMount')

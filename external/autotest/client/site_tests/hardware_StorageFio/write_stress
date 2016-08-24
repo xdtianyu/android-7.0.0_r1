@@ -1,0 +1,29 @@
+; Copyright (c) 2013 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; mixed size random with verify and mix read and mostly write.
+;
+[write_stress]
+filename=${FILENAME}
+size=${FILESIZE}
+
+readwrite=randrw
+rwmixread=15
+bssplit=4k/10:64k/50:1m/40
+
+ioengine=libaio
+iodepth=32
+direct=1
+
+bwavgtime=5000
+iopsavgtime=5000
+
+do_verify=1
+verify=meta
+verify_interval=64k
+verify_dump=1
+continue_on_error=verify
+
+; write partition/file twice
+loops=2

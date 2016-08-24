@@ -1,0 +1,48 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'rpius'
+NAME = 'network_WiFi_CliqueConnectDisconnect.debug'
+TIME = 'SHORT'
+TEST_TYPE = 'server'
+
+DOC = """
+This test makes 2 sets of DUTs repeatedly (2 runs) connect/disconnect
+simultaneously to 2 APs.
+"""
+
+from autotest_lib.server.cros.ap_configurators import ap_spec
+from autotest_lib.server.cros.clique_lib import clique_dut_locker
+from autotest_lib.server.cros.clique_lib import clique_runner
+
+def run_clique_debug(machine):
+    host = hosts.create_host(machine)
+
+    # Test with these two APs
+    debug_aps = ['chromeos3-row2-rack1-host3', 'chromeos3-row2-rack1-host7']
+    ap_specs = [ap_spec.APSpec(security=ap_spec.SECURITY_TYPE_WPA2PSK,
+                               band=ap_spec.BAND_2GHZ,
+                               hostnames=debug_aps),
+                ap_spec.APSpec(security=ap_spec.SECURITY_TYPE_WPA2PSK,
+                               band=ap_spec.BAND_5GHZ,
+                               hostnames=debug_aps)]
+
+    # Test with 2 DUT's in a set
+    dut_pool_spec = clique_dut_locker.DUTPoolSpec()
+    dut_set_spec1 = clique_dut_locker.DUTSetSpec()
+    dut_set_spec2 = clique_dut_locker.DUTSetSpec()
+    dut_spec1 = clique_dut_locker.DUTSpec(
+            host_name='chromeos1-row1-rack3-host4.cros')
+    dut_spec2 = clique_dut_locker.DUTSpec(
+            host_name='chromeos1-row1-rack10-host2.cros')
+    dut_set_spec1.append(dut_spec1)
+    dut_set_spec2.append(dut_spec2)
+    dut_pool_spec.extend([dut_set_spec1, dut_set_spec2])
+
+    runner = clique_runner.CliqueRunner(
+            'network_WiFi_CliqueConnectDisconnect', dut_pool_spec, ap_specs)
+    runner.run(job, tries=2)
+
+
+parallel_simple(run_clique_debug, machines)

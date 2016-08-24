@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'The Chromium OS Authors,chromeos-audio@google.com'
+NAME = 'audio_Aplay'
+ATTRIBUTES = "suite:kernel_per-build_regression"
+SUITE = "kernel_per-build_regression"
+PURPOSE = 'Test that simple Aplay succeeds. Used in other tests.'
+CRITERIA = """
+Check that the system plays...used in stress or after resume tests.
+"""
+TIME='SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = "audio,qav"
+TEST_TYPE = 'client'
+
+DOC = """
+Check that the system plays audio.
+"""
+
+job.run_test('audio_Aplay')

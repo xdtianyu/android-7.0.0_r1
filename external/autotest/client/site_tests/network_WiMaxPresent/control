@@ -1,0 +1,40 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "network_WiMaxPresent"
+ATTRIBUTES = "suite:wimax"
+SUITE = "wimax"
+PURPOSE = "Verify a WiMAX module is detected and supported by the system."
+CRITERIA = """
+This test fails if one of the following conditions occurs:
+  1. The DUT does not have a WiMAX module.
+  2. The WiMAX kernel driver is not installed or does not function properly on
+     the DUT.
+  3. The WiMAX firmware is not installed on the DUT.
+  4. The WiMAX manager is not installed or does not function properly on the
+     DUT.
+  5. shill is not built with WiMAX support or does not communicate with the
+     WiMAX manager properly.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "wimax"
+DOC = """
+  Verifies that a WiMAX module is detected and supported by the system.
+
+  This test verifies that a build can support WiMAX properly. It needs to run
+  on a DUT with a supported WiMAX module, but does not require a WiMAX network.
+  It simply checks if shill creates a WiMAX device object, which verifies that:
+  - The kernel detects a WiMAX module, loads the WiMAX driver, and downloads
+    the WiMAX firmware to the module.
+  - The WiMAX manager detects the WiMAX module exposed by the kernel.
+  - The WiMAX manager is running and can communicate with shill over DBus.
+  - shill is built with WiMAX support.
+
+"""
+
+job.run_test('network_WiMaxPresent')

@@ -1,0 +1,59 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'krisr, tienchang, bmahadev'
+NAME = 'network_WiFi_SuspendStress.Hidden'
+TIME = 'MEDIUM'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'servo, wificell'
+ATTRIBUTES = 'suite:wifi_matfunc, suite:wifi_matfunc_bcm4371'
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371'
+
+DOC = """
+This test uses servo to simulate lid close and open events and checks that the
+wifi adapter is brought back up and connects to a hidden network.
+"""
+
+import copy
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.server.cros.network import hostap_config
+from autotest_lib.server import utils
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    try:
+        host = hosts.create_host(machine, servo_args=servo_args)
+    except IOError:
+        # We probably failed to connect to the servo. That's probably
+        # because the cell doesn't have a servo.
+        #
+        # Ideally, we'd raise TestNAError here, and be done. But the
+        # test isn't actually running yet. So we instantiate a host
+        # without servo, and let the network_WiFi_SuspendStress
+        # instance report the TestNAError.
+        host = hosts.create_host(machine)
+
+    g = hostap_config.HostapConfig.MODE_11G
+    n = hostap_config.HostapConfig.MODE_11N_PURE
+    assoc_params = xmlrpc_datatypes.AssociationParameters()
+    assoc_params.is_hidden = True
+    configurations = [
+            (hostap_config.HostapConfig(channel=6, mode=g, hide_ssid=True),
+             copy.copy(assoc_params)),
+            (hostap_config.HostapConfig(channel=36, mode=n, hide_ssid=True),
+             copy.copy(assoc_params)),
+            (hostap_config.HostapConfig(channel=48, mode=n, hide_ssid=True),
+             copy.copy(assoc_params))]
+
+    job.run_test('network_WiFi_SuspendStress',
+                 host=host,
+                 tag=NAME.split('.')[1],
+                 suspends=5,
+                 raw_cmdline_args=args,
+                 additional_params=configurations)
+
+parallel_simple(run, machines)

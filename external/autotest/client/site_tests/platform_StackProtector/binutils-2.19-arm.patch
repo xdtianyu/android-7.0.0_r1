@@ -1,0 +1,48 @@
+diff -rU 3 binutils-2.19/gas/config/tc-arm.c binutils-2.19-arm/gas/config/tc-arm.c
+--- binutils-2.19/gas/config/tc-arm.c	2008-08-13 09:39:30.000000000 +1000
++++ binutils-2.19-arm/gas/config/tc-arm.c	2008-11-12 19:51:08.000000000 +1100
+@@ -3456,7 +3456,7 @@
+ 
+       if (reg == FAIL)
+ 	{
+-	  as_bad (_(reg_expected_msgs[REG_TYPE_MMXWR]));
++	  as_bad ("%s", _(reg_expected_msgs[REG_TYPE_MMXWR]));
+ 	  goto error;
+ 	}
+ 
+@@ -3470,7 +3470,7 @@
+ 	  hi_reg = arm_reg_parse (&input_line_pointer, REG_TYPE_MMXWR);
+ 	  if (hi_reg == FAIL)
+ 	    {
+-	      as_bad (_(reg_expected_msgs[REG_TYPE_MMXWR]));
++	      as_bad ("%s", _(reg_expected_msgs[REG_TYPE_MMXWR]));
+ 	      goto error;
+ 	    }
+ 	  else if (reg >= hi_reg)
+@@ -3588,7 +3588,7 @@
+ 
+       if (reg == FAIL)
+ 	{
+-	  as_bad (_(reg_expected_msgs[REG_TYPE_MMXWCG]));
++	  as_bad ("%s", _(reg_expected_msgs[REG_TYPE_MMXWCG]));
+ 	  goto error;
+ 	}
+ 
+@@ -3603,7 +3603,7 @@
+ 	  hi_reg = arm_reg_parse (&input_line_pointer, REG_TYPE_MMXWCG);
+ 	  if (hi_reg == FAIL)
+ 	    {
+-	      as_bad (_(reg_expected_msgs[REG_TYPE_MMXWCG]));
++	      as_bad ("%s", _(reg_expected_msgs[REG_TYPE_MMXWCG]));
+ 	      goto error;
+ 	    }
+ 	  else if (reg >= hi_reg)
+@@ -3709,7 +3709,7 @@
+   reg = arm_reg_parse (&input_line_pointer, REG_TYPE_RN);
+   if (reg == FAIL)
+     {
+-      as_bad (_(reg_expected_msgs[REG_TYPE_RN]));
++      as_bad ("%s", _(reg_expected_msgs[REG_TYPE_RN]));
+       ignore_rest_of_line ();
+       return;
+     }

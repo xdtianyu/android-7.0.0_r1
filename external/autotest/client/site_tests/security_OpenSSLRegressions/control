@@ -1,0 +1,24 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME='SHORT'
+AUTHOR = 'The Chromium OS Authors'
+DOC = """
+Ensures that local patches aren't dropped.
+"""
+NAME = 'security_OpenSSLRegressions'
+PURPOSE = 'Ensure that local patches aren\'t dropped.'
+CRITERIA = """
+Tests that local patches are not dropped when updating. See the source for which
+patches.
+"""
+TEST_CLASS = 'security'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = 'bvt-inline, smoke'
+
+job.run_test('security_OpenSSLRegressions', opts=args)
+

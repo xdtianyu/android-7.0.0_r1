@@ -1,0 +1,22 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_LibCBench"
+PURPOSE = "A LibCBenchmark."
+CRITERIA = """
+No specific criteria.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+Runs the libc-bench benchmark originally from http://www.etalabs.net/libc-bench.html
+"""
+
+if args:
+    args = args[0].split(':')
+job.run_test('platform_LibCBench', args=args)

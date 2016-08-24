@@ -1,0 +1,21 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "gwendal"
+NAME = "StorageQualTrim.test"
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+
+DOC = """
+Suite for testing the Storage Qual Trim test running from the fixed devices.
+This tests check trim support under stress.
+"""
+
+def run_server_tests(machine):
+    job.run_test('hardware_StorageQualTrimStress',
+                 client_ip=machine, duration=5100)
+
+parallel_simple(run_server_tests, machines)

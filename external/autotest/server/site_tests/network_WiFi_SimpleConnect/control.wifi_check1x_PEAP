@@ -1,0 +1,45 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_SimpleConnect.wifi_check1x_PEAP'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = ('suite:wifi_matfunc, suite:wifi_matfunc_bcm4371, '
+              'suite:wifi_release')
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371, wifi_release'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test attempts to verify that we can connect to a router while using
+PEAP authentication with tunneled MSCHAPv2, MD5, and GTC.
+"""
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_security_types
+from autotest_lib.server.cros.network import tunneled_1x_tests
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    # Negative tests check the parts of the state machine that handle failures.
+    # We do these tests for only one inner authentication protocol because
+    # we presume that supplicant reuses this code between inner authentication
+    # types.
+    configurations = tunneled_1x_tests.get_negative_8021x_test_cases(
+            xmlrpc_security_types.Tunneled1xConfig.LAYER1_TYPE_PEAP,
+            xmlrpc_security_types.Tunneled1xConfig.LAYER2_TYPE_MSCHAPV2)
+    for inner in (xmlrpc_security_types.Tunneled1xConfig.LAYER2_TYPE_MSCHAPV2,
+                  xmlrpc_security_types.Tunneled1xConfig.LAYER2_TYPE_MD5,
+                  xmlrpc_security_types.Tunneled1xConfig.LAYER2_TYPE_GTC):
+        configurations += tunneled_1x_tests.get_positive_8021x_test_cases(
+                xmlrpc_security_types.Tunneled1xConfig.LAYER1_TYPE_PEAP,
+                inner)
+    job.run_test('network_WiFi_SimpleConnect',
+                 tag=NAME.split('.')[1],
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=configurations)
+
+
+parallel_simple(run, machines)

@@ -1,0 +1,22 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_WebRtcPerf.power"
+PURPOSE = "Measure the power consumption of WebRTC"
+TIME = "SHORT"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+
+DOC = """
+This test measures the power consumption of WebRTC locally and does not have
+SUITE. The test needs RPM to run on a bot and the control files are in server
+side.
+"""
+
+job.run_test("video_WebRtcPerf",
+             decode_time_test=False,
+             cpu_test=False,
+             power_test=True)

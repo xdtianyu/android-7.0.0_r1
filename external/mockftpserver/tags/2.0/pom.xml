@@ -1,0 +1,236 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.mockftpserver</groupId>
+    <artifactId>MockFtpServer</artifactId>
+    <name>MockFtpServer</name>
+    <description>
+        The MockFtpServer project provides mock/dummy FTP server implementations for testing FTP client
+        code. Two FTP Server implementations are provided, each at a different level of abstraction.
+        FakeFtpServer provides a higher-level abstraction. You define a virtual file system, including
+        directories and files, as well as a set of valid user accounts and credentials. The FakeFtpServer
+        then responds with appropriate replies and reply codes based on that configuration.
+        StubFtpServer, on the other hand, is a lower-level "stub" implementation. You configure the
+        individual FTP server commands to return custom data or reply codes, allowing simulation of
+        either success or failure scenarios. You can also verify expected command invocations.
+    </description>
+    <packaging>jar</packaging>
+    <version>2.0</version>
+    <url>http://mockftpserver.sourceforge.net/</url>
+
+    <scm>
+        <connection>scm:svn:https://mockftpserver.svn.sourceforge.net/svnroot/mockftpserver/MockFtpServer</connection>
+        <developerConnection>scm:svn:https://mockftpserver.svn.sourceforge.net/svnroot/mockftpserver/MockFtpServer
+        </developerConnection>
+        <url>https://mockftpserver.svn.sourceforge.net/svnroot/mockftpserver</url>
+    </scm>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.13</version>
+        </dependency>
+
+        <!-- TESTING ONLY -->
+
+        <dependency>
+            <groupId>org.codehaus.groovy.maven.runtime</groupId>
+            <artifactId>gmaven-runtime-default</artifactId>
+            <version>1.0-rc-3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>1.4.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>1.2_Java1.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit-addons</groupId>
+            <artifactId>junit-addons</artifactId>
+            <version>1.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring</artifactId>
+            <version>2.0.7</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Transitive dependency.
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>3.8.1</version>
+          <scope>test</scope>
+        </dependency>
+        -->
+
+    </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>sourceforge</id>
+            <url>scp://shell.sourceforge.net/home/groups/m/mo/mockftpserver/htdocs/m2repo</url>
+        </repository>
+    </distributionManagement>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh-external</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
+        </extensions>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.codehaus.groovy.maven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.0-rc-3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!-- <goal>generateStubs</goal> -->
+                            <!-- <goal>compile</goal> -->
+                            <goal>generateTestStubs</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <verbose>true</verbose>
+                    <source>1.4</source>
+                    <target>1.4</target>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+
+            <!-- clean coverage data before collecting -->
+            <plugin>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <MockFtpServer-Version>${pom.version}</MockFtpServer-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <preparationGoals>clean site assembly:assembly</preparationGoals>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependencies</report>
+                            <!-- <report>project-team</report> -->
+                            <!-- <report>mailing-list</report> -->
+                            <!-- <report>cim</report> -->
+                            <!-- <report>issue-tracking</report> -->
+                            <report>license</report>
+                            <!-- <report>scm</report> -->
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </reporting>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+</project>

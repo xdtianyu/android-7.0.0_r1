@@ -1,0 +1,256 @@
+[
+    {
+        "benchmark": "v8",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.BenchmarkPerfTest.testV8BenchmarkSuite\"",
+        "perf_keys": [
+            "score_V8Benchmark",
+            "score_V8Benchmark-Crypto",
+            "score_V8Benchmark-DeltaBlue",
+            "score_V8Benchmark-EarleyBoyer",
+            "score_V8Benchmark-RayTrace",
+            "score_V8Benchmark-RegExp",
+            "score_V8Benchmark-Richards",
+            "score_V8Benchmark-Splay"
+        ]
+    },
+    {
+        "benchmark": "sunspider",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.BenchmarkPerfTest.testSunSpider\"",
+        "perf_keys": [
+            "ms_SunSpider-total",
+            "ms_SunSpider-3d",
+            "ms_SunSpider-access",
+            "ms_SunSpider-bitops",
+            "ms_SunSpider-date",
+            "ms_SunSpider-math",
+            "ms_SunSpider-regexp"
+        ]
+    },
+    {
+        "benchmark": "dromaeo",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.BenchmarkPerfTest.testDromaeoSuite\"",
+        "perf_keys": [
+            "runsPerSec_Dromaeo-total",
+            "runsPerSec_Dromaeo-Arrays",
+            "runsPerSec_Dromaeo-Base64EncodingandDecoding",
+            "runsPerSec_Dromaeo-CodeEvaluation",
+            "runsPerSec_Dromaeo-RegularExpressions",
+            "runsPerSec_Dromaeo-Rotating3DCube",
+            "runsPerSec_Dromaeo-Strings"
+        ]
+    },
+    {
+        "benchmark": "scimark_gui",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.FlashTest.testScimarkGui\"",
+        "perf_keys": [
+            "MFLOPS_ScimarkGui-fast_fourier_transform-MFLOPS",
+            "MFLOPS_ScimarkGui-jacobi_sor-MFLOPS",
+            "MFLOPS_ScimarkGui-lu_factorization-MFLOPS",
+            "MFLOPS_ScimarkGui-monte_carlo_integration-MFLOPS",
+            "MFLOPS_ScimarkGui-sparse_matrix_multiply-MFLOPS"
+        ]
+    },
+    {
+        "benchmark": "cycler_intl1",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.PageCyclerTest.testIntl1File\"",
+        "perf_keys": [
+            "milliseconds_Intl1File_PageCycler"
+        ]
+    },
+    {
+        "benchmark": "cycler_intl2",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.PageCyclerTest.testIntl2File\"",
+        "perf_keys": [
+            "milliseconds_Intl2File_PageCycler"
+        ]
+    },
+    {
+        "benchmark": "cycler_moz",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.PageCyclerTest.testMozFile\"",
+        "perf_keys": [
+            "milliseconds_MozFile_PageCycler"
+        ]
+    },
+    {
+        "benchmark": "cycler_moz2",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.PageCyclerTest.testMoz2File\"",
+        "perf_keys": [
+            "milliseconds_Moz2File_PageCycler"
+        ]
+    },
+    {
+        "benchmark": "cycler_alexa",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.PageCyclerTest.testAlexaFile\"",
+        "perf_keys": [
+            "milliseconds_Alexa_usFile_PageCycler"
+        ]
+    },
+    {
+        "benchmark": "cycler_morejs",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.PageCyclerTest.testMoreJSFile\"",
+        "perf_keys": [
+            "milliseconds_MoreJSFile_PageCycler"
+        ]
+    },
+    {
+        "benchmark": "cycler_dhtml",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.PageCyclerTest.testDHTMLFile\"",
+        "perf_keys": [
+            "milliseconds_DhtmlFile_PageCycler"
+        ]
+    },
+    {
+        "benchmark": "cycler_bloat",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.PageCyclerTest.testBloatFile\"",
+        "perf_keys": [
+            "milliseconds_BloatFile_PageCycler"
+        ]
+    },
+    {
+        "benchmark": "new_tab",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.TabPerfTest.testNewTab\"",
+        "perf_keys": [
+            "milliseconds_NewTabPage"
+        ]
+    },
+    {
+        "benchmark": "20_tabs",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.TabPerfTest.test20Tabs\"",
+        "perf_keys": [
+            "milliseconds_20TabsNewTabPage"
+        ]
+    },
+    {
+        "benchmark": "tab_memory",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.MemoryTest.testOpenCloseTabsLiveSites perf.MemoryTest.testOpenCloseTabsControl\"",
+        "perf_keys": [
+            "KB_MemCtrl-EndGemObj-0Tabs0",
+            "KB_MemCtrl-EndGemObj-0Tabs1",
+            "KB_MemCtrl-EndGemObj-0Tabs2",
+            "KB_MemCtrl-EndMemFree-0Tabs0",
+            "KB_MemCtrl-EndMemFree-0Tabs1",
+            "KB_MemCtrl-EndMemFree-0Tabs2",
+            "KB_MemCtrl-MinMemFree-10Tabs1",
+            "KB_MemCtrl-MinMemFree-10Tabs2",
+            "KB_MemLive-EndMemFree-0Tabs0",
+            "KB_MemLive-EndMemFree-0Tabs1",
+            "KB_MemLive-EndMemFree-0Tabs2"
+        ]
+    },
+    {
+        "benchmark": "webgl_spacerocks",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.WebGLTest.testWebGLSpaceRocks\"",
+        "perf_keys": [
+            "fps_WebGLSpaceRocks"
+        ]
+    },
+    {
+        "benchmark": "webgl_aquarium",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.WebGLTest.testWebGLAquarium\"",
+        "perf_keys": [
+            "fps_WebGLAquarium"
+        ]
+    },
+    {
+        "benchmark": "flash_text",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.FlashTest.testFlashText\"",
+        "perf_keys": [
+            "FPS_FlashText"
+        ]
+    },
+    {
+        "benchmark": "scroll",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.ScrollTest.testBlankPageScroll perf.ScrollTest.testTextScroll perf.ScrollTest.testGooglePlusScroll\"",
+        "perf_keys": [
+            "FPS_ScrollBlankPage",
+            "FPS_ScrollGooglePlusPage",
+            "FPS_ScrollTextPage"
+        ]
+    },
+    {
+        "benchmark": "upload",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.FileUploadDownloadTest.testUpload50MBFile\"",
+        "perf_keys": [
+            "milliseconds_Upload50MBFile"
+        ]
+    },
+    {
+        "benchmark": "download",
+        "autotest_name": "desktopui_PyAutoPerfTests",
+        "autotest_args":
+            "--args=\"--iterations=1 perf.FileUploadDownloadTest.testDownload100MBFile\"",
+        "perf_keys": [
+            "milliseconds_Download100MBFile"
+        ]
+    },
+    {
+        "benchmark": "file_system_size",
+        "autotest_name": "build_RootFilesystemSize",
+        "perf_keys": [
+            "bytes_rootfs_prod",
+            "bytes_rootfs_test"
+        ]
+    },
+    {
+        "benchmark": "glbench",
+        "autotest_name": "graphics_GLBench/control$",
+        "perf_keys": [
+            "1280x768_fps_compositing",
+            "mpixels_sec_clear_color",
+            "mpixels_sec_fill_solid",
+            "mpixels_sec_yuv_shader_2",
+            "mtri_sec_triangle_setup"
+        ]
+    },
+    {
+        "benchmark": "boot_perf",
+        "autotest_name": "platform_BootPerfServer/control$",
+        "perf_keys": [
+            "rdbytes_kernel_to_login",
+            "seconds_power_on_to_kernel",
+            "seconds_power_on_to_lf_end",
+            "seconds_power_on_to_lk_end",
+            "seconds_power_on_to_lk_start"
+        ]
+    }
+]

@@ -1,0 +1,73 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'graphics_GLBench.hwqual'
+AUTHOR = 'chromeos-gfx'
+PURPOSE = 'Benchmark the graphics library performance.'
+CRITERIA = """
+On hwqual this test is run as a benchmark with a large confidence intervals.
+The test also generates output images and verifies their bit accuracy using
+MD5 checksums which are stored in
+../../deps/glbench/glbench_reference_images.txt (for known good images)
+and in ../../deps/glbench/glbench_knownbad_images.txt (for ignored failures -
+this should be very rare though).
+
+If unknown images are encountered the test fails. To resolve this use an
+image diffing tool like Beyond Compare and visually check differences between
+the unknown image and older versions in ../../deps/glbench-images/.
+Note: it should nearly never be required to remove old versions of good/bad
+images from these directories.
+"""
+ATTRIBUTES = "suite:hwqual"
+SUITE = 'hwqual'
+TIME='FAST'
+TEST_CATEGORY = 'Performance'
+TEST_CLASS = "gl"
+TEST_TYPE = 'client'
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+On hwqual we do not upload performance numbers to the chrome dashboard. We run
+glbench with the "-hasty" option to stay well below the BVT limit of 20
+minutes. This option will run each test at 512x512 resolution only, run it
+only for a fraction of the loops we normally do, and not cool down the
+machine between tests. For this PerfControl is disabled.
+
+This benchmark executes glbench, a graphics benchmark designed to time how long
+various graphic intensive activities take, which includes measuring:
+  - fill rate
+    - blended
+    - opaque
+  -Z reject rate
+  -triangle rate
+    - no cull
+    - half cull (half triangles backface culled)
+    - full cull (mix of back face and degenerates)
+  - blend rate
+  - texture fetch
+    - nearest
+    - bilinear
+    - trilinear
+  - compute
+    - vertex shader
+    - pixel shader
+    - *fragement shader to test ddx and ddy
+  - attribute fetch
+  - color depth stencil test
+  - *state change
+  - texture upload
+  - read back
+
+* Not yet implemented.
+"""
+
+job.run_test('graphics_GLBench',
+             hasty=True,
+             constraints=[
+                 'mpixels_sec_fill_solid >= 190',
+                 'mpixels_sec_fill_tex_nearest >= 190',
+                 'mpixels_sec_fill_tex_bilinear >= 190',
+             ])

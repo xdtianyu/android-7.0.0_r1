@@ -1,0 +1,22 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_KernelVersionByBoard"
+PURPOSE = "Ensure the running kernel is the same as an expected value."
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This test contains a list of expected kernel versions per board (e.g. '3.4')
+and will fail if the actual kernel version does not match the expected.
+Serves as a warning flag or as a check when migrating kernel versions.
+Matches only expected ToT values, so older branches may fail.
+"""
+
+job.run_test('platform_KernelVersionByBoard')

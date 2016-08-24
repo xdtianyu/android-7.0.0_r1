@@ -1,0 +1,27 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_MobileSuspendResume"
+PURPOSE = "Test cellular modem state after suspend/resume"
+CRITERIA = """
+    Check the cellular state of the device after suspend and resume.  Verify
+    that cellular can be enabled under all situations after resuming of device.
+    Verify that if autoconnect is turned on that the modem autoconnects
+    after resuming.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+    Verify that cellular can be enabled under all suspend/resume situations.
+"""
+
+# Run all scenarios twice, first with autoconnect off, then with it on
+job.run_test('network_MobileSuspendResume',
+             autoconnect=False, tag='autoconnect_off')
+job.run_test('network_MobileSuspendResume',
+             autoconnect=True, tag='autoconnect_on')

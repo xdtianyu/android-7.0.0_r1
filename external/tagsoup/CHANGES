@@ -1,0 +1,309 @@
+Changes from 1.2 to 1.2.1
+=========================
+Match DOCTYPE case-blind
+Extend PushbackReader's size for oddball cases like & followed by CR
+Leo Sutic's 2x-4x speedup by precompiling HTMLScanner table
+
+Changes from 1.1.3 to 1.2
+=========================
+Changed license to Apache 2.0
+Bogon default model is now ANY, not EMPTY
+Support new DOCTYPE output switches --doctype-system and --doctype-public
+Support new XML declaration output switches --standalone and --version
+New --norootbogons switch makes bogons children of the root
+Don't resolve entity references in attribute values unless semicolon-terminated
+Support character entities above U+FFFF
+Add character entities from the 2007-12-14 draft of xml-entity-names
+Call SAX events startPrefixMapping and endPrefixMapping to report prefixes
+Clean up newline processing, shrinking html.stml considerably
+Allow link elements in the body as well as the head, to avoid excess bodies
+Allow tables inside paragraphs
+Allow cells and forms in thead and tfoot elements without intervening tr element
+The span element is no longer restartable
+Support non-standard elements bgsound, blink, canvas, comment, listing,
+	marquee, nobr, ruby, rbc, rtc, rb, rt, rp, wbr, xmp
+In HTML mode, boolean attributes like checked are output in minimized form
+Correctly handle runs of less-than characters
+Suppress all but the first DOCTYPE declaration
+Modify PI targets containing colons to have underscores instead
+The case of element tags is now canonicalized to the schema
+PI targets are no longer forced to lower case
+
+Changes from 1.1.2 to 1.1.3
+===========================
+Allow Parser.set* methods to accept null
+Allow setting the LexicalHandler feature to be null
+	in both cases means "use default behavior"
+
+Changes from 1.1.1 to 1.1.2
+===========================
+Setting CDATAElementsFeature didn't really set CDATAElements instance variable
+
+Changes from 1.1 to 1.1.1
+=========================
+Removed lexical handler calls to startCDATA/endCDATA from CDATA element handling
+Added lexical handler calls to startCDATA/endCDATA from CDATA section handling
+Added CDATAElementsFeature, the programmatic equivalent of the --nocdata switch
+
+Changes from 1.0.5 to 1.1
+=========================
+Add Tatu Saloranta's JAXP support package
+
+Changes from 1.0.4 to 1.0.5
+===========================
+Major repairs to comment scanning
+Skip leading BOM
+Comment out debugging code in PYXWriter
+Allow &#X as well as &#x
+Add net.sf.saxon to list of supported XSLT engines
+
+Changes from 1.0.4 to 1.0.3
+===========================
+Certain options were mutually exclusive that should not have been
+Blocked XML declaration from specifying an encoding of ""
+--method=html was not doing the right thing
+
+Changes from 1.0.3 to 1.0.2
+===========================
+Fixed build file to use Java target version 1.4
+Fixed --version switch to print the right thing
+
+Changes from 1.0.1 to 1.0.2
+===========================
+Version attribute default value removed from html element
+Leading and trailing hyphens now trimmed properly from comments
+Added --output-encoding switch to control encoding
+If output encoding is Unicode, don't generate character references
+Whitespace compressed and junk stripped from public identifiers
+
+Changes from 1.0 to 1.0.1
+=========================
+Added ignorableWhitespaceFeature and --ignorable to report ignorable whitespace
+	Patch due to David Pashley
+Insert spaces to break up -- in comments
+Change bogus chars in publicids to spaces
+--lexical switch now outputs DOCTYPE if there is one
+Remove unnecessary blank line after XML declaration
+
+Changes from 1.0rc9 to 1.0
+==========================
+Added feature to control restartability
+	Patch due to Nikita Zhuk
+Added corresponding --norestart switch in CommandLine
+Made translate-colons feature actually work
+
+Changes from 1.0rc8 to 1.0rc9
+=============================
+If there is a publicid but no systemid, set systemid to ""
+
+Changes from 1.0rc7 to 1.0rc8
+=============================
+Fixed paper-bag bug (source didn't match binary in release)
+
+Changes from 1.0rc6 to 1.0rc7
+=============================
+LexicalHandler now gets DOCTYPE information (publicid and systemid)
+	Patch due to Mike Bremford
+HTMLScanner now reports more useful debug output when not commented out
+	Patch due to Mike Bremford
+Change "<memberOfAny>" to exclude "<root>" pseudo-element
+	This prevents "script" from being output as a root
+The shared HTMLParser object has been eliminated
+
+Changes from 1.0rc5 to 1.0rc6
+=============================
+If namespaceFeature is false, uri and localname are passed as empty strings
+The namespacePrefixesFeature is now always false
+Command line switch --nons no longer affects namespacePrefixesFeature
+Command line switch --html now implies --nons
+XMLWriter is now told directly to use the schema's URI as default namespace
+XMLWriter now takes the element name from the qname if localname is empty
+
+Changes from 1.0rc4 to 1.0rc5
+=============================
+The --nodefault switch now removes only default attributes, not all of them
+Added --nocolons switch and translate-colons feature to convert ":"
+	in names to "_" (thus suppressing namespaces other than the basic one)
+The root element can be unknown without problem
+Empty <script/> and <style/> tags now work
+Added all standard SAX2 features to feature hashtable
+Reimplemented namespacePrefixes feature (broken since 1.0rc3)
+
+Changes from 1.0rc3 to 1.0rc4
+=============================
+Remove trailing ? from processing instructions (in case the input is XHTML)
+Added Javadocs for all SAX standard and TagSoup-specific features and properties
+Fixed termination conditions for entity/character references
+Fixed EOF-pushback bug that was generating bogus &#x65535; references
+Added Parser feature and --nodefaults switch to ignore default attribute values
+Added support for SAX Locator
+Updated AFL license to version 3.0
+Scanner buffer size increases as needed, allowing large attribute values
+Look for various XSLT implementations as available (still fails in raw 5.0)
+Clean up handling of XML empty tags and SGML minimized end-tags
+Support proper options and help message internally
+Use Hashtable in CommandLine class instead of HashMap
+Do proper buffering of InputStream and Reader
+Clean up content model of noframes element
+Removed htmlMode in XMLWriter
+Added support for XSLT output options METHOD=html and OMIT_XML_DECLARATION=yes
+Command line option --html sets both of these
+Wrote simple validator for TSSL schemas (tssl/tssl-validator.xslt)
+Removed various validity problems in html.tssl
+When processing a start-tag, don't restart elements that aren't in the new
+	element's content model
+Remove bogus double param in tssl.xslt
+
+Changes from 1.0rc2 to 1.0rc3
+=============================
+Convert CR and CRLF to LF in comments and PIs
+Force empty elements to close immediately
+Match close tags of CDATA elements more precisely (but case-blind)
+Process switches on the command line
+Man page available
+
+Changes from 1.0rc1 to 1.0rc2
+=============================
+Isolated & and &# now don't crash parser
+TagSoup no longer depends on /dev/stdin existing
+Refactored Parser class, removing main method to new CommandLine class
+Changes to content models of form, button, table, and tr elements in html.tssl
+'</scr' + 'ipt>' in a script element no longer terminates it
+Introduced "uncloseability" of form and table elements
+"pyxin" property specifies that input is in PYX format
+Correctly cope with unexpected characters around colons, also with multiple colons
+Correctly output comments with "--" in them (by adding a space)
+
+Changes from 0.10.2 to 1.0rc1
+=============================
+Script can now appear anywhere
+Switch -nocdata correctly implemented
+Eliminated useless M_n constants in Schema
+Introduced <memberofAny> and <isRoot> as alternatives to
+	<memberOf> in TSSL
+Allow prefixes in element names
+Attributes are now normalized
+Expanded public API for Element and ElementType
+Javadoc improved
+
+Changes from 0.10.1 to 0.10.2
+=============================
+Removed misfeature whereby > terminated a tag even inside quotes
+Added licensing language to XSLT scripts, RELAX NG schemas
+Removed long-standing mishandling of entity references in attributes
+Cleaned up logic for converting junky strings to proper XML Names
+Correctly handle empty tag that has no whitespace or attributes
+Restore correct 0.9.3 handling of an apparent end-tag in a CDATA element
+Added script element to content model of head element
+
+Changes from 0.9.7 to 0.10.1 (there is no 0.10.0):
+==================================================
+Convert to XSLT configuration exclusively;
+	Perl code and tab-separated tables are gone
+Remove xmlns:* attributes
+Append "_" to attribute names ending in ":"
+Don't prepend "_" to an attribute name starting in "_"
+Handle namespace prefixes in attributes:
+	"xml" prefix is handled correctly
+	other prefixes are mapped to "urn:x-prefix:foo"
+Ignore XML declarations
+-Dnocdata=true turns off F_CDATA on script and style elements
+Fixed off-by-one errors in character references that made them uninterpreted
+Start-tags ending in a minimized attribute are no longer being dropped
+XML empty tags are now supported (though slashes are still allowed in
+	unquoted attribute values)
+
+Changes from 0.9.6 to 0.9.7:
+============================
+Upgraded AFL to version 2.1
+Passed through newlines in character content (very old bug)
+
+Changes from 0.9.5 to 0.9.6:
+============================
+Script element can appear directly in body
+">" terminates a start-tag even inside a quoted attribute,
+	to protect against unbalanced quotes
+"_" is prepended to attributes that don't begin with a letter
+Remove "xmlns" attributes from the input
+All standard features can now be set
+	(although there is no effect from doing so)
+New "bogons-empty" feature can be set to false to give bogons
+	 content model of ANY rather than EMPTY;
+	-Dany switch sets this feature to false
+TSSL now has an explicit group element to declare an element group
+STML is a new XML format for modeling state-table changes
+License updated to AFL 2.1
+
+Changes from 0.9.4 to 0.9.5:
+============================
+S in the statetable now means \r and \n and \t as well as space
+	(as was always intended; brain fart!)
+Ins and del elements are now allowed everywhere
+TSSL now correctly supports attributes that are legal on all elements
+
+Changes from 0.9.3 to 0.9.4:
+============================
+Fixed paper-bag bug that revealed attribute type BOOLEAN to applications.
+Obsolete ABSTRACT removed in favor of README.
+Improved implementation of CDATA restart after bogus end-tag.
+Allowed hyphen, underscore, and period in names as well as colon.
+First cut at TagSoup Schema Language -- doesn't do anything yet.
+Support CDATA sections on input.
+Don't generate built-in entities within CDATA elements.
+
+Changes from 0.9.2 to 0.9.3:
+============================
+Convenience main program "tagsoup" in bin directory.
+Begin to integrate tests.
+Introduced BOOLEAN type (currently just converted to NMTOKEN).
+Features that actually work are now named constants in Parser.
+Double root elements are really gone now.
+ID attributes weren't being removed from restarted elements.
+Fixed a bug that made unknown elements disappear in some cases.
+Parser is now safely reusable.
+PYXWriter and XMLWriter now implement LexicalHandler.
+Parser reports comments, startCDATA, and endCDATA events to a LexicalHandler.
+ScanHandler methods now throw only SAXException, not also IOException.
+-Dlexical=true switch sets the ContentHandler as a LexicalHandler as well
+	(XMLWriter prints comments, ignores CDATA sections; PYXWriter ignores all).
+-Dreuse=true switch reuses a single Parser object (no great speed gain).
+We now disallow an a element as the child of another a element.
+An empty input is now treated as zero-length character content.
+HTMLWriter is gone in favor of an extended XMLWriter with get/setHTMLMode methods.
+CDATA elements only terminaate with matching end-tags (thanks to Sebastien Bardoux).
+
+Changes from 0.9.1 to 0.9.2:
+============================
+No longer inserts bogus ; after unknown entity reference without ;.
+Consecutive entity references now work correctly.
+Setting namespaces and namespace-prefixes methods now works.
+-Dnons=true option turns off namespace and prefix.
+New feature http://www.ccil.org/~cowan/tagsoup/features/ignore-bogons"
+	suppresses unknown start-tags (any end-tag will be automatically ignored).
+-Dnobogons=true option turns ignore-bogons on.
+Suppress unknown and/or empty initial start-tag always
+	(prevents double root element).
+Schema now allows style as an inline element, like script.
+Schema now allows tr as a child of table to avoid problems with embedded tables.
+Clear Parser instance variables to make Parsers properly reusable.
+
+Changes from 0.9 to 0.9.1:
+==========================
+Incorporated patch for -jar support by Joseph Walton.
+Incorporated patch for Megginson XMLWriter support by Joseph Walton.
+Changed existing XMLWriter to HTMLWriter.
+Rewrote Parsermain for better features, removed Tester class.
+-Dnewline=true removed, now implied by -DHTML=true.
+-Dfiles=true now used to generate separate outputs (old Tester behavior)
+	with extension xhtml (removing any old extension).
+Fixed nasty bug in HTMLScanner that was failing to fix unusual entities.
+Don't attempt to smash whitespace to spaces any more.
+
+Changes from 0.8 to 0.9:
+========================
+Ant-ified by Martin Rademacher.
+Don't suppress colons in element names.
+Entity problems fixed (I hope).
+Can now set namespace and namespace-prefixes features (without effect).
+Properly templatize HTMLModels.java.
+Attributes are no longer in the HTML namespace.

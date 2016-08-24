@@ -1,0 +1,20 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "security_SeccompSyscallFilters"
+TIME = "SHORT"
+AUTHOR = "chromeos-security@google.com"
+DOC = """
+Runs tests to verify that seccomp calls make correct changes with
+different settings
+"""
+PURPOSE = "To verify that seccomp is correctly changing permissions"
+CRITERIA = "Permissions are changed to expected values after seccomp calls"
+ATTRIBUTES = "suite:security"
+SUITE = "security"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+
+job.run_test('security_SeccompSyscallFilters')

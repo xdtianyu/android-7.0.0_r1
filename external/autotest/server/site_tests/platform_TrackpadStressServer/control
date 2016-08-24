@@ -1,0 +1,22 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "TrackpadStressServer"
+TIME = "SHORT"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This script performs a kernel panic while running the syndetect command on the
+CMT trackpad driver.  It is designed to test if we can disable the trackpad.
+"""
+
+def run_trackpad_stress(machine):
+    host = hosts.create_host(machine)
+    job.run_test("platform_TrackpadStressServer", host=host, iterations=1,
+                 disable_sysinfo=True)
+
+parallel_simple(run_trackpad_stress, machines)

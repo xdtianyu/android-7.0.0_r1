@@ -1,0 +1,6 @@
+def run(machine):
+    host = hosts.create_host(machine)
+    print host.is_up()
+    host.reboot()
+
+job.parallel_simple(run, machines)

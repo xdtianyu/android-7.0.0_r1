@@ -1,0 +1,45 @@
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team, chromeos-video@google.com"
+NAME = "video_VEAPerf.h264"
+PURPOSE = "Monitor the performance of the Chromium VEA."
+CRITERIA = """
+The test fails if the video_encode_accelerator_unittest fails or crashes.
+"""
+ATTRIBUTES = "suite:crosbolt_perf_nightly"
+SUITE = "crosbolt_perf_nightly"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES='hw_video_acc_enc_h264'
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This test utilizes the video_encode_accelerator_unittest to measure the
+performance of the Chromium Video Encode Accelerator.
+"""
+
+# A list of test cases. Each entry consists of the following parts:
+#   (path, on_cloud, width, height, requested_bit_rate, profile, requested_frame_rate)
+#
+# Bitrate settings come from http://www.webmproject.org/hardware/rtc-coding-requirements/
+# Please do not change bitrates.
+#
+# Requested_frame_rate settings control input frame rates when measuring CPU
+# usage.
+# (VEA_unittest reuses per-stream requested-frame-rate as input frame rate when
+# --run_at_fps option is enabled.)
+test_cases = [
+    ('tulip2/tulip2-1280x720-1b95123232922fe0067869c74e19cd09.yuv', True, 1280, 720, 1200000, 1, 30),
+    ('tulip2/tulip2-640x360-094bd827de18ca196a83cc6442b7b02f.yuv', True, 640, 360, 500000, 1, 30),
+    ('tulip2/tulip2-320x180-55be7124b3aec1b72bfb57f433297193.yuv', True, 320, 180, 100000, 1, 30),
+    ('tulip2/tulip2-240x136-ed58afc99d08e5d21013c1a5056e43bf.yuv', True, 240, 136, 100000, 1, 30)
+]
+
+job.run_test('video_VEAPerf', test_cases=test_cases)

@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# usage: suite_times [ status.log ]
+#
+# Parses a "status.log" file for a suite job, and for each test that
+# ran, report these timeline data from the log:
+#   1. hostname of the DUT that the test ran on
+#   2. time_t value of the time that the test started running
+#   3. total run time of the test on the DUT
+#   4. number of seconds between this test's start time and the
+#       start time of the last prior test on the same DUT
+#   5. name of the test
+#
+# This script is meant as a simple building block.  Below are
+# some sample uses.
+#
+# Print average inter-test time:
+#   suite_times | awk '{if ($4) {sum += $4; cnt++}} END {print sum / cnt}'
+#
+# Print average test run time:
+#   suite_times | awk '{sum += $3} END {print sum / NR}'
+#
+# Print time line for a host:
+#   suite_times | grep $HOST
+
+
+PROCESS_SUITE='
+  $1 == "START" && $2 != "----" {
+    host = gensub(".*/(.*)/.*", "\\1", 1, $2)
+    test = $3
+    start_ts = gensub(".*=", "", 1, $4)
+    old_ts = hosttimes[host]
+    if (!old_ts) { old_ts = start_ts }
+    start_rel = start_ts - old_ts
+    hosttimes[host] = start_ts
+  }
+
+  $1 == "GOOD" {
+    end_ts = gensub(".*=", "", 1, $4)
+    runtime = end_ts - start_ts
+    printf "%s %d %4d %4d %s\n", host, start_ts, runtime, start_rel, test
+  }
+'
+
+if [ $# -eq 0 ]; then
+  STATUS_LOG=status.log
+elif [ $# -eq 1 ]; then
+  STATUS_LOG="$1"
+else
+  echo "usage: $(basename $0) [ status.log ]" >&2
+  exit 1
+fi
+
+awk "$PROCESS_SUITE" "$STATUS_LOG"

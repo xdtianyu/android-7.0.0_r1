@@ -1,0 +1,25 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "cmasone, achuith"
+NAME = "login_LoginSuccess"
+ATTRIBUTES = "suite:bvt-inline, suite:push_to_prod, suite:smoke"
+SUITE = "bvt-inline, smoke, push_to_prod"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "login"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test verifies that signing in via the UI (using Telemetry) works correctly.
+This includes listening to DBus to verify that the session_manager announces the
+start of a user session upon sign in, as well as the end of one on sign out.
+
+This test can also be used as a 'helper test' to sign into a system
+using Telemetry. To this end, it sets client_success to True on
+success so callers can verify it ran correctly.
+"""
+
+job.run_test('login_LoginSuccess')

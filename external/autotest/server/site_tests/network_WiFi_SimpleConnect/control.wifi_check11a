@@ -1,0 +1,39 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_SimpleConnect.wifi_check11a'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = ('suite:wifi_correctness_cros_core, suite:wifi_matfunc, '
+              'suite:wifi_matfunc_bcm4371, suite:wifi_release')
+SUITE = ('wifi_matfunc, wifi_matfunc_bcm4371, wifi_correctness_cros_core, '
+         'wifi_release')
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test verifies that DUT can connect to an open 802.11a network
+on channels 48, 64.
+"""
+
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    a_mode = hostap_config.HostapConfig.MODE_11A
+    configurations = [(hostap_config.HostapConfig(channel=48, mode=a_mode),
+                       xmlrpc_datatypes.AssociationParameters()),
+                      (hostap_config.HostapConfig(channel=64, mode=a_mode),
+                       xmlrpc_datatypes.AssociationParameters())]
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_SimpleConnect',
+                 tag=NAME.split('.')[1],
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=configurations)
+
+
+parallel_simple(run, machines)

@@ -1,0 +1,35 @@
+		--------------------------------------------------
+				StubFtpServer Features and Limitations
+		--------------------------------------------------
+
+StubFtpServer Features
+
+  * Standalone dummy FTP server. Run either within the same JVM as test code or in a different JVM.
+
+  * Implements common FTP server commands. See {{{stubftpserver-commandhandlers.html}FTP Commands and CommandHandlers}}.
+  
+  * Supports active and passive mode data transfers.
+
+  * Works out of the box with reasonable defaults: success reply codes and empty data.
+  
+  * Easy to configure command handlers for individual FTP server commands to return success/failure reply codes and custom data.
+  
+  * Can verify expected FTP server command invocations.
+  
+  * Easy to implement command handlers for other commands or replace existing command handlers.
+
+  * Use a dynamically chosen free port number for the server control port instead of using the default (21)
+    or hard-coding some other value (set the serverControlPort property of the server to 0).
+
+  * Fully supports configuration within the <<Spring Framework>>.
+  
+  * Can be used to test FTP client code written in any language
+  
+
+StubFtpServer Limitations
+
+  * Using <<StubFtpServer>> for testing and simulation of non-default scenarios requires
+    some understanding of the FTP Specification and a configuration of the low-level
+    FTP Server commands.
+  
+  

@@ -1,0 +1,23 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'harpreet'
+TIME = 'SHORT'
+NAME = 'cellular_ChromeEndToEnd'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'servo'
+
+DOC = """
+cellular_ChromeEndToEnd test reboots the DUT and runs the client side
+network_ChromeCellularEndToEnd test which tests the UI.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('cellular_ChromeEndToEnd',
+                 host=host,
+                 raw_cmdline_args=args,
+                 test='all')
+
+parallel_simple(run, machines)

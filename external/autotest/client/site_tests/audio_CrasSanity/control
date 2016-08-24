@@ -1,0 +1,29 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'rohitbm@chromium.org, ChromeOS Audio'
+NAME = 'audio_CrasSanity'
+PURPOSE = 'Performs basic audio check for active streams and crashes'
+CRITERIA = '''
+Test will fail if 1. cras is not running 2. cras crashes 3. active stream count
+does not match.
+'''
+ATTRIBUTES = "suite:bvt-cq, suite:partners"
+SUITE = 'bvt-cq, partners'
+TIME = 'MEDIUM'
+TEST_CATEGORY = 'General'
+TEST_CLASS = 'audio'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+BUG_TEMPLATE = {
+    'owner': 'rohitbm@chromium.org',
+    'labels': ['Cr-OS-Kernel-Audio', 'OS-Chrome']
+}
+
+DOC = '''
+Test checks for basic audio sanity by checking cras status, crashes and active
+streams.
+'''
+
+job.run_test('audio_CrasSanity')

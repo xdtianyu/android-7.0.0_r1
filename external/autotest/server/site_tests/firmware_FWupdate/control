@@ -1,0 +1,34 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_FWupdate"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+
+DOC = """
+RO+RW firmware update using chromeos-firmwareupdate --mode=recovery
+or chromeos-firmwareupdate --mode=factory
+
+Example for servo V3:
+test_that --board=BOARD --args 'servo_host=SERVO3_IP new_ec=/path/to/ec.bin new_bios=/path/to/bios.bin' DUT_IP f:.*firmware_FWupdate/control
+
+Remove servo_host param for V2 servo.
+Default mode is recovery, add mode=factory to use factory mode.
+
+"""
+
+from autotest_lib.client.common_lib import utils
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_firmwareupdate(machine):
+    # Setup the client machine.
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test('firmware_FWupdate', host=host, cmdline_args=args)
+
+parallel_simple(run_firmwareupdate, machines)

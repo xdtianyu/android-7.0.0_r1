@@ -1,0 +1,51 @@
+This directory contains tools for ICU updates.
+
+Data update tools
+=================
+
+update-tzdata.py
+  - downloads tzdata updates and regenerates the ICU and
+    libcore/bionic timezone data files.
+    There are sometimes code and metadata changes associated
+    with tzdata updates that should be applied at the same time.
+    e.g. see http://bugs.icu-project.org/trac/search?q=2015d
+
+    ICU and CTS tests for bionic / libcore should be run before
+    and after.
+
+updateicudata.py
+  - regerates the ICU data files.
+    ICU and CTS tests for libcore should be run before and
+    after.
+
+Source code updates
+===================
+
+The source code in android_icu4j is generated from the code in icu4j. Do not change the code
+in android_icu4j directly: instead you change the icu4j source or the rules used to generate
+android_icu4j.
+
+All changes made to icu4j should be accompanied by changes in android_icu4j and vice versa.
+
+Applying patches to ICU4J
+-------------------------
+
+After making changes to icu4j (e.g. after applying upstream patches):
+
+source build/envsetup.sh
+lunch
+
+cd external/icu/tools/srcgen
+./generate_android_icu4j.sh
+
+The code in android_icu4j will be regenerated and should contain the changes you made
+in icu4j. Confirm the diffs are what you intended. Commit both at the same time.
+
+Modifying the code gen
+----------------------
+
+android_icu4j is generated using a Java tool found in tools/srcgen.
+
+The "rules" that transform the source are configured in
+src/main/java/com/android/icu4j/srcgen/Icu4jTransform.java.
+

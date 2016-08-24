@@ -1,0 +1,44 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GModemControl.pseudomodem"
+PURPOSE = "Verify commands sent to a modem manager are reflected in shill."
+CRITERIA = """
+This test will fail if modem manager state differs from shill state.
+"""
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Tests that commands sent to ModemManager1 are reflected in shill.
+
+  Issues many connect, disconnect, enable, and disable commands to
+  ensure that the modem state is always properly reflected in shill --
+  even if the commands are sent to the modem manager instead of shill.
+  Uses a pseudo modem to simulate modem manager so that this test can
+  be run on a virtual machine.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+# 3GPP
+test_env = test_environment.CellularPseudoMMTestEnvironment(
+        pseudomm_args=({'family': '3GPP'},))
+job.run_test('network_3GModemControl', test_env=test_env, autoconnect=False,
+             tag='no-autoconnect-pseudomodem.3GPP')
+job.run_test('network_3GModemControl', test_env=test_env, autoconnect=True,
+             tag='autoconnect-pseudomodem.3GPP')
+
+# CDMA
+test_env = test_environment.CellularPseudoMMTestEnvironment(
+        pseudomm_args=({'family': 'CDMA'},))
+job.run_test('network_3GModemControl', test_env=test_env, autoconnect=False,
+             tag='no-autoconnect-pseudomodem.CDMA')
+job.run_test('network_3GModemControl', test_env=test_env, autoconnect=True,
+             tag='autoconnect-pseudomodem.CDMA')

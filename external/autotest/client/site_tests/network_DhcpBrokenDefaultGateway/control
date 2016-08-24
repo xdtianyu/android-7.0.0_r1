@@ -1,0 +1,21 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, quiche'
+NAME = 'network_DhcpBrokenDefaultGateway'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that we can negotiate a lease on an IPv4 address via DHCP from
+  a server that provides a broken default gateway option.  Specifically,
+  the gateway provided is outside the broadcast domain specified by the
+  client IP address and prefix.  This test verifies that the client
+  mitigates this issue by creating a link-scoped route to the gateway,
+  or via some other method which allows the gateway route to be
+  successfully added.
+
+"""
+
+job.run_test('network_DhcpBrokenDefaultGateway')

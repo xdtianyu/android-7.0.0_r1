@@ -1,0 +1,35 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_ECLidShutdown"
+PURPOSE = "Verify functionality of DUT with GBB_FLAG_DISABLE_LID_SHUTDOWN"
+CRITERIA = "This test will ensure disable lid shutdown GBB flag working"
+ATTRIBUTES = "suite:faft, suite:faft_ec, suite:faft_ec3po"
+SUITE = "faft,faft_ec,faft_ec3po"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+JOB_RETRIES = 4
+
+DOC = """
+This test check the functionality of disable lid shutdown GBB flag.
+    - Verifies that closing lid in recovery will shutdown DUT
+      when GBB_FLAG_DISABLE_LID_SHUTDOWN flag disabled.
+    - Verifies that closing lid in recovery will not shutdown DUT
+      when GBB_FLAG_DISABLE_LID_SHUTDOWN flag enabled.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_eclidshutdown(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("firmware_ECLidShutdown", host=host, cmdline_args=args,
+                 disable_sysinfo=True)
+
+parallel_simple(run_eclidshutdown, machines)

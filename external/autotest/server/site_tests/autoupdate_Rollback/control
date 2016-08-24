@@ -1,0 +1,62 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.common_lib import utils
+
+AUTHOR = "Chromium OS"
+NAME = "autoupdate_Rollback"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:au"
+SUITE = "au"
+BUG_TEMPLATE = {
+    'cc': ['chromeos-installer-alerts@google.com'],
+    'labels': ['Cr-Internals-Installer'],
+}
+
+DOC = """
+This is a rollback test for Chrome OS releases. It first updates a machine and
+then invokes rollback to boot from its previously booted partition. It tests
+rollback using the update_engine_client rather than manipulating the UI.
+
+Setup for this test is exactly like platform_RebootAfterUpdate. Namely:
+
+Arg:
+  job_repo_url: repo url to use to find image to update from -- assumes caller
+                has staged image. By default if host[repo_job_url] is set, it'll
+                use that. This overrides that value. This value must follow
+                the package_url_pattern in the global config.
+
+To run locally:
+  1) Setup your devserver in your shadow config that your DUT can reach.
+  2) Start your devserver and stage the image you want for example:
+     http://localhost:8080/stage?archive_url=\
+     gs://chromeos-image-archive/parrot-release/R32-4793.0.0&\
+     artifacts=full_payload (and leave it on).
+  3) Run with test_that etc passing
+     args="job_repo_url=http://<your_hostname>:8080/static/\
+     parrot-release/R32-4793.0.0/autotest/packages"
+
+For example:
+
+test_that -b parrot --args="job_repo_url=http://<your_machine>:8080/static/\
+parrot-release/R32-4793.0.0/autotest/packages" --fast \
+<dut_ip> autoupdate_Rollback
+"""
+
+args_dict = utils.args_to_dict(args)
+job_repo_url = args_dict.get('job_repo_url')
+
+
+def run_test(machine):
+    """Execute a test configuration on a given machine."""
+    host = hosts.create_host(machine)
+    job.run_test("autoupdate_Rollback", host=host,
+                 job_repo_url=job_repo_url)
+
+
+# Invoke parallel tests.
+parallel_simple(run_test, machines)

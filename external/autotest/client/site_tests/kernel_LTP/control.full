@@ -1,0 +1,25 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "kernel_ltp"
+AUTHOR = "The Chromium OS Authors,chromeos-kernel-test@google.com"
+TIME = "LONG"
+# TODO (jimishs) - crbug.com/354547.
+# Uncomment the suite line below once the test can be properly ran in the lab.
+#SUITE = "kernel_weekly_regression"
+TEST_CATEGORY = "FUNCTIONAL"
+TEST_CLASS = "KERNEL"
+TEST_TYPE = "CLIENT"
+DOC = """
+The Linux Test Project is a suite of tests. The suite is executed through a
+shell program. Most of the tests are written in C, with some in bash and Perl,
+and are designed to test various aspects of the Linux operating system. Most
+test cases will use a glibc interface if it exists, or kernel header files if
+available.
+
+For more information visit:
+  http://ltp.sourceforge.net/
+"""
+
+job.run_test("kernel_LTP")

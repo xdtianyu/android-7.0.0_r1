@@ -1,0 +1,40 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME='LONG'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Stress test the ecryptfs home directory across power state changes.'
+CRITERIA = 'This test is a stress test. Expected success, no crashes.'
+DOC = """This test uses fio and a basic configuration to test and
+validate writes to the ecryptfs vault. It does not create a login
+session, but mounts a special user dir for the test.
+"""
+NAME = 'platform_CryptohomeFio.stress'
+TEST_CLASS = 'platform'
+TEST_CATEGORY = 'Stress'
+TEST_TYPE = 'client'
+
+RUNTIME=60  # seconds.
+
+tests = {
+    'surfing': 'iops',
+    'boot': 'bw',
+    'login': 'bw',
+    'seq_read': 'bw',
+    'seq_write': 'bw',
+    '16k_read': 'iops',
+    '16k_write': 'iops',
+    '8k_read': 'iops',
+    '8k_write': 'iops',
+    '4k_read': 'iops',
+    '4k_write': 'iops',
+}
+
+for test in tests.keys():
+    job.run_test('platform_CryptohomeFio',
+        script=test,
+        tag=test,
+        runtime=RUNTIME,
+        disk_configs=['crypto', 'plain'])
+

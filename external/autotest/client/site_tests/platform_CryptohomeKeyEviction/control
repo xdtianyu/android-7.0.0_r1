@@ -1,0 +1,24 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "usanghi"
+NAME = "platform_CryptohomeKeyEviction"
+PURPOSE = "Verify that crypthome correctly reloads evicted TPM keys."
+CRITERIA = "Fails if any operations fail."
+ATTRIBUTES = "suite:manual"
+SUITE = "manual"
+TIME = "SHORT"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+    Ensure that the cryptohome properly manages key eviction from
+    the tpm. This test verifies this behaviour by creating 30 keys using
+    chaps, and then remounting a user's cryptohome. Mount requires use of the
+    user's cryptohome key, and thus the mount only succeeds if the
+    cryptohome key was properly evicted and reloaded into the TPM.
+"""
+
+job.run_test('platform_CryptohomeKeyEviction')

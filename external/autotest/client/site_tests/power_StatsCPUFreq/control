@@ -1,0 +1,21 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_StatsCPUFreq"
+ATTRIBUTES = "suite:power_build"
+SUITE = "power_build"
+PURPOSE = "Measure time spent at each CPU Frequency when system is idle."
+CRITERIA = "This test is a benchmark."
+TIME = "SHORT"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+This test measures percentage time spent at each CPU frequency level when
+the system is idle
+"""
+
+job.run_test('power_StatsCPUFreq')

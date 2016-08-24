@@ -1,0 +1,31 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# Test expects to be run on a jailbroken device in developer mode.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "network_StressServoEthernetPlug"
+PURPOSE = "Servo based ChromeOS functional tests."
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "server"
+
+DOC = """
+This test uses servo to repeatedly plug and unplug the ethernet device,
+then validate appropriate behavior.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+num_iterations = int(args_dict.get('num_iterations', 10000))
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("network_StressServoEthernetPlug", host=host,
+                 disable_sysinfo=True, num_iterations=num_iterations)
+
+parallel_simple(run, machines)

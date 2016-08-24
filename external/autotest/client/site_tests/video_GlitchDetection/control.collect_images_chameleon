@@ -1,0 +1,58 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Mussa Kiroga"
+NAME = "video_GlitchDetection_collect_images_chameleon"
+PURPOSE = "Collect golden images to be used in video image comparison tests."
+CRITERIA = """ """
+TIME = "LONG"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+
+DOC = """
+To have a sense of the 'quality' of the video playing on a ChromeOS device,
+we use image comparison techniques. In it, we collect golden images ahead of
+time and during a test on a build we collect test images and compare them
+against the golden ones.
+
+What makes the golden images golden is the build they are collected on. Other
+the process of collecting these images is similar to what you would do to
+collect test images. So, we are resuing the same code but using this control
+file to only collect the images and perform no comparison.
+
+To collect golden images run a command in this format:
+
+test_that <ip> video_GlitchDetection_collect_images_chameleon --fast
+--args CHAMELEON_HOST=<chameleons_ip>,video_format=mp4,video_def=480p
+
+You need to supply Chameleon's IP address for the CHAMELEON_HOST argument. Also
+change the format and definition to your chosen values.
+
+After the test is completed, the images will be saved under
+/tmp/test/golden_images. Grab those using scp or otherwise.
+E.g scp root@DUT's_ip:/tmp/test/golden_images/* ~
+
+This will also grab the golden_checksum.txt file.
+
+You will need to upload this text file together with the images into google
+storage.
+
+The parent path to storage is:
+pantheon.corp.google.com/storage/browser/chromiumos-test-assets-public/
+video_tests/bigbuck/...
+
+When you get to the parent directory, navigate accordingly based on the format
+and the definition you selected.
+
+"""
+host = next(iter(job.hosts))
+
+job.run_test('video_GlitchDetection',
+              channel='dev',
+              video_name='bigbuck',
+              collect_only=True,
+              use_chameleon=True,
+              host=host,
+              args=args)

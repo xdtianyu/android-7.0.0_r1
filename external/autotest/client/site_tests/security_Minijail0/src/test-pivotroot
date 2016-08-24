@@ -1,0 +1,22 @@
+#!/bin/sh
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+# setup: mkdir -p "%T/c/bin" "%T/c/lib64" "%T/c/lib" "%T/c/usr/lib" "%T/c/usr/local" "%T/c/tmp-rw" "%T/c/tmp-ro" "%T/tmp"
+# args: -b /bin,/bin -b /lib,/lib -b /usr/lib,/usr/lib -b /usr/local,/usr/local -b %T/tmp,/tmp-rw,1 -b %T/tmp,/tmp-ro -P "%T/c" -v
+# args64: -b /lib64,/lib64
+
+# Can't get at common.sh from here... oops :)
+die () {
+  echo "$@"
+  exit 1
+}
+
+wd=$(pwd)
+[ "$wd" != "/" ] && die "not in /"
+[ ! -d /lib ] && die "no /lib"
+[ ! -d /tmp-rw ] && die "no /tmp-rw"
+[ ! -d /tmp-ro ] && die "no /tmp-ro"
+echo 'x' > /tmp-rw/test-rw || die "non-writeable /tmp-rw"
+echo 'x' > /tmp-ro/test-ro && die "writeable /tmp-ro"
+exit 0

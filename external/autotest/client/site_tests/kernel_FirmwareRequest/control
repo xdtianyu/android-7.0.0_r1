@@ -1,0 +1,34 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "kernel_FirmwareRequest"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Verify kernel correctly implements firmware request APIs"
+CRITERIA = """
+   Fails if a known-existing firmware file can't be loaded (e.g., due to
+   crashes, race conditions on kfree()'ing the name, etc.), or if
+   known-nonexistent firmware files can be loaded.
+"""
+TIME = "SHORT"
+ATTRIBUTES = "suite:kernel_per-build_regression"
+SUITE = "kernel_per-build_regression"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+
+DOC = """
+    This test will run the firmware request kernel self test (from upstream).
+    This tests that the request_firmware() and request_firmware_nowait() kernel
+    APIs are somewhat sane. It tries to load the empty filename ("") as well as
+    a small toy firmware, and checks that it matches. It also makes sure a
+    non-existent firmware cannot be found.
+
+    We rerun the same test several times to increase the probability of
+    catching errors.
+
+    Of course, a success doesn't mean the absence of race conditions or bugs.
+    We may have just won the race.
+"""
+
+job.run_test('kernel_FirmwareRequest')

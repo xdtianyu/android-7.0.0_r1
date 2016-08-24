@@ -1,0 +1,319 @@
+//
+// Copyright (C) 2014 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+common_cflags = [
+    "-std=gnu99",
+    "-D_REENTRANT",
+    "-fvisibility=hidden",
+    "-Wno-unused-parameter",
+    "-Wno-type-limits",
+]
+
+// These parameters change the way jemalloc works.
+//   ANDROID_ALWAYS_PURGE
+//     If defined, always purge immediately when a page is purgeable.
+//   ANDROID_MAX_ARENAS=XX
+//     The total number of arenas will be less than or equal to this number.
+//     The number of arenas will be calculated as 2 * the number of cpus
+//     but no larger than XX.
+//   ANDROID_TCACHE_NSLOTS_SMALL_MAX=XX
+//     The number of small slots held in the tcache. The higher this number
+//     is, the higher amount of PSS consumed. If this number is set too low
+//     then small allocations will take longer to complete.
+//   ANDROID_TCACHE_NSLOTS_LARGE=XX
+//     The number of large slots held in the tcache. The higher this number
+//     is, the higher amount of PSS consumed. If this number is set too low
+//     then large allocations will take longer to complete.
+//   ANDROID_LG_TCACHE_MAXCLASS_DEFAULT=XX
+//     1 << XX is the maximum sized allocation that will be in the tcache.
+//   ANDROID_LG_CHUNK_DEFAULT=XX
+//     1 << XX is the default chunk size used by the system. Decreasing this
+//     usually decreases the amount of PSS used, but can increase
+//     fragmentation.
+common_cflags += [
+    "-DANDROID_ALWAYS_PURGE",
+    "-DANDROID_MAX_ARENAS=2",
+    "-DANDROID_TCACHE_NSLOTS_SMALL_MAX=8",
+    "-DANDROID_TCACHE_NSLOTS_LARGE=16",
+    "-DANDROID_LG_TCACHE_MAXCLASS_DEFAULT=16",
+]
+
+common_c_local_includes = [
+    "src",
+    "include",
+]
+
+common_product_variables = {
+    // Only enable the tcache on non-svelte configurations, to save PSS.
+    malloc_not_svelte: {
+        cflags: ["-DJEMALLOC_TCACHE"],
+    },
+}
+
+cc_defaults {
+    name: "jemalloc_defaults",
+    cflags: common_cflags,
+
+    product_variables: common_product_variables,
+
+    multilib: {
+        lib32: {
+            // Use a 512K chunk size on 32 bit systems.
+            // This keeps the total amount of virtual address space consumed
+            // by jemalloc lower.
+            cflags: [
+                "-DANDROID_LG_CHUNK_DEFAULT=19",
+            ],
+        },
+        lib64: {
+            // Use a 2MB chunk size on 64 bit systems.
+            // This is the default currently used by 4.0.0
+            cflags: [
+                "-DANDROID_LG_CHUNK_DEFAULT=21",
+            ],
+        },
+    },
+
+    local_include_dirs: common_c_local_includes,
+}
+
+lib_src_files = [
+    "src/arena.c",
+    "src/atomic.c",
+    "src/base.c",
+    "src/bitmap.c",
+    "src/chunk.c",
+    "src/chunk_dss.c",
+    "src/chunk_mmap.c",
+    "src/ckh.c",
+    "src/ctl.c",
+    "src/extent.c",
+    "src/hash.c",
+    "src/huge.c",
+    "src/jemalloc.c",
+    "src/mb.c",
+    "src/mutex.c",
+    "src/nstime.c",
+    "src/pages.c",
+    "src/prng.c",
+    "src/prof.c",
+    "src/quarantine.c",
+    "src/rtree.c",
+    "src/stats.c",
+    "src/tcache.c",
+    "src/ticker.c",
+    "src/tsd.c",
+    "src/util.c",
+]
+
+//-----------------------------------------------------------------------
+// jemalloc static library
+//-----------------------------------------------------------------------
+cc_library_static {
+    name: "libjemalloc",
+
+    defaults: ["jemalloc_defaults"],
+
+    include_files: ["bionic/libc/private/libc_logging.h"],
+
+    srcs: lib_src_files,
+
+    sanitize: ["never"],
+}
+
+//-----------------------------------------------------------------------
+// jemalloc static jet library
+//-----------------------------------------------------------------------
+cc_library_static {
+    name: "libjemalloc_jet",
+
+    defaults: ["jemalloc_defaults"],
+
+    cflags: ["-DJEMALLOC_JET"],
+
+    local_include_files: ["android/include/libc_logging.h"],
+
+    srcs: lib_src_files,
+
+}
+
+jemalloc_testlib_srcs = [
+    "test/src/btalloc.c",
+    "test/src/btalloc_0.c",
+    "test/src/btalloc_1.c",
+    "test/src/math.c",
+    "test/src/mq.c",
+    "test/src/mtx.c",
+    "test/src/SFMT.c",
+    "test/src/test.c",
+    "test/src/thd.c",
+    "test/src/timer.c",
+]
+
+//-----------------------------------------------------------------------
+// jemalloc unit test library
+//-----------------------------------------------------------------------
+cc_library_static {
+    name: "libjemalloc_unittest",
+
+    defaults: ["jemalloc_defaults"],
+
+    cflags: ["-DJEMALLOC_UNIT_TEST"],
+
+    local_include_files: ["android/include/libc_logging.h"],
+
+    local_include_dirs: [
+        "test/src",
+        "test/include",
+    ],
+
+    srcs: jemalloc_testlib_srcs,
+
+    whole_static_libs: ["libjemalloc_jet"],
+
+}
+
+//-----------------------------------------------------------------------
+// jemalloc unit tests
+//-----------------------------------------------------------------------
+unit_tests = [
+    "test/unit/atomic.c",
+    "test/unit/bitmap.c",
+    "test/unit/ckh.c",
+    "test/unit/decay.c",
+    "test/unit/hash.c",
+    "test/unit/junk.c",
+    "test/unit/junk_alloc.c",
+    "test/unit/junk_free.c",
+    "test/unit/lg_chunk.c",
+    "test/unit/mallctl.c",
+    "test/unit/math.c",
+    "test/unit/mq.c",
+    "test/unit/mtx.c",
+    "test/unit/nstime.c",
+    "test/unit/prng.c",
+    "test/unit/prof_accum.c",
+    "test/unit/prof_active.c",
+    "test/unit/prof_gdump.c",
+    "test/unit/prof_idump.c",
+    "test/unit/prof_reset.c",
+    "test/unit/prof_thread_name.c",
+    "test/unit/ql.c",
+    "test/unit/qr.c",
+    "test/unit/quarantine.c",
+    "test/unit/rb.c",
+    "test/unit/rtree.c",
+    "test/unit/run_quantize.c",
+    "test/unit/SFMT.c",
+    "test/unit/size_classes.c",
+    "test/unit/smoothstep.c",
+    "test/unit/stats.c",
+    "test/unit/ticker.c",
+    "test/unit/tsd.c",
+    "test/unit/util.c",
+    "test/unit/zero.c",
+]
+
+cc_test {
+    name: "jemalloc_unittests",
+
+    gtest: false,
+
+    product_variables: common_product_variables,
+
+    cflags: common_cflags + ["-DJEMALLOC_UNIT_TEST"],
+
+    local_include_files: ["android/include/libc_logging.h"],
+
+    local_include_dirs: common_c_local_includes + [
+        "test/src",
+        "test/include",
+    ],
+
+    srcs: unit_tests,
+
+    static_libs: ["libjemalloc_unittest"],
+
+    shared_libs: ["liblog"],
+
+    test_per_src: true,
+}
+
+//-----------------------------------------------------------------------
+// jemalloc integration test library
+//-----------------------------------------------------------------------
+cc_library_static {
+    name: "libjemalloc_integrationtest",
+
+    defaults: ["jemalloc_defaults"],
+
+    cflags: ["-DJEMALLOC_INTEGRATION_TEST"],
+
+    local_include_files: ["android/include/libc_logging.h"],
+
+    local_include_dirs: [
+        "test/src",
+        "test/include",
+    ],
+
+    srcs: jemalloc_testlib_srcs + lib_src_files,
+
+}
+
+//-----------------------------------------------------------------------
+// jemalloc integration tests
+//-----------------------------------------------------------------------
+integration_tests = [
+    "test/integration/aligned_alloc.c",
+    "test/integration/allocated.c",
+    "test/integration/chunk.c",
+    "test/integration/iterate.c",
+    "test/integration/MALLOCX_ARENA.c",
+    "test/integration/mallocx.c",
+    "test/integration/overflow.c",
+    "test/integration/posix_memalign.c",
+    "test/integration/rallocx.c",
+    "test/integration/sdallocx.c",
+    "test/integration/thread_arena.c",
+    "test/integration/thread_tcache_enabled.c",
+    "test/integration/xallocx.c",
+]
+
+cc_test {
+
+    name: "jemalloc_integrationtests",
+
+    gtest: false,
+
+    product_variables: common_product_variables,
+
+    cflags: common_cflags + ["-DJEMALLOC_INTEGRATION_TEST"],
+
+    local_include_files: ["android/include/libc_logging.h"],
+
+    local_include_dirs: common_c_local_includes + [
+        "test/src",
+        "test/include",
+    ],
+
+    srcs: integration_tests,
+
+    static_libs: ["libjemalloc_integrationtest"],
+
+    shared_libs: ["liblog"],
+
+    test_per_src: true,
+}

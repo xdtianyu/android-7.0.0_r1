@@ -1,0 +1,67 @@
+<html>
+<head>
+<script>
+
+ // How many arrays to allocate.
+var __n_arrays = 10;
+// How many elements in each array
+var __n_elements = 10 * 1000 * 1000;
+// Touch one element every __touch_step elements.
+var __touch_step = 5 * 1000;
+var __total_allocation;
+var __text_area = null;
+
+function __initialize_bloat() {
+  __total_allocation = 0;
+  document.bloat = new Array(__n_arrays);
+  for (i = 0; i < __n_arrays; i++) {
+    document.bloat[i] = new Array(1);
+  }
+  __display_message("allocation was cleared");
+}
+
+function __display_message(text) {
+  if (__text_area == null) {
+    __text_area = document.getElementById("text area");
+  }
+  if (__text_area != null) {
+    __text_area.innerText = text;
+  }
+}
+
+function __bloat_array(i) {
+  var message = "allocated "
+      + __total_allocation / (1000000) + "M elements ...";
+  if (i >= __n_arrays) {
+    message += " done"
+  }
+  __display_message(message);
+  if (i < __n_arrays) {
+    __total_allocation += __n_elements;
+    document.bloat[i] += new Array(__n_elements);
+    for (j = 0; j < __n_elements; j += __touch_step) {
+            document.bloat[i][j] = j;
+    }
+    setTimeout(function() {__bloat_array(i + 1);}, 10);
+  }
+}
+
+function __bloat() {
+  __bloat_array(0);
+}
+
+__initialize_bloat();
+__bloat();
+
+</script>
+</head>
+<body>
+<center>
+
+    <div id="text area">
+    No memory allocated yet.
+    </div>
+
+</center>
+</body>
+</html>

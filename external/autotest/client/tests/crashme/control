@@ -1,0 +1,34 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME='crashme'
+AUTHOR='George J. Carrette'
+ATTRIBUTES = "suite:kernel_per-build_regression"
+SUITE = "kernel_per-build_regression"
+TEST_CATEGORY='Stress'
+TEST_CLASS='Kernel'
+TEST_TYPE='client'
+TIME='MEDIUM'
+
+DOC='''
+Runs the crashme suite located at:
+
+http://people.delphiforums.com/gjc/crashme.html
+
+All the files purporting to be source, available for download on this
+site, appear to be corrupted.
+
+I got the sources here:
+
+https://launchpad.net/ubuntu/natty/+source/crashme/2.4-9
+
+crashme_2.4.orig.tar.gz
+crashme_2.4-9.diff.gz
+
+The 'makefile' must be modified to replace 'cc' with '$(CC)' so that
+32-bit executables will be produced.
+
+'''
+
+job.run_test('crashme')

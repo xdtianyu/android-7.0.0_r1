@@ -1,0 +1,37 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "firmware_LockedME"
+PURPOSE = "Ensure the ME region is locked."
+CRITERIA = "Fail if any part of the BIOS ME region is mutable from userspace"
+TIME = "SHORT"
+TEST_CATEGORY = "Security"
+TEST_CLASS = "firmware"
+TEST_TYPE = "client"
+
+DOC = """
+Intel x86 CPUs (Sandybridge and later) reserve a portion of the BIOS
+firmware image for use by the Intel Management Engine (ME). Intel
+requires that section of the BIOS flash to be mutable. The ME firmware
+itself determines whether or not the CPU can modify the ME region. During
+development, we often use an ME image that allows CPU updates. For
+production, we need to ensure that we do NOT allow CPU updates.
+
+This test PASSES if the CPU is unable to modify the ME region.
+
+This test FAILS if the CPU can modify the ME region, which means it should
+*always* fail on any pre-production image.
+
+Because the only way to be sure that the ME is locked is to try to change
+it, if the test fails and is interrupted before it can restore the original
+content, the DUT may stop functioning and will require reimaging via servo
+or Dediprog to restore it.
+
+This test is only meaningful to systems using Intel x86 CPUs, and then only
+Sandybrige models or later (not Pinetrail, for example)
+
+"""
+
+job.run_test('firmware_LockedME')

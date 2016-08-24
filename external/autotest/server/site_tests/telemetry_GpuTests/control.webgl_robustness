@@ -1,0 +1,26 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'chromeos-gfx'
+NAME = 'telemetry_GpuTests.webgl_robustness'
+ATTRIBUTES = "suite:graphics, suite:perf_v2"
+SUITE = 'graphics, perf_v2'
+TIME = 'LONG'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'gl'
+TEST_TYPE = 'server'
+# TODO(ihf): Reevaluate this once crbug.com/379397 is fixed. For now don't
+# run on pinetrail boards.
+DEPENDENCIES = 'hw_video_acc_dec_h264'
+
+DOC = """
+This server control file executes the GPU telemetry test: webgl_robustness.
+"""
+
+def run_test(machine):
+    host = hosts.create_host(machine)
+    job.run_test('telemetry_GpuTests', host=host, test='webgl_robustness')
+
+
+parallel_simple(run_test, machines)

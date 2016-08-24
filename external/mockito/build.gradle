@@ -1,0 +1,63 @@
+apply plugin: 'java'
+
+configurations {
+    // similar to 'default', export compile-time dependencies
+    host.extendsFrom(hostCompile)
+    target.extendsFrom(targetCompile)
+}
+
+sourceSets {
+    host {
+        java {
+            srcDirs = ['src', 'cglib-and-asm/src']
+        }
+    }
+
+    target {
+        java {
+            srcDirs = ['src']
+            exclude 'org/mockito/internal/creation/cglib/**',
+                    'org/mockito/internal/creation/jmock/**',
+                    'org/mockito/internal/creation/AbstractMockitoMethodProxy.java',
+                    'org/mockito/internal/creation/AcrossJVMSerializationFeature.java',
+                    'org/mockito/internal/creation/CglibMockMaker.java',
+                    'org/mockito/internal/creation/DelegatingMockitoMethodProxy.java',
+                    'org/mockito/internal/creation/MethodInterceptorFilter.java',
+                    'org/mockito/internal/creation/MockitoMethodProxy.java',
+                    'org/mockito/internal/creation/SerializableMockitoMethodProxy.java',
+                    'org/mockito/internal/invocation/realmethod/FilteredCGLIBProxyRealMethod.java',
+                    'org/mockito/internal/invocation/realmethod/CGLIBProxyRealMethod.java',
+                    'org/mockito/internal/invocation/realmethod/HasCGLIBMethodProxy.java'
+        }
+    }
+}
+
+dependencies {
+    targetCompile project(':hamcrest')
+    targetCompile project(':objenesis')
+    targetCompile project(path: ':junit', configuration: 'target')
+
+    hostCompile project(':hamcrest')
+    hostCompile project(':objenesis')
+    hostCompile project(path: ':junit', configuration: 'host')
+    hostCompile 'org.apache.ant:ant:1.8.0'
+}
+
+task targetJar(type: Jar) {
+    from sourceSets.target.output
+    dependsOn targetClasses
+    baseName "mockito"
+    classifier "target"
+}
+
+task hostJar(type: Jar) {
+    from sourceSets.host.output
+    dependsOn hostClasses
+    baseName "mockito"
+    classifier "host"
+}
+
+artifacts {
+    host hostJar
+    target targetJar
+}

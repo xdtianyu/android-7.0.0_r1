@@ -1,0 +1,25 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Runs a cpu-hogging process in the Chrome renderer background cgroup, which is
+CPU bandwidth limited and verifies that 90% of the time slices were throttled.
+"""
+NAME = "kernel_SchedBandwith"
+PURPOSE = """
+Checks that /sys/fs/cgroup/cpu/chrome_renderers/background/cpu.cfs_quota_us
+is enforced.
+"""
+CRITERIA = """
+Fails if CONFIG_CFS_BANDWIDTH components do not exist or behave incorrectly.
+"""
+ATTRIBUTES = "suite:hwqual"
+SUITE = "hwqual"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+
+job.run_test('kernel_SchedBandwith')

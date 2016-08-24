@@ -1,0 +1,246 @@
+# Copyright 2012 Google Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# main.scons for google-tv-pairing-protocol cpp library 
+
+import os
+import platform
+import sys
+
+GTEST_INCLUDES = ['%s/include' % os.environ['GTEST_DIR']]
+Export('GTEST_INCLUDES')
+GMOCK_INCLUDES = ['%s/include' % os.environ['GMOCK_DIR']]
+Export('GMOCK_INCLUDES')
+OPENSSL_INCLUDES = ['%s/include' % os.environ['OPENSSL_DIR']]
+Export('OPENSSL_INCLUDES')
+
+GTEST_LIBS = ['%s/lib/.libs' % os.environ['GTEST_DIR']]
+Export('GTEST_LIBS')
+GMOCK_LIBS = ['%s/lib/.libs' % os.environ['GMOCK_DIR']]
+Export('GMOCK_LIBS')
+OPENSSL_LIBS = [os.environ['OPENSSL_DIR']]
+Export('OPENSSL_LIBS')
+
+build_environments = []
+
+root_env = Environment(
+  tools = ['component_setup'],
+  BUILD_SCONSCRIPTS = [
+    'src/polo',
+    'tests/polo',
+  ],
+  CPPPATH=['$MAIN_DIR/src'],
+)
+
+# Detect 64-bit build platform
+DeclareBit('arch_64', 'Target platform is 64-bit')
+DeclareBit('64bit', 'Target environment is 64-bit')
+if platform.architecture()[0] == '64bit':
+    root_env.SetBits('arch_64')
+
+# Setup the linux environment
+linux_env = root_env.Clone(tools = ['target_platform_linux'])
+
+linux_env.Append(
+  LINKFLAGS = ['-static', '-pthread'],
+  CCFLAGS = ['-fPIC'],
+)
+
+linux_32_env = linux_env.Clone()
+linux_32_env.Append(
+  CCFLAGS = ['-m32'],
+  LINKFLAGS = ['-m32'],
+  LIBPATH = [
+    #'/usr/lib32',
+  ]
+)
+
+linux_dbg_32_env = linux_32_env.Clone(
+  BUILD_TYPE = 'dbg',
+  BUILD_TYPE_DESCRIPTION = 'Linux 32-bit Debug Build',
+  tools = ['target_debug'],
+)
+build_environments.append(linux_dbg_32_env)
+
+
+linux_opt_32_env = linux_32_env.Clone(
+  BUILD_TYPE = 'opt',
+  BUILD_TYPE_DESCRIPTION = 'Linux 32-bit Release Build',
+  tools = ['target_optimized']
+)
+linux_opt_32_env.Append(
+  CCFLAGS = ['-O2'],
+  LINKFLAGS = ['--strip-all', '-s'],
+)
+build_environments.append(linux_opt_32_env)
+
+#  Add 64-bit linux environment if supported by build platform
+if linux_env.Bit('arch_64'):
+  linux_64_env = linux_env.Clone()
+  linux_64_env.Append(
+    CCFLAGS = ['-m64'],
+    LINKFLAGS = ['-m64'],
+    LIBPATH = [
+      #'/usr/lib64',
+    ]
+  )
+
+  linux_dbg_64_env = linux_64_env.Clone(
+    BUILD_TYPE = 'dbg64',
+    BUILD_TYPE_DESCRIPTION = 'Linux 64-bit Debug Build',
+    BUILD_GROUPS = ['default'],
+    tools = ['target_debug'],
+  )
+  linux_dbg_64_env.SetBits('64bit')
+  build_environments.append(linux_dbg_64_env)
+
+  linux_opt_64_env = linux_64_env.Clone(
+    BUILD_TYPE = 'opt64',
+    BUILD_TYPE_DESCRIPTION = 'Linux 64-bit Release Build',
+    tools = ['target_optimized']
+  )
+  linux_opt_64_env.Append(
+    CCFLAGS = ['-O2'],
+    LINKFLAGS = ['--strip-all'],
+  )
+  linux_opt_64_env.SetBits('64bit')
+  build_environments.append(linux_opt_64_env)
+
+# Mac OSX Build Environment
+mac_env = root_env.Clone(tools = ['target_platform_mac'])
+mac_env.Append(
+  CCFLAGS = [
+    '-arch', 'i386',
+    '-fPIC',
+  ],
+  CPPDEFINES = [
+    'OSX',
+    'XP_MACOSX',
+  ],
+  FRAMEWORKS = [
+    'CoreFoundation',
+    'IOKit',
+  ],
+  LIBS = [
+    'pthread',
+  ],
+  LINKFLAGS = [
+    '-arch', 'i386',
+    '-Wl,-search_paths_first',
+  ],
+)
+
+mac_opt_env = mac_env.Clone(
+  BUILD_TYPE = 'opt',
+  BUILD_TYPE_DESCRIPTIONS = 'Mac Release Build',
+)
+
+mac_opt_env.Append(
+  CCFLAGS = [
+    '-O2',
+  ],
+  LINKFLAGS = ['--string-all', '-s'],
+  tools = ['target_optimized'],
+)
+build_environments.append(mac_opt_env)
+
+mac_dbg_env = mac_env.Clone(
+  BUILD_TYPE = 'dbg',
+  BUILD_TYPE_DESCRIPTION = 'Mac Debug Build',
+)
+
+mac_dbg_env.Append(
+  CCFLAGS = ['-O0'],
+  tools = ['target_debug'],
+)
+build_environments.append(mac_dbg_env)
+
+
+# Windows Build Environment
+win_env = root_env.Clone(tools = ['target_platform_windows'])
+
+win_env.Append(
+  CCFLAGS = [
+    '/EHsc',
+  ],
+  CPPDEFINES = [
+    'OS_WINDOWS',
+    'WIN32',
+    '_WINDOWS',
+    '_WIN32_WINNT=0x0501',
+    'WINVER=0x0501',
+    'WIN32_LEAN_AND_MEAN',
+    'GOOGLE_GLOG_DLL_DECL=',
+    'NOGDI',
+    'BOOST_ALL_NO_LIB',
+    'BOOST_THREAD_BUILD_LIB',
+    '_X86_',
+    'X86',
+  ],
+)
+
+# We need perl and nasm to be in the path.
+if sys.platform == 'win32':
+  win_env['ENV']['PATH'] = os.environ['PRESCONS_PATH']
+  win_env['ENV']['INCLUDE'] = os.environ['INCLUDE']
+  win_env['ENV']['LIB'] = os.environ['LIB']
+
+win_opt_env = win_env.Clone(
+  BUILD_TYPE = 'opt',
+  BUILD_TYPE_DESCRIPTION = 'Windows Release Build',
+)
+
+win_opt_env.Append(
+  CCFLAGS = [
+    '/O1',
+    '/GS',
+    '/GL',
+    '/MT',
+  ],
+  CPPDEFINES = [
+    'NDEBUG',
+  ],
+  ARFLAGS = [
+    '/LTCG',
+  ],
+  LINKFLAGS = [
+    '/incremental:no',
+    '/LTCG',
+    '/opt:icf=32',
+    '/opt:ref',
+  ]
+)
+build_environments.append(win_opt_env)
+
+win_dbg_env = win_env.Clone(
+  BUILD_TYPE = 'dbg',
+  BUILD_TYPE_DESCRIPTION = 'Windows Debug Build',
+  BUILD_GROUPS = ['default'],
+)
+
+win_dbg_env.Append(
+  CCFLAGS = [
+    '/Fd$OBJ_ROOT/vc80.pdb',
+    '/MTd',
+    '/Od',
+    '/Z7',
+  ],
+  CPPDEFINES = [
+    'DEBUG',
+    '_DEBUG',
+  ],
+)
+build_environments.append(win_dbg_env)
+
+BuildEnvironments(build_environments)

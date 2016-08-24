@@ -1,0 +1,22 @@
+TIME='SHORT'
+AUTHOR = 'The Chromium OS Authors'
+DOC = """
+Tests that the last shutdown was clean (without errors).
+
+NOTE: You need to shutdown or reboot the device at least once before running
+this test for a given build or else the test is useless.
+"""
+
+NAME = 'platform_CleanShutdown'
+PURPOSE = 'Verify the last shutdown was clean.'
+CRITERiA = """
+Fails if any of the following conditions are present:
+  - unmount failure in cyptohome
+  - unmount failure of the stateful partition
+  - if shutdown had to forcefully kill processes
+"""
+TEST_CLASS = 'platform'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'client'
+
+job.run_test('platform_CleanShutdown')

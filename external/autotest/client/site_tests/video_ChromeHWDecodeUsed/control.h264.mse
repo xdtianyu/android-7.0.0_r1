@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_ChromeHWDecodeUsed.h264.mse"
+PURPOSE = "Verify that H.264 decode acceleration works for MSE videos in Chrome"
+CRITERIA = """
+This test will fail if VDA doesn't work with Chrome navigating to an MSE mp4 file.
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:partners"
+SUITE = "bvt-perbuild, partners"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES = "hw_video_acc_h264"
+JOB_RETRIES = 2
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This test verifies H.264 decode acceleration works for MSE videos.
+"""
+
+video = 'http://crosvideo.appspot.com/?codec=h264&cycle=true&mute=true'
+job.run_test('video_ChromeHWDecodeUsed', is_mse=1, video_file=video)

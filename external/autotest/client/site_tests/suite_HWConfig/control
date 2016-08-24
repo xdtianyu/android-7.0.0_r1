@@ -1,0 +1,55 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "HWConfig"
+PURPOSE = "Execute automated hardware configuration checks."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "client"
+
+DOC = """
+This test suite runs automated hardware configuration checks. The purpose of
+the suite is to sanity test all hardware components in less than 5 minutes.
+"""
+
+# Firmware
+job.run_test('firmware_RomSize',
+             constraints=['kb_system_rom_size >= 4096',
+                          'kb_ec_rom_size >= 128'])
+
+# RTC, system
+job.run_test('platform_HighResTimers')
+job.run_test('power_Resume')
+
+# RAM
+job.run_test('hardware_MemoryTotalSize')
+
+# CPU
+job.run_test('power_CPUFreq')
+job.run_test('power_CPUIdle')
+
+# Display
+job.run_test('hardware_Backlight')
+
+# SSD
+job.run_test('hardware_DiskSize',
+             constraints=['gb_main_disk_size >= 8'])
+job.run_test('hardware_SsdDetection')
+
+# CPU, RAM, SSD
+job.run_test('hardware_SAT', seconds=20)
+
+# Network
+job.run_test('network_DisableInterface',
+             iface_name='wlan0', tag='wlan0')  # WiFi
+job.run_test('network_DisableInterface',
+             iface_name='eth0', tag='eth0')  # Ethernet
+job.run_test('network_DisableInterface',
+             iface_name='hci0', tag='hci0')  # Bluetooth
+job.run_test('network_WiFiCaps')
+
+# GPU
+job.run_test('graphics_GLBench')

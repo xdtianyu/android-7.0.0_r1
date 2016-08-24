@@ -1,0 +1,13 @@
+apply plugin: 'com.android.library'
+
+android {
+    sourceSets.main {
+        manifest.srcFile 'AndroidManifest.xml'
+        java.srcDirs = ['src']
+        res.srcDirs = ['res']
+    }
+}
+
+dependencies {
+    compile project(':zxing-core')
+}

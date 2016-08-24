@@ -1,0 +1,29 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dhaddock"
+NAME = "ui_SystemTray_guest"
+PURPOSE = "Collects system tray images as data to examine default icons"
+CRITERIA = """
+
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "ui"
+TEST_TYPE = "client"
+DEPENDENCIES = "board:link"
+
+DOC = """
+This test collects system tray images of different devices. The goal is collect
+data that helps us understand how system tray looks in the lab for purposes of
+establishing some sort of a control/reference behavior.
+"""
+
+job.run_test('ui_SystemTray',
+              width = 100,
+              height = 90,
+              logged_in=False,
+              tag='guest')

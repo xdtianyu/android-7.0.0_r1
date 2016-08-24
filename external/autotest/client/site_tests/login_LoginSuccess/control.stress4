@@ -1,0 +1,20 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "mohsinally"
+NAME = "login_LoginSuccess"
+ATTRIBUTES = "suite:stress4"
+SUITE = "stress4"
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "login"
+TEST_TYPE = "client"
+
+DOC = """
+This test stress tests and verifies that signing in via the UI (using Telemetry)
+works correctly. This includes listening to DBus to verify that the session_manager
+announces the start of a user session upon sign in, as well as the end of one on sign out.
+"""
+
+job.run_test('login_LoginSuccess', iterations=50, stress_run=True)

@@ -1,0 +1,22 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "security_ModuleLocking"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Verify kernel module loading restrictions"
+CRITERIA = "Fails if kernel loads modules outside of root filesystem"
+TIME = "SHORT"
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+    Checks that the kernel correctly restricts modules from being loaded
+    outside of the root filesystem.
+"""
+
+job.run_test('security_ModuleLocking')

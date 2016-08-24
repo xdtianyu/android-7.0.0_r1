@@ -1,0 +1,25 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.common_lib import utils
+
+AUTHOR = "bsimonnet@chromium.org"
+NAME = "platform_Vpd"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:regression"
+SUITE = "regression"
+
+DOC = """
+This test checks that vpd can run correctly, generates the cache when it
+reboots and that the generated files have the right permissions.
+"""
+
+def run_test(machine):
+    host = hosts.create_host(machine)
+    job.run_test("platform_Vpd", host=host)
+
+parallel_simple(run_test, machines)

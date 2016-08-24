@@ -1,0 +1,22 @@
+AUTHOR = 'Martin Bligh (mbligh@google.com)'
+NAME = 'Disktest'
+PURPOSE = 'Verify the integrity of the disk and disk controller.'
+CRITERIA = """
+This test reads back all data written during the test, and if the data it reads
+does not match the data it wrote, the test fails.
+"""
+DOC = '''\
+Using unique signatures for each block and each iteration of the test,
+different patterns will be tested. Designed to check both the disk and disk
+controller for corruption issues.
+
+It writes 50MB/s of 500KB size ops.
+'''
+ATTRIBUTES = "suite:hwqual"
+SUITE = 'hwqual'
+TIME = 'MEDIUM'
+TEST_CATEGORY = 'Kernel'
+TEST_TYPE = 'client'
+TEST_CLASS = 'Hardware'
+
+job.run_test('disktest')

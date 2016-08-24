@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "cmasone, jrbarnette"
+NAME = "desktopui_CrashyReboot"
+TIME = "MEDIUM"
+TEST_TYPE = "client"
+
+DOC = """
+This test exercises the logic we put in place to reboot the device in the
+face of a too-crashy UI:
+
+If the UI crashes too much too fast, the device will eventually reboot
+to attempt to mitigate the problem. If the device determines that it's
+already tried that some number of times, it will shut down the UI and
+remain up.
+
+This test will crash the browser repeatedly and, in the case that it
+has not rebooted before, the test will cause the device to reboot. If
+it has rebooted within a certain window of time, the test will expect
+the device to stay up.
+
+This test cannot be used on its own, but is intended to be used in
+conjunction with the server-side desktopui_CrashyRebootServer test.
+"""
+
+job.run_test('desktopui_CrashyReboot')
+

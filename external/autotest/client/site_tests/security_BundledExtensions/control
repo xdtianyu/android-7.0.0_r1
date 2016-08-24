@@ -1,0 +1,26 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "jorgelo@chromium.org"
+NAME = "security_BundledExtensions"
+PURPOSE = "Verify bundled extensions/their permissions have all been approved"
+CRITERIA = """
+This test will fail if the set of expected extensions -- and every
+permission requested by those extensions -- does not exactly match
+the expected set.
+"""
+ATTRIBUTES = ""
+SUITE = ""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+
+DOC = """
+This test uses telemetry to ask Chrome what extensions it has installed,
+what their effective permissions are, etc. Then it compares those to a
+list and fails (with various helpful details) if there is not an exact match.
+"""
+
+job.run_test('security_BundledExtensions')

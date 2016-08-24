@@ -1,0 +1,31 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "sque"
+NAME = "graphics_VTSwitch.100"
+PURPOSE = 'Verify that VT switching works.'
+CRITERIA = """
+Test fails if any of the following happen:
+- Unable to get a valid screenshot.
+- VT1 and VT2 are not sufficiently different.
+- VT1 does not remain the same between VT switches.
+- VT2 does not remain the same between VT switches.
+- Cannot login after repeated VT switching.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "graphics"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+Switches between VT1 and VT2 repeatedly and logs in/out of Chrome to make sure
+the VT switching was successful.  Also, checks and compares screenshots to make
+sure each VT remains the same between VT switches, and that VT1 and VT2 are
+sufficiently different.
+"""
+
+job.run_test("graphics_VTSwitch", num_iterations=100)

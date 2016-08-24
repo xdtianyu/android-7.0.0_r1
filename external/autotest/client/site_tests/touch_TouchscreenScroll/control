@@ -1,0 +1,25 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kathrelkeld"
+NAME = "touch_TouchscreenScroll"
+PURPOSE = "Test that touchscreen scrolling occurs in the correct direction."
+CRITERIA = """
+This test will fail if, after playback of touchscreen events, no scrolling is
+detected or if scrolling is in the wrong direction.
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:touch"
+SUITE = "bvt-perbuild,touch"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "touch"
+TEST_TYPE = "client"
+DEPENDENCIES = "touchscreen"
+
+DOC = """
+Plays back touchscreen movements and checks for scroll.
+
+"""
+
+job.run_test('touch_TouchscreenScroll')

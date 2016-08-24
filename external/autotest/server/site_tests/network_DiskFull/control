@@ -1,0 +1,25 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "quiche@chromium.org"
+NAME = "network_DiskFull"
+PURPOSE = "Test that the connection manager survives on a full disk."
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "server"
+
+DOC = """
+This test fills the /var partition, and sets up a process to keep
+the disk full (in case, e.g. an old log file is deleted). It then
+tests how various bits of network machinery (e.g. shill, dhcpcd)
+cope with a full disk.
+"""
+
+def run(machine):
+    job.run_test("network_DiskFull", client_addr=machine)
+
+parallel_simple(run, machines)

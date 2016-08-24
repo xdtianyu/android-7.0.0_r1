@@ -1,0 +1,200 @@
+#
+#    AppArmor tlsdate profile for Debian GNU/Linux
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+
+#include <tunables/global>
+#include <tunables/multiarch.d>
+/usr/bin/tlsdate {
+  #include <abstractions/consoles>
+  #include <abstractions/ssl_certs>
+
+  capability sys_time,
+  capability setgid,
+  capability setuid,
+  capability sys_chroot,
+
+  # IPv4 TCP
+  network inet stream,
+  # IPv4 UDP for DNS resolution
+  network inet dgram,
+  # IPv6 TCP
+  network inet6 stream,
+  # IPv6 UDP
+  network inet6 dgram,
+
+  # Required for gethostbyname
+  /etc/resolv.conf r,
+  /run/resolvconf/resolv.conf r,
+  /etc/nsswitch.conf r,
+  /etc/localtime r,
+  /etc/nsswitch.conf r,
+  /etc/hosts r,
+  /etc/host.conf r,
+
+  # Allow reading public certs but not private keys
+  /etc/ssl/certs/* r,
+  /usr/share/ca-certificates/*/** r,
+  
+  # Allow reading of /etc/tlsdate/
+  /etc/tlsdate/*/** r,
+
+  # Required for getpwnam
+  /etc/passwd r,
+  /etc/group r,
+  /proc/sys/kernel/ngroups_max r,
+
+  # Allow reading of libs and /tmp
+  /etc/ld.so.cache r,
+
+  # Random number generation requires these two
+  /dev/random r,
+  /dev/urandom r,
+
+  # Allow mapping of shared libraries
+  /lib{,32,64}/* rm,
+  /usr/lib/* rm,
+  /lib/@{multiarch}/* rm,
+  /usr/lib/@{multiarch}/* rm,
+
+  # We'll allow tlsdate to write a new root to chroot into
+  /tmp/ r,
+  owner /tmp/tlsdate_*/ rw,
+
+  # We'll allow tlsdate to exec tlsdate-helper
+  /usr/bin/tlsdate-helper ixm,
+  /usr/bin/tlsdate ixm,
+}
+
+/usr/bin/tlsdate-helper {
+  #include <abstractions/consoles>
+  #include <abstractions/ssl_certs>
+
+  capability sys_time,
+  capability setgid,
+  capability setuid,
+  capability sys_chroot,
+
+  # IPv4 TCP
+  network inet stream,
+  # IPv4 UDP for DNS resolution
+  network inet dgram,
+  # IPv6 TCP
+  network inet6 stream,
+  # IPv6 UDP
+  network inet6 dgram,
+
+  # Required for gethostbyname
+  /etc/resolv.conf r,
+  /run/resolvconf/resolv.conf r,
+  /etc/nsswitch.conf r,
+  /etc/localtime r,
+  /etc/nsswitch.conf r,
+  /etc/hosts r,
+  /etc/host.conf r,
+
+  # Allow reading public certs but not private keys
+  /etc/ssl/certs/* r,
+  /usr/share/ca-certificates/*/** r,
+
+  # Allow reading of /etc/tlsdate/
+  /etc/tlsdate/*/** r,
+
+  # Required for getpwnam
+  /etc/passwd r,
+  /etc/group r,
+  /proc/sys/kernel/ngroups_max r,
+
+  # Allow reading of libs and /tmp
+  /etc/ld.so.cache r,
+
+  # Random number generation requires these two
+  /dev/random r,
+  /dev/urandom r,
+
+  # Allow mapping of shared libraries
+  /lib{,32,64}/* rm,
+  /usr/lib/* rm,
+  /lib/@{multiarch}/* rm,
+  /usr/lib/@{multiarch}/* rm,
+
+  # We'll allow tlsdate to write a new root to chroot into
+  /tmp/ r,
+  owner /tmp/tlsdate_*/ rw,
+}
+
+/usr/sbin/tlsdated {
+  #include <abstractions/consoles>
+  #include <abstractions/ssl_certs>
+
+  capability sys_time,
+  capability setgid,
+  capability setuid,
+  capability sys_chroot,
+
+  # IPv4 TCP
+  network inet stream,
+  # IPv4 UDP for DNS resolution
+  network inet dgram,
+  # IPv6 TCP
+  network inet6 stream,
+  # IPv6 UDP
+  network inet6 dgram,
+
+  # Required for gethostbyname
+  /etc/resolv.conf r,
+  /etc/nsswitch.conf r,
+  /etc/localtime r,
+  /etc/nsswitch.conf r,
+  /etc/hosts r,
+  /etc/host.conf r,
+
+  # Allow reading public certs but not private keys
+  /etc/ssl/certs/* r,
+  /usr/share/ca-certificates/*/** r,
+
+  # Allow reading of /etc/tlsdate/
+  /etc/tlsdate/*/** r,
+  /etc/tlsdate/tlsdated.conf r,
+
+  # Required for getpwnam
+  /etc/passwd r,
+  /etc/group r,
+  /proc/sys/kernel/ngroups_max r,
+
+  # tlsdated looks into proc for answers
+  /proc/meminfo r,
+
+  # Allow reading of libs and /tmp
+  /etc/ld.so.cache r,
+
+  # Random number generation requires these two
+  /dev/random r,
+  /dev/urandom r,
+
+  # RTC
+  /dev/rtc0 rw,
+  /dev/rtc1 rw,
+
+  # Allow mapping of shared libraries
+  /lib{,32,64}/* rm,
+  /usr/lib/* rm,
+  /lib/@{multiarch}/* rm,
+  /usr/lib/@{multiarch}/* rm,
+
+  # We'll allow tlsdate to write a new root to chroot into
+  /tmp/ r,
+  owner /tmp/tlsdate_*/ rw,
+
+  # We'll allow tlsdated to cache the time here
+  owner /var/cache/tlsdated/* rw,
+  # We'll allow the unprivileged helper to read the time
+  /var/cache/tlsdated/* r,
+
+  # We'll allow tlsdated to exec tlsdate-helper
+  /usr/bin/tlsdate-helper ixm,
+  /usr/bin/tlsdate ixm,
+}

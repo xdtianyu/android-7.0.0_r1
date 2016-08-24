@@ -1,0 +1,35 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'chromeos-gfx'
+NAME = "graphics_VTSwitch"
+PURPOSE = 'Verify that VT switching works.'
+CRITERIA = """
+Test fails if any of the following happen:
+- Unable to get a valid screenshot.
+- VT1 and VT2 are not sufficiently different.
+- VT1 does not remain the same between VT switches.
+- VT2 does not remain the same between VT switches.
+- Cannot login after repeated VT switching.
+"""
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "graphics"
+TEST_TYPE = "client"
+
+#TODO(ihf): Port to frecon and enable again (crbug.com/413088).
+#ATTRIBUTES = "suite:graphics, suite:graphics_per-day, suite:graphics_system"
+#SUITE = 'graphics_per-day, graphics, graphics_system'
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+Switches between VT1 and VT2 repeatedly and logs in/out of Chrome to make sure
+the VT switching was successful.  Also, checks and compares screenshots to make
+sure each VT remains the same between VT switches, and that VT1 and VT2 are
+sufficiently different.
+"""
+
+job.run_test("graphics_VTSwitch")

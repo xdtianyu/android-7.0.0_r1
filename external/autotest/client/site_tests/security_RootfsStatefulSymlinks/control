@@ -1,0 +1,27 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Locating important system files outside of the integrity-controlled
+rootfs can undermine the security provided by verified boot. Therefore,
+there should be a whitelisted, limited, reviewed set of locations where
+we symlink from inside the rootfs out to the stateful partition. This
+test enforces that.
+"""
+NAME = "security_RootfsStatefulSymlinks"
+PURPOSE = "To avoid circumventions of verified boot by careless symlinks."
+CRITERIA = """
+The test succeeds if all links pointing into "bad destinations" are
+accounted for by the whitelist ('baseline').
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+job.run_test("security_RootfsStatefulSymlinks")

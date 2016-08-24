@@ -1,0 +1,32 @@
+#!/bin/bash
+
+CMD=$(basename $0)
+usage() {
+  echo "usage: $CMD <job-directory>" >&2
+  exit 1
+}
+
+if [ $# -ne 1 ]; then
+  usage
+fi
+
+AUTOTEST=/usr/local/autotest/results
+DIR=$1
+if [ ! -d $AUTOTEST/$DIR ]; then
+  echo "$DIR is not a directory in $AUTOTEST" >&2
+  usage
+fi
+
+cd $AUTOTEST
+
+GET_GSURI="
+import common
+from autotest_lib.client.common_lib import global_config
+print global_config.global_config.get_config_value(
+        'CROS', 'results_storage_server').strip('/')
+"
+GSURI=$(cd .. ; python -c "$GET_GSURI")
+(
+  gsutil ls -R "$GSURI/$DIR/*" | sed "s=^$GSURI/==p"
+  find $DIR -type f
+) | sort | uniq -u

@@ -1,0 +1,44 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GModemControl.e362"
+PURPOSE = "Verify commands sent to a modem manager are reflected in flimflam."
+CRITERIA = """
+This test will fail if modem manager state differs from flimflam state.
+"""
+ATTRIBUTES = "suite:network3g"
+SUITE = "network3g"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "modem:e362, modem_repair"
+
+# The E362 modems may fail while connecting and disconnecting.  These
+# failures go away if the test is retried.  See crbug.com/224026,
+# crbug.com/224110, and crbug.com/224329.
+# TODO(thieule): Change this from generic retry to specific failure retry.
+# crbug.com/224369.
+RETRIES = 2
+
+DOC = """
+  Tests that commands sent to ModemManager or cromo are reflected in flimflam.
+
+  Issues many connect, disconnect, enable, and disable commands to ensure
+  that the modem state is always properly reflected in flimflam -- even
+  if the commands are sent to the modem manager instead of flimflam.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+# For E362 modems, we need to prevent the modem from disconnecting too quickly
+# or else the out-of-credits logic will kick in and attempt to reconnect (see
+# shill/cellular_service.cc).  This is accomplished by setting |slow_connect|
+# to True.
+test_env = test_environment.CellularOTATestEnvironment()
+job.run_test('network_3GModemControl', test_env=test_env, autoconnect=False,
+             slow_connect=True, tag='no-autoconnect-e362')
+job.run_test('network_3GModemControl', test_env=test_env, autoconnect=True,
+             slow_connect=True, tag='autoconnect-e362')

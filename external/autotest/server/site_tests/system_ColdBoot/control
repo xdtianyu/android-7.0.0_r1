@@ -1,0 +1,35 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "cernekee"
+NAME = "system_ColdBoot"
+PURPOSE = "Shut down DUT, then initiate a cold boot."
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "server"
+DEPENDENCIES = "servo"
+DOC = """
+Verifies that cold boots work correctly.
+
+This executes the following sequence:
+  - remote shutdown of DUT via Linux commands (ssh)
+  - wait for DUT to stop responding to pings
+  - simulate a power button press via servo
+  - wait for DUT to start responding to pings
+  - attempt to log into DUT
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("system_ColdBoot", host=host, disable_sysinfo=True)
+
+parallel_simple(run, machines)

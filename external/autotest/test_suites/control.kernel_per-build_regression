@@ -1,0 +1,42 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "kernel_per-build_regression"
+PURPOSE = "Test required functionality - longer running than bvt tests usually."
+CRITERIA = "All tests with SUITE=kernel_per-build_regression must pass."
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This is the Kernel Per-Build Regression Test suite.  Failures in this test
+suite should not close the tree. It should consist of tests that are slightly
+longer than expected for bvt runs.  Since failures here are not tree-closers,
+it may be used to stage SHORT tests prior to admitting them to the bvt to
+ensure they are stable. Other common tests added here are SHORT tests that
+re-assess corrected issues.  Longer running regression tests should be added
+to kernel_daily_regression or kernel_weekly_regression.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on.  Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+args_dict['add_experimental'] = True
+args_dict['name'] = 'kernel_per-build_regression'
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['job'] = job
+
+dynamic_suite.reimage_and_run(**args_dict)

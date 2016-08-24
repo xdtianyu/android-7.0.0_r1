@@ -1,0 +1,20 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_EC'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Ensure the EC is working.'
+CRITERIA = 'Fails if communication with EC does not work.'
+TIME='SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = "hardware"
+TEST_TYPE = 'client'
+
+DOC = """
+This is a hardware test for EC. The test uses ectool to check if the EC can
+receive message from host and send expected reponse back to host. It also
+checks basic EC functionality, such as FAN and temperature sensor.
+"""
+
+job.run_test('hardware_EC')

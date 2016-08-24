@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Long Page</title>
+<script type="text/javascript">
+var pageReady = false;
+var userWidth = screen.width;
+var userHeight = screen.height;
+
+function onLoad() {
+    var mainDiv = document.getElementById("longPage");
+    mainDiv.style.width = parseInt(userWidth * 15) + "px";
+    mainDiv.style.height = parseInt(userHeight * 15) + "px";
+    pageReady = true;
+}
+
+</script>
+</head>
+<body onload="onLoad()">
+<div id="longPage"></div>
+</body>
+</html>

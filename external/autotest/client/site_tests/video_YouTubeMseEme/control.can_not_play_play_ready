@@ -1,0 +1,30 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dunno@chromium.org"
+NAME = "video_YouTubeMseEme"
+PURPOSE = "Verify Chrome MSE/EME works for YouTube."
+CRITERIA = """
+This test will fail if the browser can play Play Ready (update this test when it
+can).
+"""
+ATTRIBUTES = "suite:youtube_mse_eme"
+SUITE = "youtube_mse_eme"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['VideoTestFailure', 'OS-Chrome'],
+}
+
+DOC = """
+This test verifies Chrome MSE/EME implementation is fit for YouTube.
+"""
+
+_TEST_NAME = 'can_not_play_play_ready'
+job.run_test(
+        'video_YouTubeMseEme',
+        subtest_name=_TEST_NAME,
+        subdir_tag=_TEST_NAME)

@@ -1,0 +1,24 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Authors"
+NAME = "platform_TPMEvict"
+PURPOSE = "Tests the TPM under low-resource conditions."
+CRITERIA = "Fails if any operations fail."
+ATTRIBUTES = "suite:regression"
+SUITE = "regression"
+TIME = "SHORT"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This test verifies that PKCS #11 services remain functional when the TPM is
+operating under low-resource conditions. Specifically, more keys are used than
+are able to fit in TPM memory which requires that previously loaded keys be
+evicted. The test exercises the eviction code path as well as the reload code
+path (when a previously evicted key is used again).
+"""
+
+job.run_test('platform_TPMEvict')

@@ -1,0 +1,58 @@
+#!/bin/bash
+
+CSV=FALSE
+
+while getopts "c" name
+do
+  case $name in
+    c)  CSV=TRUE;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+if [ $# -gt 1 ]
+then
+  echo "usage:  $(basename $0) [ <options> ] [ <filename> ]" >&2
+  echo "options: -c for CSV format" >&2
+  exit 1
+fi
+
+# If the -c option is called, the option index is shifted over once and the
+# value of the option is stored in $FILE. The default behavior is that the sed
+# transform will read from standard input if no argument is provided and $FILE
+# will be empty.
+FILE=$1
+
+SED_SCRIPT="
+    s/ CHROMEOS_RELEASE_VERSION=[^ ]*//
+    s/ BOARD=[^ ]*//
+  "
+
+if [ $CSV = "TRUE" ]
+then
+  echo "Location,Status,Fixed,Comments"
+  SED_SCRIPT="
+      s/ ...[A-Z]*//
+      $SED_SCRIPT
+      s/ /,/
+      s/$/,,/
+    "
+  sed "$SED_SCRIPT" $FILE
+
+else
+  SED_SCRIPT="
+      s/^[^ ]* ...[A-Z]* //
+      $SED_SCRIPT
+      s/is up/servod &/
+      s/.*pwr_button:press.*/power button is stuck down/
+      s/^\(not running servod\) \(not running brillo\)$/\1, \2/
+      s/^not running servod$/up but not running servod, reason unknown/
+      s/^servod not configured$/running brillo, BOARD for &/
+      s/^servod failed$/servod running, but not working/
+      s/^is down/no answer to ping/
+      s/^\(not running servod\) \(ssh is down\)$/\1, ping is up, \2/
+    "
+  sed "$SED_SCRIPT" $FILE | sort | uniq -c |
+    awk '{ print ; sum += $1 } END { printf "%7d total\n", sum }' |
+      sort | cut -c -72
+fi

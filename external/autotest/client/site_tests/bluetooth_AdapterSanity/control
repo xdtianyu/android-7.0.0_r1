@@ -1,0 +1,24 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kathrelkeld"
+NAME = "bluetooth_AdapterSanity"
+PURPOSE = "Basic sanity test for Bluetooth adapter."
+CRITERIA = """
+This test will fail if there are any basic problems with the Bluetooth adapter.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "touch"
+TEST_TYPE = "client"
+DEPENDENCIES = 'bluetooth'
+
+DOC = """
+Uses dbus commands to enable the adapter then disable it.  Test will fail if
+the adapter is not found.  Older boards without Bluetooth are ignored.
+"""
+
+job.run_test('bluetooth_AdapterSanity')

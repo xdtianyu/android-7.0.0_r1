@@ -1,0 +1,26 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_WMM.wifi_wmm'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = "suite:wifi_flaky"
+SUITE = 'wifi_flaky'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test verifies that DUT can process datagrams transmitted at
+different Quality of Service (QoS) levels.
+"""
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_WMM',
+                 host=host,
+                 raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

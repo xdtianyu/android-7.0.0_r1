@@ -1,0 +1,18 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, quiche, wiley'
+NAME = 'network_DhcpFailureWithStaticIP'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that it is possible to apply static IP configuration to a network
+  that has no DHCP server at all.
+
+  Note that shill's DHCP timeout handling depends on the device technology.
+  This test only vaidates shill's handling of DHCP timeouts for Ethernet.
+"""
+
+job.run_test('network_DhcpFailureWithStaticIP')

@@ -1,0 +1,48 @@
+apply plugin: 'com.github.dcendents.android-maven'
+
+project.ext.innerPom = { // used by mavenInstaller
+    project {
+        packaging 'aar'
+        version ddVersion
+        groupId ddGroup
+        artifactId ddArtifactId
+
+        name ddArtifactId
+        description ddDescription
+        url ddWebsite
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+
+        developers {
+            developer {
+                name 'Kevin Jin'
+                organizationUrl 'https://github.com/ddkjin'
+            }
+        }
+
+        // http://central.sonatype.org/pages/requirements.html
+        scm {
+            connection "scm:git:${ddGit}"
+            developerConnection "scm:git:${ddGit}"
+            url ddWebsite
+        }
+
+        issueManagement {
+            url ddTracker
+        }
+    }
+}
+
+project.ext.pomXml = pom innerPom // used by mavenJava publication in artifactory
+
+install {
+    repositories.mavenInstaller {
+        // will not work with just pomXml
+        pom innerPom
+    }
+}

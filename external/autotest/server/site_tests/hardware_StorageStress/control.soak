@@ -1,0 +1,24 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_StorageStress.soak'
+AUTHOR = 'gwendal'
+PURPOSE = 'Stress the SSD to age it prematurely.'
+TIME = 'LENGTHY'
+TEST_CLASS = 'hardware'
+TEST_TYPE = 'server'
+
+DOC = """
+Run intensive write/read test at different size for days.
+Interleave every 15h a veritication test and measure latency/throughput.
+
+The test last 7 days.
+"""
+
+def run_hardware_storage_stress(machine):
+    job.run_test('hardware_StorageStress', client_ip=machine, duration=24 * 60 * 60 * 7,
+                  power_command='nothing', storage_test_command='full_write')
+
+job.parallel_simple(run_hardware_storage_stress, machines)
+

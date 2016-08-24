@@ -1,0 +1,34 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'keybuk@chromium.org'
+NAME = 'bluetooth_Sanity_DefaultState'
+ATTRIBUTES = "suite:bluetooth, suite:bluetooth_sanity"
+SUITE = 'bluetooth,bluetooth_sanity'
+TIME = 'SHORT'
+TEST_CLASS = 'bluetooth'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'bluetooth,wificell'
+
+DOC = """
+Verify that the device's Bluetooth adapter has the correct default state when
+reset to powered off, powered on, and powered back off again.
+
+This is a useful sanity check to ensure that the device state is what we
+expect, and that the device state returns to the initial state after a power
+cycle.
+
+This is also a security check that our devices are not discoverable unless we
+specifically set them to be.
+"""
+
+def run(machine):
+    device_host = hosts.create_host(machine)
+    job.run_test('bluetooth_Sanity_DefaultState',
+                 device_host=device_host,
+                 tester_host=None,
+                 interactive=False)
+
+
+parallel_simple(run, machines)

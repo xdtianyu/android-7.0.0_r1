@@ -1,0 +1,23 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Tests to ensure that RestartJob ignores argv[0] and cannot be
+abused to launch arbitrary processes.
+"""
+NAME = "security_RestartJob"
+PURPOSE = "Validate that RestartJob will not launch arbitrary processes"
+CRITERIA = """
+Fail if we are able to launch an arbitrary process via RestartJob.
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Security"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+job.run_test("security_RestartJob")

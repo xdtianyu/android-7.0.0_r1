@@ -1,0 +1,20 @@
+{
+  "name": "GraphicsTestExtension",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDXgXC9oW/2uNEcKmpCLkAsUkvOJQdRoIAabqsBcDEVkTaekNnGItr/dp3s06aYnVgxQPdfbcWzE36Rb77inlWc9kCPCW4mgbiFNvBAo2cL/IYsStfXDvNRkSktbC1iC9asr/yIcXc7A5ptojGu4s/24TeubraNT9r20V6OC0gGcwIDAQAB",
+  "description": "Graphics test extension",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/graphics_test.html"],
+      "js": ["fullscreen.js"]
+    }
+  ],
+  "permissions": [
+    "tabs"
+  ]
+}

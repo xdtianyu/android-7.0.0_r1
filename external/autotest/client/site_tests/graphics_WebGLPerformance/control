@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'chromeos-gfx'
+NAME = "graphics_WebGLPerformance"
+PURPOSE = "Execute the WebGL performance test suite."
+CRITERIA = "All suite tests must not crash/hang."
+ATTRIBUTES = "suite:graphics_per-day, suite:graphics, suite:graphics_browser"
+SUITE = "graphics_per-day, graphics, graphics_browser"
+TIME = "medium"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "graphics"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+This test runs the WebGL performance tests.
+"""
+
+job.run_test('graphics_WebGLPerformance')

@@ -1,0 +1,45 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_Perf.11b_wep'
+ATTRIBUTES = 'suite:wifi_perf, suite:wifi_perf_bcm4371'
+SUITE = 'wifi_perf, wifi_perf_bcm4371'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test uses netperf to measure the maximal receiving and transmitting
+throughput on a DUT with an 802.11b network with WEP encryption.
+"""
+
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_security_types
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    mode = hostap_config.HostapConfig.MODE_11B
+    # FYI: D-Bus requires string parameters must be valid UTF-8.
+    wep_keys = ['0123456789abcdef0123456789',
+                'mlk:ihgfedcba',
+                # Mix ASCII characters with a 3-byte UTF-8 characters.
+                'd\xe4\xb8\x80\xe4\xba\x8c\xe4\xb8\x89\xe5\x9b\x9b',
+                # Mix different byte length UTF-8 characters.
+                '\xe4\xb8\x80\xe4\xba\x8c\xe4\xb8\x89\xc2\xa2\xc2\xa3']
+    wep_config = xmlrpc_security_types.WEPConfig(
+            wep_keys,
+            wep_default_key=0,
+            auth_algorithm=xmlrpc_security_types.WEPConfig.AUTH_ALGORITHM_OPEN)
+    configs = [hostap_config.HostapConfig(channel=channel, mode=mode,
+                                          security_config=wep_config)
+               for channel in (6,)]
+    job.run_test('network_WiFi_Perf', tag=NAME.split('.')[1],
+                 host=host, raw_cmdline_args=args,
+                 additional_params=configs)
+
+
+parallel_simple(run, machines)

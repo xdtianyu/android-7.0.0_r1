@@ -1,0 +1,23 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "ssp_PackageInstall"
+PURPOSE = "Demonstrate SSP supports installation of packages inside test."
+CRITERIA = "This test will always succeed if running with SSP."
+SUITE = "dummy_server"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "ssp"
+TEST_TYPE = "server"
+
+DOC = """
+The test installs OS packages and python packages. If the test is not running
+in container, or it fails to install any package it will fail.
+"""
+
+def run(machine):
+    job.run_test('ssp_PackageInstall', host=hosts.create_host(machine))
+
+parallel_simple(run, machines)

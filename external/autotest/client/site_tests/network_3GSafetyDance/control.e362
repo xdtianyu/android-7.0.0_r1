@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GSafetyDance.e362"
+PURPOSE = "Stress-test all connman 3G operations."
+CRITERIA = """
+This test will fail if any DBus call times out or flimflam crashes.
+"""
+ATTRIBUTES = "suite:network3g"
+SUITE = "network3g"
+TIME = "SHORT"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "modem:e362"
+
+DOC = """
+  Stress-tests all connman 3G operations.
+
+  This test runs a long series of 3G operations in pseudorandom order. All of
+  these 3G operations must return a convincing result (EINPROGRESS or no error).
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+test_env = test_environment.CellularOTATestEnvironment()
+job.run_test('network_3GSafetyDance', test_env=test_env, tag='e362')

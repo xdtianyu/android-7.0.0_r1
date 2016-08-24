@@ -1,0 +1,18 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Authors"
+NAME = "platform_CryptohomeBadPerms"
+PURPOSE = "Tests Cryptohome's protection against bad directory permissions."
+TIME = "SHORT"
+TEST_CATEGORY = "Security"
+TEST_CLASS = "functional"
+TEST_TYPE = "client"
+
+DOC = """
+Tests Cryptohome's ability to detect directories with bad permissions or
+ownership in the mount path of a home directory.
+"""
+
+job.run_test('platform_CryptohomeBadPerms')

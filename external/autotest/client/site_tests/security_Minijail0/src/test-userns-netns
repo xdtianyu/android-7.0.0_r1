@@ -1,0 +1,16 @@
+#!/bin/sh
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+# args: -m "0 1000 1" -M "0 1000 1" -e
+
+. "$(dirname "$0")"/common.sh
+
+# Look in /proc/net/dev so we get even downed devices.
+lines=$(wc -l < /proc/net/dev)
+
+# Inter-|   Receive                                                |  Transmit
+#  face |bytes    packets errs drop fifo frame compressed multicast|bytes packets errs drop fifo colls carrier compressed
+#    lo:       0       0    0    0    0     0          0         0        0	0    0    0    0     0       0          0
+
+[ $lines -eq 3 ] || die "network interfaces still here"

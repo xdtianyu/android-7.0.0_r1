@@ -1,0 +1,21 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'kernel_Bootcache'
+AUTHOR = 'The Chromium OS Authors'
+ATTRIBUTES = "suite:kernel_per-build_regression"
+SUITE = 'kernel_per-build_regression'
+TIME = 'SHORT'
+TEST_CLASS = 'kernel'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'client'
+
+DOC = '''
+Test the bootcache;
+  - Cache is built correctly
+  - Bad block mapping
+  - Corrupt header
+'''
+
+job.run_test('kernel_Bootcache', args=args)

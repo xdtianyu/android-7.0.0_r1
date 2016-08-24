@@ -1,0 +1,49 @@
+<html>
+  <body>
+    <iframe id="player" type="text/html" width="640" height="390"
+      src="http://www.youtube.com/embed/50MukADPNCA?enablejsapi=1&html5=1"
+        frameborder="0"></iframe>
+    <br>
+    Player status: <span id='playerStatus'>Unstarted</span>
+    <br>
+    Playback quality: <span id='playbackQuality'>None</span>
+    <script>
+      var tag = document.createElement('script');
+      tag.src = "//www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange,
+            'onPlaybackQualityChange': onQualityChange
+          }
+        });
+      }
+      function onPlayerReady(event) {
+        playerStatus.innerHTML = 'Ready';
+        event.target.playVideo();
+      }
+      function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+          playerStatus.innerHTML = 'Playing';
+        } else if (event.data == YT.PlayerState.BUFFERING) {
+          playerStatus.innerHTML = 'Buffering';
+        } else if (event.data == YT.PlayerState.PAUSED) {
+          playerStatus.innerHTML = 'Paused';
+        } else if (event.data == YT.PlayerState.CUED) {
+          playerStatus.innerHTML = 'Video Cued';
+        } else if (event.data == YT.PlayerState.ENDED) {
+          playerStatus.innerHTML = 'Ended';
+        } else {
+          playerStatus.innerHTML = 'Undefined';
+        }
+      }
+      function onQualityChange(event) {
+        playbackQuality.innerHTML = player.getPlaybackQuality();
+      }
+    </script>
+  </body>
+</html>

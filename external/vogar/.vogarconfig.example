@@ -1,0 +1,24 @@
+##
+# This file contains default command line arguments that are supplied to every
+# invocation of Vogar. Blank lines and lines beginning with "#" are ignored.
+#
+# Included are a few examples of things you may wish to include in your
+# .vogarconfig file. Names contained in angle brackets are placeholders.
+##
+
+# use "--verbose", "--suggest-classpaths" and "--mode jvm" + "use-bootclasspath"
+# by default
+--verbose
+--suggest-classpaths
+--mode jvm
+--use-bootclasspath
+
+# where to find results against which to compare test runs
+--results-dir <HOME_DIR>/.vogar/results/
+
+# a list of directories to search for jar files when using --suggest-classpaths
+--jar-search-dir <ANDROID_ROOT>/out/target/common/obj/JAVA_LIBRARIES/
+--jar-search-dir <SOME_OTHER_DIR>
+
+# some classpaths to always include
+--classpath <ANDROID_ROOT>/out/target/common/obj/JAVA_LIBRARIES/core_intermediates/classes.jar

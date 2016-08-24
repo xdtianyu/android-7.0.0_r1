@@ -1,0 +1,56 @@
+Easiest way to run tests
+========================
+
+On target machine
+cd /usr/local/autotest
+
+Figure out the GPU_FAMILY in {exynos[*1], pinetrail, tegra[*1], other}.
+[*1] Not working with current piglit binaries.
+
+To run each and every test (thousands)
+./tests/graphics_PiglitBVT/test_scripts/$(GPU_FAMILY)/graphics_PiglitBVT_0.sh
+
+To just run the tests in slice i (hundreds), figure out the slice and
+./tests/graphics_PiglitBVT/test_scripts/other/graphics_PiglitBVT_${i}.sh
+
+How to roll new Piglit binaries
+===============================
+
+IMPORTANT: graphics_PiglitBVT_{1..20}.sh will change easily due to differing
+           partitioning due to new maximum test times. As long as
+           graphics_PiglitBVT_0.sh stays reasonable you should be good!
+
+
+1) Get some log files for previous test runs on different boards.
+   Place them in the appropriate piglit_logs/ GPU family directory.
+
+2) To do all the main work run
+   python generate_scripts.py
+
+3) Check output. You will have
+  a) test_scripts/*/graphics_PiglitBVT_0.sh containing all tests to run.
+     There is no control file for this as we don't want to run it normally.
+  b) graphics_PiglitBVT_{1..20}.sh roughly equally timed slices of the whole
+     test set. These are normally run on BVT and each should complete in 30s
+     to 2 minutes.
+  c) control.{1...20} for running the test slices on BVT.
+
+4) You can manually edit the test expectations (say due to recent flakyness)
+   and rerun generate_scripts.py as needed.
+
+5) In the very last resort you could edit *.sh directly but it is discouraged.
+
+6) When everything passes locally, diff test_scripts/*/graphics_PiglitBVT_0.sh
+   against the previous versions. This should show you which tests got added
+   or removed. Also please diff the expectations for sanity.
+
+7) Please don't check all log files into the repository as they are too large.
+   Instead pick one representative log plus the corresponding expectations.
+   Purge all other logs.
+
+   The idea here is that we keep track of tests that pass sometimes but not
+   always as these are the largest troublemakers.
+
+8) Re-run 'python generate_scripts.py'. This is just for prettyness. After the
+   first time (which creates a new slicing) running it again should be
+   idempotent.

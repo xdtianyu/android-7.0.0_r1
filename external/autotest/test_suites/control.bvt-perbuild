@@ -1,0 +1,62 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "bvt-perbuild"
+PURPOSE = "Test basic, required functionality."
+CRITERIA = "All tests with SUITE=bvt-perbuild must pass."
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This is the portion of the Build Verification Test suite required to
+pass on every canary build.  These tests are run against canary
+builds only; failures in this suite are evaluated by QA, and
+normally will block release.
+
+Requirements for a test to be in this suite:
+ 1. The test should be SHORT or MEDIUM, and should not require any
+    specialized lab resources.
+ 2. A test failure should indicate that the product is not fit for
+    release on any channel.
+ 3. A test failure should indicate a bug in the product, and not a
+    bug in the test.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on. Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+
+# Values specified in this bug template will override default values when
+# filing bugs on tests that are a part of this suite. If left unspecified
+# the bug filer will fallback to it's defaults.
+_BUG_TEMPLATE = {
+    'labels': ['bvt'],
+    'owner': '',
+    'status': None,
+    'summary': None,
+    'title': None,
+    'ccs': ['chromeos-lab-errors@google.com']
+}
+
+args_dict['max_runtime_mins'] = 20
+args_dict['job'] = job
+args_dict['add_experimental'] = True
+args_dict['name'] = 'bvt-perbuild'
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['bug_template'] = _BUG_TEMPLATE
+
+dynamic_suite.reimage_and_run(**args_dict)

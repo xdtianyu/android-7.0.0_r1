@@ -1,0 +1,24 @@
+<!-- This is a test html file for video test. -->
+<html>
+<body>
+    <video id='testvideo' name='media' controls autoplay loop muted
+            width="640" height="360">
+    </video>
+    <br/>playing: <span id='message_box'/><br/>
+</body>
+<script type="text/javascript">
+  function changeSourceAndPlay(video_url) {
+    testvideo.src = video_url;
+    message_box.innerHTML = 'src = ' + testvideo.src;
+    testvideo.play();
+  }
+
+  function isVideoPlaying() {
+    return (!testvideo.paused) && (testvideo.error == null);
+  }
+
+  function getVideoCurrentTime() {
+    return testvideo.currentTime;
+  }
+</script>
+</html>

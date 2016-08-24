@@ -1,0 +1,29 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "cernekee"
+NAME = "kernel_sysrq_info"
+PURPOSE = "Verify the Magic SysRq show-* commands."
+ATTRIBUTES = "suite:kernel_daily_regression"
+SUITE = "kernel_daily_regression"
+TIME = "FAST"
+TEST_TYPE = "client"
+DOC = """
+Verifies select /proc/sysrq-trigger commands.
+
+Fail if any "show-*" SysRq command doesn't match the regexp in the
+test case, or if it crashes the system:
+  - show-backtrace-all-active-cpus(L)
+  - show-memory-usage(M)
+  - show-registers(P)
+  - show-all-timers(Q)
+  - show-task-states(T)
+  - show-blocked-tasks(W)
+
+These SysRq commands are used to gather postmortem data from systems
+deployed in the field, so it is critical that they work correctly (and
+don't crash the system).
+"""
+
+job.run_test('kernel_sysrq_info')

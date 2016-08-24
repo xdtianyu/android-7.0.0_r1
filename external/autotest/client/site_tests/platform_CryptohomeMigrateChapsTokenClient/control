@@ -1,0 +1,18 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "usanghi"
+NAME = "platform_CryptohomeMigrateChapsTokenClient"
+ATTRIBUTES = "suite:manual"
+SUITE = "manual"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Platform"
+TEST_TYPE = "client"
+
+DOC = """
+This test executes client side code for platform_CryptohomeMigrateChapsToken
+"""
+
+job.run_test("platform_CryptohomeMigrateChapsTokenClient")

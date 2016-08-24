@@ -1,0 +1,14 @@
+{
+  "name": "A11y Features Extension",
+  "description": "For testing A11y features.",
+  "manifest_version": 2,
+  "version": "0.1",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "permissions" : [
+    "accessibilityFeatures.modify",
+    "accessibilityFeatures.read",
+    "management"
+  ]
+}

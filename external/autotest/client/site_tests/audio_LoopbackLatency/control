@@ -1,0 +1,28 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'Chromium OS Audiovideo Team'
+NAME = 'audio_LoopbackLatency'
+PURPOSE = 'Test that audio loopback latency'
+CRITERIA = """
+Check if the audio played to line out can be heard mic in, and assert
+the latency is within certain limit.
+"""
+ATTRIBUTES = "suite:audio"
+SUITE = 'audio'
+TIME= 'SHORT'
+TEST_CATEGORY = 'PLAYBACKCAPTURE'
+TEST_CLASS = "audio"
+TEST_TYPE = 'client'
+DEPENDENCIES = 'audio_loopback_dongle'
+
+DOC = """
+Test that audio loopback latency is within certain limit.
+
+NOTE: For this test to pass you need to have the line out looped back to mic-in.
+This can be through a 3.5mm male-to-male cable or a loopback dongle depending on
+your device.
+"""
+
+job.run_test('audio_LoopbackLatency')

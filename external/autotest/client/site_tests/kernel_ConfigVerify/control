@@ -1,0 +1,23 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "kernel_ConfigVerify"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Verify various important CONFIG_* settings"
+CRITERIA = "Fails if kernel config variables are in an unexpected state"
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+    Checks that the reported CONFIG_* variables in /boot/config-$(uname -r)
+    contain expected values, and correctly lack unexpected settings. Several
+    are security related.
+"""
+
+job.run_test('kernel_ConfigVerify')

@@ -1,0 +1,22 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ejcaruso@chromium.org snanda@chromium.org marcheu@chromium.org"
+NAME = "power_PSROccupancyTest"
+PURPOSE = "Test panel self refresh (PSR) occupancy when the display is static."
+TIME = "SHORT"
+TEST_TYPE = "client"
+
+DOC = """
+Tests that PSR is entered on a static content.
+
+The purpose of this test is to verify that display enters the PSR state when the
+content being displayed is static. It also verifies that the display stays in
+PSR state for as long as the display is static. It first enables PSR if not
+enabled and makes the displayed content static. It then waits for some time,
+after which it checks whether the display was in PSR state for close to
+(<wait time> - <vblankoffdelay>).
+"""
+
+job.run_test('power_PSROccupancyTest')

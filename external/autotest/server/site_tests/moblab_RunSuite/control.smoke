@@ -1,0 +1,44 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "chromeos-moblab@google.com"
+NAME = "moblab_SmokeSuite"
+PURPOSE = "Test that Moblab can run the smoke suite."
+ATTRIBUTES = "suite:moblab"
+SUITE = "moblab"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "moblab"
+TEST_TYPE = "server"
+# moblab_RunSuite requires .boto file from drone. Disable SSP for this test as
+# it has dependency on lab infrastructure.
+REQUIRE_SSP = False
+
+DOC = """
+Kicks off the smoke suite on a Moblab host against the DUTs on its subnet
+and ensures the suite completes successfully.
+
+To invole this test locally:
+  test_that -b stumpy_moblab <remote> moblab_SmokeSuite --args="<ARGLIST>"
+
+where ARGLIST is a whitespace separated list of the following key=value pairs.
+Values pertaining to the test case include:
+
+  boto_path=<boto_path>                path to the boto file to be installed on
+                                       the Moblab DUT. If not specified, the
+                                       boto file in the current home directory
+                                       will be installed if it exists.
+  image_storage_server=<server_name>   Google Storage Bucket from which to
+                                       fetch test images from. If not
+                                       specified, the value will be fetched
+                                       from global_config.
+"""
+from autotest_lib.client.common_lib import utils
+
+def run(machine):
+    host = hosts.create_host(machine)
+    args_dict = utils.args_to_dict(args)
+    job.run_test('moblab_RunSuite', host=host, suite_name='smoke', **args_dict)
+
+parallel_simple(run, machines)

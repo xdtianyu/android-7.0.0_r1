@@ -1,0 +1,20 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Authors"
+NAME = "platform_GesturesRegressionTest"
+PURPOSE = "Regression tests of ChromeOS gestures library."
+ATTRIBUTES = "suite:bvt-perbuild, suite:touch"
+SUITE = "bvt-perbuild,touch"
+TIME = "SHORT"
+TEST_CATEGORY = "Regression"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This tests the regression of gestures library and stores the results in autotest
+db.
+"""
+
+job.run_test('platform_GesturesRegressionTest')

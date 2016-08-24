@@ -1,0 +1,21 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "cmasone, joaodasilva"
+NAME = "login_MultipleSessions"
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME = "FAST"
+TEST_CLASS = "login"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test is intended to ensure that the session manager can
+handle multiple simultaneous sessions.  It will call
+session_manager.StartSession() over DBus more than once, with
+different usernames, and ensure those calls succeed.
+"""
+
+job.run_test('login_MultipleSessions')

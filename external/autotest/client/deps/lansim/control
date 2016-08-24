@@ -1,0 +1,68 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DOC = """\
+lansim is a LAN simulator that runs over a TAP network interface and
+allows to simulate network traffic on that interface from Python code.
+
+A TAP interface is a virtual network kernel device that acts as any
+other network interface, except that instead of sending and receiving
+the traffic through a hardware interface it allows a given program to
+handle that traffic through a socket. It is essentially a
+bi-directional pipe where one side is a network interface and the
+other side is a socket on a program.
+
+The lansim Simulator class allows a Python function to attend all the
+outbound traffic matching certain rules and take an action over that
+like send back a packet to this interface. The kernel network stack
+will see this packet as an inbound packet from the fake interface.
+These actions can also be time driven, like a simulation timeout or
+send a ping packet every second.
+
+This simulator is useful on situations where you can't fake a network
+service using the normal kernel network stack. For example, if you
+need to fake a network of several hosts publishing services via mDNS
+with multicast you can write those services using this simulator but
+it's more complicated to do the same using the system's network stack
+since an outbound multicast packet will be sent out on the real
+interface.
+
+The Simulator class requires a TAP network interface and allows other
+Python classes to subscribe to its traffic. The TAP interface needs to
+be up when the Simulator runs.
+
+For example, to create a tap interface you can do the following:
+
+    tap = tuntap.TunTap(tuntap.IFF_TAP, name="faketap")
+    print "Interface running on", tap.name
+
+This will create a TAP interface with a name like "faketap0". You can
+then configure it manually, or just bring it up without an IP address
+if you have a Python class implementing a fake DHCP server to
+configure it later. To set the IP address manually, you can use any
+system command like "ip" or "ifconfig", or from Python in this way:
+
+    tap.set_addr("192.168.0.123")
+    tap.up()
+
+A very simple example of the usage of this simulator is the
+following, where three hosts are created on the faketap0 interface
+and will respond to ARP requests. Running the command
+"arping -I faketap0 192.168.0.4" will show two responses for that
+given IP address:
+
+    simu = simulator.SimulatorThread(tap)
+
+    host_a = host.SimpleHost(simu, '12:34:56:78:90:AB', '192.168.0.3')
+    host_b = host.SimpleHost(simu, '12:34:56:78:90:CD', '192.168.0.4')
+    host_c = host.SimpleHost(simu, '12:34:56:78:90:EF', '192.168.0.4')
+
+    simu.start() # Run the thread.
+    print "Press enter to stop the simulation."
+    raw_input()
+    simu.stop()
+    simu.join()
+"""
+
+job.setup_dep(['lansim'])

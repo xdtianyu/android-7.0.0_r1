@@ -1,0 +1,6 @@
+# This is the "prod" conf file directly referenced by the AFE running in our
+# lab.
+# It pulls in the default conf file for autotest (also used on developer
+# machines for developer servers), and adds in prod-only directives.
+Include "/usr/local/autotest/apache/apache-conf"
+Include "/usr/local/autotest/apache/conf/site-directives"

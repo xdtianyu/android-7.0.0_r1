@@ -1,0 +1,27 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Team"
+NAME = "CrashServices"
+PURPOSE = "Verify that all processes create *.dmp files."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "logging"
+TEST_TYPE = "client"
+JOB_RETRIES = 0
+ATTRIBUTES = "suite:jailed_build, suite:partners"
+SUITE = "jailed_build, partners"
+
+DOC = """
+Crash all valid Chrome OS processes from a whitelist, and confirm
+that *.dmp, *.meta, and *.core files are created.
+"""
+
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'Cr-Internals-Logging', 'Cr-OS-Systems'],
+    'owner': 'vapier@chromium.org',
+    'cc': ['vapier@chromium.org', 'benchan@chromium.org'],
+}
+
+job.run_test("logging_CrashServices")

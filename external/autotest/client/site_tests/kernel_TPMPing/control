@@ -1,0 +1,26 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "kernel_TPMPing"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Ping the TPM"
+CRITERIA = "Fails if user-level cannot communicate with the TPM."
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = "bvt-cq"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+    Checks that there is a TPM, that the driver can talk to it, and that the
+    TCS daemon can talk to the driver.  Assumes that the firmware has started
+    the TPM, but makes no other assumptions on the TPM state (activated or not,
+    owned or not, etc.)
+
+    Also checks that the driver contains an important patch (gentle shutdown).
+"""
+
+job.run_test('kernel_TPMPing')

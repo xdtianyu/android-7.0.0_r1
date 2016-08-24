@@ -1,0 +1,39 @@
+NAME = 'platform_MemCheck'
+PURPOSE = 'Verify memory values look reasonable.'
+CRITERIA = """
+This test will fail if unexpected values are found for:
+  - Total Memory
+  - Free Memory
+  - Swap Cached
+  - Swap Total
+  - Virtual Memory
+"""
+AUTHOR = 'kdlucas, puthik'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'platform'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = 'bvt-cq'
+DEPENDENCIES = 'cleanup-reboot'
+DOC = """
+Verifies that memory levels look sane.
+
+The resources being verified are:
+
+Total Memory
+Free Memory
+Swap Total
+Virtual Memory Total
+Memory Speed
+
+We are assuming that we should have at least 1/2 of total memory free and
+that virtual memory should be at least 102400 KB and memory speed is at
+least 1333 MHz.
+
+This test requires a reboot of the DUT before it runs for free memory check
+(thus the 'cleanup-reboot' dependency).
+"""
+
+job.run_test('platform_MemCheck')

@@ -1,0 +1,65 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "push_to_prod"
+PURPOSE = "Test Autotest before push to prod."
+CRITERIA = ""
+
+TIME = "LONG"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This suite is designed to test various aspect of Autotest. It should be run
+before push to prod. Design doc:
+https://docs.google.com/a/google.com/document/d/1JMz0xS3fZRSHMpFkkKAL_rxsdbNZomhHbC3B8L71uuI/edit?usp=sharing
+Email chromeos-lab-infrastructure@google.com if you have any question about this
+suite.
+
+This suite sets num to 6 in the reimage_and_run call to make sure we run
+across 6 different machines. This overrides the CROS.sharding_factor option in
+the global_config.
+
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on. Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import common
+from autotest_lib.client.common_lib.cros import dev_server
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+# Needs to be done to generate the control files for the suite.
+ds = dev_server.ImageServer.resolve(build)
+ds.stage_artifacts(build, artifacts=['au_suite'])
+
+# Values specified in this bug template will override default values when
+# filing bugs on tests that are a part of this suite. If left unspecified
+# the bug filer will fallback to it's defaults.
+_BUG_TEMPLATE = {
+    'labels': ['push_to_prod'],
+    'owner': '',
+    'status': None,
+    'summary': None,
+    'title': None,
+    'ccs': []
+}
+
+args_dict['max_runtime_mins'] = 20
+args_dict['file_bugs'] = True
+args_dict['name'] = 'push_to_prod'
+args_dict['job'] = job
+args_dict['add_experimental'] = True
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['bug_template'] = _BUG_TEMPLATE
+
+dynamic_suite.reimage_and_run(**args_dict)

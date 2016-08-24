@@ -1,0 +1,18 @@
+# Copyright (c) 2009 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "CryptohomeTPMReOwnServer"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test verifies that cryptohome re-creates a user's cryptohome directory
+when the TPM is cleared and re-owned.
+"""
+
+job.run_test("platform_CryptohomeTPMReOwnServer",
+             host=hosts.create_host(machines[0]))

@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, quiche, wiley'
+NAME = 'network_CheckCriticalProcesses'
+ATTRIBUTES = "suite:bvt-cq, suite:network_nightly, subsystem:network"
+SUITE = 'bvt-cq, network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+DOC = """
+This test has a static list of process names that should be running
+on a good Chrome OS Core image with client networking (shill) support.
+It fails if any of these are not running at the time of the test.
+"""
+
+NETWORK_CRITICAL_PROCESSES = [
+    'dbus-daemon',
+    'netfilter-queue',
+    'shill',
+    'udevd',
+    'update_engine',
+    'wpa_supplicant',
+    ]
+
+job.run_test('platform_CheckCriticalProcesses',
+             process_list=NETWORK_CRITICAL_PROCESSES)

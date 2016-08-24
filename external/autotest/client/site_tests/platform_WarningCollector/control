@@ -1,0 +1,20 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "platform_WarningCollector"
+AUTHOR = "chromeos-kernel@google.com"
+PURPOSE = "Checks that the warning collector is collecting warnings"
+CRITERIA = "The collector must create a file when a test warning is produced"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Platform"
+TEST_TYPE = "Client"
+
+DOC = """
+This checks that the warning collector is operational by generating
+a test warning and verifying that the collector daemon collects it.
+More functionality is tested by the compile-time test.
+"""
+
+job.run_test('platform_WarningCollector')

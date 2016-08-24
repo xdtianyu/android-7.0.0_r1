@@ -1,0 +1,31 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+import logging
+
+from autotest_lib.client.common_lib import utils
+
+
+AUTHOR = 'garnold'
+NAME = 'brillo_DiskSizeTest'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:brillo-bvt,suite:brillo-smoke'
+SUITE = 'brillo-bvt,brillo-smoke'
+
+DOC = """
+Tests whether a Brillo device has sufficient disk size.
+"""
+
+TEST_ARG_NAMES = ('path', 'min_size')
+args_dict = utils.args_to_dict(args)
+
+def run(machine):
+    test_args = {name: args_dict[name] for name in TEST_ARG_NAMES
+                 if name in args_dict}
+    job.run_test('brillo_DiskSizeTest', host=hosts.create_host(machine),
+                 **test_args)
+
+
+parallel_simple(run, machines)

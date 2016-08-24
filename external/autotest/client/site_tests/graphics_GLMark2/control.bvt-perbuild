@@ -1,0 +1,28 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'graphics_GLMark2.bvt-perbuild'
+AUTHOR = 'chromeos-gfx'
+PURPOSE = 'Benchmark the graphics library performance.'
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = 'bvt-perbuild'
+TIME='MEDIUM'
+TEST_CATEGORY = 'Performance'
+TEST_CLASS = "gl"
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+# Reboot in the lab after the test ends.
+DEPENDENCIES='cleanup-reboot'
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+glmark2 is a benchmark for OpenGL (ES) 2.0. It uses only the subset of the
+OpenGL 2.0 API that is compatible with OpenGL ES 2.0.
+
+https://launchpad.net/glmark2
+"""
+
+job.run_test('graphics_GLMark2', hasty = True)

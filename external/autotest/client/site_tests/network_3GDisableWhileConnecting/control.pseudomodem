@@ -1,0 +1,67 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GDisableWhileConnecting.pseudomodem"
+PURPOSE = "Check that the 3G modem can handle a disconnect while connecting."
+CRITERIA = """
+This test will fail if a disconnect request while the modem is
+connecting is not promptly executed.
+"""
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+Check that the 3G modem can handle a disconnect while connecting.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+ITERATIONS_PER_TEST=1
+
+# 3GPP
+test_env = test_environment.CellularPseudoMMTestEnvironment(
+        pseudomm_args=({'family': '3GPP'},))
+job.run_test('network_3GDisableWhileConnecting',
+             test_env=test_env,
+             timeout_s=20,
+             delay_before_disable_ms=0,
+             disable_delay_per_iteration_ms=0,
+             iterations=ITERATIONS_PER_TEST,
+             tag='instant_disable_3GPP')
+
+test_env = test_environment.CellularPseudoMMTestEnvironment(
+        pseudomm_args=({'family': '3GPP'},))
+job.run_test('network_3GDisableWhileConnecting',
+             test_env=test_env,
+             timeout_s=20,
+             delay_before_disable_ms=0,
+             disable_delay_per_iteration_ms=int(1000.0 / ITERATIONS_PER_TEST),
+             iterations=ITERATIONS_PER_TEST,
+             tag='disable_delay_ramp_3GPP')
+
+# CDMA
+test_env = test_environment.CellularPseudoMMTestEnvironment(
+        pseudomm_args=({'family': 'CDMA'},))
+job.run_test('network_3GDisableWhileConnecting',
+             test_env=test_env,
+             timeout_s=20,
+             delay_before_disable_ms=0,
+             disable_delay_per_iteration_ms=0,
+             iterations=ITERATIONS_PER_TEST,
+             tag='instant_disable_CDMA')
+
+test_env = test_environment.CellularPseudoMMTestEnvironment(
+        pseudomm_args=({'family': 'CDMA'},))
+job.run_test('network_3GDisableWhileConnecting',
+             test_env=test_env,
+             timeout_s=20,
+             delay_before_disable_ms=0,
+             disable_delay_per_iteration_ms=int(1000.0 / ITERATIONS_PER_TEST),
+             iterations=ITERATIONS_PER_TEST,
+             tag='disable_delay_ramp_CDMA')

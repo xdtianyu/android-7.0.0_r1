@@ -1,0 +1,22 @@
+; Copyright (c) 2009 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; 16k random reads over a 1 GiB area.
+;
+
+[16k_read]
+filename=${FILENAME}
+size=${FILESIZE}
+
+time_based
+runtime=${RUN_TIME}
+
+ioengine=libaio
+iodepth=4
+
+readwrite=randread
+
+bs=16k
+norandommap
+

@@ -1,0 +1,23 @@
+NAME = "LTP"
+AUTHOR = "Martin Bligh <mbligh@google.com>"
+PURPOSE = 'Verify kernel system calls are operating correctly.'
+CRITERIA = """
+There are over 1,000 tests and each one has its own pass/failure criteria. Each
+individual test case is written from the system call's manpage.
+"""
+TIME = "MEDIUM"
+TEST_CATEGORY = "FUNCTIONAL"
+TEST_CLASS = "KERNEL"
+TEST_TYPE = "CLIENT"
+DOC = """
+The Linux Test Project is a suite of tests. The suite is executed through a
+shell program. Most of the tests are written in C, with some in bash and Perl,
+and are designed to test various aspects of the Linux operating system. Most
+test cases will use a glibc interface if it exists, or kernel header files if
+available.
+
+For more information visit:
+  http://ltp.sourceforge.net/
+"""
+
+job.run_test('ltp')

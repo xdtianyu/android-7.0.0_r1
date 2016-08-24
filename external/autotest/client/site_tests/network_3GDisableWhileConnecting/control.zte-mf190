@@ -1,0 +1,45 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GDisableWhileConnecting.zte-mf190"
+PURPOSE = "Check that the 3G modem can handle a disconnect while connecting."
+CRITERIA = """
+This test will fail if a disconnect request while the modem is
+connecting is not promptly executed.
+"""
+ATTRIBUTES = "suite:network3g"
+SUITE = "network3g"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "modem:zte-mf190"
+
+DOC = """
+Check that the 3G modem can handle a disconnect while connecting.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+ITERATIONS_PER_TEST=1
+
+test_env = test_environment.CellularOTATestEnvironment()
+job.run_test('network_3GDisableWhileConnecting',
+             test_env=test_env,
+             delay_before_disable_ms=0,
+             disable_delay_per_iteration_ms=0,
+             iterations=ITERATIONS_PER_TEST,
+             tag='instant_disable-zte-mf190')
+
+# Since dbus-python emits our calls asynchronously, it is sometimes
+# (often?) the case that the disable arrives before the connect.
+# There's no good way to track what actually gets sent first, so we
+# sleep.
+job.run_test('network_3GDisableWhileConnecting',
+             test_env=test_env,
+             delay_before_disable_ms=0,
+             disable_delay_per_iteration_ms=int(1000.0 / ITERATIONS_PER_TEST),
+             iterations=ITERATIONS_PER_TEST,
+             tag='disable_delay_ramp-zte-mf190')

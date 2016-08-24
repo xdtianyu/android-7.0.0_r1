@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dshi@chromium.org"
+NAME = "desktopui_UrlFetchWithChromeDriver"
+PURPOSE = "Verify URL loads and cookies are stored in Chrome."
+CRITERIA = """
+This test will fail if the URL fails to load or the cookie is not saved.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+
+DOC = """
+This test opens a new browser to the given URL and waits for the specified
+cookie to be saved.
+"""
+
+job.run_test('desktopui_UrlFetchWithChromeDriver', live=True, tag='live')
+job.run_test('desktopui_UrlFetchWithChromeDriver', live=False, tag='not-live')

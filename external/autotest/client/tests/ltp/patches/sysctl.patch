@@ -1,0 +1,273 @@
+From 75201f160b9aa49af70d8f46fb1f087e63d603dd Mon Sep 17 00:00:00 2001
+From: Mike Frysinger <vapier@gentoo.org>
+Date: Fri, 8 Feb 2013 17:12:41 -0500
+Subject: [PATCH] syscalls/sysctl: check if __NR_sysctl is defined
+
+Recent kernel ports have started omitting this old syscall, so if it
+isn't defined, just display a normal TCONF message.
+
+Signed-off-by: Mike Frysinger <vapier@gentoo.org>
+---
+ testcases/kernel/syscalls/sysctl/sysctl01.c | 15 +++++++++++++++
+ testcases/kernel/syscalls/sysctl/sysctl03.c | 15 +++++++++++++++
+ testcases/kernel/syscalls/sysctl/sysctl04.c | 15 +++++++++++++++
+ testcases/kernel/syscalls/sysctl/sysctl05.c | 15 +++++++++++++++
+ 4 files changed, 60 insertions(+)
+
+diff --git a/testcases/kernel/syscalls/sysctl/sysctl01.c b/testcases/kernel/syscalls/sysctl/sysctl01.c
+index ed2d067..cc2817e 100644
+--- a/testcases/kernel/syscalls/sysctl/sysctl01.c
++++ b/testcases/kernel/syscalls/sysctl/sysctl01.c
+@@ -53,6 +53,10 @@
+ #include <linux/sysctl.h>
+ 
+ char *TCID = "sysctl01";
++
++/* This is an older/deprecated syscall that newer arches are omitting */
++#ifdef __NR_sysctl
++
+ int TST_TOTAL = 3;
+ 
+ static int sysctl(int *name, int nlen, void *oldval, size_t * oldlenp,
+@@ -194,3 +198,14 @@ void cleanup()
+ 	TEST_CLEANUP;
+ 
+ }
++
++#else
++int TST_TOTAL = 0;		/* Total number of test cases. */
++
++int main()
++{
++
++	tst_resm(TCONF, "This test needs a kernel that has sysctl syscall.");
++	tst_exit();
++}
++#endif
+diff --git a/testcases/kernel/syscalls/sysctl/sysctl03.c b/testcases/kernel/syscalls/sysctl/sysctl03.c
+index 09713d7..6caaa72 100644
+--- a/testcases/kernel/syscalls/sysctl/sysctl03.c
++++ b/testcases/kernel/syscalls/sysctl/sysctl03.c
+@@ -73,6 +73,10 @@
+ #include <pwd.h>
+ 
+ char *TCID = "sysctl03";
++
++/* This is an older/deprecated syscall that newer arches are omitting */
++#ifdef __NR_sysctl
++
+ int TST_TOTAL = 2;
+ 
+ int sysctl(int *name, int nlen, void *oldval, size_t * oldlenp,
+@@ -213,3 +217,14 @@ void cleanup(void)
+ {
+ 	TEST_CLEANUP;
+ }
++
++#else
++int TST_TOTAL = 0;		/* Total number of test cases. */
++
++int main()
++{
++
++	tst_resm(TCONF, "This test needs a kernel that has sysctl syscall.");
++	tst_exit();
++}
++#endif
+diff --git a/testcases/kernel/syscalls/sysctl/sysctl04.c b/testcases/kernel/syscalls/sysctl/sysctl04.c
+index 3e41418..bda1020 100644
+--- a/testcases/kernel/syscalls/sysctl/sysctl04.c
++++ b/testcases/kernel/syscalls/sysctl/sysctl04.c
+@@ -54,6 +54,10 @@
+ #include <linux/sysctl.h>
+ 
+ char *TCID = "sysctl04";
++
++/* This is an older/deprecated syscall that newer arches are omitting */
++#ifdef __NR_sysctl
++
+ int TST_TOTAL = 2;
+ 
+ int sysctl(int *name, int nlen, void *oldval, size_t * oldlenp,
+@@ -166,3 +170,14 @@ void cleanup()
+ 	TEST_CLEANUP;
+ 
+ }
++
++#else
++int TST_TOTAL = 0;		/* Total number of test cases. */
++
++int main()
++{
++
++	tst_resm(TCONF, "This test needs a kernel that has sysctl syscall.");
++	tst_exit();
++}
++#endif
+diff --git a/testcases/kernel/syscalls/sysctl/sysctl05.c b/testcases/kernel/syscalls/sysctl/sysctl05.c
+index 4ec4e20..e06ad6e 100644
+--- a/testcases/kernel/syscalls/sysctl/sysctl05.c
++++ b/testcases/kernel/syscalls/sysctl/sysctl05.c
+@@ -56,6 +56,10 @@
+ #include <errno.h>
+ 
+ char *TCID = "sysctl05";
++
++/* This is an older/deprecated syscall that newer arches are omitting */
++#ifdef __NR_sysctl
++
+ int TST_TOTAL = 2;
+ 
+ int sysctl(int *name, int nlen, void *oldval, size_t * oldlenp,
+@@ -193,3 +197,14 @@ void cleanup()
+ 	TEST_CLEANUP;
+ 
+ }
++
++#else
++int TST_TOTAL = 0;		/* Total number of test cases. */
++
++int main()
++{
++
++	tst_resm(TCONF, "This test needs a kernel that has sysctl syscall.");
++	tst_exit();
++}
++#endif
+-- 
+1.8.0.2
+
+From a62b53febaa0a236c00a502c79c8e9ac0f3b468e Mon Sep 17 00:00:00 2001
+From: Mike Frysinger <vapier@gentoo.org>
+Date: Fri, 8 Feb 2013 19:33:22 -0500
+Subject: [PATCH] tomoyo: stop using sysctl()
+
+Recent kernel ports have started omitting this old syscall, and glibc
+makes it an error to try to include that header when it's unavailable.
+So convert over to reading/writing the /proc/sys/ paths directly.
+
+Signed-off-by: Mike Frysinger <vapier@gentoo.org>
+---
+ testcases/kernel/security/tomoyo/include.h         | 31 +++++++++++++++++++++-
+ .../kernel/security/tomoyo/tomoyo_file_test.c      | 10 +++----
+ .../kernel/security/tomoyo/tomoyo_new_file_test.c  | 18 ++++++-------
+ 3 files changed, 42 insertions(+), 17 deletions(-)
+
+diff --git a/testcases/kernel/security/tomoyo/include.h b/testcases/kernel/security/tomoyo/include.h
+index 44d6f6a..fd1b19b 100644
+--- a/testcases/kernel/security/tomoyo/include.h
++++ b/testcases/kernel/security/tomoyo/include.h
+@@ -35,7 +35,6 @@
+ #include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <sys/syscall.h>
+-#include <sys/sysctl.h>
+ #include <sys/time.h>
+ #include <sys/timex.h>
+ #include <sys/types.h>
+@@ -84,6 +83,36 @@ static inline int pivot_root(const char *new_root, const char *put_old)
+ }
+ #endif
+ 
++/* The sysctl() wrapper is dead and newer arches omit it now. */
++static inline int write_sysctl(const char *path, const char *value)
++{
++	FILE *fp = fopen(path, "w");
++	if (!fp)
++		return 1;
++	fputs(value, fp);
++	fclose(fp);
++	return 0;
++}
++
++static inline int read_sysctl(const char *path, char *value, int len)
++{
++	char scratch[100];
++	FILE *fp = fopen(path, "r");
++	if (!fp)
++		return 1;
++	if (!value) {
++		value = scratch;
++		len = sizeof(scratch);
++	}
++	if (fgets(value, len, fp))
++		/* ignore */;
++	fclose(fp);
++	return 0;
++}
++
++/* Should be a fairly benign path to bang on. */
++#define TEST_SYSCTL_PATH "/proc/sys/net/ipv4/ip_local_port_range"
++
+ #define proc_policy_dir              "/sys/kernel/security/tomoyo/"
+ #define proc_policy_domain_policy    "/sys/kernel/security/tomoyo/domain_policy"
+ #define proc_policy_exception_policy "/sys/kernel/security/tomoyo/exception_policy"
+diff --git a/testcases/kernel/security/tomoyo/tomoyo_file_test.c b/testcases/kernel/security/tomoyo/tomoyo_file_test.c
+index fa2dec1..010802e 100644
+--- a/testcases/kernel/security/tomoyo/tomoyo_file_test.c
++++ b/testcases/kernel/security/tomoyo/tomoyo_file_test.c
+@@ -77,14 +77,11 @@ static void stage_file_test(void)
+ {
+ 	int fd;
+ 	{
+-		static int name[] = { CTL_NET, NET_IPV4,
+-				      NET_IPV4_LOCAL_PORT_RANGE };
+-		int buffer[2] = { 32768, 61000 };
+-		size_t size = sizeof(buffer);
++		const char buffer[] = "32768 61000";
+ 		show_prompt("sysctl(READ)");
+-		show_result(sysctl(name, 3, buffer, &size, 0, 0));
++		show_result(read_sysctl(TEST_SYSCTL_PATH, NULL, 0));
+ 		show_prompt("sysctl(WRITE)");
+-		show_result(sysctl(name, 3, 0, 0, buffer, size));
++		show_result(write_sysctl(TEST_SYSCTL_PATH, buffer));
+ 	}
+ 
+ 	/* QUESTION: Is there a file which can be passed to uselib()? */
+diff --git a/testcases/kernel/security/tomoyo/tomoyo_new_file_test.c b/testcases/kernel/security/tomoyo/tomoyo_new_file_test.c
+index 2ed021e..16427d2 100644
+--- a/testcases/kernel/security/tomoyo/tomoyo_new_file_test.c
++++ b/testcases/kernel/security/tomoyo/tomoyo_new_file_test.c
+@@ -90,9 +90,7 @@ static void mkfifo2(const char *pathname)
+ 
+ static void stage_file_test(void)
+ {
+-	static int name[] = { CTL_NET, NET_IPV4, NET_IPV4_LOCAL_PORT_RANGE };
+-	int buffer[2] = { 32768, 61000 };
+-	size_t size = sizeof(buffer);
++	const char buffer[] = "32768 61000";
+ 	int pipe_fd[2] = { EOF, EOF };
+ 	int error = 0;
+ 	int fd;
+@@ -127,21 +125,23 @@ static void stage_file_test(void)
+ 
+ 	policy = "allow_read /proc/sys/net/ipv4/ip_local_port_range";
+ 	write_domain_policy(policy, 0);
+-	show_result(sysctl(name, 3, buffer, &size, 0, 0), 1);
++	show_result(read_sysctl(TEST_SYSCTL_PATH, NULL, 0), 1);
+ 	write_domain_policy(policy, 1);
+-	show_result(sysctl(name, 3, buffer, &size, 0, 0), 0);
++	show_result(read_sysctl(TEST_SYSCTL_PATH, NULL, 0), 0);
+ 
+ 	policy = "allow_write /proc/sys/net/ipv4/ip_local_port_range";
+ 	write_domain_policy(policy, 0);
+-	show_result(sysctl(name, 3, 0, 0, buffer, size), 1);
++	show_result(write_sysctl(TEST_SYSCTL_PATH, buffer), 1);
+ 	write_domain_policy(policy, 1);
+-	show_result(sysctl(name, 3, 0, 0, buffer, size), 0);
++	show_result(write_sysctl(TEST_SYSCTL_PATH, buffer), 0);
+ 
+ 	policy = "allow_read/write /proc/sys/net/ipv4/ip_local_port_range";
+ 	write_domain_policy(policy, 0);
+-	show_result(sysctl(name, 3, buffer, &size, buffer, size), 1);
++	show_result(read_sysctl(TEST_SYSCTL_PATH, NULL, 0) &&
++	            write_sysctl(TEST_SYSCTL_PATH, buffer), 1);
+ 	write_domain_policy(policy, 1);
+-	show_result(sysctl(name, 3, buffer, &size, buffer, size), 0);
++	show_result(read_sysctl(TEST_SYSCTL_PATH, NULL, 0) &&
++	            write_sysctl(TEST_SYSCTL_PATH, buffer), 0);
+ 
+ 	policy = "allow_read /bin/true";
+ 	write_domain_policy(policy, 0);
+-- 
+1.8.0.2

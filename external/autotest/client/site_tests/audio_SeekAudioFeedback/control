@@ -1,0 +1,33 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Project"
+NAME = "audio_SeekAudioFeedback"
+PURPOSE = "Verifies audio output for seeking forward and back"
+CRITERIA = """
+This test will fail if audio file sound is not audible after seek.
+"""
+ATTRIBUTES = "suite:audio"
+SUITE = "audio"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "audio"
+TEST_TYPE = "client"
+DEPENDENCIES = 'audio_loopback_dongle'
+
+DOC = """
+Test that the sound from media files can be heard by recording from mic in
+by seeking forward and back
+"""
+
+# Media formats to be tested.
+TEST_DURATION = 5
+TEST_FILE = 'audio_SeekAudioFeedbackaudio.mp3'
+
+constraints = ['%s_rms_value > 0.001' % TEST_FILE.replace('.', '_') ]
+
+job.run_test('audio_SeekAudioFeedback',
+             test_file=TEST_FILE,
+             test_duration=TEST_DURATION,
+             constraints=constraints)

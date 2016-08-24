@@ -1,0 +1,24 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_MemoryLatency'
+AUTHOR = 'sonnyrao@chromium.org'
+PURPOSE = 'Benchmark memory and cache access latency'
+CRITERIA = 'This test is a benchmark.'
+ATTRIBUTES = "suite:hwqual, suite:kernel_daily_benchmarks"
+SUITE = "kernel_daily_benchmarks, hwqual"
+TIME='MEDIUM'
+TEST_CATEGORY = 'Performance'
+TEST_CLASS = "hardware"
+TEST_TYPE = 'client'
+
+DOC = """
+This test will use the lat_mem_rd benchmark from lmbench3 to measure memory
+latency.
+"""
+
+# test with samples added at points which should roughly correspond to
+# L1, L2, L3 (if any) and the final size will tell us DRAM latency
+job.run_test('hardware_MemoryLatency',
+        sample_size_kb=[ int(2), int(192), int(1024)])

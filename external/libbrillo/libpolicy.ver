@@ -1,0 +1,19 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+{
+  global:
+    extern "C++" {
+      enterprise_management::*;
+      typeinfo*for*enterprise_management::*;
+      vtable*for*enterprise_management*;
+
+      policy::*;
+      typeinfo*for*policy::*;
+      vtable*for*policy*;
+      _VTV*::__vtable_map;
+    };
+
+  local: *;
+};

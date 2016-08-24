@@ -1,0 +1,22 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME = "SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Enforces a whitelist of known, allowed reserved privileged processes on the system
+"""
+NAME = "security_ReservedPrivileges"
+PURPOSE = """
+To maintain a minimal set of reserved privileged processes on the system
+"""
+CRITERIA = """
+Fail if the list of reserved privileged processes doesn't match the baseline
+"""
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+
+job.run_test("security_ReservedPrivileges", owner_type='user', tag='user')
+job.run_test("security_ReservedPrivileges", owner_type='group', tag='group')

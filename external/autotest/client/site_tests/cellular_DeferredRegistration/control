@@ -1,0 +1,27 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "cellular_DeferredRegistration"
+PURPOSE = "Verify shill deferred regisrtration behavior."
+CRITERIA = """
+This test will fail if one of the following conditions occurs:
+  - Shill destroys a service due to temporary registration loss
+  - Shill never destroys a service after permanent registration loss
+"""
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DOC = """
+  Tests that shill can handle temporary registration loss without destroying
+  the service because some modems periodically go searching for a better signal
+  while still connected to the network.  Additionally, make sure that shill
+  still destroys a service that has suffered a registration loss for an
+  extended period of time (>15s).
+"""
+
+job.run_test('cellular_DeferredRegistration')

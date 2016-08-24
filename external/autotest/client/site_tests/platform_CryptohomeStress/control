@@ -1,0 +1,28 @@
+AUTHOR = "Chromium OS Team"
+NAME = "platform_CryptoHomeStress"
+PURPOSE = "Stress test the encrypted file system in Chromium OS."
+TIME = "LONG"
+TEST_CATEGORY = "Security"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+
+DOC = """
+This is a stress test of the file system in Chromium OS. While performing the
+test, we will cycle through power states, and interrupt disk activity.
+"""
+
+# The time in seconds to run this stress for, passed to the individual tests.
+RUNTIME = 120
+
+def run_sleeper():
+    job.run_test('platform_SuspendStress', runtime=RUNTIME)
+
+def run_fio():
+    job.run_test('platform_CryptohomeFio', runtime=RUNTIME, 
+                 script='seq_write_verified')
+
+def run_cryptohomestress():
+    job.run_test('platform_CryptohomeStress', runtime=RUNTIME,
+                 script='seq_write_verified')
+
+job.parallel([run_sleeper], [run_fio], [run_cryptohomestress])

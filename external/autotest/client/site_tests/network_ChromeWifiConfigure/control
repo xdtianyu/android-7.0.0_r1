@@ -1,0 +1,25 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_ChromeWifiConfigure"
+PURPOSE = "Verify that chrome.networkingPrivate can configure a wifi network."
+CRITERIA = """
+  The test will fail if the Chrome fails to configure the wifi network, or if
+  the getProperties fails to retreive the correct properties once configured.
+"""
+ATTRIBUTES = "suite:network_ui"
+SUITE = "network_ui"
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DOC = """
+  Tests that Chrome can do the following using chrome.networkingPrivate:
+  * Configure a new wifi network with Security = psk.
+  * Receive the properties of the newly configured network.
+  * Properties of the network match the configured values.
+"""
+
+job.run_test('network_ChromeWifiConfigure')

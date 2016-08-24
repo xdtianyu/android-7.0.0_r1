@@ -1,0 +1,34 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GStressEnable.pseudomodem"
+PURPOSE = "Stress-test Connman enable/disable"
+CRITERIA = """
+This test fails if flimflam ever fails to respond to a DBus message or crashes.
+"""
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "SHORT"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Stress-tests enabling and disabling a technology at short intervals.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+# 3GPP
+test_env = test_environment.CellularPseudoMMTestEnvironment(
+        pseudomm_args=({'family': '3GPP'},))
+job.run_test('network_3GStressEnable', tag='pseudomodem_3GPP',
+             test_env=test_env)
+
+# CDMA
+test_env = test_environment.CellularPseudoMMTestEnvironment(
+        pseudomm_args=({'family': 'CDMA'},))
+job.run_test('network_3GStressEnable', tag='pseudomodem_CDMA',
+             test_env=test_env)

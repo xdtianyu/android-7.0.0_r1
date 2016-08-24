@@ -1,0 +1,22 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_Fan'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Ensure the fan is working.'
+CRITERIA = 'Fails if the fan cannot be set to max speed or turned off.'
+TIME='SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = "hardware"
+TEST_TYPE = 'client'
+
+DOC = """
+This is a hardware test for system fan.  The test first sets the fan to max
+speed, turns off the fan, and then sets to 50% speed.  The test sleeps for a
+few seconds after setting the fan speed, which allows the fan some time to
+spin up/down and ensures the correctness of the test.  The test restores fan
+setting when finished.  This test uses mosys to read and control fan settings.
+"""
+
+job.run_test('hardware_Fan')

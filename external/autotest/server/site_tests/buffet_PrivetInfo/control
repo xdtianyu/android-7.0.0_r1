@@ -1,0 +1,23 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'avakulenko, wiley, keybuk'
+NAME = 'buffet_PrivetInfo'
+TIME = 'FAST'
+TEST_TYPE = 'Server'
+ATTRIBUTES = "suite:tendo_experimental"
+SUITE = 'tendo_experimental'
+
+DOC = """
+This test verifies that the buffet responds to /privet/info request and returns
+the expected JSON response object.
+
+"""
+
+def run(machine):
+    job.run_test('buffet_PrivetInfo',
+                 host=hosts.create_host(machine))
+
+
+parallel_simple(run, machines)

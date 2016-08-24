@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+TIME = 'SHORT'
+NAME = 'network_WiFi_RetryConnectHidden'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'network'
+TEST_TYPE = 'Server'
+DOC = """
+This test run is designed to check that the connection manager
+re-scans a few times before quiescing after losing a connection.
+We simulate this by shutting off an AP in full sight of the
+DUT, waiting for a bit, and then re-instating the AP.  We choose
+a hidden AP since this requires the connection manager to do the
+scans (since only the connection manager knows to scan for them,
+as opposed to wpa_supplicant).
+
+"""
+
+
+def run(machine):
+    job.run_test('network_WiFi_RetryConnectHidden',
+                 host=hosts.create_host(machine),
+                 raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

@@ -1,0 +1,17 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team, chromeos-video@google.com"
+NAME = "video_VDAStressSetup"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "video"
+TEST_TYPE = "server"
+
+DOC = """
+This test is the setup step for: video_VDAStress
+
+It prepares the server for video_VDAStress by downloading test videos
+from cloud storage. Do not run this test. Run server/video_VDAStress.
+"""

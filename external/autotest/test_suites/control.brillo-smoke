@@ -1,0 +1,29 @@
+# Copyright 2016 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Brillo Team"
+NAME = "brillo-smoke"
+PURPOSE = "Test critical brillo functionality."
+CRITERIA = "All tests with SUITE=brillo-smoke must pass."
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+Suite for kicking off a subset of the Brillo PTS tests, particularly for VM
+testing.
+"""
+
+import common
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+
+args_dict['max_runtime_mins'] = 20
+args_dict['name'] = 'brillo-smoke'
+args_dict['job'] = job
+args_dict['add_experimental'] = True
+
+dynamic_suite.reimage_and_run(**args_dict)

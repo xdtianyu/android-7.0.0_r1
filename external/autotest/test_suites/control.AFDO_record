@@ -1,0 +1,60 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "AFDO_record"
+PURPOSE = "Exercise Chrome, record profiling data using AFDO."
+CRITERIA = "The browser should do a reasonable amout, upload must succeed"
+
+TIME = "LONG"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+Exercise Chrome, record profiling data using AFDO.
+
+The profile is collected using branch and program counter sampling with
+the 'perf' tool instead of creating an instrumented binary as it is done
+with traditional PGO.
+
+The image should have been built with default optimization turned on for chrome.
+We do this to make branch prediction etc. data driven in future optimizations
+of chrome builds, so realism and source control are important.
+
+Mostly we are just wrapping the labelled tests here.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on. Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+
+# Values specified in this bug template will override default values when
+# filing bugs on tests that are a part of this suite. If left unspecified
+# the bug filer will fallback to it's defaults.
+_BUG_TEMPLATE = {
+    'labels': ['Build-Toolchain'],
+    'owner': 'llozano@chromium.org',
+    'status': None,
+    'summary': None,
+    'title': None,
+    'cc': ['bjanakiraman@chromium.org']
+}
+
+args_dict['job'] = job
+args_dict['file_bugs'] = True
+args_dict['name'] = 'AFDO_record'
+args_dict['add_experimental'] = True
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['bug_template'] = _BUG_TEMPLATE
+
+dynamic_suite.reimage_and_run(**args_dict)

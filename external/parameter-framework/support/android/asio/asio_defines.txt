@@ -1,0 +1,87 @@
+// non-boost asio, header-only
+#define ASIO_STANDALONE
+#define ASIO_HEADER_ONLY=1
+// we don't need to generate the doxygen
+#undef GENERATING_DOCUMENTATION
+// platform-specific deifnitions
+#undef BOOST_WINDOWS
+#undef BOOST_MSVC
+#undef _MSC_VER
+#undef ASIO_MSVC
+#undef WIN32
+#undef _WIN32
+#undef __WIN32__
+#undef ASIO_WINDOWS_RUNTIME
+#undef ASIO_WINDOWS
+#undef __CYGWIN__
+#undef __SYMBIAN32__
+#undef __BORLANDC__
+// We assume clang ("LOCAL_CLANG := true" in Android Makefiles)
+#define __clang__
+// We assume C++11
+#define ASIO_HAS_STD_SYSTEM_ERROR 1
+#define ASIO_HAS_STD_ARRAY 1
+#define ASIO_HAS_STD_SHARED_PTR 1
+#define ASIO_HAS_STD_ATOMIC 1
+#define ASIO_HAS_STD_ADDRESSOF 1
+#define ASIO_HAS_STD_FUNCTION 1
+#define ASIO_HAS_STD_TYPE_TRAITS 1
+#define ASIO_HAS_CSTDINT 1
+#define ASIO_HAS_STD_THREAD 1
+#define ASIO_HAS_STD_MUTEX_AND_CONDVAR 1
+#define ASIO_HAS_STD_CHRONO 1
+#define ASIO_HAS_GETADDRINFO 1
+#define ASIO_HAS_MOVE 1
+#define ASIO_HAS_VARIADIC_TEMPLATES 1
+#define ASIO_HAS_CONSTEXPR 1
+// Android has clang's libc++
+#define ASIO_HAS_CLANG_LIBCXX 1
+// non-boost asio
+#define ASIO_DISABLE_BOOST_ARRAY 1
+#define ASIO_DISABLE_BOOST_ASSERT 1
+#define ASIO_DISABLE_BOOST_BIND 1
+#define ASIO_DISABLE_BOOST_CHRONO 1
+#define ASIO_DISABLE_BOOST_DATE_TIME 1
+#define ASIO_DISABLE_BOOST_LIMITS 1
+#define ASIO_DISABLE_BOOST_REGEX 1
+#define ASIO_DISABLE_BOOST_STATIC_CONSTANT 1
+#define ASIO_DISABLE_BOOST_THROW_EXCEPTION 1
+#define ASIO_DISABLE_BOOST_WORKAROUND 1
+#undef ASIO_HAS_BOOST_CONFIG
+#undef ASIO_HAS_BOOST_ARRAY
+#undef ASIO_HAS_BOOST_ASSERT
+#undef ASIO_HAS_BOOST_LIMITS
+#undef ASIO_HAS_BOOST_THROW_EXCEPTION
+#undef ASIO_HAS_BOOST_REGEX
+#undef ASIO_HAS_BOOST_BIND
+#undef ASIO_HAS_BOOST_WORKAROUND
+#undef ASIO_HAS_BOOST_CHRONO
+#undef ASIO_HAS_BOOST_DATE_TIME
+// no need for buffer debugging
+#define ASIO_DISABLE_BUFFER_DEBUGGING
+#undef ASIO_ENABLE_BUFFER_DEBUGGING
+// bionic doesn't implement eventfd nor timerfd
+#define ASIO_DISABLE_EPOLL
+#define ASIO_DISABLE_EVENTFD
+#undef ASIO_HAS_EVENTFD
+#undef ASIO_HAS_TIMERFD
+#define ASIO_HAS_THREADS
+// We are not using asio for iostream, nor serial ports, nor posix file
+// descriptiors, nor with unix sockets
+#define ASIO_NO_IOSTREAM
+#define ASIO_DISABLE_SERIAL_PORT
+#undef ASIO_HAS_SERIAL_PORT
+#undef ASIO_HAS_POSIX_STREAM_DESCRIPTOR
+#define ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR
+#undef ASIO_HAS_LOCAL_SOCKETS
+#define ASIO_DISABLE_LOCAL_SOCKETS
+// windows-only features
+#undef ASIO_HAS_IOCP
+#undef ASIO_HAS_WINDOWS_OBJECT_HANDLE
+#undef ASIO_HAS_WINDOWS_STREAM_HANDLE
+#undef ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE
+#undef ASIO_HAS_WINDOWS_OBJECT_HANDLE
+#undef ASIO_HAS_WINDOWS_OVERLAPPED_PTR
+#define ASIO_DISABLE_THREAD_KEYWORD_EXTENSION
+#define ASIO_DISABLE_KQUEUE 1
+#undef ASIO_HAS_KQUEUE

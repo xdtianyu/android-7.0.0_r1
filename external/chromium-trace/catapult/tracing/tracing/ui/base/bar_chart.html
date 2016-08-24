@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<!--
+Copyright (c) 2014 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+-->
+
+<link rel="import" href="/tracing/ui/base/chart_base_2d_brushable_x.html">
+
+<script>
+'use strict';
+
+tr.exportTo('tr.ui.b', function() {
+  var ColorScheme = tr.b.ColorScheme;
+  var ChartBase2DBrushX = tr.ui.b.ChartBase2DBrushX;
+  var getColorOfKey = tr.ui.b.getColorOfKey;
+
+  // @constructor
+  var BarChart = tr.ui.b.define('bar-chart', ChartBase2DBrushX);
+
+  BarChart.prototype = {
+    __proto__: ChartBase2DBrushX.prototype,
+
+    decorate: function() {
+      ChartBase2DBrushX.prototype.decorate.call(this);
+      this.classList.add('bar-chart');
+      this.xCushion_ = 0;
+    },
+
+    isDatumFieldSeries_: function(fieldName) {
+      return fieldName != 'x';
+    },
+
+    getXForDatum_: function(datum, index) {
+      return datum.x;
+    },
+
+    updateScales_: function() {
+      if (this.data_.length === 0)
+        return;
+
+      var xDifferences = 0;
+      var currentX = undefined;
+      var previousX = undefined;
+      var yRange = new tr.b.Range();
+      this.data_.forEach(function(datum, index) {
+        previousX = currentX;
+        currentX = this.getXForDatum_(datum, index);
+        if (previousX !== undefined) {
+          xDifferences += currentX - previousX;
+        }
+
+        this.seriesKeys_.forEach(function(key) {
+          // Allow for sparse data
+          if (datum[key] !== undefined)
+            yRange.addValue(datum[key]);
+        });
+      }, this);
+
+      // X.
+      // Leave a cushion on the right so that the last rect doesn't
+      // exceed the chart boundaries. The last rect's width is set to the
+      // average width of the rects, which is chart.width / data.length.
+      var width = this.chartAreaSize.width;
+      this.xScale_.range([0, width]);
+      var domain = d3.extent(this.data_, this.getXForDatum_.bind(this));
+      this.xCushion_ = xDifferences / (this.data_.length - 1);
+      this.xScale_.domain([domain[0], domain[1] + this.xCushion_]);
+
+      // Y.
+      this.yScale_.range([this.chartAreaSize.height, 0]);
+      this.yScale_.domain(this.getYScaleDomain_(yRange.min, yRange.max));
+    },
+
+    updateDataContents_: function(dataSel) {
+      dataSel.selectAll('*').remove();
+      var rectsSel = dataSel.selectAll('path').data(this.seriesKeys_);
+      this.data_.forEach(function(datum, index) {
+        var currentX = this.getXForDatum_(datum, index);
+        var width = undefined;
+        if (index < (this.data_.length - 1)) {
+          var nextX = this.getXForDatum_(this.data_[index + 1], index + 1);
+          width = nextX - currentX;
+        } else {
+          width = this.xCushion_;
+        }
+
+        var stacks = [];
+        this.seriesKeys_.forEach(function(key) {
+          if (datum[key] !== undefined)
+            stacks.push({y: datum[key], color: getColorOfKey(key)});
+        });
+        stacks.sort(function(a, b) {
+          return b.y - a.y;
+        });
+
+        stacks.forEach(function(stack) {
+          var left = this.xScale_(currentX);
+          var right = this.xScale_(currentX + width);
+          var widthPx = right - left;
+          var top = this.yScale_(Math.max(stack.y, this.getYScaleMin_()));
+          rectsSel.enter()
+              .append('rect')
+              .attr('fill', stack.color)
+              .attr('x', left)
+              .attr('y', top)
+              .attr('width', widthPx)
+              .attr('height', this.yScale_.range()[0] - top);
+        }, this);
+      }, this);
+      rectsSel.exit().remove();
+    }
+  };
+
+  return {
+    BarChart: BarChart
+  };
+});
+</script>

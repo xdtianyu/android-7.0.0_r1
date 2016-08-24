@@ -1,0 +1,39 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "gwendal"
+NAME = "StorageQualSuspend.quick"
+ATTRIBUTES = "suite:kernel_weekly_regression, suite:storage_qual_quick"
+SUITE = "storage_qual_quick, kernel_weekly_regression"
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+
+DOC = """
+Sequence for testing the Storage Qual running from the fixed devices.
+This tests check for data corruption when SSD is power cycled.
+"""
+from autotest_lib.server import sequence
+
+
+SERVER_SEQUENCES = [
+    sequence.SequenceJob(
+            'hardware_StorageQualBase',
+            {'tag': 'before', 'client_tag': 'before', 'crypto_runtime': 30}),
+    sequence.SequenceJob(
+            'hardware_StorageStress',
+            {'tag': 'soak', 'power_command': 'nothing',
+             'storage_test_command': 'full_write'},
+            iteration=2, duration=sequence.HOUR_IN_SECS),
+    sequence.SequenceJob(
+            'hardware_StorageQualSuspendStress',
+            {'tag': 'suspend', 'power_command': 'suspend'},
+            iteration=2, duration=510),
+    sequence.SequenceJob(
+            'hardware_StorageQualBase',
+            {'tag': 'after', 'client_tag': 'after', 'crypto_runtime': 30}),
+]
+
+sequence.sequence_schedule(job, machines, SERVER_SEQUENCES)

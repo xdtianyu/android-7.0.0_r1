@@ -1,0 +1,19 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "hardware_TPMTakeOwnership"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Measure delays of TPM_TakeOwnership operation"
+CRITERIA = "Estimate range of timing requirements for the operation"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Hardware"
+TEST_TYPE = "Client"
+
+DOC = """
+This test exercises TPM_TakeOwnership functionality of a TPM (Trusted Platform
+Module) module and takes timing measurement of the operation.
+"""
+
+job.run_test('hardware_TPMTakeOwnership')

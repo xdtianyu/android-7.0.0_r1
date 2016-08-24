@@ -1,0 +1,20 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'kernel_VbootContextEC'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Test access Vboot Context stored in EC'
+CRITERIA = 'Fails if kernel could not read/write Vboot Context in EC'
+ATTRIBUTES = "suite:kernel_per-build_regression"
+SUITE = 'kernel_per-build_regression'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'kernel'
+TEST_TYPE = 'client'
+
+DOC = '''
+    Checks that kernel is able to read/write Vboot Context in EC.
+'''
+
+job.run_test('kernel_VbootContextEC')

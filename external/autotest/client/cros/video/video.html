@@ -1,0 +1,75 @@
+<html>
+<body>
+    <video id='video' name='media' height="480" width="854" controls>
+        <source src='' type='video'>
+    </video>
+    <br>
+Current time (seconds): <span id='videoCurTime'>0</span>
+</body>
+
+<script type="text/javascript">
+var can_play = false;
+var finished_seeking = false;
+var error_status = false;
+
+(function() {
+     var timeEle = document.getElementById('videoCurTime');
+     video.addEventListener('timeupdate', function(event) {
+     timeEle.innerHTML = video.currentTime;
+  }, false);
+})();
+
+(function() {
+     video.addEventListener('canplay', function(event) {
+     can_play = true;
+  }, false);
+})();
+
+(function() {
+     video.addEventListener('error', function(event) {
+     error_status = true;
+  }, false);
+})();
+
+(function() {
+     video.addEventListener('seeked', function(event) {
+     finished_seeking = true;
+  }, false);
+})();
+
+(function() {
+     video.addEventListener('seeking', function(event) {
+     finished_seeking = false;
+  }, false);
+})();
+
+function loadVideoSource(video_source_path) {
+    video.src = video_source_path;
+    return true;
+}
+
+function canplay() {
+    return can_play;
+}
+
+function finishedSeeking() {
+    return finished_seeking;
+}
+
+function play() {
+    video.play();
+}
+
+function pause() {
+    video.pause();
+}
+
+function currentTime()  {
+    return video.currentTime;
+}
+
+function errorDetected() {
+  return error_status;
+}
+</script>
+</html>

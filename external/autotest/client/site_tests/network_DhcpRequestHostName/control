@@ -1,0 +1,17 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'mattwein'
+NAME = 'network_DhcpRequestHostName'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that we can allow a Device to request the hostname
+parameter and accept this hostname from a dhcp config and
+apply it locally.
+
+"""
+
+job.run_test('network_DhcpRequestHostName')

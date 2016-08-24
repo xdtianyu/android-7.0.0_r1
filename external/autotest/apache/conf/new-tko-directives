@@ -1,0 +1,24 @@
+RewriteEngine On
+
+# This rule is meant for autotest installations under a single directory,
+# such as when pulling the code from git or from a tarball.
+RewriteCond /usr/local/autotest/frontend/client/www/autotest.TkoClient -d
+RewriteRule ^/new_tko((?!\/server\/).*)$ /usr/local/autotest/frontend/client/www/autotest.TkoClient/$1
+
+# This rule is meant for autotest installations from a package such as RPM.
+RewriteCond /usr/share/autotest/frontend/client/www/autotest.TkoClient -d
+RewriteRule ^/new_tko((?!\/server\/).*)$ /usr/share/autotest/frontend/client/www/autotest.TkoClient/$1
+
+<Location "/new_tko">
+    DirectoryIndex TkoClient.html
+    # Allow all requests from localhost or corp.google.com subdomains with any port
+    SetEnvIf Origin "^http(s)?://(localhost|([^/]+\.)?corp\.google\.com)(:[0-9]+)?$" \
+        AccessControlAllowOriginValue=$0 AccessControlAllowCredentialsValue=true
+    Header set Access-Control-Allow-Origin %{AccessControlAllowOriginValue}e \
+        env=AccessControlAllowOriginValue
+    Header set Access-Control-Allow-Credentials %{AccessControlAllowCredentialsValue}e \
+        env=AccessControlAllowCredentialsValue
+    <IfVersion >= 2.4>
+        Require all granted
+    </IfVersion>
+</Location>

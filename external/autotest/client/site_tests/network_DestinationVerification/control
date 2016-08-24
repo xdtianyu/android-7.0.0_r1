@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew'
+NAME = 'network_DestinationVerification'
+ATTRIBUTES = "suite:bvt-cq, subsystem:network"
+SUITE = 'bvt-cq'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+DOC = """
+  Tests that we can validate a ChromeCast device by its certificate.  This test
+  fails if crypto-util is unable to verify a valid ChromeCast device
+  certificate or validates an invalid certificate.  This checks the ways that
+  crypto-util interacts with OpenSSL and verifies that we're expecting the
+  correct key/certificate formats.
+
+"""
+
+job.run_test('network_DestinationVerification')

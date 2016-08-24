@@ -1,0 +1,34 @@
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team, chromeos-video@google.com"
+NAME = "video_VEAPerf.h264.bvt"
+PURPOSE = "Monitor the performance of the Chromium VEA."
+CRITERIA = """
+The test fails if the video_encode_accelerator_unittest fails or crashes.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES='hw_video_acc_enc_h264'
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This test utilizes the video_encode_accelerator_unittest to measure the
+performance of the Chromium Video Encode Accelerator.
+"""
+
+# A list of test cases. Each entry consists of the following parts:
+#   (path, on_cloud, width, height, requested_bit_rate, profile, requested_frame_rate)
+test_cases = [
+    ('media/test/data/bear_320x192_40frames.yuv', False, 320, 192, 200000, 1, 30)
+]
+
+job.run_test('video_VEAPerf', test_cases=test_cases)

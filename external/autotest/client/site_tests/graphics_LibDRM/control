@@ -1,0 +1,27 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'chromeos-gfx'
+NAME = "graphics_LibDRM"
+PURPOSE = 'Verify libdrm is working correctly by running libdrm test apps.'
+CRITERIA = """
+If one or more of the libdrm test apps fails, this autotest will fail.
+"""
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "graphics"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+ATTRIBUTES = "suite:bvt-cq, suite:graphics, suite:graphics_per-day, suite:graphics_system"
+SUITE = 'bvt-cq, graphics_per-day, graphics, graphics_system'
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+Runs libdrm test apps.
+"""
+
+job.run_test('graphics_LibDRM')

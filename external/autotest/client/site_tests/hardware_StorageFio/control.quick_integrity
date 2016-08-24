@@ -1,0 +1,19 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_StorageFio.quick_integrity'
+AUTHOR = 'jcasse, grundler'
+PURPOSE = 'Short integrity test to verify the integrity test'
+TIME = 'LENGTHY'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:storagequal"
+SUITE = 'storagequal'
+
+DOC = """
+This test uses FIO to spawn a number of threads to perform a particular type of
+I/O. This test will write data to the spare root partition, wait for 1 minute,
+then verify the data is still valid.
+"""
+
+job.run_test(url='hardware_StorageFio', integrity='True', wait=60)

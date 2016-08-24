@@ -1,0 +1,26 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dunno@chromium.org"
+NAME = "video_YouTubePage.pausing"
+PURPOSE = "Verify that YouTube page HTML5 video paused works"
+CRITERIA = """
+This test will fail if YouTube page HTML5 video fails to be in the 'paused'
+state.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['VideoTestFailure', 'OS-Chrome'],
+}
+
+DOC = """
+This test verifies YouTube video paused state.
+"""
+
+_TEST_NAME = 'pausing'
+job.run_test('video_YouTubePage', subtest_name=_TEST_NAME,
+             subdir_tag=_TEST_NAME)

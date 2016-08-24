@@ -1,0 +1,13 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+open: 1
+read: 1
+close: 1
+exit: 1
+exit_group: 1
+# Privilege-dropping syscalls.
+setgroups: 1
+setresgid: 1
+setresuid: 1

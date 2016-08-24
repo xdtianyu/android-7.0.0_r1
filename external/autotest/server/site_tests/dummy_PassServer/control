@@ -1,0 +1,24 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "dummy_PassServer"
+PURPOSE = "Demonstrate success methods of autotests."
+CRITERIA = "This test will always succeed."
+ATTRIBUTES = "suite:dummy_server"
+SUITE = "dummy_server"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "dummy"
+TEST_TYPE = "server"
+
+DOC = """
+This is a helper test that will succeed.
+"""
+
+def run(machine):
+    job.run_test('dummy_PassServer',
+                 host=hosts.create_host(machine))
+
+parallel_simple(run, machines)

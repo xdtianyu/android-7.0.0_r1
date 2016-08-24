@@ -1,0 +1,37 @@
+# Copyright (c) 2012 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team, chromeos-video@google.com"
+NAME = "video_VideoDecodeAccelerator.h264"
+PURPOSE = "Verify Chromium hardware Video Decode Acceleration works."
+CRITERIA = """
+This test will fail if any of the tests in video_decode_accelerator_unittest
+fails. Running video_decode_accelerator_unittest is skipped on machines that are
+known not to support video decode.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+DEPENDENCIES = "hw_video_acc_h264"
+# Reboot in the lab after the test ends.
+DEPENDENCIES = "cleanup-reboot, hw_video_acc_h264"
+RETRIES = 1
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This is a wrapper test for Chrome video_decode_accelerator_unittest.
+"""
+
+# The FPS expectations here are lower than observed in most runs to keep
+# the bots green.
+videos = ['test-25fps.h264:320:240:250:258:35:150:1']
+
+job.run_test('video_VideoDecodeAccelerator', videos=videos)

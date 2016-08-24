@@ -1,0 +1,14 @@
+from autotest_lib.server import utils
+
+
+def install(machine):
+    if utils.machine_is_testbed(machine):
+        logging.info('testbed does not need to verify job repo url.')
+        return
+
+    logging.info('Verifying job repo url for machine %s', machine)
+    host = hosts.create_host(machine, initialize=False, auto_monitor=False)
+    host.verify_job_repo_url(job.tag)
+
+
+job.parallel_simple(install, machines, log=False)

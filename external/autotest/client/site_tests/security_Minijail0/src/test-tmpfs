@@ -1,0 +1,17 @@
+#!/bin/sh
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+# setup: mkdir -p "%T/c/bin" "%T/c/lib" "%T/c/lib64" "%T/c/usr/lib" "%T/c/usr/local" "%T/c/usr/bin" "%T/c/tmp"
+# args: -b /bin,/bin -b /lib,/lib -b /usr/lib,/usr/lib -b /usr/bin,/usr/bin -b /usr/local,/usr/local -C "%T/c" -t -v
+# args64: -b /lib64,/lib64
+
+# Can't get at common.sh from here... oops :)
+die () {
+  echo "$@"
+  exit 1
+}
+
+fs=$(stat -f /tmp -c %T)
+[ "$fs" != "tmpfs" ] && die "tmpfs"
+exit 0

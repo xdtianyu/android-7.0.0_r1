@@ -1,0 +1,20 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'quiche, wiley'
+NAME = 'network_DhcpNegotiationTimeout'
+ATTRIBUTES = "suite:network_nightly"
+SUITE = 'network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that shill handles DHCP timeout in a reasonable way. In particular,
+  shill should not crash due a to a DHCP timeout.
+
+  Note that shill's DHCP timeout handling depends on the device technology.
+  This test only vaidates shill's handling of DHCP timeouts for Ethernet.
+"""
+
+job.run_test('network_DhcpNegotiationTimeout')

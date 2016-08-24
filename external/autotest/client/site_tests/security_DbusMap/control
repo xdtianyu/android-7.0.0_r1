@@ -1,0 +1,24 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+This test enforces a known/vetted list of vetted dbus attack surface
+in Chromium OS.
+"""
+NAME = "security_DbusMap"
+PURPOSE = "To ensure un-vetted attack surface doesn't make it into the system"
+CRITERIA = """
+The test walks all available interfaces and their methods. If this
+exactly-matches our baseline data, test passes. If there are any missing, or
+any extra, test fails.
+"""
+TEST_CLASS = "security"
+TEST_CATEGORY = "Security"
+TEST_TYPE = "client"
+ATTRIBUTES = "suite:manual"
+SUITE = "manual"
+
+job.run_test("security_DbusMap")

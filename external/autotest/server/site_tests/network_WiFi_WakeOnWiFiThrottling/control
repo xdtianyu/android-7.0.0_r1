@@ -1,0 +1,34 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'samueltan, ejcaruso'
+NAME = 'network_WiFi_WakeOnWiFiThrottling'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'servo, wificell, lucidsleep'
+ATTRIBUTES = ('suite:wifi_correctness_cros_core, suite:wifi_matfunc, '
+              'suite:wifi_lucidsleep')
+SUITE = 'wifi_matfunc, wifi_correctness_cros_core, wifi_lucidsleep'
+
+DOC = """
+This test verifies that shill disables wake on WiFi when the DUT wakes up in
+dark resume too frequently. Test both the short and long thresholds, which are 3
+dark resumes per 1 minute and 10 dark resumes per 10 minutes respectively.
+"""
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.client.common_lib.cros.network import xmlrpc_security_types
+from autotest_lib.server.cros.network import hostap_config
+from autotest_lib.server import utils
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test('network_WiFi_WakeOnWiFiThrottling',
+                 host=host,
+                 raw_cmdline_args=args)
+
+parallel_simple(run, machines)

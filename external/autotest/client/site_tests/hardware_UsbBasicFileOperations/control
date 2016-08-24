@@ -1,0 +1,35 @@
+# Copyright (c) 2012 Collabora Ltd. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "hardware_UsbBasicFileOperations"
+AUTHOR = "Cosimo Alfarano <cosimo.alfarano@collabora.co.uk>"
+PURPOSE = "Test USB drive file-based operations"
+CRITERIA = "Fail if open/copy/move/remove and modify content operations fail"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+
+DOC = """
+Try to open a file, move/copy and remove it from the filesystem.
+Check that it"s possible to change the file as well.
+
+This test requires a USB drive inserted before the test begins.
+It also needs a single partition on the drive, the file system type is not
+relevant as long as it"s mountable by the system.
+
+@param device,bus,model,size,fs_uuid: @see client.cros.storage.StorageScanner
+                                      doc for paramter meaning.
+                                      A single filter key can be passed as
+                                      parameter.
+                                      Use those parameters only if the test
+                                      cannot detect your device by default.
+"""
+from autotest_lib.client.cros import storage as storage_mod
+
+volume_filter, args_dict = storage_mod.args_to_storage_dict(args)
+if not volume_filter:
+    volume_filter = {"bus": "usb"}
+
+job.run_test("hardware_UsbBasicFileOperations", volume_filter=volume_filter)

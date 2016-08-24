@@ -1,0 +1,30 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dhaddock"
+NAME = "ui_AppLauncher"
+PURPOSE = "Collects screenshots of the default apps in App Launcher."
+CRITERIA = """
+
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "ui"
+TEST_TYPE = "client"
+DEPENDENCIES = "board:peppy"
+
+DOC = """
+Collects screenshots of the default apps in App Launcher. Compares them to a
+golden image to look for unwanted changes and regressions.
+
+This test makes use of keyboard emulation to bring up the launcher.
+
+This test is to be used by the test team as part of their daily build
+qualification process.
+
+"""
+
+job.run_test('ui_AppLauncher')

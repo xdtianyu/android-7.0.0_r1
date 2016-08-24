@@ -1,0 +1,27 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "cellular_MbimComplianceControlRequest.CM07"
+PURPOSE = """
+MBIM Compliance Test: Validation of status in case of an unsupported CID in
+MBIM_COMMAND_MSG.
+"""
+CRITERIA = """
+This test will fail if the modem is not MBIM compliant.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+ATTRIBUTES = "suite:cellular_mbim_compliance"
+SUITE="cellular_mbim_compliance"
+
+DOC = """
+CM_07 Test listed in the MBIM Compliance Test Suite specification.
+Validation of status in case of an unsupported CID in MBIM_COMMAND_MSG.
+"""
+
+job.run_test('cellular_MbimComplianceControlRequest',
+             subtest_name='cellular_MbimComplianceCM07')

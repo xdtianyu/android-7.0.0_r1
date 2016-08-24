@@ -1,0 +1,31 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import logging
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "bluetooth_RegressionServer"
+TIME = "MEDIUM"
+TEST_CATEGORY = "General"
+TEST_CLASS = "bluetooth"
+TEST_TYPE = "server"
+
+DOC = """
+Server side of Bluetooth Semi-Automated Regression tests.
+"""
+
+args_dict = utils.args_to_dict(args)
+
+def run_system_bluetooth_Regression(machine):
+    if 'device_addrs' in args_dict:
+        arg = args_dict.get('device_addrs')
+        device_addrs = arg.split(',') if arg != '' else []
+        job.run_test('bluetooth_RegressionServer', client_ip=machine,
+                     device_addrs=device_addrs)
+    else:
+        logging.info('Please provide Bluetooth device MAC addresses: '
+                     '"device_addrs=addr1,addr2,addr3"')
+
+job.parallel_simple(run_system_bluetooth_Regression, machines)

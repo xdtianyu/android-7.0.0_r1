@@ -1,0 +1,78 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "Power per-build tests"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+ATTRIBUTES = "suite:power_build"
+SUITE = "power_build"
+TEST_TYPE = "server"
+DEPENDENCIES = "rpm"
+
+DOC = """
+This test suite runs automated power tests that should all pass. These
+tests are run on every build and thefore each test should be short
+and not take more than 5 minutes to run.
+
+This suite runs the test list on systems with AC off (on battery)
+since they require use of the rpm.
+
+The tests that run with AC on are run through their normal control
+files since they do not need to interact with the RPM.
+"""
+
+import logging
+
+from autotest_lib.client.common_lib import error
+from autotest_lib.server import site_host_attributes
+
+
+def _iterate_tests(client, machine):
+    client_at = autotest.Autotest(client)
+
+    tag = 'AC_OFFLINE'
+
+    # Tests that are also run on AC from their control file.
+    client_at.run_test('power_CPUFreq', tag=tag)
+    client_at.run_test('power_CPUIdle', tag=tag)
+    client_at.run_test('power_ProbeDriver', tag=tag, test_which='Battery')
+    client_at.run_test('power_StatsCPUFreq', tag=tag)
+    client_at.run_test('power_StatsCPUIdle', tag=tag)
+    client_at.run_test('power_StatsUSB', tag=tag)
+    client_at.run_test('power_Resume', tag=tag)
+    client_at.run_test('power_x86Settings',tag=tag)
+
+    # Tests that are only run on battery power here.
+    client_at.run_test('power_Backlight', tag=tag)
+    client_at.run_test('power_Draw', tag=tag)
+    client_at.run_test('power_Idle',tag=tag)
+
+    # Run the short version of power_Consumption
+    client_at.run_test('power_Consumption', short=True)
+
+    client_attributes = site_host_attributes.HostAttributes(machine)
+    if not client_attributes.has_resume_bug:
+        client_at.run_test('power_Resume', tag=tag)
+
+
+def _run_client_test(machine):
+    """Runs client tests - all with battery actively discharging."""
+    client = hosts.create_host(machine)
+    if not client.has_power():
+        # Because this is a control file these test errors do not
+        # get printed...logging ensures test_that users can see it.
+        msg = 'This test requires RPM support.'
+        logging.info('********************%s', msg)
+        raise error.TestError(msg)
+
+    client.power_off()
+    try:
+        _iterate_tests(client, machine)
+    finally:
+        client.power_on()
+
+
+job.parallel_on_machines(_run_client_test, machines)

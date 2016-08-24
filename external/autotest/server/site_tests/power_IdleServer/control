@@ -1,0 +1,37 @@
+# Copyright (c) 2009 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "PowerIdleServer"
+TIME = "SHORT"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "power"
+TEST_TYPE = "server"
+DEPENDENCIES = "rpm"
+
+DOC = """
+This test first cuts off power to a machine and then measures the battery power
+draw at idle.
+"""
+
+from autotest_lib.server import utils
+
+
+def run_system_power_idle(machine):
+    host = hosts.create_host(machine)
+    if host.has_power():
+        host.power_off()
+
+    host_at = autotest.Autotest(host)
+    host_test = 'power_Idle'
+
+    host_at.run_test(host_test)
+
+    if host.has_power():
+        host.power_on()
+
+
+(tuple, failures) = utils.form_ntuples_from_machines(machines, 1)
+
+job.parallel_simple(run_system_power_idle, tuple[0], log=False)

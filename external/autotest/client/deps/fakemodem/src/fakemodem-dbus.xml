@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node name="/">
+  <interface name="org.chromium.FakeModem">
+    <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="fake_modem"/>
+    <method name="SendUnsolicited">
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol"
+		  value="send_unsolicited" />
+      <arg type="s" name="str" direction="in" />
+    </method>
+    <method name="SetResponse">
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol"
+		  value="set_response" />
+      <arg type="s" name="command" direction="in" />
+      <arg type="s" name="reply" direction="in" />
+      <arg type="s" name="responsetext" direction="in" />
+    </method>
+    <method name="RemoveResponse">
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol"
+		  value="remove_response" />
+      <arg type="s" name="command" direction="in" />
+    </method>
+  </interface>
+</node>

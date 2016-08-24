@@ -1,0 +1,23 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_Dhcpv6Basic"
+PURPOSE = "Verify DHCPv6 negotiation can succeed in the most normal case"
+CRITERIA = """
+This test fails if the device cannot successfully negotiate a lease for
+non-temporary address and prefix delegation via DHCPv6 server.
+"""
+# TODO(zqiu): assign this test to an appropriate test suite.
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Tests that we can acquire an DHCPv6 non-temporary address and prefix
+  delegation from DHCPv6 server.
+"""
+
+job.run_test('network_Dhcpv6Basic')

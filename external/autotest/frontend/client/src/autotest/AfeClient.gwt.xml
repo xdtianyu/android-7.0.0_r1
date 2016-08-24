@@ -1,0 +1,13 @@
+<module>
+	<inherits name='com.google.gwt.user.User'/>
+	<inherits name='com.google.gwt.json.JSON'/>
+	<inherits name='com.google.gwt.http.HTTP'/>
+
+	<source path="afe"/>
+	<source path="common"/>
+	<entry-point class='autotest.afe.AfeClient'/>
+	
+	<stylesheet src='common.css'/>
+	<stylesheet src='afeclient.css'/>
+	<stylesheet src='standard.css'/>
+</module>

@@ -1,0 +1,41 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'graphics_Piglit'
+AUTHOR = 'chromeos-gfx'
+PURPOSE = 'Collection of automated tests for OpenGL implementations.'
+CRITERIA = """
+TODO(ihf) For now Piglit shall never fail except for crashes outside of
+Piglit binaries as it is normal to have 1000 subtests pass and 300 fail
+as long as this is stable. For this reason it should be treated as a
+performance test plotting counts over time. If there is a problem with this
+approach we will investigate black/whitelisting.
+"""
+TIME='MEDIUM'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'graphics'
+TEST_TYPE = 'client'
+# Reboot in the lab after the test ends.
+DEPENDENCIES='cleanup-reboot'
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+Piglit is a collection of automated tests for OpenGL implementations.
+
+The goal of Piglit is to help improve the quality of open source
+OpenGL drivers by providing developers with a simple means to
+perform regression tests.
+
+The original tests have been taken from
+- Glean
+- Mesa
++ specific regression tests for certain bugs
+
+http://people.freedesktop.org/~nh/piglit/
+"""
+
+job.run_test('graphics_Piglit', args=args)
+

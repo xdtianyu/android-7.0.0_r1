@@ -1,0 +1,27 @@
+From 59b56e0f7e70166bb78a3266feeae8a205e25f05 Mon Sep 17 00:00:00 2001
+From: "Ilja H. Friedel" <ihf@chromium.org>
+Date: Tue, 27 Oct 2015 22:53:32 -0700
+Subject: [PATCH 2/2] Always increment numberOfResults.
+
+BUG=chromium:548352
+---
+ index.html | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/index.html b/index.html
+index 0d0891b..75c096d 100644
+--- a/index.html
++++ b/index.html
+@@ -90,8 +90,8 @@
+       if (e.data.testResult) {
+         sumOfResults += e.data.testResult;
+         sumOfLogResults += Math.log(e.data.testResult);
+-        numberOfResults++;
+       }
++      numberOfResults++;
+       currentPageIndex++;
+       startCurrentTestPage();
+     }
+-- 
+2.1.2
+

@@ -1,0 +1,10 @@
+AUTHOR = "Andy Whitcroft <apw@shadowen.org>"
+TIME = "MEDIUM"
+NAME = "Self Test"
+TEST_TYPE = "client"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Software"
+DOC = """\
+Run a selftest on the autotest installed branch
+"""
+job.run_test('selftest', cmd=1)

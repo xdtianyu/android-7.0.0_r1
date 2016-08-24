@@ -1,0 +1,64 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "video_PowerConsumption.hw_hangout.vp8"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "video"
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TEST_TYPE = "server"
+DEPENDENCIES = "rpm, power:battery, hw_video_acc_vp8, hw_video_ac_enc_vp8"
+BUG_TEMPLATE = {
+    "labels": ["OS-Chrome", "VideoTestFailure"],
+}
+
+DOC = """
+The test outputs the video power consumption for vp8 video decode.
+"""
+
+import logging
+
+from autotest_lib.client.common_lib import error
+
+# Used resources. They will be download in the beginning of the test.
+resources = [
+    'crowd/crowd720-41e9a3e6a6b1644ebdb3f5723fce96e5.vp8',
+    'crowd/crowd180-bde69ca71393033d9187a2833720c9f8.vp8',
+    'crowd/crowd720-3cfe7b096f765742b4aa79e55fe7c994.yuv',
+    'crowd/crowd360-e84aac15c05b9b19250f3fc97722e0f6.yuv',
+    'crowd/crowd180-6d71fa96da062037482619df31830a97.yuv']
+
+# The videos to be decoded. Each entry consists of the following parts:
+#   [vidoe_name, width, height, frame_num, fragment_num, profile]
+decode_videos  = [['crowd720.vp8', 1280, 720, 500, 502, 11]]
+decode_videos += [['crowd180.vp8', 320, 180, 500, 502, 11]] * 4
+
+# The videos to be encoded.
+#   [video_name, width, height, profile, bit_rate]
+encode_videos = [
+    ['crowd720.yuv', 1280, 720, 11, 1200000],
+    ['crowd360.yuv', 640, 360, 11, 500000],
+    ['crowd180.yuv', 320, 180, 11, 100000]]
+
+
+def _run_client_test(machine):
+    """Runs client test with battery actively discharging."""
+    client = hosts.create_host(machine)
+    if not client.has_power():
+        raise error.TestError("This test requires RPM support.")
+
+    client.power_off()
+    try:
+        client_at = autotest.Autotest(client)
+        client_at.run_test(
+                'video_HangoutHardwarePerf', resources=resources,
+                decode_videos=decode_videos, encode_videos=encode_videos,
+                measurement='power')
+    finally:
+        client.power_on()
+
+
+job.parallel_on_machines(_run_client_test, machines)

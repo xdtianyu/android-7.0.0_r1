@@ -1,0 +1,24 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'The Chromium OS Authors'
+NAME = 'audio_Microphone'
+PURPOSE = 'Verify microphone works correctly.'
+CRITERIA = """
+Microphone should be on by default.
+Mono and stereo capturing should work fine @ 44.1KHz and 48KHz.
+Low latency capturing should work fine with low CPU usage.
+"""
+TIME='MEDIUM'
+TEST_CATEGORY = 'Microphone'
+TEST_CLASS = 'audio'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:bvt-perbuild, suite:partners"
+SUITE = 'bvt-perbuild, partners'
+
+DOC = """
+This test run multiple cmdline tools to verify that microphone works correctly.
+"""
+
+job.run_test('audio_Microphone')

@@ -1,0 +1,32 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_TryFwB.ec_wp"
+PURPOSE = "Servo based RW firmware B boot test"
+CRITERIA = "This test will fail if firmware does not switch to firmware B"
+ATTRIBUTES = "suite:faft, suite:faft_ec, suite:faft_ec_wp, suite:faft_ec3po"
+SUITE = "faft,faft_ec,faft_ec_wp,faft_ec3po"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+JOB_RETRIES = 4
+
+DOC = """
+This test sets fwb_tries flag and boots firmware B.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_tryfwb(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("firmware_TryFwB", host=host, cmdline_args=args,
+                 disable_sysinfo=True, dev_mode=False, ec_wp=True,
+                 tag="ec_wp")
+
+parallel_simple(run_tryfwb, machines)

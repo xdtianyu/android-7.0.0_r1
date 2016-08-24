@@ -1,0 +1,20 @@
+#!/usr/bin/python
+# A utility script used by servo-inventory.  Arguments on the
+# command line should be hostnames of DUTs in the lab.  For each
+# DUT, if there's a corresponding servo host name, print the DUT's
+# name.
+#
+# Error checking is kept to a minimum, because the only caller we
+# expect to have doesn't need it.
+
+import sys
+
+import common
+
+from autotest_lib.client.bin import utils
+from autotest_lib.server.hosts import servo_host
+
+for host in [l.strip() for l in sys.stdin.readlines()]:
+    servo_name = servo_host.make_servo_hostname(host.strip())
+    if utils.host_is_in_lab_zone(servo_name):
+        print host

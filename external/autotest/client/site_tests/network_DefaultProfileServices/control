@@ -1,0 +1,19 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'quiche, pstew'
+NAME = 'network_DefaultProfileServices'
+ATTRIBUTES = "suite:bvt-cq, subsystem:network"
+SUITE = 'bvt-cq'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+DOC = """
+  Tests that, when shill starts, it instantiates Services for services
+  which are in the persistent default profile.
+
+"""
+
+job.run_test('network_DefaultProfileServices')

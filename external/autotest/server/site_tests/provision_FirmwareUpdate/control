@@ -1,0 +1,40 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+
+AUTHOR = "chromeos-lab-infrastructure"
+NAME = "provision_FirmwareUpdate"
+PURPOSE = "Provision a system to the correct firmware version."
+TIME = "MEDIUM"
+TEST_CATEGORY = "System"
+TEST_CLASS = "provision"
+TEST_TYPE = "Server"
+
+DOC = """
+This is a test used by the provision control segment in autoserv to set the
+fwro-version label of a host to the desired setting. This test attempts to
+reprogram both EC and AP firmware.
+"""
+
+
+from autotest_lib.client.common_lib import error, utils
+
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+
+if not locals().get('value'):
+    if not args_dict.get('value'):
+        raise error.TestError("No provision value!")
+    value = args_dict['value']
+
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test('provision_FirmwareUpdate', host=host, value=value,
+                 rw_only=False, disable_sysinfo=True)
+
+
+job.parallel_simple(run, machines)

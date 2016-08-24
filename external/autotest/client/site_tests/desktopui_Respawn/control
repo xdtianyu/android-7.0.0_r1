@@ -1,0 +1,24 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "cmasone, jrbarnette"
+NAME = "desktopui_Respawn"
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = "bvt-cq"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test verifies that our UI respawning logic functions correctly under
+normal conditions. That is, that the UI will cease restarting after a certain
+number of failed respawn attempts. By design, this test does _not_ attempt to
+ensure that these values remain the same over time. The values are
+somewhat arbitrary anyhow, so enforcing them is simply an over-constraint.
+"""
+
+job.run_test('desktopui_Respawn')
+

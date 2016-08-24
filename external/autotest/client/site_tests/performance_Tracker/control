@@ -1,0 +1,18 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "rohitbm"
+NAME = "performance_Tracker"
+PURPOSE = "Records cpu and memory usage for manually scheduled test."
+TIME = "SHORT"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "performance"
+TEST_TYPE = "client"
+
+DOC = """
+This test is intended to be used by any functional test which wants to
+measure cpu/memory usage. This test runs forever until the exit flag is seen.
+"""
+
+job.run_test("performance_Tracker")

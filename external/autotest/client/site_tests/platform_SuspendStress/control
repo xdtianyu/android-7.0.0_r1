@@ -1,0 +1,19 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME='LARGE'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Stress test the ecryptfs home directory across power state changes.'
+CRITERIA = 'This test is a stress test. Expected success, no crashes.'
+DOC = """
+This test puts the client host through suspend/resume cycles.
+"""
+NAME = 'platform_SuspendStress'
+TIME = 'MEDIUM'
+TEST_CLASS = 'platform'
+TEST_CATEGORY = 'Stress'
+TEST_TYPE = 'client'
+
+# Run suspend/resume cycle for 5 minutes.
+job.run_test('platform_SuspendStress', auto_start=True, runtime=300)

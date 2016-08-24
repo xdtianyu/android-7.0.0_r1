@@ -1,0 +1,23 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'bmahadev, harpreet, krisr'
+NAME = 'network_RoamWifiEndToEnd'
+TIME = 'FAST'
+TEST_TYPE = 'client'
+
+DOC = """
+  Client side of the network_WiFi_RoamEndToEnd server test that sets up the
+  APs in the wifi cell for running this test.
+
+  Tests that Chrome can do the following using chrome.networkingPrivate:
+  * Find available wifi networks and connect to it.
+  * Roam/Transition to a different network with the same ssid when we tear
+    down one AP.
+  * Successfully connect to the other AP.
+"""
+
+job.run_test('network_RoamWifiEndToEnd',
+             ssid='ssid',
+             test='test')

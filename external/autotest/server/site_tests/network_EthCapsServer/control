@@ -1,0 +1,27 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_EthCapsServer"
+PURPOSE = 'Verify that LAN devices have the required capabilities.'
+CRITERIA = """
+Test will pass if the following requirements are met, otherwise should fail:
+1. Has Wake-on-LAN magic packet capabilities and successfully wakes from
+   suspend.
+   - subtest should take <20 seconds to pass and <60seconds to fail
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "server"
+
+DOC = """
+This test checks ethernet capabilities of a device.  See CRITERIA for more
+details.
+"""
+
+def run_ethcaps(machine):
+    job.run_test('network_EthCapsServer', client_ip=machine)
+
+job.parallel_simple(run_ethcaps, machines, timeout=60)

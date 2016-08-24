@@ -1,0 +1,26 @@
+apply plugin: 'java'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = [
+                'src/main/java',
+                'src/dx/java',
+                'src/mockito/java',
+            ]
+        }
+        resources {
+            srcDirs = ['src/mockito/resources']
+        }
+    }
+}
+
+jar {
+    baseName 'dexmaker'
+    classifier 'mockmaker'
+}
+
+dependencies {
+    compile getAndroidPrebuilt('10')
+    compile project(path: ':mockito', configuration: 'target')
+}

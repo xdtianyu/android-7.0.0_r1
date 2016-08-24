@@ -1,0 +1,226 @@
+#!/usr/bin/python
+
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import sys
+
+import common
+from autotest_lib.client.cros.networking import wifi_proxy
+
+SERVICE_PROP_PARSERS = {
+    'EAP.AnonymousIdentity': unicode,
+    'EAP.CACertID': unicode,
+    'EAP.CACertNSS': unicode,
+    'EAP.CACertPEM': unicode,
+    'EAP.CACert': unicode,
+    'EAP.CertID': unicode,
+    'EAP.ClientCert': unicode,
+    'EAP.EAP': unicode,
+    'EAP.Identity': unicode,
+    'EAP.InnerEAP': unicode,
+    'EAP.KeyID': unicode,
+    'EAP.KeyMgmt': unicode,
+    'EAP.Password': unicode,
+    'EAP.PIN': unicode,
+    'EAP.PrivateKey': unicode,
+    'EAP.SubjectMatch': unicode,
+    'EAP.UseSystemCAs': bool,
+    wifi_proxy.WifiProxy.SERVICE_PROPERTY_SECURITY: unicode,
+    }
+
+
+def usage():
+    """ Prints a usage message and returns False. """
+    cmd = sys.argv[0]
+    print 'Usage:'
+    print cmd, 'connect <ssid> [passphrase] [security]'
+    print '    |security| defaults to "psk" when |passphrase|',
+    print 'is given without |security|'
+    print
+    print cmd, 'disconnect <ssid> [timeout seconds]'
+    print
+    print cmd, 'connect_with_props <ssid> <timeout seconds>'
+    print '    <Security=[none|psk|802_1x]> [Property=Value ...]'
+    print '    for Property in:'
+    print '\n'.join(['\t\t' + x for x in sorted(SERVICE_PROP_PARSERS.keys())])
+    print
+    print cmd, 'configure <ssid> [passphrase] [security]'
+    print '    |security| defaults to "psk" when |passphrase|',
+    print 'is given without |security|'
+    return False
+
+
+def configure(ssid, security, passphrase):
+    wifi = wifi_proxy.WifiProxy()
+    security_parameters = {}
+    if passphrase is not None:
+        security_parameters[wifi.SERVICE_PROPERTY_PASSPHRASE] = passphrase
+    successful = wifi.configure_wifi_service(ssid, security,
+                                             security_parameters)
+    if successful:
+        print 'Operation succeeded.'
+    else:
+        print 'Operation failed.'
+    return successful
+
+
+def connect(ssid, security, credentials, save_credentials, timeout=15):
+    """Attempt to connect to a WiFi network.
+
+    Blocks until we connect successfully to a WiFi network described
+    by the given parameters or time out while attempting to do so.
+
+    @param ssid string Name of the network to connect to.
+    @param security string security type of the network to connect to.
+    @param credentials dict of service properties that includes credentials
+            like the passphrase for psk security.
+    @param save_credentials bool True if credentials should be saved.
+    @return True upon success, False otherwise.
+
+    """
+    wifi = wifi_proxy.WifiProxy()
+    result = wifi.connect_to_wifi_network(ssid,
+            security,
+            credentials,
+            save_credentials,
+            discovery_timeout_seconds=timeout,
+            association_timeout_seconds=timeout,
+            configuration_timeout_seconds=timeout)
+    (successful, discovery, association, configuration, reason) = result
+    if successful:
+        print 'Operation succeeded.'
+    else:
+        print 'Operation failed. (%s)' % reason
+    print 'Discovery time: %f.' % discovery
+    print 'Association time: %f.' % association
+    print 'Configuration time: %f.' % configuration
+    return successful
+
+
+def disconnect(ssid, timeout=None):
+    """Disconnect from the specified network.
+
+    Disconnect from a network with name |ssid|.  Note that this
+    method will not fail if we're already disconnected.
+
+    @param ssid string Name of the network to disconnect from.
+    @param timeout float number of seconds to wait for transition
+            to idle state.
+    @return True upon seeing network is in idle state.
+
+    """
+    wifi = wifi_proxy.WifiProxy()
+    result = wifi.disconnect_from_wifi_network(ssid, timeout)
+    (successful, duration, reason) = result
+    if successful:
+        print 'Operation succeeded.'
+    else:
+        print 'Operation failed: %s.' % reason
+    print 'Disconnect time: %f.' % duration
+    return successful
+
+
+def parse_security_from_credentials(credentials):
+    """Parses SERVICE_PROPERTY_SECURITY from credentials.
+
+    @param credentials dict of service properties that includes credentials
+            like the passphrase for psk security.
+    @return SERVICE_PROPERTY_SECURITY value from credentials,
+            or exit if no such key/value in credentials.
+
+    """
+    security = credentials.pop(
+            wifi_proxy.WifiProxy.SERVICE_PROPERTY_SECURITY, None)
+    if security is None:
+        print "Error: security type not provided"
+        usage()
+        sys.exit(1)
+
+    if security not in ['none', 'wep', 'psk', '802_1x']:
+        print "Error: invalid security type %s" % security
+        usage()
+        sys.exit(1)
+
+    return security
+
+
+def parse_service_property(property_string):
+    """Parses one commandline key=value string into a tuple.
+
+    @param property_string string to be parsed into (key,value).
+    @return parsed tuple of (key,value) or exit on parsing error.
+
+    """
+    property_name, raw_value = property_string.split('=', 1)
+
+    if not property_name in SERVICE_PROP_PARSERS:
+        print '%s is not a recognized service property' % property_name
+        usage()
+        sys.exit(1)
+
+    try:
+        return property_name, SERVICE_PROP_PARSERS[property_name](raw_value)
+    except:
+        print 'Failed parsing value from %s' % property_string
+        usage()
+        sys.exit(1)
+
+
+def main(args):
+    """Main method for this script.
+
+    @param args list of arguments to the script, not including script name.
+    @return True on success, False otherwise.
+
+    """
+    if len(args) < 2:
+        return usage()
+    command = args[0]
+    ssid = args[1]
+    save_credentials = True
+
+    if command == 'configure':
+        security = 'none'
+        passphrase = None
+        if len(args) > 2:
+            security = 'psk'
+            passphrase = args[2]
+        if len(args) > 3:
+            security = args[3]
+        return configure(ssid, security, passphrase)
+
+    if command == 'connect':
+        security = 'none'
+        credentials = {}
+        save_credentials = True
+        if len(args) > 2:
+            credentials[wifi_proxy.WifiProxy.SERVICE_PROPERTY_PASSPHRASE] = \
+                    args[2]
+            security = 'psk'
+        if len(args) > 3:
+            security = args[3]
+        return connect(ssid, security, credentials, save_credentials)
+
+    if command == 'connect_with_props':
+        timeout = float(args[2])
+        credentials = {}
+        if len(args) > 3:
+            for i in xrange(3, len(args)):
+                credentials.update((parse_service_property(args[i]),))
+        security = parse_security_from_credentials(credentials)
+        return connect(ssid, security, credentials, save_credentials, timeout)
+
+    if command == 'disconnect':
+        timeout=None
+        if len(args) > 2:
+            timeout = float(args[2])
+        return disconnect(ssid, timeout)
+
+    return usage()
+
+
+if __name__ == '__main__':
+    if not main(sys.argv[1:]):
+      sys.exit(1)

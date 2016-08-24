@@ -1,0 +1,26 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "platform_CorruptRootfs"
+AUTHOR = "chromeos-kernel,taysom"
+ATTRIBUTES = "suite:kernel_daily_regression"
+SUITE = "kernel_daily_regression"
+DEPENDENCIES = "servo"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test copies the kernel and root partitions from A to B.
+Corrupts the root partition on A (including bootcache area).
+Reboots the machine.
+Checks that the machine comes back up on B rootfs.
+"""
+
+def run_corrupt_rootfs(machine):
+    host = hosts.create_host(machine)
+    job.run_test("platform_CorruptRootfs", host=host)
+
+parallel_simple(run_corrupt_rootfs, machines)

@@ -1,0 +1,12 @@
+/*
+ * README.android describes in high-level the libedit changes that we
+ * cannot push upstream to the llvm.org repository: 
+ * - Changes due to Android's build system. 
+ * - Changes due to Android's toolchain.
+ */
+
+* Initial downstream on 2013/10/30: Synched to libedit-20130712-3.1.tar.gz
+  from http://thrysoee.dk/editline/.
+
+* We add Android's *.mk files that are specific to Android's build system.
+  Currently for linux x86 (32-bit) host only.

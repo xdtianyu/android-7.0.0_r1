@@ -1,0 +1,287 @@
+{
+  "tests": {
+    "glean/glsl1-Swizzled swizzled swizzle": {
+      "command": "bin/glean -o -v -v -v -t +glsl1 --quick",
+      "result": "skip"
+    },
+    "glean/glsl1-nested function calls (2)": {
+      "command": "/usr/local/piglit/lib/piglit/bin/glean -o -v -v -v -t +glsl1 --quick",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "glean/pixelFormats": {
+      "command": "/usr/local/piglit/lib/piglit/bin/glean -o -v -v -v -t +pixelFormats --quick",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "glx/GLX_OML_sync_control/waitformsc": {
+      "command": "bin/glx-oml-sync-control-waitformsc -fbo -auto",
+      "result": "skip"
+    },
+    "glx/glx-multithread-shader-compile": {
+      "command": "bin/glx-multithread-shader-compile -fbo -auto",
+      "crbug": "410498",
+      "result": "skip"
+    },
+    "glx/glx-swap-event_interval": {
+      "command": "bin/glx-swap-event --interval -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "shaders/glsl-algebraic-logicor-true": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/shaders/glsl-algebraic-logicor-true.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "shaders/glsl-const-folding-01": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/shaders/glsl-const-folding-01.shader_test -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "shaders/glsl-floating-constant-120": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/shaders/glsl-floating-constant-120.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "shaders/glsl-fs-all-01": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/shaders/glsl-fs-all-01.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "shaders/glsl-fs-clamp-5": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/shaders/glsl-fs-clamp-5.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "shaders/glsl-fs-discard-03": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/shaders/glsl-fs-discard-03.shader_test -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "shaders/glsl-fs-lots-of-tex": {
+      "command": "bin/shader_runner tests/shaders/glsl-fs-lots-of-tex.shader_test -auto",
+      "pass rate": "0.50",
+      "result": "flaky"
+    },
+    "shaders/glsl-fs-texture2d-masked-3": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/shaders/glsl-fs-texture2d-masked-3.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "shaders/glsl-getactiveuniform-count: glsl-getactiveuniform-ftransform": {
+      "command": "/usr/local/piglit/lib/piglit/bin/glsl-getactiveuniform-count shaders/glsl-getactiveuniform-ftransform.vert 2 -fbo -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "shaders/glsl-getactiveuniform-count: glsl-getactiveuniform-mvp": {
+      "command": "/usr/local/piglit/lib/piglit/bin/glsl-getactiveuniform-count shaders/glsl-getactiveuniform-mvp.vert 2 -fbo -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/!OpenGL 1.1/dlist-fdo31590": {
+      "command": "bin/dlist-fdo31590 -auto",
+      "result": "skip"
+    },
+    "spec/!OpenGL 1.2/texture-packed-formats": {
+      "command": "/usr/local/piglit/lib/piglit/bin/texture-packed-formats -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/!OpenGL 1.5/draw-vertices": {
+      "command": "/usr/local/piglit/lib/piglit/bin/draw-vertices -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/!OpenGL 2.0/attribs": {
+      "command": "/usr/local/piglit/lib/piglit/bin/attribs -fbo -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/!OpenGL 2.0/gl-2.0-active-sampler-conflict": {
+      "command": "/usr/local/piglit/lib/piglit/bin/gl-2.0-active-sampler-conflict -fbo -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/ARB_ES2_compatibility/arb_es2_compatibility-fixed-type": {
+      "command": "/usr/local/piglit/lib/piglit/bin/arb_es2_compatibility-fixed-type -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/ARB_ES2_compatibility/fbo-generatemipmap-formats": {
+      "command": "/usr/local/piglit/lib/piglit/bin/fbo-generatemipmap-formats GL_ARB_ES2_compatibility -fbo -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/ARB_depth_texture/fbo-depth-GL_DEPTH_COMPONENT32-blit": {
+      "command": "/usr/local/piglit/lib/piglit/bin/fbo-depth blit GL_DEPTH_COMPONENT32 -fbo -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/ARB_explicit_uniform_location/arb_explicit_uniform_location-minmax": {
+      "command": "/usr/local/piglit/lib/piglit/bin/arb_explicit_uniform_location-minmax -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/ARB_framebuffer_object/framebuffer-blit-levels draw depth": {
+      "command": "/usr/local/piglit/lib/piglit/bin/framebuffer-blit-levels draw depth -fbo -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/ARB_framebuffer_object/framebuffer-blit-levels read depth": {
+      "command": "/usr/local/piglit/lib/piglit/bin/framebuffer-blit-levels read depth -fbo -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/ARB_occlusion_query2/api": {
+      "command": "/usr/local/piglit/lib/piglit/bin/arb_occlusion_query2-api -fbo -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/ARB_texture_compression/fbo-generatemipmap-formats": {
+      "command": "/usr/local/piglit/lib/piglit/bin/fbo-generatemipmap-formats GL_ARB_texture_compression -fbo -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/ARB_vertex_array_object/isvertexarray": {
+      "command": "/usr/local/piglit/lib/piglit/bin/arb_vertex_array-isvertexarray -fbo -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/ARB_vertex_program/big-param": {
+      "command": "/usr/local/piglit/lib/piglit/bin/vpfp-generic /usr/local/piglit/lib/piglit/tests/shaders/generic/big-param.vpfp -fbo -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/ARB_vertex_program/vp-address-01": {
+      "command": "/usr/local/piglit/lib/piglit/bin/vp-address-01 -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/EXT_framebuffer_object/fbo-alphatest-formats": {
+      "command": "/usr/local/piglit/lib/piglit/bin/fbo-alphatest-formats -fbo -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/EXT_framebuffer_object/fbo-fragcoord": {
+      "command": "/usr/local/piglit/lib/piglit/bin/fbo-fragcoord -fbo -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/EXT_framebuffer_object/fbo-generatemipmap-filtering": {
+      "command": "bin/fbo-generatemipmap-filtering -fbo -auto",
+      "comment": "Regression tracked at crbug.com/384409",
+      "crbug": "384409",
+      "result": "skip"
+    },
+    "spec/EXT_framebuffer_object/fbo-generatemipmap-formats": {
+      "command": "/usr/local/piglit/lib/piglit/bin/fbo-generatemipmap-formats -fbo -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/EXT_texture_sRGB/fbo-generatemipmap-formats": {
+      "command": "/usr/local/piglit/lib/piglit/bin/fbo-generatemipmap-formats GL_EXT_texture_sRGB -fbo -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/glsl-1.10/compiler/extension-semicolon.frag": {
+      "command": "/usr/local/piglit/lib/piglit/bin/glslparsertest /usr/local/piglit/lib/piglit/tests/spec/glsl-1.10/compiler/extension-semicolon.frag fail 1.10",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/glsl-1.10/execution/built-in-functions/fs-atan-float": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.10/execution/built-in-functions/fs-atan-float.shader_test -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/glsl-1.10/execution/built-in-functions/fs-atan-vec2": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.10/execution/built-in-functions/fs-atan-vec2.shader_test -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/glsl-1.10/execution/built-in-functions/fs-atan-vec3": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.10/execution/built-in-functions/fs-atan-vec3.shader_test -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/glsl-1.10/execution/built-in-functions/fs-atan-vec4": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.10/execution/built-in-functions/fs-atan-vec4.shader_test -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/glsl-1.10/execution/built-in-functions/fs-mod-vec4-vec4": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.10/execution/built-in-functions/fs-mod-vec4-vec4.shader_test -auto",
+      "pass rate": "0.25",
+      "result": "flaky"
+    },
+    "spec/glsl-1.10/execution/built-in-functions/fs-op-add-ivec2-ivec2": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.10/execution/built-in-functions/fs-op-add-ivec2-ivec2.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.10/execution/built-in-functions/vs-faceforward-vec4-vec4-vec4": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.10/execution/built-in-functions/vs-faceforward-vec4-vec4-vec4.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.10/execution/built-in-functions/vs-op-div-ivec2-int": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.10/execution/built-in-functions/vs-op-div-ivec2-int.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.10/execution/variable-indexing/vs-varying-array-mat3-row-rd": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/spec/glsl-1.10/execution/variable-indexing/vs-varying-array-mat3-row-rd.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.10/execution/variable-indexing/vs-varying-mat2-col-wr": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/spec/glsl-1.10/execution/variable-indexing/vs-varying-mat2-col-wr.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/compiler/built-in-functions/log-vec4.frag": {
+      "command": "/usr/local/piglit/lib/piglit/bin/glslparsertest /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.20/compiler/built-in-functions/log-vec4.frag pass 1.20",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/compiler/built-in-functions/op-uplus-vec2.vert": {
+      "command": "/usr/local/piglit/lib/piglit/bin/glslparsertest /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.20/compiler/built-in-functions/op-uplus-vec2.vert pass 1.20",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/built-in-functions/vs-op-add-mat2x4-float": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.20/execution/built-in-functions/vs-op-add-mat2x4-float.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/built-in-functions/vs-op-assign-mult-mat3x4-float": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.20/execution/built-in-functions/vs-op-assign-mult-mat3x4-float.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/built-in-functions/vs-op-mult-mat3x2-vec3": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.20/execution/built-in-functions/vs-op-mult-mat3x2-vec3.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/uniform-initializer/fs-float-from-const": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/generated_tests/spec/glsl-1.20/execution/uniform-initializer/fs-float-from-const.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/variable-indexing/fs-temp-mat2-row-wr": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/spec/glsl-1.20/execution/variable-indexing/fs-temp-mat2-row-wr.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/variable-indexing/fs-temp-mat3-rd": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/spec/glsl-1.20/execution/variable-indexing/fs-temp-mat3-rd.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    },
+    "spec/glsl-1.20/execution/variable-indexing/fs-varying-mat4-row-rd": {
+      "command": "/usr/local/piglit/lib/piglit/bin/shader_runner /usr/local/piglit/lib/piglit/tests/spec/glsl-1.20/execution/variable-indexing/fs-varying-mat4-row-rd.shader_test -auto",
+      "pass rate": "0.75",
+      "result": "flaky"
+    }
+  }
+}

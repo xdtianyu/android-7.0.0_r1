@@ -1,0 +1,20 @@
+# Copyright (c) 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team, chromeos-video@google.com"
+NAME = "video_MediaUnittests"
+PURPOSE = "Verify Chromium media unittests pass."
+CRITERIA = "This test will fail if media_unittests fails."
+ATTRIBUTES = "suite:video"
+SUITE = "video"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+
+DOC = """
+This is a wrapper test for Chrome media_unittests.
+"""
+
+job.run_test('video_MediaUnittests')

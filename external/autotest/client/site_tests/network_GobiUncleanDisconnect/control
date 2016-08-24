@@ -1,0 +1,22 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_GobiUncleanDisconnect"
+PURPOSE = "Disconnects uncleanly from the Gobi a few times."
+CRITERIA = """
+This test will fail if any of its subtest programs fails to find or connect to
+the Gobi.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Regression"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  This test triggers unclean disconnects from the Gobi to ensure that the kernel
+  driver properly cleans up after it.
+"""
+
+job.run_test('network_GobiUncleanDisconnect')

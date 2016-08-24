@@ -1,0 +1,29 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'avakulenko, wiley, keybuk'
+NAME = 'buffet_PrivetSetupFlow'
+TIME = 'FAST'
+TEST_TYPE = 'Server'
+ATTRIBUTES = "suite:tendo_experimental"
+SUITE='tendo_experimental'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test validates the buffet pairing/authentication/setup flow.
+
+"""
+
+from autotest_lib.client.common_lib import utils
+
+def run(machine):
+    CMDLINE_ROUTER_HOSTNAME = 'router_addr'
+    cmdline_args = utils.args_to_dict(args)
+    router_hostname = cmdline_args.get(CMDLINE_ROUTER_HOSTNAME, None)
+    job.run_test('buffet_PrivetSetupFlow',
+                 host=hosts.create_host(machine),
+                 router_hostname=router_hostname)
+
+
+parallel_simple(run, machines)

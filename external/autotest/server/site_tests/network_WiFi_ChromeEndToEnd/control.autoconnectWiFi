@@ -1,0 +1,26 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'harpreet, krisr, wiley'
+TIME = 'SHORT'
+NAME = 'network_WiFi_ChromeEndToEnd.autoconnectWiFi'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:wifi_endtoend, suite:wifi_matfunc_bcm4371'
+SUITE = 'wifi_endtoend, wifi_matfunc_bcm4371'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+Configures wifi APs and tests that the DUT autoconnects to a previously
+connected wifi network.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_ChromeEndToEnd',
+                 host=host,
+                 raw_cmdline_args=args,
+                 test='autoconnectWiFi')
+
+
+parallel_simple(run, machines)

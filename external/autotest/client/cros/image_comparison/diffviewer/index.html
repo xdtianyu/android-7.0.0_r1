@@ -1,0 +1,76 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Image Comparison Viewer</title>
+    <style>
+        #testrundetails {
+          height: 200px;
+        }
+
+        #thumbnails {
+          top: 250px;
+          left: 10px;
+          width: 260px;
+          margin: 0px;
+          padding: 0px;
+          position: absolute;
+        }
+
+        .thumb {
+          width: 200px;
+          height: auto;
+          cursor: pointer;
+          border: 3px solid black;
+        }
+
+        .thumb:hover {
+          border: 3px solid blue;
+        }
+
+        #content {
+          margin-left: 260px;
+        }
+
+        .tagname {
+          font-weight: bold;
+        }
+    </style>
+    <script type="text/javascript">
+        function setup() {
+            var golden = document.getElementById("golden").src;
+            updateFullImageSrc(golden);
+        }
+        function updateFullImageSrc(src) {
+            document.getElementById("fullsizeimage").src = src;
+        }
+    </script>
+</head>
+<body onload="setup()">
+    <div id="testrundetails">
+        <h1> Test Run Details </h1>
+        <ul>
+            <li><span class="tagname"> Test Name: </span>$testname</li>
+            <li><span class="tagname"> ChromeOS Build Number: </span>$chromeos_version</li>
+            <li><span class="tagname"> Chrome Build Number: </span>$chrome_version</li>
+            <li><span class="tagname"> Device: </span>$board</li>
+            <li><span class="tagname"> Date of run: </span>$date</li>
+            <li><span class="tagname"> Differing pixels: </span>$diff_pixels</li>
+        </ul>
+    </div>
+    <hr />
+    <div id="thumbnails">
+        <p>Golden</p>
+        <img id="golden" class="thumb"onclick=updateFullImageSrc(this.src)
+             src="data:image/png;base64, $golden"><br>
+        <p>Test</p>
+        <img id="test" class="thumb" onclick=updateFullImageSrc(this.src)
+             src="data:image/png;base64, $test"><br>
+        <p>Diff</p>
+        <img id="diff" class="thumb" onclick=updateFullImageSrc(this.src) 
+             src="data:image/png;base64, $diff">
+    </div>
+    <div id="content">
+        <img id="fullsizeimage" src="golden.png" />
+    </div>
+</body>
+</html>

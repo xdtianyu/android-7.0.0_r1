@@ -1,0 +1,34 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'krisr, wiley'
+NAME = 'network_WiFi_ChaosConnectDisconnect.jetstream'
+TIME = 'LONG'
+TEST_TYPE = 'server'
+
+DOC = """
+This script iterates through all jetstream access points in the AP compatibility
+lab and has a chrome device connect to each in series. This test must be
+performed in the AP compatibility lab.
+"""
+
+from autotest_lib.server.cros.ap_configurators import ap_spec
+from autotest_lib.server.cros.chaos_lib import chaos_runner
+
+def run_chaos_jetstream(machine):
+    host = hosts.create_host(machine)
+    # Pick up just Jetstream APs on both 2.4 and 5 GHz bands
+    jetstream_ap = ['chromeos3-row2-rack3-host9']
+    ap_specs = [ap_spec.APSpec(channel=5, hostnames=jetstream_ap,
+                               security=ap_spec.SECURITY_TYPE_WPA2PSK),
+                ap_spec.APSpec(channel=48, hostnames=jetstream_ap,
+                               security=ap_spec.SECURITY_TYPE_WPA2PSK)]
+    for spec in ap_specs:
+        runner = chaos_runner.ChaosRunner(
+                'network_WiFi_ChaosConnectDisconnect', host, spec)
+        runner.run(job, tries=10)
+
+
+parallel_simple(run_chaos_jetstream, machines)
+

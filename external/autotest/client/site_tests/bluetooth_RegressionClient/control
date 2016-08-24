@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "bluetooth_RegressionClient"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "bluetooth"
+TEST_TYPE = "client"
+
+
+DOC = """
+Client Side Bluetooth Semi-Auto Regression Tests.
+
+Implements most of the Bluetooth Regression Tests with some tester
+interaction (putting external devices in pairing mode, verifying audio
+quality, etc.).
+"""
+
+job.run_test('bluetooth_RegressionClient', args)
+

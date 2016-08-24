@@ -1,0 +1,19 @@
+# Pretend to be a Samsung Y3300
+# Get the number of retries for PIN/PUK/PIN2/PUK2
+%PINNUM\?  %PINNUM: 3, 10, 3, 10
+# Enable/disable unsolicited indications of UE change
+%NWSTATE=[01]
+# Set/get the preferred system (GSM/WCDMA) "5,2" is "dual-mode, packet
+# and/or circuit-switched"
+%IPSYS=[0-5](,[0-3])?
+%IPSYS\?    5,2
+# Get/set frequency bands
+%IPBM=.*
+%IPBM\?
+
+# Get possible functionality levels
+\+CFUN=\?  (0,1,4),(0-2)
+# Set functionality level/reset
+\+CFUN=[014](,[012])?
+# Get functionality level
+\+CFUN\?   1

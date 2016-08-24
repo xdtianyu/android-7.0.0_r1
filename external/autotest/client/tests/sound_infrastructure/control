@@ -1,0 +1,21 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "Sound System Validation"
+AUTHOR = "dgreid"
+PURPOSE = "Ensure minimal sound devices are present."
+CRITERIA = "Pass if files exist."
+ATTRIBUTES = "suite:kernel_per-build_regression"
+SUITE = "kernel_per-build_regression"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+
+DOC = """
+This tests that the sound infrastructure such as device and control names
+are present when the system is running.  And that permissions are sane
+"""
+
+job.run_test('sound_infrastructure')

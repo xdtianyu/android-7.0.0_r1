@@ -1,0 +1,437 @@
+# -*- mode: python; coding: utf-8 -*-
+#
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# DOCUMENTATION:
+#
+# Define below an ordered list if tests for execution on factory
+# assembly lines.  This list can be customized for specific factory
+# needs, within the limits set by the below comments -- specifically,
+# ODMs should not remove any Google required tests.
+#
+# This file is loaded via a call to execfile() in the primary factory
+# autotest control file.
+
+# This particular test list is meant to represent the RunIn portion of the
+# normal factory test_list for internal testing purposes.
+
+TEST_LIST_NAME = 'Firmware Team Stress Tests'
+
+# -- CUSTOMIZABLE SETTINGS -------------------------------------------
+# The number of suspend/resume tests you want during run-in.
+_RUNIN_RESUME_ITERATIONS = 1
+
+# The duration of stress test + repeated suspend/resume during run-in.
+# This may detect bit flips between suspend/resume.
+# Running for 5 hours to start.
+_RUNIN_DOZING_SAT_DURATION_SECS = int(1 * 60 * 60)
+
+# The number of reboots you want during run-in.
+_RUNIN_REBOOT_SEQ_ITERATIONS = 1
+
+# The duration of stress test during run-in (suggested 10+ mins).
+# Running for 24 hours to start.
+_RUNIN_SAT_DURATION_SECS = 1 * 60 * 60
+
+# The interval of logging events in seconds during run-in.
+_RUNIN_LOG_INTERVAL_SECS = 10
+
+# Enable requirement for RunIn finish test.
+_REQUIRE_RUN_FOR_RUNIN_FINISH = False
+
+# Enable options that apply only in a real factory environment.
+_FACTORY_ENVIRONMENT = False
+
+# Enable options that only apply in a full factory image (i.e. an image that
+# contains a finalize-able image).
+_FULL_FACTORY_IMAGE = False
+
+# We use the defaults value for global options unless
+# _FACTORY_ENVIRONMENT is specified, but if desired, you may also
+# specify options outside the if block.
+if _FACTORY_ENVIRONMENT:
+  # echo -n 'passwordgoeshere' | sha1sum
+  # - Use operator mode by default and require a password to enable
+  #   engineering mode
+  options.engineering_password_sha1 = '6848bf3617a2cf82bd5260a146d4a3236a20badc'
+  # - Default to Chinese language
+  options.ui_lang = 'zh'
+  options.wlans = [WLAN(ssid='selshopfloor',
+                        security='psk', passphrase='ganondorf')]
+
+  # Choose another access point as a contingency plan in case the main
+  # access point gets overloaded.
+  try:
+    _AP_COUNT = 2
+    import hashlib
+    mac_address = open('/sys/class/net/mlan0/address').read().strip()
+    # Choose based on a hash of the MAC address.  (Don't use the MAC
+    # address directly since it may have certain bit patterns.)
+    ap_number = int(hashlib.md5(mac_address).hexdigest(), 16) % _AP_COUNT
+    options.wlans.append(WLAN(ssid=('selshopfloor%d' % (ap_number + 1)),
+                              security='psk', passphrase='ganondorf'))
+    import logging
+    logging.info('Set wlans to %s', ', '.join([x.ssid for x in options.wlans]))
+  except:
+    # This shouldn't happen, but let's not prevent Goofy from starting up.
+    import logging
+    logging.exception('Unable to choose random WLAN access point')
+
+  # - Enable background event log syncing
+  options.sync_event_log_period_secs = 300
+  options.update_period_secs = 300
+  # - Enable clock syncing with shopfloor server
+  options.sync_time_period_secs = None
+  options.shopfloor_server_url = 'http://10.3.0.11:8082/'
+  # - Disable ChromeOS keys.
+  options.disable_cros_shortcut_keys = True
+
+  #TODO (cychiang) open these options after cherry-picking the changes from
+  # factory branch.
+  #options.sync_log_period_secs = None
+  options.core_dump_watchlist = ['*glmark2*']
+  #options.log_disk_space_period_secs = 120
+  #options.stateful_usage_threshold = 90
+
+options.min_charge_pct = 87
+options.max_charge_pct = 88
+
+#
+# For details on available options, see the Options class in
+# py/test/factory.py.
+
+# Change this to enable using shop floor system.
+_ENABLE_SHOP_FLOOR = False
+
+# Change this to match your local report upload site.
+# Default is to use shopfloor if available, otherwise discard reports.
+# WARNING: 'none' is ONLY ALLOWED FOR DEBUGGING.
+_REPORT_UPLOAD_METHOD = 'shopfloor' if _ENABLE_SHOP_FLOOR else 'none'
+#
+# * For LAN environments, setup a FTP server and build FTP URL.
+#   Example: ftp://user:pass@host:port/directory/
+#
+#_REPORT_UPLOAD_METHOD = 'ftp://LOCAL_FTP_HOST/'
+#
+# * If you have access to public internet, use Google CPFE URL.
+#   Example: ("cpfe:https://www.google.com/chromeos/partner/fe/report_upload?"
+#             "device_name=mario&report_type=rma")
+#
+#_REPORT_UPLOAD_METHOD = (
+#  "cpfe:https://www.google.com/chromeos/partner/fe/report_upload?"
+#  "device_name=PLATFORM_NAME&report_type=REPORT_TYPE")
+#
+# REPORT UPLOADING IS REQUIRED TO BE SET AT BUILD TIME.
+# REPORTS MUST BE PROVIDED TO GOOGLE, MACHINES WITHOUT LOGS CANNOT BE SUPPORTED.
+# -- END OF CUSTOMIZABLE SETTINGS ------------------------------------
+
+def SyncShopFloor(id_suffix=None):
+  """Creates a step to sync with the shopfloor server.
+
+  If _FACTORY_ENVIRONMENT is False, None is returned (since there is no
+  shopfloor server to sync to).
+
+  Args:
+    id_suffix: An optional suffix in case multiple SyncShopFloor steps
+      are needed in the same group (since they cannot have the same ID).
+  """
+  if _FACTORY_ENVIRONMENT:
+    suffix_str = '_' + str(id_suffix) if id_suffix else ''
+    return OperatorTest(
+        id='SyncShopFloor' + suffix_str,
+        pytest_name='flush_event_logs',
+        label_zh=u'åæ­¥äºä»¶è®°å½ ' + suffix_str)
+  else:
+    return None
+
+def Barrier(id_suffix):
+  return  OperatorTest(
+      id='Barrier_' + str(id_suffix),
+      label_zh=u'æ£æ¥å³å¡' + str(id_suffix),
+      pytest_name='summary',
+      never_fails=True,
+      disable_abort=True,
+      dargs={'disable_input_on_fail':True})
+
+# Tests in the test_list will be run in the order below, unless the
+# operator interrupts the flow.
+
+TEST_LIST = [
+
+TestGroup(
+    id='RunIn',
+    subtests=[
+
+    OperatorTest(
+        id='ShopFloor1',
+        label_zh=u'ShopFloor1',
+        subtests=[
+            SyncShopFloor(),
+
+            # Read device data from VPD (most importantly,
+            # 'mlb_serial_number' and 'smt_complete').  If SMT is
+            # already complete, we need not (and cannot!) run the
+            # shopfloor steps again.
+            OperatorTest(
+                label_en='Read Device Data from VPD',
+                label_zh='ä» VPD è¯»æºå¨èµæ',
+                pytest_name='read_device_data_from_vpd'),
+
+            OperatorTest(
+                label_en='Call ShopFloor (GetDeviceInfo)',
+                label_zh=u'è¿å° ShopFloor (GetDeviceInfo)',
+                pytest_name='call_shopfloor',
+                dargs={'method': 'GetDeviceInfo',
+                       'args': lambda env: [
+                           env.GetDeviceData()['mlb_serial_number'],
+                           ],
+                       'action': 'update_device_data'}),
+
+            OperatorTest(
+                id='VPD',
+                label_zh=u'äº§åèµè®¯ (VPD)',
+                pytest_name='vpd',
+                dargs={'use_shopfloor_device_data': True}),
+
+            OperatorTest(
+                id='WriteHWIDv3',
+                label_en='Write HWID (v3)',
+                label_zh=u'ç¡¬ä½ä»£å· (HWID v3)',
+                pytest_name='hwid_v3')
+            ])
+    if _FACTORY_ENVIRONMENT else None,
+
+    # TODO(bhthompson): add in video and audio tests
+    FactoryTest(
+        id='Stress',
+        label_zh=u'éåååæµè¯',
+        subtests=[
+            SyncShopFloor(),
+
+            FactoryTest(
+                id='ThermalSensor',
+                label_zh=u'æ¸©åº¦æåºå¨',
+                pytest_name='i2c_probe',
+                backgroundable=True,
+                dargs={'bus': 7,
+                       'addr': 0x4c}),
+
+            FactoryTest(
+                label_en='VerifyRootPartition',
+                label_zh=u'éªè¯æ ¹ç£å',
+                pytest_name='verify_root_partition',
+                backgroundable=True,
+                dargs={'kern_a_device': 'mmcblk0p4',
+                       'root_device': 'mmcblk0p5'})
+            if _FULL_FACTORY_IMAGE else None,
+
+            FactoryTest(
+                id='BadBlocks',
+                label_zh=u'æ¯ææå',
+                backgroundable=True,
+                pytest_name='bad_blocks',
+                # It takes ~3200s per gigabyte.  Target ~75% of RunIn.
+                # NOTE: as Spring uses eMMC, we should be careful to limit the
+                # number of erase/write, eMMCs typically have much lower
+                # endurance than SSDs, so w/e cycles on a particular block may
+                # wear out after a few thousand cycles.
+                dargs={'timeout_secs': 120,
+                       'log_threshold_secs': 10,
+                       'max_bytes': int(1024 * 1024 * 1024 * 0.75 *
+                                        _RUNIN_SAT_DURATION_SECS / 3200.0) })
+            if _FULL_FACTORY_IMAGE else
+            FactoryTest(
+                label_en='BadBlocks',
+                label_zh=u'æ¯ææå',
+                backgroundable=True,
+                pytest_name='bad_blocks',
+                # It takes ~1700s per round @1G space, we can stress
+                # ~75% of RunIn.
+                iterations=int((_RUNIN_SAT_DURATION_SECS / 1700.0) * 0.75),
+                dargs={'mode': 'file',
+                       'timeout_secs': 120,
+                       'log_threshold_secs': 10,
+                       'max_bytes': 1 * 1024 * 1024 * 1024}),
+
+            FactoryTest(
+                id='StressAppTest',
+                label_zh=u'ååæµè¯',
+                autotest_name='hardware_SAT',
+                backgroundable=True,
+                dargs={'drop_caches': True,
+                       'free_memory_fraction': 0.85,
+                       'seconds': _RUNIN_SAT_DURATION_SECS}),
+
+            OperatorTest(
+                id='Graphics',
+                label_zh=u'å¾å',
+                pytest_name='webgl_aquarium',
+                backgroundable=True,
+                dargs={'duration_secs': _RUNIN_SAT_DURATION_SECS}),
+
+            FactoryTest(
+                label_en='Camera',
+                label_zh=u'ç¸æº',
+                backgroundable=True,
+                pytest_name='camera',
+                dargs={'face_recognition': False,
+                       'timeout_secs': _RUNIN_SAT_DURATION_SECS,
+                       'show_image': False,
+                       'timeout_run': True}),
+
+            FactoryTest(
+                id='RandomNumberGen',
+                label_zh=u'ä¹±æ°äº§ç',
+                backgroundable=True,
+                pytest_name='urandom',
+                dargs={'duration_secs': _RUNIN_SAT_DURATION_SECS}),
+
+            OperatorTest(
+                id='Countdown',
+                label_zh=u'åæ°è®¡æ¶',
+                backgroundable=True,
+                pytest_name='countdown',
+                dargs={'title_en': 'Run-In Tests',
+                       'title_zh': 'ç§æºæµè¯',
+                       'duration_secs': _RUNIN_SAT_DURATION_SECS,
+                       'log_interval': _RUNIN_LOG_INTERVAL_SECS,
+                       'grace_secs': 8*60,
+                       'temp_max_delta': 10,
+                       'temp_criteria': [
+                         # name, temp_index, warning_temp, critical_temp.
+                         ('CPU', 0, 95, 105)]}),
+    ]),
+
+    RebootStep(
+        label_en='Reboot (%s %s)' % (
+            _RUNIN_REBOOT_SEQ_ITERATIONS,
+            'time' if _RUNIN_REBOOT_SEQ_ITERATIONS == 1 else 'times'),
+        label_zh=u'éæ°å¼æº (%s æ¬¡)' % _RUNIN_REBOOT_SEQ_ITERATIONS,
+        iterations=_RUNIN_REBOOT_SEQ_ITERATIONS),
+
+    OperatorTest(
+        label_en='Suspend/Resume (%s %s)' % (
+            _RUNIN_RESUME_ITERATIONS,
+            'time' if _RUNIN_RESUME_ITERATIONS == 1 else 'times'),
+        label_zh=u'ç¡ç ãå¤é (%s æ¬¡)' % _RUNIN_RESUME_ITERATIONS,
+        pytest_name='suspend_resume',
+        dargs={'cycles': _RUNIN_RESUME_ITERATIONS,
+               'suspend_delay_min_secs': 10,
+               'suspend_delay_max_secs': 15,
+               'suspend_worst_case_secs': 120}),
+
+    FactoryTest(
+        id='DozingStress',
+        label_zh=u'ç¡ç åå­ååæµè¯',
+        subtests=[
+            SyncShopFloor(),
+
+            # if StressAppTest fails here, it's likely memory issue.
+            FactoryTest(
+                id='StressAppTest',
+                label_zh=u'ååæµè¯',
+                autotest_name='hardware_SAT',
+                backgroundable=True,
+                dargs={'drop_caches': True,
+                       'free_memory_fraction': 0.85,
+                       'seconds': _RUNIN_DOZING_SAT_DURATION_SECS}),
+
+            FactoryTest(
+                label_en='Suspend/Resume (%d %s)' % (
+                    _RUNIN_RESUME_ITERATIONS,
+                    'time' if _RUNIN_RESUME_ITERATIONS == 1 else 'times'),
+                label_zh=u'ç¡ç ãå¤é (%s æ¬¡)' % _RUNIN_RESUME_ITERATIONS,
+                pytest_name='suspend_resume',
+                backgroundable=True,
+                dargs={'cycles': _RUNIN_RESUME_ITERATIONS,
+                       'suspend_delay_min_secs': 28,
+                       'suspend_delay_max_secs': 30,
+                       'resume_early_margin_secs': 1,
+                       'suspend_worst_case_secs': 120}),
+    ]),
+
+    OperatorTest(
+        id='ShopFloor2',
+        label_zh=u'ShopFloor2',
+        subtests=[
+            SyncShopFloor(),
+
+            OperatorTest(
+                label_en='Call ShopFloor (FinishRunIn)',
+                label_zh=u'è¿å° ShopFloor (FinishRunIn)',
+                pytest_name='call_shopfloor',
+                dargs={'method': 'FinishRunIn',
+                       'args': lambda env: [
+                           env.GetDeviceData()['mlb_serial_number'],
+                           ]}),
+            ])
+    if _FACTORY_ENVIRONMENT else None,
+
+    # 87% =~ 2450 mAh. Typical charging current under load 0 is 500-600 mA. Give
+    # it 7hr to regulate battery to *_starting_charge_pct if starting with empty
+    # battery.
+    # Discharging current under 2 load is about -700mA.  Empirically, it takes
+    # ~150 seconds to discharge 30mAh.
+    # Charging current under 1 load is about 60-150mA. Empirically, it takes
+    # ~800 seconds to charge 30mAh.
+    # Note: If a SW bug causes Python task to occupy 100% CPU, this test may
+    # fail due to lower-than-expected charging current.
+    OperatorTest(
+        id='Charger',
+        label_zh=u'åçµå¨',
+        exclusive=['CHARGER'],
+        pytest_name='charger',
+        dargs={'min_starting_charge_pct': 87,
+               'max_starting_charge_pct': 88,
+               'starting_timeout_secs': 25000,
+               'check_battery_current': False,
+               'use_percentage': False,
+               'spec_list': [(30, 1600, 1), (-30, 600, 2)]}),
+
+    RebootStep(
+        id='RebootAfterCharger',
+        label_en='Reboot',
+        label_zh=u'éæ°å¼æº'),
+
+    OperatorTest(
+        id='Charge',
+        label_zh=u'åçµ',
+        pytest_name='blocking_charge',
+        exclusive=['CHARGER'],
+        dargs={'timeout_secs': 7200,
+               'target_charge_pct': 87}),
+
+    OperatorTest(
+        id='ShopFloor3',
+        label_zh=u'ShopFloor3',
+        subtests=[
+            SyncShopFloor(),
+
+            OperatorTest(
+                label_en='Call ShopFloor (FinishBattery)',
+                label_zh=u'è¿å° ShopFloor (FinishBattery)',
+                pytest_name='call_shopfloor',
+                dargs={'method': 'FinishBattery',
+                       'args': lambda env: [
+                           env.GetDeviceData()['mlb_serial_number'],
+                           ]}),
+            ])
+    if _FACTORY_ENVIRONMENT else None,
+
+    Barrier('RUNIN'),
+
+    OperatorTest(
+        label_en='Finish',
+        label_zh=u'ç»æ',
+        pytest_name='message',
+        require_run=(Passed('RunIn.Barrier_RUNIN')
+                     if _REQUIRE_RUN_FOR_RUNIN_FINISH else None),
+        never_fails=True,
+        dargs={'html_en': 'RunIn tests finished, press SPACE to continue.\n',
+               'html_zh': 'RunIn æµè¯ç»æï¼æä¸ç©ºç½é®ç»§ç»­\n'}),
+
+]),  # End of RUNIN test group.
+]
+

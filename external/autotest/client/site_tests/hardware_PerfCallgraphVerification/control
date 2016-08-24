@@ -1,0 +1,25 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Emma Rapati <rapati@chromium.org>"
+NAME = "hardware_PerfCallgraphVerification"
+PURPOSE = "Verify that callchains can be profiled using perf"
+CRITERIA = """
+Successfully collect a perf callchain profile and verify that the
+callchain is long enough.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = "bvt-cq"
+
+DOC = """
+Verify performance callchain
+"""
+
+job.run_test('hardware_PerfCallgraphVerification')

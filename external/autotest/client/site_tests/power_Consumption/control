@@ -1,0 +1,39 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_Consumption"
+PURPOSE = "Measure power draw when system is under different kinds of load."
+CRITERIA = "This test is a benchmark."
+TIME = "MEDIUM"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """This test runs a series of different tasks like media playback, flash
+animation, large file download etc. It measures and reports power
+consumptions during each of those tasks.
+
+Args:
+    short: Boolean, if True, run a shorter version of the test with fewer
+        measurements. Designed to run in under 5 minutes so it can be used in
+        the per-build test suite.
+    test_groups: list of sub-test groups to run. Those refer to _run_group_X()
+        methods. None - to use defaults hard-coded in the test.
+    reps: a multiplier used for running longer tests. With reps=N each sub-test
+        will run roughly N times longer. This is good for averaging out more
+        of the noise and therefore getting better accuracy.
+"""
+
+UI_TESTS = ['backlight', 'download', 'webpages', 'video', 'v8']
+NONUI_TESTS = ['backchannel', 'sound', 'lowlevel']
+DEFAULT_TESTS = UI_TESTS + NONUI_TESTS
+INTERVAL_SECS = 5
+
+job.profilers.add('vmstat', INTERVAL_SECS)
+job.run_test('power_Consumption',
+                short=False,
+                test_groups=DEFAULT_TESTS,
+                reps=1)
+job.profilers.delete('vmstat')

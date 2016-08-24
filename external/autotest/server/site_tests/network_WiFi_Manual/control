@@ -1,0 +1,22 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_Manual'
+TIME = 'LONG'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+Start up an AP for manual testing.
+"""
+
+
+def run(machine):
+    job.run_test('network_WiFi_Manual',
+                 host=hosts.create_host(machine),
+                 raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

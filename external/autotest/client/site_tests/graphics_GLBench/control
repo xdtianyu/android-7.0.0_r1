@@ -1,0 +1,63 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'graphics_GLBench'
+AUTHOR = 'chromeos-gfx'
+PURPOSE = 'Benchmark the graphics library performance.'
+CRITERIA = """
+Test should not crash and not overheat (which is monitored by PerfControl).
+Test generates output images and verifies their bit accuracy using MD5 checksums
+which are stored in
+../../deps/glbench/glbench_reference_images.txt (for known good images)
+and in ../../deps/glbench/glbench_knownbad_images.txt (for ignored failures -
+this should be very rare though).
+
+If unknown images are encountered the test fails. To resolve this use an
+image diffing tool like Beyond Compare and visually check differences between
+the unknown image and older versions in ../../deps/glbench-images/.
+Note: it should nearly never be required to remove old versions of good/bad
+images from these directories.
+"""
+ATTRIBUTES = "suite:graphics, suite:graphics_per-day, suite:graphics_system"
+SUITE = 'graphics_per-day, graphics, graphics_system'
+TIME='LENGTHY'
+TEST_CATEGORY = 'Performance'
+TEST_CLASS = "gl"
+TEST_TYPE = 'client'
+# Reboot in the lab after the test ends.
+DEPENDENCIES='cleanup-reboot'
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+This benchmark executes glbench, a graphics benchmark designed to time how long
+various graphic intensive activities take, which includes measuring:
+  - fill rate
+    - blended
+    - opaque
+  -Z reject rate
+  -triangle rate
+    - no cull
+    - half cull (half triangles backface culled)
+    - full cull (mix of back face and degenerates)
+  - blend rate
+  - texture fetch
+    - nearest
+    - bilinear
+    - trilinear
+  - compute
+    - vertex shader
+    - pixel shader
+    - *fragement shader to test ddx and ddy
+  - attribute fetch
+  - color depth stencil test
+  - *state change
+  - texture upload
+  - read back
+
+* Not yet implemented.
+"""
+
+job.run_test('graphics_GLBench')

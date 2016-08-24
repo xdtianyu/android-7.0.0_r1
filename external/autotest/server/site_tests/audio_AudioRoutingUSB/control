@@ -1,0 +1,34 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = 'The Chromium OS Authors'
+NAME = 'audio_AudioRoutingUSB'
+PURPOSE = 'Verify audio is routed to USB headset correctly.'
+CRITERIA = """
+After a USB headset is plugged in, CRAS should route the audio
+to the new device. After the USB headset is unplugged, the audio
+should be routed back to the original device. We check if the
+correct device file (/dev/snd/pcmCXDY) is opened in each case.
+"""
+TIME='FAST'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = "audio"
+TEST_TYPE = 'server'
+
+DOC = """
+This test uses servo to simulate plugging/unplugging a USB headset. Before
+running the test, a USB headset should be plugged into DUT_USB (TYPE A/J4),
+and DUT_IN (TYPE MICRO-B/J5) should be connected to a USB port on the device.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("audio_AudioRoutingUSB", host=host)
+
+parallel_simple(run, machines)

@@ -1,0 +1,10 @@
+import common
+from autotest_lib.server import afe_utils
+
+def install(machine):
+    host = hosts.create_target_machine(machine, initialize=False,
+                                       auto_monitor=False)
+    afe_utils.machine_install_and_update_labels(host)
+
+
+job.parallel_simple(install, machines, log=False)

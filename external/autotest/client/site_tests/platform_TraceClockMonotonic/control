@@ -1,0 +1,27 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "sonnyrao"
+DOC = """
+Checks for "mono" option in trace_clock and runs a binary that creates
+three entries using the trace_marker file to write directly into the trace
+and then processes the trace to make sure things are in the proper order.
+"""
+NAME = "platform_TraceClockMonotonic"
+PURPOSE = """
+Ensure the the kernel properly supports monotonic timestamps for
+ftrace events
+"""
+CRITERIA = """
+Fails if kernel doesn't support tracing or monotonic clock for ftrace events
+or the timestamps aren't in the proper order
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+job.run_test('platform_TraceClockMonotonic')

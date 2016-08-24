@@ -1,0 +1,15 @@
+NAME = 'Flaky client side test'
+AUTHOR = 'scottz'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'General'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:dummyclientretries, suite:dummyflake"
+SUITE = 'dummyflake, dummyclientretries'
+
+
+DOC = """
+Test that randomly fails half the time.
+"""
+
+job.run_test('flaky_test', seconds=1)

@@ -1,0 +1,27 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "network_3GScanningProperty"
+PURPOSE = "Verify cellular device 'Scanning' property is updated correctly."
+CRITERIA = """
+This test will fail if shill does not update the |Scanning| property correctly
+during the initial modem enable-register-connect sequence, or when the user
+requests a network scan using |ProposeScan|.
+"""
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DOC = """
+Test that the |Scanning| Property of the shill cellular device object is
+updated correctly in the following two scenarios:
+  (1) When a user requests a network scan using the |ProposeScan| method of
+      the cellular device.
+  (2) During the initial modem enable-register-connect sequence.
+"""
+
+job.run_test('network_3GScanningProperty')

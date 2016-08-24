@@ -1,0 +1,41 @@
+There are configure scripts in this directory to generate the header files
+used by the jemalloc library.
+
+These scripts are named conf_<HOST_TYPE>.sh, where HOST_TYPE is one of
+aarch64, arm, mips, x86, x86_64.
+
+In order to build generate the header files for each supported HOST_TYPE,
+follow these steps:
+
+- source build/envsetup.sh
+- lunch <TARGET>
+- mmma -jXX bionic
+- cd external/jemalloc
+- autoconf
+- <Modify the configure script>
+- android/conf_<HOST_TYPE>.sh
+
+Follow these instructions to modify the configure script before running
+any of the conf_<HOST_TYPE>.sh scripts.
+
+In the code that looks similar to this:
+
+case "${host}" in
+  *-*-darwin*)
+
+Modify it to be:
+
+case "${host}" in
+  *android*)
+    CFLAGS="$CFLAGS"
+    CPPFLAGS="$CPPFLAGS -D_GNU_SOURCE"
+    abi="elf"
+    force_tls="0"
+    enable_tls="0"
+    $as_echo "#define JEMALLOC_HAS_ALLOCA_H 1" >>confdefs.h
+
+    $as_echo "#define JEMALLOC_PURGE_MADVISE_DONTNEED  " >>confdefs.h
+
+    $as_echo "#define JEMALLOC_THREADED_INIT  " >>confdefs.h
+    ;;
+  *-*-darwin*)

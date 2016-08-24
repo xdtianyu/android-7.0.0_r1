@@ -1,0 +1,19 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_Memtester.memory_qual'
+AUTHOR = 'puthik'
+PURPOSE = 'Verify memory integrity using memtester.'
+CRITERIA = 'Fails if memory corrupt'
+TIME = 'LENGTHY'
+TEST_CLASS = "hardware"
+TEST_TYPE = 'client'
+
+DOC = """
+This test uses memtester to find memory subsystem faults. Amount of memory
+to test is all of the free memory plus buffer and cache region with 30MB
+reserved for OS use. The memory_qual version is 100 loops of the normal test.
+"""
+
+job.run_test('hardware_Memtester', tag='memory_qual', loop=100)

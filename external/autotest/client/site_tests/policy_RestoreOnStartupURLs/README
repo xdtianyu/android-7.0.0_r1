@@ -1,0 +1,73 @@
+Usage Guide
+===========
+From chroot, run the test remotely with test_that:
+$ test_that <IPAddress> policy_RestoreOnStartupURLs <arguments>
+
+On your Chrome OS device, run the test locally from the command line:
+$ /usr/local/autotest/bin/autotest /usr/local/autotest/tests/
+  policy_RestoreOnStartupURLs/control <arguments>
+
+When no arguments are given, all test cases defined in the test are run using
+the local AutoTest fake DM Server to download policies, and production GAIA to
+authenticate the user.
+
+Use the mode=single argument to run a single test case, and the case argument
+to specify the test case to run. E.g.:
+--args="mode=single case=1URL"
+--args="mode=single case=3URLs"
+--args="mode=single case=NotSet"
+
+Use the env argument to select the environment parameters used during the test.
+The env argument determines which GAIA login server and DMServer will be used
+by Chrome OS to authenticate user sign-ins and to download policies. Use the
+dm-fake environment for your test to set up policies on the local AutoTest
+fake DM Server. Note that your tests cannot set up policies on the DMServer in
+the production, staging, or test environments.
+
+Valid values for env are:
+  prod: production - DMServer and GAIA in production
+  cr-dev: staging - DMServer (cros-dev) and GAIA in staging
+  cr-auto: staging - DMServer (cros-auto) and GAIA in staging
+  dm-test: test - Python server on chromium-dm-test.appspot.com and
+           GAIA in production
+  dm-fake (default): AutoTest - fake AutoTest DMServer and GAIA in production.
+
+When you select an environment other than the default 'dm-fake' AutoTest,
+you must provide the user credentials for that environment. E.g.:
+--args="env=cr-auto username=tester1@testdomain.com password=test1234"
+
+When you select an environment other than dm-fake, and you specify a single
+test case to run, you may optionally specify the policy value that the test
+case expects to be shown on the chrome://policy page. This is uncommon usage,
+but is provided to support situations where a single test method is used by
+multiple test cases, but with different policy values pre-set by the user on
+an external DM Server.
+
+When using env=dm-test, you must specify the dms_name for your instance of the
+chromium-dm-test service. E.g.:
+--args="env=dm-test dms_name=xot-dmst username=..."
+
+
+Argument Examples for policy_RestoreOnStartupURLs tests
+=======================================================
+
+Local Command Line Args
+------------------------
+Fake, mode=All:
+/usr/local/autotest/bin/autotest /usr/local/autotest/tests/policy_RestoreOnStartupURLs/control --args="mode=all env=dm-fake"
+
+Production, mode=Single (1URL), with expected policy value:
+/usr/local/autotest/bin/autotest /usr/local/autotest/tests/policy_RestoreOnStartupURLs/control --args="mode=single case=1URL env=prod username=sal1@crosprqa1.com password=sal1Pt001 value=None"
+
+YAPS, mode=Single (3URLs):
+/usr/local/autotest/bin/autotest /usr/local/autotest/tests/policy_RestoreOnStartupURLs/control --args="mode=single case=3URLs env=dm-test dms_name=xot-dmst username=dadm@crosprqa3.com password=ad3pky001"
+
+Remote Command Line Ags
+------------------------
+For comparision, here are equivalent commands to run using test_that (from within chroot):
+test_that 100.96.49.89 policy_RestoreOnStartupURLs --args="mode=all env=dm-fake"
+
+test_that 100.96.49.89 policy_RestoreOnStartupURLs --args="mode=single case=1URL env=prod username=sal1@crosprqa1.com password=sal1Pt001 value=None"
+
+test_that 100.96.49.89 policy_RestoreOnStartupURLs --args="mode=single case=3URLs env=dm-test dms_name=xot-dmst username=dadm@crosprqa3.com password=ad3pky001"
+

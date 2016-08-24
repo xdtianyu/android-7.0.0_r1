@@ -1,0 +1,19 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_StatsCPUIdle"
+PURPOSE = "Measure time spent at each CPU idle level when system is idle."
+CRITERIA = "This test is a benchmark."
+TIME = "SHORT"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+This test measures percentage time spent at each CPU idle level while
+the system is idling.
+"""
+
+job.run_test('power_StatsCPUIdle', test_time=60)

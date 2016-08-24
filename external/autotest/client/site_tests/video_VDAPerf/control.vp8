@@ -1,0 +1,40 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team, chromeos-video@google.com"
+NAME = "video_VDAPerf"
+PURPOSE = "Monitor the performance of the Chromium hardware VDA."
+CRITERIA = """
+The test fails if the video_decode_accelerator_unittest fails or crashes.
+"""
+ATTRIBUTES = "suite:crosbolt_perf_nightly"
+SUITE = "crosbolt_perf_nightly"
+TIME = "SHORT"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+# Reboot in the lab after the test ends.
+DEPENDENCIES='cleanup-reboot, hw_video_acc_vp8'
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This test utilizes the video_decode_accelerator_unittest to measure the
+performance of the Chromium hardware Video Decode Accelerator.
+"""
+
+# A list of test cases. Each entry consists of the following parts:
+#   [download_path, width, height, frame_num, fragment_num, profile, fps]
+test_cases = [
+    ['crowd/crowd1080-1edaaca36b67e549c51e5fea4ed545c3.vp8', 1920, 1080, 500, 539, 11, 50],
+    ['crowd/crowd720-41e9a3e6a6b1644ebdb3f5723fce96e5.vp8', 1280, 720, 500, 534, 11, 50]
+]
+
+constraints = [
+    'crowd1080_vp8_frame_drop_rate == 0',
+    'crowd720_vp8_frame_drop_rate == 0']
+
+job.run_test('video_VDAPerf', test_cases=test_cases, constraints=constraints)

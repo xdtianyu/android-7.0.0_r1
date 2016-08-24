@@ -1,0 +1,25 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "dummy_Fail"
+PURPOSE = "Demonstrate failure methods of autotests."
+CRITERIA = "This test will never succeed."
+ATTRIBUTES = "suite:another_suite, suite:dummy, suite:push_to_prod"
+SUITE = "dummy, another_suite, push_to_prod"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "dummy"
+TEST_TYPE = "client"
+
+DOC = """
+This is a helper test that will fail in a number of ways.
+"""
+
+job.run_test('dummy_Fail', tag='Error', to_throw='TestError')
+job.run_test('dummy_Fail', tag='Fail', to_throw='TestFail')
+job.run_test('dummy_Fail', tag='Warn', to_throw='TestWarn')
+job.run_test('dummy_Fail', tag='NAError', to_throw='TestNAError')
+job.run_test('dummy_Fail', tag='Crash', to_throw=None)
+

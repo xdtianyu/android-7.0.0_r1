@@ -1,0 +1,18 @@
+apply plugin: 'java'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['main/src']
+        }
+    }
+}
+
+jar {
+    baseName 'objenesis'
+    classifier 'target'
+}
+
+dependencies {
+    compile getAndroidPrebuilt('10')
+}

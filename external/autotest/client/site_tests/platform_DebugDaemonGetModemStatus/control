@@ -1,0 +1,22 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "platform_DebugDaemonGetModemStatus"
+PURPOSE = "Verify that debugd's GetModemStatus works."
+
+CRITERIA = """
+GetModemStatus must return a valid, non-empty json object.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+Exercises the debugd GetModemStatus API. This test will only pass when run on a
+target with a cellular modem.
+"""
+
+job.run_test('platform_DebugDaemonGetModemStatus')

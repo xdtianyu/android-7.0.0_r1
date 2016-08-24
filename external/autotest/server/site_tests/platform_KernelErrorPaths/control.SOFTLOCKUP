@@ -1,0 +1,28 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "platform_KernelErrorPaths.SOFTLOCKUP"
+AUTHOR = "Chrome OS Team"
+ATTRIBUTES = "suite:kernel_per-build_regression, suite:partners"
+SUITE = "kernel_per-build_regression, partners"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test uses /proc/breakme to cause the machine to have various
+serious failures (kernel panic, kernel bug, deadlock, etc.), and then
+check to make sure that these failures were properly logged and had
+appropritate consequences (reboot, logging, etc.).
+
+Pass the kernel crashes as a comma-delimited string of crash types.
+"""
+
+def run_kernel_error_paths(machine):
+    host = hosts.create_host(machine)
+    job.run_test("platform_KernelErrorPaths", tag="SOFTLOCKUP",
+                 kcrashes="SOFTLOCKUP", host=host)
+
+parallel_simple(run_kernel_error_paths, machines)

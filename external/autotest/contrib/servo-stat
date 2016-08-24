@@ -1,0 +1,136 @@
+#!/bin/bash
+
+# Usage:
+#     servo-stat DUT ...
+#
+# Reports the status of the servo (if any) attached to the DUT.
+# The DUT name is the host name without the .cros, or -servo.
+# For each named DUT, reports a line something like this:
+#     DUT ...ABCDEFG is up BOARD=swanky CHROMEOS_RELEASE_VERSION=5995.0.0
+#
+# The letters are just arbitrary tags printed before any
+# long-running operation that might time out.  It allows you to see
+# progress, and if things get hung up, you can see where.
+
+
+# readlink -f $0, in case $0 is a symlink from somewhere else
+REPO=$(dirname $(readlink -f $0))/../../../../..
+REPO=$(readlink -f $REPO)
+PYTHON=$(readlink -f $REPO/chroot/usr/bin/python2.7)
+HDCTOOLS=$(readlink -f $REPO/chroot/usr/lib/python2.7/site-packages/servo)
+KEYFILE=$REPO
+KEYFILE=$KEYFILE/src/third_party/chromiumos-overlay
+KEYFILE=$KEYFILE/chromeos-base/chromeos-ssh-testkeys/files/testing_rsa
+
+# Need some temporary files to keep ssh happy:
+#  + Just setting StrictHostKeyChecking=no won't silence all
+#    possible errors about host keys, so we need a temporary file
+#    where host keys can be cached.
+#  + We don't want to require the user to edit or provide the
+#    standard test keys, so we use the keys from the repo.  But...
+#    The file must be user-readable only, so we need a copy with
+#    the correct modes (mktemp is 600 by default).
+
+TMPKEYS=$(mktemp)
+TMPHOSTS=$(mktemp)
+trap 'rm $TMPKEYS $TMPHOSTS' EXIT
+cp $KEYFILE $TMPKEYS
+
+dut_control() {
+  timeout 90 $PYTHON $HDCTOOLS/dut_control.py "$@"
+}
+
+remote() {
+    local ssh_opts=( -n -o BatchMode=yes -o StrictHostKeyChecking=no
+                     -o UserKnownHostsFile=$TMPHOSTS -i $TMPKEYS )
+    local servo=$1
+    shift
+    timeout 45 ssh "${ssh_opts[@]}" root@$servo "$@"
+}
+
+CONFIG=/var/lib/servod/config
+
+for H in "$@"
+do
+  SERVO=$H-servo.cros
+  echo -n "$H ..."
+  STATUS=()
+
+  HAVE_SERVOD=1
+  BOARD=
+  VERSION=
+
+  echo -n "A"
+  if ping -c1 -w2 $SERVO >/dev/null 2>&1
+  then
+    echo -n "B"
+    if BUTTON=$(dut_control -s $SERVO pwr_button 2>&1)
+    then
+      if [ "$BUTTON" != "pwr_button:release" ]
+      then
+        STATUS=("${STATUS[@]}" "pwr_button is '$BUTTON'")
+      else
+        echo -n "C"
+        LID=$(dut_control -s $SERVO lid_open 2>&1)
+        if [ "$LID" != "lid_open:yes" -a "$LID" != "lid_open:not_applicable" ]
+        then
+          STATUS=("${STATUS[@]}" "lid_open is '$LID'")
+        fi
+      fi
+    else
+      STATUS=("${STATUS[@]}" "not running servod")
+      HAVE_SERVOD=0
+    fi
+
+    echo -n "D"
+    if ! remote $SERVO true >/dev/null 2>&1
+    then
+      STATUS=("${STATUS[@]}" "ssh is down")
+    else
+      echo -n "E"
+      VERSION=$(
+          remote $SERVO grep CHROMEOS_RELEASE_VERSION /etc/lsb-release 2>&1)
+      if [ -z "$VERSION" ]
+      then
+        STATUS=("${STATUS[@]}" "not running brillo")
+      fi
+    fi
+
+    if [ -n "$VERSION" ]
+    then
+      echo -n "F"
+      if remote $SERVO test -f $CONFIG
+      then
+        echo -n "G"
+        BOARD=$(remote $SERVO grep BOARD= $CONFIG)
+      fi
+      if [ $HAVE_SERVOD -eq 0 ]
+      then
+        if [ -z "$BOARD" ]
+        then
+          STATUS=("servod not configured")
+        else
+          echo -n "H"
+          JOB=$(remote $SERVO status servod | sed 's/,.*//')
+          if [ "$JOB" = "servod start/running" ]
+          then
+              STATUS=("servod failed")
+          fi
+        fi
+      fi
+    fi
+  else
+    STATUS=("${STATUS[@]}" "is down")
+  fi
+
+  if [ "${#STATUS}" -eq 0 ]
+  then
+    STATUS=("is up")
+  fi
+
+  if [ -n "$VERSION" ]
+  then
+    STATUS=("${STATUS[@]}" $BOARD $VERSION)
+  fi
+  echo " ${STATUS[@]}"
+done

@@ -1,0 +1,27 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Team"
+NAME = "logging_UdevCrash"
+PURPOSE = "Verify udev triggered crash works as expected."
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = "bvt-cq"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "logging"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+Fake trackpad failure to trigger crash report with udev type, and
+confirm the *.log file has the correct conetent.
+"""
+
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'Cr-Internals-Logging', 'Cr-OS-Systems'],
+    'owner': 'vapier@chromium.org',
+    'cc': ['vapier@chromium.org', 'benchan@chromium.org'],
+}
+
+job.run_test("logging_UdevCrash")

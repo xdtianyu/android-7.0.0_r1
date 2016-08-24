@@ -1,0 +1,31 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "chromeos-chameleon"
+NAME = "audio_AudioBasicBluetoothRecord"
+PURPOSE = "Remotely controlled bluetooth record audio test."
+CRITERIA = "This test will fail if the captured audio does not match original file."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "audio"
+TEST_TYPE = "server"
+SUITE = "chameleon_audio_nightly, chameleon_audio"
+ATTRIBUTES = "suite:chameleon_audio_nightly, suite:chameleon_audio"
+DEPENDENCIES = "chameleon, audio_board"
+JOB_RETRIES = 2
+
+DOC = """
+This test remotely tests bluetooth playback audio function.
+"""
+
+args_dict = utils.args_to_dict(args)
+chameleon_args = hosts.CrosHost.get_chameleon_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, chameleon_args=chameleon_args)
+    job.run_test("audio_AudioBasicBluetoothRecord", host=host)
+
+parallel_simple(run, machines)

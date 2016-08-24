@@ -1,0 +1,38 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'keybuk@chromium.org'
+NAME = 'bluetooth_Sanity_LEDiscovery.manual'
+TIME = 'SHORT'
+TEST_CLASS = 'bluetooth'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'bluetooth'
+
+DOC = """
+Verify that the device can discover a Bluetooth Low Energy peripheral.
+
+This is a useful sanity check because it tests basic functionality of the
+radio and host subsystem when in LE mode.
+
+This is the manual, interactive, version of bluetooth_Sanity_LEDiscovery;
+whereas running that test will use an automated Bluetooth tester, running this
+test will open a web browser on the device with testing instructions and
+interactive prompts where required.
+
+You will need a second device in order to perform those tests and verify the
+results according to the instructions.
+"""
+
+from autotest_lib.server.cros.bluetooth import bluetooth_tester
+
+
+def run(machine):
+    device_host = hosts.create_host(machine)
+    job.run_test('bluetooth_Sanity_LEDiscovery',
+                 device_host=device_host,
+                 tester_host=None,
+                 interactive=True)
+
+
+parallel_simple(run, machines)

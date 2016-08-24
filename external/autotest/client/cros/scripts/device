@@ -1,0 +1,99 @@
+#!/usr/bin/python
+
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import pprint
+import sys
+
+import common
+from autotest_lib.client.cros.networking import shill_proxy
+
+def usage():
+    """ Prints a script usage message. """
+    cmd = sys.argv[0]
+    print 'Usage: %s <command> [more parameters]' % cmd
+    print 'Example uses:'
+    print cmd, 'list - List devices and their properties.'
+    print cmd, 'get-property <devname> [propname] - List device property.'
+    print cmd, 'set-property <devname> <propname> <value>'
+    print '     Set property on devname to value'
+    return False
+
+
+def set_device_property(device, property_key, value):
+    """Sets a property on a device
+
+    @param device Interface representing a device
+    @param property_key string name of property
+    @param value string value of property to set
+
+    """
+    shill_proxy.ShillProxy.set_dbus_property(device, property_key, value)
+    return True
+
+
+def print_device_properties(device, property_key):
+    """Prints one or all properties on a device
+
+    @param device Interface representing a device
+    @param property_key string name of property or None
+
+    """
+    shill = shill_proxy.ShillProxy()
+    if property_key is None:
+        pprint.pprint(
+                shill.dbus2primitive(device.GetProperties(utf8_strings=True)),
+                indent=2)
+    else:
+        pprint.pprint({property_key:
+                shill_proxy.ShillProxy.get_dbus_property(device, property_key)},
+                indent=2)
+    return True
+
+
+def list_devices():
+    """ Display detailed device information. """
+    shill = shill_proxy.ShillProxy()
+    for device in shill.get_devices():
+        print 'Device: %s' % device.object_path
+        print_device_properties(device, None)
+        print
+    return True
+
+
+def main():
+    """ Main entry point for the device script. """
+    if len(sys.argv) < 2:
+        return usage()
+
+    command = sys.argv[1]
+
+    if command == 'list':
+      return list_devices()
+
+    if len(sys.argv) > 2:
+        shill = shill_proxy.ShillProxy()
+        device = shill.find_object('Device', {'Name': sys.argv[2]})
+        if device is None:
+            print "No device named %s found" % sys.argv[2]
+            return usage()
+
+        if command == 'get-property':
+            return print_device_properties(
+                    device,
+                    None if len(sys.argv) < 4 else sys.argv[3])
+
+        if command == 'set-property' and len(sys.argv) == 5:
+            return set_device_property(
+                    device,
+                    sys.argv[3],
+                    sys.argv[4])
+
+    return usage()
+
+
+if __name__ == '__main__':
+    if not main():
+        sys.exit(1)

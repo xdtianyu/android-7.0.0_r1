@@ -1,0 +1,39 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_ServoPowerStateController_USBPluggedin"
+PURPOSE = "Verify servo PowerStateController functions."
+CRITERIA = "This test will fail if servo does not work as expected."
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+DEPENDENCIES = "servo"
+
+DOC = """
+The test specifically exercises all the state transitions from control.nousb,
+plus these additional transitions:
+  normal mode -> off
+  off -> normal mode boot with USB stick plugged in
+  normal mode -> off
+  off -> recovery mode boot from USB
+  recovery mode -> off
+  off -> normal mode
+
+Note also that this test requires a USB stick with a test image be plugged in to
+the servo's usbkey port.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test('platform_ServoPowerStateController', host=host,
+                 usb_available=True)
+
+parallel_simple(run, machines)

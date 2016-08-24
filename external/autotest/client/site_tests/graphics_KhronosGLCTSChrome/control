@@ -1,0 +1,27 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'graphics_KhronosGLCTSChrome'
+AUTHOR = 'chromeos-gfx'
+PURPOSE = 'Run the Khronos GL-CTS test suite on the Chrome GPU command buffer'
+CRITERIA = """
+All of the individual GL-CTS tests must pass.
+"""
+#TODO(ihf): Port to waffle and enable again (crbug.com/484467).
+#ATTRIBUTES = "suite:graphics, suite:graphics_browser, suite:graphics_per-day"
+#SUITE = 'graphics_per-day, graphics, graphics_browser'
+TIME = 'MEDIUM'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'graphics'
+TEST_TYPE = 'client'
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+This test runs the Khronos GL-CTS test suite against the Chrome GPU
+command buffer.
+"""
+
+job.run_test('graphics_KhronosGLCTSChrome')

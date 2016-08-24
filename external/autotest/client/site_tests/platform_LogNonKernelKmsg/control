@@ -1,0 +1,20 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.  Use of
+# this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'quiche'
+NAME = 'platform_LogNonKernelKmsg'
+ATTRIBUTES = "suite:experimental"
+SUITE = 'experimental'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Test that we log non-kernel messages that are written to /dev/kmsg
+
+  Write a message to /dev/kmsg, and check that the message has been
+  written to /var/log/messages. This is important, as init (upstart)
+  writes log messages to /dev/kmsg.
+"""
+
+job.run_test('platform_LogNonKernelKmsg')

@@ -1,0 +1,31 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_SoftwareSync"
+PURPOSE = "Servo based EC software sync test"
+CRITERIA = "This test will fail if EC software sync misbehalved"
+ATTRIBUTES = "suite:faft, suite:faft_ec, suite:faft_ec_ryu, suite:faft_ec3po"
+SUITE = "faft,faft_ec,faft_ec_ryu,faft_ec3po"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+JOB_RETRIES = 4
+
+DOC = """
+This test corrupts EC RW firmware body and checks software sync restores it.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_softwaresync(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("firmware_SoftwareSync", host=host, cmdline_args=args,
+                 disable_sysinfo=True, dev_mode=False, tag="normal")
+
+parallel_simple(run_softwaresync, machines)

@@ -1,0 +1,39 @@
+# Copyright 2016 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+
+AUTHOR = "sbasi"
+NAME = "provision_AndroidUpdate"
+PURPOSE = "Provision an android-based system to the correct OS version."
+TIME = "MEDIUM"
+TEST_CATEGORY = "System"
+TEST_CLASS = "provision"
+TEST_TYPE = "Server"
+
+DOC = """
+This is a test used by the provision control segment in autoserv to set the
+ab-version label of a host to the desired setting and reimage the host to a
+specific version.
+"""
+
+
+from autotest_lib.client.common_lib import error, utils
+from autotest_lib.client.cros import constants
+
+
+# Autoserv may inject a local variable called value to supply the desired
+# version. If it does not exist, check if it was supplied as a test arg.
+if not locals().get('value'):
+    args = utils.args_to_dict(args)
+    if not args.get('value'):
+        raise error.TestError("No provision value!")
+    value = args['value']
+
+
+def run(machine):
+    host = hosts.create_host(machine, initialize=False)
+    job.run_test('provision_AndroidBuildUpdate', host=host, value=value)
+
+
+job.parallel_simple(run, machines)

@@ -1,0 +1,20 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, quiche, wiley'
+NAME = 'network_UdevRename'
+ATTRIBUTES = "suite:network_nightly"
+SUITE = 'network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that network interfaces do not get renamed unexpectedly.
+
+  In particular, we check that neither restarting udev, nor unloading
+  and reloading the device driver module, causes the device name to
+  change.
+"""
+
+job.run_test('network_UdevRename')

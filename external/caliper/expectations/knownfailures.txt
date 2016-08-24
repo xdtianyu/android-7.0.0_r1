@@ -1,0 +1,76 @@
+[
+{
+  description: "ObjectGraphMeasurer doesn't work on Android",
+  names: [
+    "com.google.caliper.memory.ObjectGraphMeasurerTest"
+  ]
+},
+{
+  description: "Ljava/lang/management/ManagementFactory; doesn't exist on Android",
+  names: [
+    "com.google.caliper.config.CaliperConfigTest#getDefaultVmConfig",
+    "com.google.caliper.runner.StreamServiceTest",
+    "com.google.caliper.runner.WorkerProcessTest"
+  ]
+},
+{
+  description: "@RunWith(MockitoJUnitRunner) doesn't work in Vogar",
+  names: [
+    "com.google.caliper.config.CaliperConfigLoaderTest",
+    "com.google.caliper.config.LoggingConfigLoaderTest",
+    "com.google.caliper.runner.ExperimentingRunnerModuleTest"
+  ]
+},
+{
+  description: "Assumes it is running on a standard Java platform with java binary",
+  names: [
+    "com.google.caliper.config.VmConfigTest#testExecutable"
+  ]
+},
+{
+  description: "AllocationInstrument doesn't work on Android",
+  names: [
+    "com.google.caliper.runner.AllocationInstrumentTest",
+    "com.google.caliper.runner.BadUserCodeTest#testComplexNonDeterministicAllocation_noTrackAllocations",
+    "com.google.caliper.runner.BadUserCodeTest#testComplexNonDeterministicAllocation_trackAllocations",
+    "com.google.caliper.runner.BadUserCodeTest#testNonDeterministicAllocation_noTrackAllocations",
+    "com.google.caliper.runner.BadUserCodeTest#testNonDeterministicAllocation_trackAllocations",
+    "com.google.caliper.runner.MalformedBenchmarksTest#noBenchmarkMethods"
+  ]
+},
+{
+  description: "ArbitraryMeasurementInstrument doesn't work on Android",
+  names: [
+    "com.google.caliper.runner.ArbitraryMeasurmentInstrumentTest"
+  ]
+},
+{
+  description: "Android only has 256M heap",
+  names: [
+    "com.google.caliper.runner.RuntimeInstrumentTest#gcBeforeEachOptionIsHonored",
+    "com.google.caliper.runner.RuntimeInstrumentTest#gcBeforeEachOptionIsReallyNecessary"
+  ]
+},
+{
+  description: "Checks for a specific exception message that is an implementation detail of JVM",
+  names: [
+    "com.google.caliper.runner.MalformedBenchmarksTest#unparsableParamDefault"
+  ]
+},
+{
+  description: "Unknown cause",
+  names: [
+    "com.google.caliper.runner.ServerSocketServiceTest#getConnectionStoppedService",
+    "com.google.caliper.runner.BadUserCodeTest#testExceptionInMethod_notInDryRun",#
+    "com.google.caliper.runner.RuntimeInstrumentTest#maxWarmupWallTimeOptionIsHonored"
+  ]
+},
+{
+  description: "Possible race in parse code that causes dryRun to be true when it is false, goes away under debug",
+  names: [
+    "com.google.caliper.options.ParsedOptionsTest#testDefaults_DoNotRequireBenchmarkClassName",
+    "com.google.caliper.options.ParsedOptionsTest#testDefaults_RequireBenchmarkClassName",
+    "com.google.caliper.options.ParsedOptionsTest#testKitchenSink"
+  ]
+}
+]

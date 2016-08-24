@@ -1,0 +1,22 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Enforces a whitelist of known, allowed Dbus interfaces owned by chronos
+"""
+NAME = "security_DbusOwners"
+PURPOSE = "To maintain a minimal attack surface of chronos-owned interfaces"
+CRITERIA = """
+Fail if the list of interfaces owned by chronos doesn't match the baseline
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+job.run_test("security_DbusOwners")

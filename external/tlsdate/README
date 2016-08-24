@@ -1,0 +1,47 @@
+tlsdate: secure parasitic rdate replacement
+
+ tlsdate sets the local clock by securely connecting with TLS to remote
+ servers and extracting the remote time out of the secure handshake. Unlike
+ ntpdate, tlsdate uses TCP, for instance connecting to a remote HTTPS or TLS
+ enabled service, and provides some protection against adversaries that try to
+ feed you malicious time information.
+
+On Debian GNU/Linux and related systems, we provide an init.d script that
+controls the tlsdated daemon. It will notice network changes and regularly
+invoke tlsdate to keep the clock in sync. Start it like so:
+
+  /etc/init.d/tlsdate start
+
+
+Here is an example an unprivileged user fetching the remote time:
+
+  % tlsdate -V -n -H encrypted.google.com
+  Fri Apr 19 17:56:46 PDT 2013
+
+
+This is an example run - starting as root and dropping to nobody, setting the
+clock and printing it:
+
+  % sudo tlsdate -V
+  Fri Apr 19 17:57:49 PDT 2013
+
+
+Here is an example with a custom host and custom port without verification:
+
+  % sudo tlsdate --skip-verification -p 80 -H rgnx.net
+
+Here is an example where a system may not have any kind of RTC at boot. Do the
+time warp to restore sanity and do so with a leap of faith:
+
+  % sudo tlsdate -V -l -t
+  Fri Apr 19 18:08:03 PDT 2013
+
+
+Some SSL/TLS services do not provide accurate time in their handshake process;
+tlsdate may also be used to fetch time by processing the HTTP Date headers of
+HTTP services:
+
+  % sudo tlsdate -V -l -t -w
+  Wed Oct 30 18:08:46 CET 2013
+
+

@@ -1,0 +1,25 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'graphics_Gbm'
+AUTHOR = 'chromeos-gfx'
+PURPOSE = 'Tests the Mesa graphics buffer management.'
+CRITERIA = """
+Tests the Mesa graphics buffer management. All tests must pass.
+"""
+ATTRIBUTES = 'suite:graphics, suite:graphics_per-day, suite:graphics_system'
+SUITE = 'graphics_per-day, graphics, graphics_system'
+TIME='FAST'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = "gl"
+TEST_TYPE = 'client'
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+Tests the Mesa graphics buffer management. All tests must pass.
+"""
+
+job.run_test('graphics_Gbm')

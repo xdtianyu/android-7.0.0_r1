@@ -1,0 +1,36 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Mussa Kiroga"
+NAME = "video_GlitchDetection_chameleon_vp8_480p_collect_golden_images"
+PURPOSE = "Collects golden images to be used in image comparison video tests"
+CRITERIA = """
+
+"""
+TIME = "LONG"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES = "video_glitch_detection, chameleon:hdmi"
+
+DOC = """
+Run this test to collect golden images for a certain device and  build. This
+test will use an H264 480p video to produce the images.
+
+This test is not intended to be run automatically in the lab. Instead it
+should be scheduled to run on a desired dut via autotest.
+
+Golden images can then be copied from the dut once the test is finished.
+
+"""
+host = next(iter(job.hosts))
+
+job.run_test('video_GlitchDetection',
+              source_path=('https://storage.googleapis.com/'
+              'chromiumos-test-assets-public/Shaka-Dash/480_vp8.webm'),
+              codec='vp8',
+              resolution='480p',
+              host=host,
+              args=args,
+              collect_only=True)

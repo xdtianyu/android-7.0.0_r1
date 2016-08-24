@@ -1,0 +1,32 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME = 'LENGTHY'
+AUTHOR = 'puthik'
+PURPOSE = 'Stress test hardware devices 8 hours'
+CRITERIA = 'Fails if memory pages do not match the original fill pattern.'
+DOC = """
+System stress test is an open source stress tool that works by stressing
+system interfaces. It is good at catching memory signal integrity issues or
+setup/hold problems, memory controller and bus interface issues, and disk
+controller issues. It can also detect bad memory cells and cache coherency
+issues.
+
+Large amounts of memory is allocted in a single block, and memory is divided
+into chunks, each filled with a potentially stressful data pattern. Worker
+threads are spawned which draw pages from an empty queue and a valid queue, and
+copy data to the other.
+
+For more information, see:
+http://code.google.com/p/stressapptest/
+"""
+
+HOUR_IN_SECS=60*60
+
+NAME = 'hardware_SAT.memory_qual'
+TEST_CLASS = 'hardware'
+TEST_CATEGORY = 'Stress'
+TEST_TYPE = 'client'
+
+job.run_test('hardware_SAT', tag='memory_qual', seconds=8 * HOUR_IN_SECS)

@@ -1,0 +1,18 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_DhcpVendorEncapsulatedOptions'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that we can negotiate a lease on an IPv4 address via DHCP from
+  a server that provides the Vendor Encapsulated Options option.  Test
+  that a properly formatted Vendor Encapsulated Options field causes
+  the Ethernet service to report that it is tethered.
+
+"""
+
+job.run_test('network_DhcpVendorEncapsulatedOptions')

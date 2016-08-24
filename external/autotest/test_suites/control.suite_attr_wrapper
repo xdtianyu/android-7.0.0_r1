@@ -1,0 +1,51 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "shuqianz, chromeos-infra"
+NAME = "suite_attr_wrapper"
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This is a wrapper suite to trigger tests that satisfy any attribute boolean
+expression.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on. Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+import ast, logging
+
+import common
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+from autotest_lib.server.cros.dynamic_suite import suite
+from autotest_lib.server.cros import provision
+
+suite_args_dict = ast.literal_eval(args_dict['suite_args'])
+
+# Get the predicate object from attr_filter argument
+try:
+    attr = suite_args_dict['attr_filter']
+    attr_predicate = suite.Suite.matches_attribute_expression_predicate(attr)
+except KeyError:
+    logging.error('Unable to find the attribute boolean expression used to '
+                  'trigger tests in suite_args %s, please use attr_filter '
+                  'keyword to specify it. suite aborting' % suite_args_dict)
+    raise
+
+# Update suite_args_dict into args_dict
+args_dict.update(suite_args_dict)
+args_dict['predicate'] = attr_predicate
+args_dict.setdefault('name', NAME)
+args_dict['job'] = job
+args_dict.setdefault('version_prefix', provision.CROS_VERSION_PREFIX)
+
+dynamic_suite.reimage_and_run(**args_dict)

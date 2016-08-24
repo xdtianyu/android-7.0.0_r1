@@ -1,0 +1,18 @@
+Consider having elements that suppress reopening
+Handle namespace declarations semi-properly
+Squelch namespaces better in --nons mode
+Clean systemids as well as publicids
+
+Notice: It's quite possible that none of these features will ever be
+implemented.  If you'd like to implement one yourself, feel free to send
+me a patch.
+
+Flag added parent elements with a special attribute
+Allow case sensitivity as a standard feature
+Make use of the pseudo-comment in a script element to suppress close-tag detection
+Allow inline cruft in table bodies and rows
+	(Don't break up tables, ever?)
+	(Don't break up forms, ever, either?)
+Suppress start-tags for some restartable elements if the element
+	is already on the stack (<b><b> is the same as <b>)
+Combine consecutive body elements

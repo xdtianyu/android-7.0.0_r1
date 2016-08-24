@@ -1,0 +1,23 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Perf/jrbarnette"
+NAME = "BootPerfBVT"
+TIME = "LONG"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test gathers performance metrics about a system by rebooting it and
+collecting boot times.
+"""
+
+
+def run_bootperf(machine):
+    host = hosts.create_host(machine)
+    job.run_test('platform_BootPerfServer', host=host)
+
+
+parallel_simple(run_bootperf, machines)

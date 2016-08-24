@@ -1,0 +1,29 @@
+This repository contains source code derived from the TCG TPM 2.0 library
+specification
+
+(http://www.trustedcomputinggroup.org/resources/tpm_library_specification)
+
+The specification consists of four separate PDF files, two of them, part 3 and
+part 4 contain sample C code.
+
+To extract the C code from PDF files, first they were converted to text using
+the pdftotext utility available in poppler-utils Ubuntu package:
+
+pdftotext -eol unix -layout 'TPM/2.0/TPM Rev 2.0 Part 3 - Commands 01.16-code.pdf' part3.txt
+pdftotext -eol unix -layout 'TPM Rev 2.0 Part 4 - Supporting Routines 01.16-code.pdf' part4.txt
+
+A newline needed to be added to each of the text files to make sure the last
+function in the file is processed properly.
+
+echo >> part3.txt
+echo >> part4.txt
+
+Then the two scripts included in this directory for references were used to
+pull out code from the text files. The two files format source code
+differently, the easiest way to pull out the code is to use two different
+scripts:
+
+./parsep3 part3.txt
+./parsep4 part4.txt
+
+See LICENSE file for details.

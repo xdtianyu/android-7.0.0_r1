@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href=".resources/doc.css" charset="UTF-8" type="text/css" />
+  <link rel="shortcut icon" href=".resources/report.gif" type="image/gif" />
+  <title>JaCoCo - Development Environment</title>
+</head>
+<body>
+
+<div class="breadcrumb">
+  <a href="../index.html" class="el_report">JaCoCo</a> &gt;
+  <a href="index.html" class="el_group">Documentation</a> &gt;
+  <span class="el_source">Development Environment</span>
+</div>
+<div id="content"> 
+
+<h1>Development Environment</h1>
+
+<p>
+  JaCoCo is currently hosted at
+  <a href="https://github.com/jacoco/jacoco">GitHub</a>. This document provides
+  an overview of the local and shared tools used for JaCoCo development.
+</p>
+
+<h3>IDE</h3>
+
+<p>
+  JaCoCo development is done with the latest version of
+  <a href="http://www.eclipse.org/">Eclipse</a>. Please make sure to install
+  the <a href="http://www.eclipse.org/m2e/">m2e plug-in</a> to get all
+  dependencies resolved properly.
+</p>
+
+<p>  
+  Project specific Eclipse settings only exist for the following projects. All
+  other projects and test projects link to these settings:
+</p>
+
+<ul>
+  <li><code>org.jacoco.core</code></li>
+  <li><code>org.jacoco.core.test</code></li>
+</ul>
+
+<h3>JRE/JDK</h3>
+
+<p>
+  The minimum JRE version to execute JaCoCo is Java 1.5. To guarantee
+  compatibility JaCoCo builds should always be executed against Java 1.5 JDK. In
+  addition we run builds with 1.6, 1.7 and 1.8 JDKs. 
+</p>
+
+<h3>Build</h3>
+
+<p>
+  The JaCoCo build is based on <a href="http://maven.apache.org/">Maven 3</a>.
+  We have a <a href="https://jacoco.ci.cloudbees.com/">continuous build</a>
+  which is kindly provided by <a href="http://www.cloudbees.com/">CloudBees</a>.
+  Continuous builds from the master branch are directly published to the
+  <a href="repo.html">snapshot repository</a>.
+</p>
+
+<p>
+  We do also use
+  <a href="http://nemo.sonarqube.org/dashboard/index/org.jacoco:org.jacoco.build">continuous inspection</a>
+  with <a href="http://www.sonarqube.org/">SonarQube</a>.
+</p>
+
+<h3>Source Rules</h3>
+
+<ul>
+  <li>
+    <b>Encoding:</b> All source files and HTML documents are encoded in UTF-8
+    unless an alternative encoding is required by the file format specification.
+    For example Java property files are always encoded in ISO-8859-1.
+  </li>
+  <li>
+    <b>Formatting:</b> The Eclipse project settings define auto-formatter
+    settings for all Java classes. Make sure you apply the Eclipse formatter to
+    source files before committing.
+  </li>
+  <li>
+    <b>Warnings:</b> The Eclipse project settings define several compiler
+    warnings. JaCoCo projects must not show any Eclipse warnings.
+  </li>
+</ul>
+
+<h3>Source Control</h3>
+
+<p>
+  The JaCoCo source code is maintained in a Git repository at
+  <a href="https://github.com/jacoco/jacoco">GitHub</a> and can be cloned from
+</p>
+
+<pre>
+  https://github.com/jacoco/jacoco.git
+</pre>
+
+<p>
+  The source tree is organized as a plain list of Eclipse projects that can be
+  imported in a Eclipse workspace.
+</p>
+
+<h3>Issue Tracking</h3>
+
+<p>
+  This GitHub <a href="https://github.com/jacoco/jacoco/issues">issue tracker</a>
+  is used for bug and enhancement tracking.
+</p>
+
+<h3>Communication</h3>
+
+<p>
+  The development team communicates through a mailing list. The list is closed
+  for non-developers but the archive is
+  <a href="https://groups.google.com/d/forum/jacoco-dev">public</a>.
+  Please use the <a href="support.html">support channels</a> to get in touch
+  with the development team.
+</p>
+
+</div>
+<div class="footer">
+  <span class="right"><a href="@jacoco.home.url@">JaCoCo</a> @qualified.bundle.version@</span>
+  <a href="license.html">Copyright</a> &copy; @copyright.years@ Mountainminds GmbH &amp; Co. KG and Contributors
+</div>
+
+</body>
+</html>

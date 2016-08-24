@@ -1,0 +1,29 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'Chrome OS Project, chromeos-video@google.com'
+NAME = 'video_VideoSanity.bvt'
+PURPOSE = 'Verify that Chrome media and video works'
+CRITERIA = """
+This test will fail if Chrome media is not enable or video doesn't play.
+"""
+# Disabled due to flake in PFQ for daisy_skate. http://crbug.com/450335
+# But still need to run it regularly (once per build) in video for monitoring.
+ATTRIBUTES = "suite:bvt-cq, suite:partners"
+SUITE = 'bvt-cq, partners'
+TIME = 'SHORT'
+TEST_CATEGORY = 'General'
+TEST_CLASS = 'video'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This test verify the media elements and video sanity.
+"""
+
+job.run_test('video_VideoSanity')

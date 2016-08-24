@@ -1,0 +1,68 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_LoadTest.single_page"
+PURPOSE = "Measure power draw when system is under load."
+CRITERIA = "This test is a benchmark."
+TIME = "MEDIUM"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+This test measures the power of a single webpage including stats such as
+cpu usage.
+
+@args: the website url to run the test with
+
+The following manual steps need to be performed on the device under test
+before this test can be run:
+  - make sure that Ethernet cable is disconnected and WiFi is connected
+  - disconnect power cable
+
+You are now ready to run the test.
+"""
+
+# TODO (bleung): Find a way to do automatic Facebook login for test account.
+# TODO (tbroch): Find way to not replicate all these parameters that are common
+# between this control file and the original
+loop_time = 300
+loop_count = 1
+
+# Task format:
+# This sets the tasks variable in the extension directly via javascript.
+#
+# Args:
+# type: [window, cycle] Window will open a window with tabs for the duration of
+# the window. Cycle will cycle through the urls for the duration of the window
+# every delay ms.
+# name: name of the window
+# start: start time (ms)
+# duration: duration of task (ms)
+# delay: time for each url for the cycle type (ms)
+# timeout: time before loading a url times out for the cycle type (ms)
+# focus: whether the window should be in the foreground
+# tabs: list of urls for the window type
+# urls: list of urls to cycle through for the cycle type
+
+# The duration and delay are scaled by 1/12 due to the loop time being 300
+# instead of 3600 seconds. This is why duration is minutes(60) instead of
+# minutes(5) and delay is minutes(12) instead of minutes(1).
+tasks='[{' + \
+'    type: \'cycle\',' + \
+'    name: \'web\',' + \
+'    start: seconds(1),' + \
+'    duration: minutes(60),' + \
+'    delay: minutes(12),' + \
+'    timeout: seconds(10),' + \
+'    focus: true,' + \
+'    urls: [' + \
+'\'' + \
+args[0] + \
+'\'' + \
+']}]'
+
+job.run_test('power_LoadTest', loop_time=loop_time, loop_count=loop_count,
+             test_low_batt_p=6, tasks=tasks)

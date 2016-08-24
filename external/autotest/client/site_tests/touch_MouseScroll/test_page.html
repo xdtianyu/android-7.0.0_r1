@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Long Page</title>
+<style type="text"></style>
+<script type="text/javascript">
+
+    var userWidth = screen.width;
+    var userHeight = screen.height;
+    var pageReady = false;
+
+    function resizePage()
+    {
+        document.getElementById("long_page").style.width = parseInt(userWidth * 15) + "px";
+        document.getElementById("long_page").style.height = parseInt(userHeight * 15) + "px";
+        pageReady = true;
+    }
+
+</script>
+</head>
+<body onload="resizePage()">
+<div id="long_page"></div>
+</html>

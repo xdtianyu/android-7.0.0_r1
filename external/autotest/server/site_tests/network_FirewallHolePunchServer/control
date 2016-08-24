@@ -1,0 +1,29 @@
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "krisr"
+NAME = "network_FirewallHolePunchServer"
+PURPOSE = "Verify Chrome apps can open holes in the firewall"
+CRITERIA = """
+Test will pass if Chrome apps can open holes in the firewall, that those
+holes are closed when the app is reloaded or closed"""
+SUITE = 'network_nightly'
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "server"
+
+DOC = """
+This test checks network firewall manipulations.  See CRITERIA for more
+details
+"""
+
+from autotest_lib.server import utils
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_FirewallHolePunchServer', host=host)
+
+parallel_simple(run, machines)
+

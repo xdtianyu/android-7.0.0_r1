@@ -1,0 +1,97 @@
+# -*- mode: python; coding: utf-8 -*-
+#
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TEST_LIST_NAME = 'Dozing Basic'
+
+options.auto_run_on_start = False
+
+# -- CUSTOMIZABLE SETTINGS -------------------------------------------
+# The number of suspend/resume tests you want during run-in.
+_RUNIN_RESUME_ITERATIONS = 1
+
+# The duration of stress test + repeated suspend/resume during run-in.
+_RUNIN_DOZING_SAT_DURATION_SECS = int(24 * 60 * 60)
+
+# The interval of logging events in seconds during run-in.
+_RUNIN_LOG_INTERVAL_SECS = 10
+
+_TEST_ARGS = {'cycles': _RUNIN_RESUME_ITERATIONS,
+              'suspend_delay_min_secs': 28,
+              'suspend_delay_max_secs': 30,
+              'resume_early_margin_secs': 1,
+              'suspend_worst_case_secs': 120}
+
+_NATIVE_TEST_LABEL = u'睡眠/唤醒 (%s次)' % _RUNIN_RESUME_ITERATIONS
+
+_ENGLISH_TEST_LABEL = 'Suspend/Resume (%s %s)' % (
+                         _RUNIN_RESUME_ITERATIONS,
+                         'time' if _RUNIN_RESUME_ITERATIONS == 1 else 'times')
+
+_TEST_NAME = 'suspend_resume'
+
+def Barrier(id_suffix):
+  return OperatorTest(
+      id='Barrier_' + str(id_suffix),
+      label_zh=u'检查关卡' + str(id_suffix),
+      pytest_name='summary',
+      never_fails=True,
+      disable_abort=True,
+      dargs={'disable_input_on_fail':True})
+
+# Tests in the test_list will be run in the order below, unless the
+# operator interrupts the flow.
+
+TEST_LIST = [
+TestGroup(
+    id='RunIn',
+    subtests=[
+    FactoryTest(
+        id='DozingBasic',
+        label_zh=u'Label',
+        subtests=[
+
+            FactoryTest(
+                label_en=_ENGLISH_TEST_LABEL,
+                label_zh=_NATIVE_TEST_LABEL,
+                pytest_name=_TEST_NAME,
+                backgroundable=True,
+                dargs=_TEST_ARGS),
+    ]),
+]),  # End of RUNIN test group.
+
+TestGroup(
+    id='RunIn2',
+    subtests=[
+
+    FactoryTest(
+        id='DozingBasic2',
+        label_zh=u'Label2',
+        subtests=[
+
+            FactoryTest(
+                label_en=_ENGLISH_TEST_LABEL,
+                label_zh=_NATIVE_TEST_LABEL,
+                pytest_name=_TEST_NAME,
+                backgroundable=False,
+                dargs=_TEST_ARGS),
+    ]),
+    FactoryTest(
+        id='DozingBasic3',
+        label_zh=u'Label3',
+        subtests=[
+
+            FactoryTest(
+                label_en=_ENGLISH_TEST_LABEL,
+                label_zh=_NATIVE_TEST_LABEL,
+                pytest_name=_TEST_NAME,
+                backgroundable=False,
+                dargs=_TEST_ARGS),
+    ]),
+    Barrier('RUNIN'),
+]),  # End of RUNIN2 test group.
+
+]
+

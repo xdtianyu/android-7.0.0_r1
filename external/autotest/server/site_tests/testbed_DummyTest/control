@@ -1,0 +1,22 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'dshi'
+NAME = 'testbed_DummyTest'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+SUITE = ''
+# All android tests do not support server-side packaging.
+REQUIRE_SSP = False
+
+DOC = """
+A dummy test to verify testbed can run basic provision and adb command to
+connected Android devices.
+"""
+
+def run(machine):
+    job.run_test('testbed_DummyTest',
+                 testbed=hosts.create_target_machine(machine))
+
+parallel_simple(run, machines)

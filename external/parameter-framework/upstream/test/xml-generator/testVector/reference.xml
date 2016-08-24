@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConfigurableDomains SystemClassName="Test">
+  <ConfigurableDomain Name="Calibration" SequenceAware="false">
+    <Configurations>
+      <Configuration Name="default">
+        <CompoundRule Type="All"/>
+      </Configuration>
+    </Configurations>
+    <ConfigurableElements>
+      <ConfigurableElement Path="/Test/test/included/bool"/>
+    </ConfigurableElements>
+    <Settings>
+      <Configuration Name="default">
+        <ConfigurableElement Path="/Test/test/included/bool">
+          <BooleanParameter Name="bool">1</BooleanParameter>
+        </ConfigurableElement>
+      </Configuration>
+    </Settings>
+  </ConfigurableDomain>
+  <ConfigurableDomain Name="Third" SequenceAware="false">
+    <Configurations>
+      <Configuration Name="default">
+        <CompoundRule Type="All"/>
+      </Configuration>
+    </Configurations>
+    <ConfigurableElements>
+      <ConfigurableElement Path="/Test/test/block/3"/>
+    </ConfigurableElements>
+    <Settings>
+      <Configuration Name="default">
+        <ConfigurableElement Path="/Test/test/block/3">
+          <ParameterBlock Name="3">
+            <FixedPointParameter Name="q2.5">1.21875</FixedPointParameter>
+            <IntegerParameter Name="uint8">200</IntegerParameter>
+            <StringParameter Name="string">blah</StringParameter>
+          </ParameterBlock>
+        </ConfigurableElement>
+      </Configuration>
+    </Settings>
+  </ConfigurableDomain>
+  <ConfigurableDomain Name="Fourth" SequenceAware="false">
+    <Configurations>
+      <Configuration Name="default">
+        <CompoundRule Type="All"/>
+      </Configuration>
+    </Configurations>
+    <ConfigurableElements>
+      <ConfigurableElement Path="/Test/test/block/4"/>
+    </ConfigurableElements>
+    <Settings>
+      <Configuration Name="default">
+        <ConfigurableElement Path="/Test/test/block/4">
+          <ParameterBlock Name="4">
+            <FixedPointParameter Name="q2.5">1.21875</FixedPointParameter>
+            <IntegerParameter Name="uint8">200</IntegerParameter>
+            <StringParameter Name="string">blah</StringParameter>
+          </ParameterBlock>
+        </ConfigurableElement>
+      </Configuration>
+    </Settings>
+  </ConfigurableDomain>
+  <ConfigurableDomain Name="EddGroup.First" SequenceAware="false">
+    <Configurations>
+      <Configuration Name="Green.On">
+        <CompoundRule Type="All">
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Red"/>
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Blue"/>
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Green"/>
+          <SelectionCriterionRule SelectionCriterion="Switch" MatchesWhen="Is" Value="On"/>
+        </CompoundRule>
+      </Configuration>
+      <Configuration Name="Green.Off">
+        <CompoundRule Type="All">
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Red"/>
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Blue"/>
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Green"/>
+          <SelectionCriterionRule SelectionCriterion="Switch" MatchesWhen="Is" Value="Off"/>
+        </CompoundRule>
+      </Configuration>
+      <Configuration Name="Default">
+        <CompoundRule Type="All">
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Red"/>
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Blue"/>
+        </CompoundRule>
+      </Configuration>
+    </Configurations>
+    <ConfigurableElements>
+      <ConfigurableElement Path="/Test/test/block/1/q2.5"/>
+      <ConfigurableElement Path="/Test/test/block/1/string"/>
+    </ConfigurableElements>
+    <Settings>
+      <Configuration Name="Green.On">
+        <ConfigurableElement Path="/Test/test/block/1/q2.5">
+          <FixedPointParameter Name="q2.5">1.18750</FixedPointParameter>
+        </ConfigurableElement>
+        <ConfigurableElement Path="/Test/test/block/1/string">
+          <StringParameter Name="string"></StringParameter>
+        </ConfigurableElement>
+      </Configuration>
+      <Configuration Name="Green.Off">
+        <ConfigurableElement Path="/Test/test/block/1/q2.5">
+          <FixedPointParameter Name="q2.5">1.18750</FixedPointParameter>
+        </ConfigurableElement>
+        <ConfigurableElement Path="/Test/test/block/1/string">
+          <StringParameter Name="string">some string</StringParameter>
+        </ConfigurableElement>
+      </Configuration>
+      <Configuration Name="Default">
+        <ConfigurableElement Path="/Test/test/block/1/q2.5">
+          <FixedPointParameter Name="q2.5">0.00000</FixedPointParameter>
+        </ConfigurableElement>
+        <ConfigurableElement Path="/Test/test/block/1/string">
+          <StringParameter Name="string">some other string</StringParameter>
+        </ConfigurableElement>
+      </Configuration>
+    </Settings>
+  </ConfigurableDomain>
+  <ConfigurableDomain Name="EddGroup.Second" SequenceAware="false">
+    <Configurations>
+      <Configuration Name="Blue.On">
+        <CompoundRule Type="All">
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Red"/>
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Blue"/>
+          <SelectionCriterionRule SelectionCriterion="Switch" MatchesWhen="Is" Value="On"/>
+        </CompoundRule>
+      </Configuration>
+      <Configuration Name="Blue.Off">
+        <CompoundRule Type="All">
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Red"/>
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Blue"/>
+        </CompoundRule>
+      </Configuration>
+      <Configuration Name="Green">
+        <CompoundRule Type="All">
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Red"/>
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Green"/>
+        </CompoundRule>
+      </Configuration>
+      <Configuration Name="Default">
+        <CompoundRule Type="All">
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Red"/>
+        </CompoundRule>
+      </Configuration>
+    </Configurations>
+    <ConfigurableElements>
+      <ConfigurableElement Path="/Test/test/block/2/uint8"/>
+    </ConfigurableElements>
+    <Settings>
+      <Configuration Name="Blue.On">
+        <ConfigurableElement Path="/Test/test/block/2/uint8">
+          <IntegerParameter Name="uint8">3</IntegerParameter>
+        </ConfigurableElement>
+      </Configuration>
+      <Configuration Name="Blue.Off">
+        <ConfigurableElement Path="/Test/test/block/2/uint8">
+          <IntegerParameter Name="uint8">4</IntegerParameter>
+        </ConfigurableElement>
+      </Configuration>
+      <Configuration Name="Green">
+        <ConfigurableElement Path="/Test/test/block/2/uint8">
+          <IntegerParameter Name="uint8">5</IntegerParameter>
+        </ConfigurableElement>
+      </Configuration>
+      <Configuration Name="Default">
+        <ConfigurableElement Path="/Test/test/block/2/uint8">
+          <IntegerParameter Name="uint8">6</IntegerParameter>
+        </ConfigurableElement>
+      </Configuration>
+    </Settings>
+  </ConfigurableDomain>
+  <ConfigurableDomain Name="sequenceAware" SequenceAware="true">
+    <Configurations/>
+    <ConfigurableElements/>
+    <Settings/>
+  </ConfigurableDomain>
+  <ConfigurableDomain Name="Red.Black" SequenceAware="true">
+    <Configurations>
+      <Configuration Name="green.confGroup..On.Blue.dot">
+        <CompoundRule Type="All">
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Red"/>
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Green"/>
+          <CompoundRule Type="Any">
+            <SelectionCriterionRule SelectionCriterion="Switch" MatchesWhen="Is" Value="On"/>
+            <CompoundRule Type="All">
+              <CompoundRule Type="All">
+                <CompoundRule Type="All"/>
+              </CompoundRule>
+              <CompoundRule Type="All">
+                <CompoundRule Type="Any">
+                  <SelectionCriterionRule SelectionCriterion="Switch" MatchesWhen="Is" Value="On"/>
+                </CompoundRule>
+              </CompoundRule>
+            </CompoundRule>
+          </CompoundRule>
+          <SelectionCriterionRule SelectionCriterion="Switch" MatchesWhen="Is" Value="On"/>
+          <SelectionCriterionRule SelectionCriterion="Switch" MatchesWhen="Is" Value="On"/>
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Green"/>
+          <SelectionCriterionRule SelectionCriterion="Colors" MatchesWhen="Includes" Value="Blue"/>
+        </CompoundRule>
+      </Configuration>
+    </Configurations>
+    <ConfigurableElements>
+      <ConfigurableElement Path="/Test/test/block/0/q2.5"/>
+      <ConfigurableElement Path="/Test/test/block/0/string"/>
+      <ConfigurableElement Path="/Test/test/inline/bool"/>
+    </ConfigurableElements>
+    <Settings>
+      <Configuration Name="green.confGroup..On.Blue.dot">
+        <ConfigurableElement Path="/Test/test/block/0/q2.5">
+          <FixedPointParameter Name="q2.5">1.18750</FixedPointParameter>
+        </ConfigurableElement>
+        <ConfigurableElement Path="/Test/test/block/0/string">
+          <StringParameter Name="string">12 ab @ 	 &lt;![CDATA[ &lt; &gt; \n \0 ✔ "'\</StringParameter>
+        </ConfigurableElement>
+        <ConfigurableElement Path="/Test/test/inline/bool">
+          <BooleanParameter Name="bool">1</BooleanParameter>
+        </ConfigurableElement>
+      </Configuration>
+    </Settings>
+  </ConfigurableDomain>
+</ConfigurableDomains>

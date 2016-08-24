@@ -1,0 +1,7 @@
+The ASM jar required by jacoco is updated in the following way:
+
+mvn -f org.jacoco.agent.rt/pom.xml dependency:copy-dependencies
+cp org.jacoco.agent.rt/target/dependency/asm-debug-all-5.0.1.jar ./
+mvn clean
+
+The Android.mk must be updated to reference the right prebuilt.

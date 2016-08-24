@@ -1,0 +1,31 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GModemPresent.alt3100"
+PURPOSE = "Verify 3G modem is visible to Flimflam."
+CRITERIA = """
+This test will fail if neither Cromo nor ModemManager is exporting a modem
+device via flimflam.
+"""
+ATTRIBUTES = "suite:network3g"
+SUITE = "network3g"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "modem:alt3100"
+
+DOC = """
+  Tests that a 3G modem is available.
+
+  The test attempts to find a flimflam device corresponding to a
+  cellular modem.
+
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+test_env = test_environment.CellularOTATestEnvironment()
+job.run_test('network_3GModemPresent', test_env=test_env, tag='alt3100')

@@ -1,0 +1,25 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley@chromium.org'
+TIME = 'SHORT'
+NAME = 'network_WiFi_ConnectOnResume'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'network'
+TEST_TYPE = 'Server'
+DOC = """
+This test checks that the connection manager triggers scans and connects
+to an AP on a resume from suspend despite not being connected before
+suspend.
+
+"""
+
+
+def run(machine):
+    job.run_test('network_WiFi_ConnectOnResume',
+                 host=hosts.create_host(machine),
+                 raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

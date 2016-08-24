@@ -1,0 +1,38 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_SIMLocking"
+PURPOSE = "Tests various SIM Lock related operations in software only."
+CRITERIA = """
+This test will fail if SIM locking/unlocking/changing operations are not
+handled as expected by shill / modemmanager.
+"""
+
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+Test the SIM locking functionality of shill.
+
+This test has the following test_cases:
+  - Attempt to enable SIM lock with incorrect sim-pin. Verify that the
+    attempt fails.
+  - Successfully pin-lock the SIM.
+  - Unlock a pin-locked SIM.
+  - Attempt to unlock a pin-locked SIM with incorrect sim-pin, until it gets
+    puk-locked.
+  - Unblock a puk-locked SIM.
+  - Attempt to unblock a puk-locked SIM with incorrect sim-puk, until the SIM
+    gets blocked. At this point, a sim-pin2 might be expected by some SIMs. This
+    test does not attempt to unlock the SIM using sim-pin2.
+  - Test the functionality to change sim-pin.
+
+"""
+
+job.run_test('network_SIMLocking')

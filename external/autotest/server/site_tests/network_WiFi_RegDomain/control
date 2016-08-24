@@ -1,0 +1,191 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, quiche'
+NAME = 'network_WiFi_RegDomain'
+TIME = 'MEDIUM'
+TEST_TYPE = 'Server'
+ATTRIBUTES = "suite:wifi_matfunc_bcm4356"
+SUITE = ('wifi_matfunc_bcm4356')
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test verifies that a DUT can, or cannot, connect on given
+channels, in given regions.
+
+This test exercises:
+- parsing of VPD data
+- mapping of VPD data to ISO country code
+- communication of country code from user-space to kernel
+- communication of country code / rules from kernel to driver
+- communication of country code / rules from driver to firmware
+
+This test is an aid to identify changes in behavior. It does not
+provide advice on regulatory requirements.
+"""
+
+import logging
+
+from autotest_lib.client.common_lib import error
+from autotest_lib.client.common_lib.cros.network import interface
+
+
+# When adding a negative rule ('expect': 'no-connect'), be sure to add
+# a case with a positive rule ('expect': 'connect', or 'expect':
+# 'passive-scan'). Otherwise, we haven't ruled out the possibility
+# that the test itself prevents the DUT from connecting.
+#
+# Note:
+# - 'passive-scan' implies 'connect'
+# - 'no-connect' implies no probes
+DEVTYPE_TO_REGION_INFOS = {
+    # TODO(quiche): Add ath9k expectations for channels 52 and 120.
+    'ath9k':
+        [
+         # This first set of expectations is based on
+         # ath_world_regdom_63_65 in ath/regd.c. We may need to change
+         # or remove these, if it turns out that some DUTs have other
+         # ath9k SKUs.
+         {'region_name': '',
+          'country_code': '00',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'passive-scan'},
+              {'chnum': 36, 'expect': 'passive-scan'},
+              {'chnum': 149, 'expect': 'passive-scan'}]},
+         # Many of the 'passive-scan' expectations for the remaining
+         # regions seem to arise from ath_world_regdom_63_65. (Or, at
+         # least, not all of the passive scanning expectations can be
+         # attributed to data in wireless-regdb.)
+         {'region_name': 'ar',
+          'country_code': 'AR',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'passive-scan'},
+              {'chnum': 36, 'expect': 'passive-scan'},
+              {'chnum': 149, 'expect': 'passive-scan'}]},
+         {'region_name': 'id',
+          'country_code': 'ID',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'passive-scan'},
+              {'chnum': 36, 'expect': 'no-connect'},
+              {'chnum': 149, 'expect': 'passive-scan'}]},
+         {'region_name': 'ru',
+          'country_code': 'RU',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'passive-scan'},
+              {'chnum': 36, 'expect': 'passive-scan'},
+              {'chnum': 149, 'expect': 'passive-scan'}]},
+         {'region_name': 'us',
+          'country_code': 'US',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'no-connect'},
+              {'chnum': 36, 'expect': 'passive-scan'},
+              {'chnum': 149, 'expect': 'passive-scan'}]}],
+    'bcm435x':
+        [{'region_name': 'ca.hybrid',  # <country code>.<extra>
+          'country_code': 'CA',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'no-connect'},
+              {'chnum': 36, 'expect': 'connect'},
+              {'chnum': 52, 'expect': 'passive-scan'},
+              {'chnum': 120, 'expect': 'passive-scan'},
+              {'chnum': 149, 'expect': 'connect'},
+              {'chnum': 165, 'expect': 'connect'}]},
+         {'region_name': 'nordic',  # virtual set
+          'country_code': 'SE',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'connect'},
+              {'chnum': 36, 'expect': 'connect'},
+              {'chnum': 52, 'expect': 'passive-scan'},
+              {'chnum': 120, 'expect': 'passive-scan'},
+              {'chnum': 149, 'expect': 'no-connect'},
+              {'chnum': 165, 'expect': 'no-connect'}]},
+         {'region_name': 'us',
+          'country_code': 'US',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'no-connect'},
+              {'chnum': 36, 'expect': 'connect'},
+              {'chnum': 52, 'expect': 'passive-scan'},
+              {'chnum': 120, 'expect': 'no-connect'},
+              {'chnum': 149, 'expect': 'connect'},
+              {'chnum': 165, 'expect': 'connect'}]}],
+    'intel_wp2':
+    # TODO(quiche): Add wp2 expectations for channels 52 and 120. If
+    # those expectations match the (to-be-added) expectations for
+    # ath9k, then collapse both configs into a 'cfg80211' config.
+        [
+         {'region_name': '',
+          'country_code': '00',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'passive-scan'},
+              {'chnum': 36, 'expect': 'passive-scan'},
+              {'chnum': 149, 'expect': 'passive-scan'}]},
+         # Many of the 'passive-scan' expectations seem to follow from
+         # the initial world rules above. (Or, at least, not all of
+         # the passive scanning expectations can be attributed to
+         # country-speific data in wireless-regdb. We haven't
+         # investigated if the 'passive-scan' expectations are due to
+         # rules in the driver.)
+         {'region_name': 'ar',
+          'country_code': 'AR',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'passive-scan'},
+              {'chnum': 36, 'expect': 'passive-scan'},
+              {'chnum': 149, 'expect': 'passive-scan'}]},
+         {'region_name': 'id',
+          'country_code': 'ID',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'passive-scan'},
+              {'chnum': 36, 'expect': 'no-connect'},
+              {'chnum': 149, 'expect': 'passive-scan'}]},
+         {'region_name': 'ru',
+          'country_code': 'RU',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'passive-scan'},
+              {'chnum': 36, 'expect': 'passive-scan'},
+              {'chnum': 149, 'expect': 'passive-scan'}]},
+         {'region_name': 'us',
+          'country_code': 'US',
+          'channel_infos': [
+              {'chnum': 13, 'expect': 'no-connect'},
+              {'chnum': 36, 'expect': 'passive-scan'},
+              {'chnum': 149, 'expect': 'passive-scan'}]}]}
+WLAN_DEV = 'wlan0'
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    wlan_info = interface.Interface(WLAN_DEV, host=host).device_description
+    if not wlan_info:
+        raise error.TestFail('Couldn\'t find the WiFi device.')
+    if wlan_info.name in (
+        interface.NAME_ATHEROS_AR9280,
+        interface.NAME_ATHEROS_AR9382,
+        interface.NAME_ATHEROS_AR9462):
+            devtype = 'ath9k'
+    elif wlan_info.name in (
+        interface.NAME_BROADCOM_BCM4354_SDIO,
+        interface.NAME_BROADCOM_BCM4356_PCIE):
+            devtype = 'bcm435x'
+    elif wlan_info.name in (
+        interface.NAME_INTEL_7260,
+        interface.NAME_INTEL_7265):
+            devtype = 'intel_wp2'
+    else:
+        raise error.TestNAError(
+            'Unrecognized WiFi chip |%s|.' % wlan_info.name)
+
+    logging.debug('Running test with devtype=%s', devtype)
+    for region_info in DEVTYPE_TO_REGION_INFOS[devtype]:
+        # Use a fresh |host| every time, as WiFiTestContextManager
+        # cleans up |host| on context exit.
+        host = hosts.create_host(machine)
+        job.run_test(
+            'network_WiFi_RegDomain',
+            tag=region_info['region_name'] or 'default',
+            host=host,
+            raw_cmdline_args=args,
+            additional_params=region_info)
+
+
+parallel_simple(run, machines)

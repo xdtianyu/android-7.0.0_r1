@@ -1,0 +1,42 @@
+# Copyright 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'Chrome OS Team, chromeos-video@google.com'
+NAME = 'video_VDAStress.vp8.private.4'
+ATTRIBUTES = 'suite:video'
+SUITE = 'video'
+TIME = 'LENGTHY'
+TEST_CATEGORY = 'Stress'
+TEST_CLASS = 'video'
+TEST_TYPE = 'server'
+DEPENDENCIES = 'hw_video_acc_vp8'
+
+DOC = """
+VDA stress test to download and run with vp8 test videos from cloud storage.
+"""
+
+import shutil
+import tempfile
+
+# Download the test videos from the gs bucket to the server.
+server_videos_dir = tempfile.mkdtemp(dir=job.tmpdir)
+videos = []
+job.run_test(
+    'video_VDAStressSetup',
+    gs_bucket='gs://chromeos-test-assets-private/VDA/vp8/',
+    server_videos_dir=server_videos_dir,
+    videos=videos,
+    shard_number=4,
+    shard_count=10)
+
+
+def run(machine):
+    job.run_test('video_VDAStress',
+                 machine=machine,
+                 server_videos_dir=server_videos_dir,
+                 videos=videos)
+
+
+job.parallel_on_machines(run, machines)
+shutil.rmtree(server_videos_dir)

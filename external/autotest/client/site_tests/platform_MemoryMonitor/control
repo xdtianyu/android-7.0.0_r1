@@ -1,0 +1,23 @@
+NAME = 'platform_MemoryMonitor'
+PURPOSE = 'Monitor the memory usage over time. This is NOT a pass/fail test.'
+CRITERIA = 'This test always pass.'
+AUTHOR = 'namnguyen'
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'platform'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:perf_v2"
+SUITE = 'perf_v2'
+DOC = """
+This test is used to monitor the memory usage trend of each build.
+
+The resources being recorded are:
+
+General memory usage (total, use, free)
+General swap usage (total, used, free)
+Top 10 processes by resident memory consumption
+Resident memory grouped by command line
+Resident memory grouped by service
+"""
+
+job.run_test('platform_MemoryMonitor')

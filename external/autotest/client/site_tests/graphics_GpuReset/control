@@ -1,0 +1,33 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'graphics_GpuReset'
+AUTHOR = 'chromeos-gfx'
+PURPOSE = 'Reset the GPU and check recovery mechanism.'
+CRITERIA = """
+Detection of udev event notification of a GPU hang.
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:graphics, suite:graphics_per-day, suite:graphics_system"
+SUITE = 'bvt-perbuild, graphics_per-day, graphics, graphics_system'
+TIME='MEDIUM'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = "gl"
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+# Reboot in the lab after the test ends.
+DEPENDENCIES='cleanup-reboot'
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+The purpose of this test is to exercise the GPU failure path. We craft an
+erroneous GPU command packet and send it to the GPU, and wait for a udev
+event notifying us of a GPU hang. If the event doesn't come back, the test
+fails.
+
+This test must run with ui stopped.
+"""
+
+job.run_test('graphics_GpuReset')

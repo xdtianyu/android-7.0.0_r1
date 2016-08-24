@@ -1,0 +1,12 @@
+AUTHOR = "Martin Bligh <mbligh@google.com>"
+NAME = "Abort test"
+TEST_TYPE = "client"
+TEST_CLASS = "General"
+TEST_CATEGORY = "Functional"
+TIME = "SHORT"
+DOC = """\
+Raise a JobError to simulate a test aborting.  This is for testing Autotest
+itself.
+"""
+
+job.run_test('aborttest')

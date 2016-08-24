@@ -1,0 +1,25 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'zqiu, wiley, pstew, quiche'
+NAME = 'network_WiFi_ScanPerformance'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:wifi_matfunc, suite:wifi_matfunc_bcm4371'
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test is designed to verify the wifi scan operation is completed within
+the time limit and able to discover all APs.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_ScanPerformance',
+                 host=host,
+                 raw_cmdline_args=args)
+
+
+parallel_simple(run, machines)

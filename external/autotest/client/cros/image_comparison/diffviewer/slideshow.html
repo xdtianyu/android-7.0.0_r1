@@ -1,0 +1,98 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Image Comparison Viewer</title>
+    <style>
+        #testrundetails {
+          height: 200px;
+        }
+
+        #thumbnails {
+          top: 250px;
+          left: 10px;
+          width: 260px;
+          margin: 0px;
+          padding: 0px;
+          position: absolute;
+        }
+
+        .thumb {
+          width: 200px;
+          height: auto;
+          cursor: pointer;
+          border: 3px solid black;
+        }
+
+        .thumb:hover {
+          border: 3px solid blue;
+        }
+
+        #content {
+          margin-left: 260px;
+        }
+
+        .tagname {
+          font-weight: bold;
+        }
+
+        .hidden {
+          display: none;
+        }
+
+        #glitchimage {
+          max-width: 800px;
+        }
+    </style>
+    <script type="text/javascript">
+        var paths = $images
+        var size = paths.length;
+        var curr = 0;
+
+        function setup() {
+            if (paths.length > 0)  {
+                document.getElementById("glitchimage").src = paths[0];
+            }
+            document.getElementById("total").innerHTML = size;
+        }
+
+        function setCounter() {
+            document.getElementById("counter").innerHTML = curr + 1;
+        }
+
+        function setImageSource() {
+            document.getElementById("glitchimage").src = paths[curr];
+        }
+
+        function next() {
+            curr = (curr + 1) % size;
+            setImageSource();
+            setCounter();
+        }
+
+        function prev() {
+            curr = ((curr - 1) + size) % size;
+            setImageSource();
+            setCounter();
+        }
+    </script>
+</head>
+<body onload="setup()">
+    <div id="testrundetails">
+        <h1> Test Run Details </h1>
+        <ul>
+            <li><span class="tagname"> Test Name: </span>$testname</li>
+            <li><span class="tagname"> ChromeOS Build Number: </span>$chromeos_version</li>
+            <li><span class="tagname"> Chrome Build Number: </span>$chrome_version</li>
+            <li><span class="tagname"> Device: </span>$board</li>
+            <li><span class="tagname"> Date of run: </span>$date</li>
+        </ul>
+    </div>
+    <hr />
+    <div id="images">
+        <button id="prev" onclick="prev()">Previous</button>
+        <span id="counter">1</span> / <span id="total"></span>
+        <button id="next" onclick="next()">Next</button><br />
+        <img id="glitchimage" src="" />
+    </div>
+</body>
+</html>

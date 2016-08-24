@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+
+<project name="vogar" default="jar">
+    <property file="local.properties" />
+
+    <!-- can be overridden at the command line with -Dversion=
+         or in IDEA, in the ant properties dialog -->
+    <property name="version" value="0.0"/> <!-- subversion revision? -->
+
+    <property name="installroot" value="build/vogar-${version}"/>
+    <property name="javadocroot" value="${installroot}/docs/api"/>
+    <property name="caliper" value="lib/caliper.jar"/>
+    <property name="gson" value="lib/gson-1.7.1.jar"/>
+    <property name="guava" value="lib/guava.jar"/>
+    <property name="kxml2" value="lib/kxml-libcore-20110123.jar"/>
+    <property name="android" value="${android.platform.dir}/android.jar"/>
+
+    <path id="dependencies">
+        <pathelement location="${caliper}"/>
+        <pathelement location="${gson}"/>
+        <pathelement location="${guava}"/>
+        <pathelement location="${kxml2}"/>
+        <pathelement location="${android}"/>
+    </path>
+
+    <target name="compile"
+            description="Compile all Java source code">
+        <fail unless="android.platform.dir"
+               message="No android.platform.dir. Create local.properties or put Android tools on your $PATH."/>
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src"
+               includes="**"
+               destdir="build/classes"
+               debug="on"
+               source="1.5"
+               target="1.5"
+               classpathref="dependencies">
+            <compilerarg value="-Xlint"/>
+            <!--compilerarg value="-Werror"/-->
+        </javac>
+    </target>
+
+    <target name="jar"
+            depends="compile"
+            description="Build JAR archive of vogar">
+        <jar destfile="build/vogar.jar" update="true" index="true">
+            <fileset dir="build/classes"/>
+            <zipfileset src="${caliper}"/>
+            <zipfileset src="${gson}"/>
+            <zipfileset src="${guava}"/>
+            <zipfileset src="${kxml2}"/>
+            <fileset dir="resources"/>
+            <manifest>
+                <attribute name="Main-Class" value="vogar.Vogar"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="compiletests"
+            depends="jar"
+            description="Compile all Java test code">
+        <mkdir dir="build/test-classes"/>
+        <javac srcdir="test"
+               includes="vogar/**"
+               destdir="build/test-classes"
+               debug="on"
+               source="1.5"
+               target="1.5"
+               classpathref="dependencies">
+            <compilerarg value="-Xlint"/>
+            <!--compilerarg value="-Werror"/-->
+            <classpath>
+                <pathelement location="build/vogar.jar" />
+                <pathelement location="${mockito}"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="clean"
+            description="Remove all generated files.">
+        <delete dir="build"/>
+    </target>
+
+</project>

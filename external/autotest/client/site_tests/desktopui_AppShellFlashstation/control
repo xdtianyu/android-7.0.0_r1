@@ -1,0 +1,20 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "derat@chromium.org"
+NAME = "desktopui_AppShellFlashstation"
+PURPOSE = "Check that the flashstation app runs on a mappy_flashstation image."
+CRITERIA = "This test fails if the flashstation app isn't running."
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+DEPENDENCIES = "board:mappy_flashstation"
+
+DOC = """
+This test checks that the app_shell process is running and that the flashstation
+app successfully logged a message at startup.
+"""
+
+job.run_test('desktopui_AppShellFlashstation')

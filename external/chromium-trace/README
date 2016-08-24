@@ -1,0 +1,13 @@
+Systrace is now part of Catapult project. The catapult directory contains code
+from:
+
+    https://github.com/catapult-project/catapult.git
+
+The file UPSTREAM_REVISION contains the upstream revision number that was last
+pulled.  Changes should be made upstream and then pulled into the catapult
+directory.
+
+The update.py script should be used to pull the latest upstream code, update
+the UPSTREAM_REVISION file, and generate systrace_trace_viewer.html. The
+generated file is checked into the git repository, and they get embedded in each
+trace HTML file that systrace.py generates.

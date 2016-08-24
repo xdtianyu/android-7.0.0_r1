@@ -1,0 +1,21 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "gwendal"
+NAME = "StorageQualBase.test"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+
+DOC = """
+Check the test hardware_StorageQualBase is working as expected.
+"""
+
+def run_server_tests(machine):
+    job.run_test('hardware_StorageQualBase', client_ip=machine,
+                 client_tag='test', crypto_runtime=30)
+
+parallel_simple(run_server_tests, machines)
+

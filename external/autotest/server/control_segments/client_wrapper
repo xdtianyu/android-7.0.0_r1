@@ -1,0 +1,10 @@
+at = autotest.Autotest()
+
+
+def run_client(machine):
+    host = hosts.create_host(machine)
+    host.log_kernel()
+    at.run(control, host=host, use_packaging=use_packaging)
+
+
+job.parallel_simple(run_client, machines)

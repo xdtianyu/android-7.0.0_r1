@@ -1,0 +1,25 @@
+{
+    "dev_server": {
+        "dev_host": "172.22.50.2",
+        "remote_host": "chromeos-devserver2.cros.corp.google.com",
+        "dir": "/home/chromeos-test/images",
+        "user": "chromeos-labtest"
+    },
+
+    "board_platform_map": {
+        "x86-alex": "netbook_ALEX",
+        "x86-alex32": "netbook_ALEX",
+        "x86-mario": "netbook_MARIO_MP",
+        "x86-zgb": "netbook_ACER_ZGB",
+        "x86-zgb32": "netbook_ACER_ZGB",
+        "stumpy": "desktop_STUMPY",
+        "lumpy": "netbook_LUMPY",
+        "tegra2-seaboard": "netbook_TEGRA2_SEABOARD_T25",
+        "tegra2-kaen": "netbook_KAEN"
+    },
+
+    "preferred_board_fixups": {
+        "tegra2_kaen": "tegra2-kaen",
+        "tegra2_seaboard": "tegra2-seaboard"
+    }
+}

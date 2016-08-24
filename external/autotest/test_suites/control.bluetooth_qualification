@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "bluetooth_qualification"
+PURPOSE = "Automated qualification testing of Bluetooth."
+CRITERIA = "All tests with SUITE=bluetooth_qualification must pass."
+
+TIME = "LONG"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This suite runs the complete set of Bluetooth SIG Qualification tests against
+our Bluetooth hardware and software.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+args_dict['add_experimental'] = True
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['name'] = 'bluetooth_qualification'
+args_dict['job'] = job
+
+dynamic_suite.reimage_and_run(**args_dict)

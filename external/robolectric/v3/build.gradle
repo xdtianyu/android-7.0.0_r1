@@ -1,0 +1,40 @@
+apply plugin: 'java'
+
+// Create an implicit target which is a collection of jars
+// required for running Robolectric v3 tests
+
+// Heavily inspired by its google3 equivalent at
+// https://cs.corp.google.com/#piper///depot/google3/third_party/java/robolectric/v3_0_SNAPSHOT/BUILD
+
+sourceSets {
+    main.java.srcDirs = []
+    test.java.srcDirs = []
+}
+
+dependencies {
+    compile "org.ow2.asm:asm:5.0.3"
+    compile "org.ow2.asm:asm-commons:5.0.3"
+    compile "org.ow2.asm:asm-tree:5.0.3"
+    compile "org.ow2.asm:asm-util:5.0.3"
+    compile "org.apache.ant:ant:1.8.0"
+    compile "com.google.guava:guava:17.0"
+    compile "org.apache.httpcomponents:httpclient:4.1.1"
+    compile "org.bouncycastle:bcprov-jdk15on:1.48"
+    compile "com.ibm.icu:icu4j:54.1.1"
+
+    // Prebuilts only needed for Robolectric and less useful
+    // for other teams.
+    compile files("libs/sqlite4java-0.282.jar")
+    compile files("libs/vtd-xml-2.11.jar")
+
+    // Jars built by the Robolectric team used across all
+    // Android versions
+    compile fileTree(dir: ".", include: "*.jar")
+
+    // Use highest version of Android supported by Robolectric for
+    // compilation. Actual implementation jar will be decided at
+    // runtime based on sdk version specified in test.
+    compile files("runtime/android-all-5.0.0_r2-robolectric-1.jar")
+    compile files("runtime/json-20080701.jar")
+    compile files("runtime/shadows-core-3.1-SNAPSHOT-21.jar")
+}

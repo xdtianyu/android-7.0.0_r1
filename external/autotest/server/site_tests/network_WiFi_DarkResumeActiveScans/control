@@ -1,0 +1,47 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = 'samueltan, ejcaruso'
+NAME = 'network_WiFi_DarkResumeActiveScans'
+TIME = 'MEDIUM'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell, servo, lucidsleep'
+ATTRIBUTES = 'suite:wifi_correctness_cros_core, suite:wifi_lucidsleep'
+SUITE = 'wifi_correctness_cros_core, wifi_lucidsleep'
+
+DOC = """
+When wake on WiFi is supported and enabled, our system could wake up from
+suspend in dark resume for several reasons. Due to privacy concerns, we do not
+want active scans to be launched on certain types of dark resume wakes where the
+user does not expect information that can uniquely identify their system
+(e.g. MAC addresses) to be broadcasted.
+
+We permit active scans to be launched when the system wakes up due to a SSID
+match or disconnect, since we might try to connect or reconnect to known
+networks during these periods, and the connection/authentication process
+inevitably broadcasts MAC addresses.
+
+However, when the system wakes up due to a RTC timer (e.g. the periodic scan
+timer or DHCP lease renewal timer) or a packet pattern match, we expect the
+system to carry out its tasks and re-suspend without active scanning and
+broadcasting MAC addresses.
+
+This test attempts to verify that no active scans are started in dark resumes
+that are triggered by RTC timers or packet pattern matches. Verify this by
+triggering these wake events and analyzing packet captures to ensure that the
+DUT does not launch any probe requests during these dark resumes.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test('network_WiFi_DarkResumeActiveScans',
+                 host=host,
+                 raw_cmdline_args=args)
+
+parallel_simple(run, machines)

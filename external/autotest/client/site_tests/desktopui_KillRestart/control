@@ -1,0 +1,22 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "cmasone"
+NAME = "desktopui_KillRestart"
+PURPOSE = "Verify Chrome is automatically restarted if it dies."
+CRITERIA = "This test will fail if Chrome is not restarted after it is killed."
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+This test kills some important processes and checks if they get restarted."
+"""
+
+job.run_test('desktopui_KillRestart', binary='^chrome$', tag='chrome')
+job.run_test('desktopui_KillRestart', binary='^session_manager$', tag='session')

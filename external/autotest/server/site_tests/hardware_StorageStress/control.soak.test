@@ -1,0 +1,21 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_StorageStress.soak_test'
+AUTHOR = 'gwendal'
+PURPOSE = 'Test hardware_StorageStress.soak code'
+TIME = 'LENGTHY'
+TEST_CLASS = 'hardware'
+TEST_TYPE = 'server'
+
+DOC = """
+Shorter version of control.soak, last only 1 hour:
+"""
+
+def run_hardware_storage_stress(machine):
+    job.run_test('hardware_StorageStress', client_ip=machine, duration=3600,
+                  power_command='nothing', storage_test_command='full_write')
+
+job.parallel_simple(run_hardware_storage_stress, machines)
+

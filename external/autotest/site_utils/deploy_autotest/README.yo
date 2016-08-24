@@ -1,0 +1,28 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+This directory contains an autotest utility for deploying infrastructure changes
+to an existing autotest infrastructure.
+
+The autotest infrastructure is described by the config
+(global_config/shadow_config).ini on the main autotest server. The config
+contains information related to the current active autotest scheduler, drones,
+and devservers.
+
+# TODO(lab): Need to bring all of our installations on to a common directory
+# structure and bring in rpm deployment to get managed by this tool. Pending
+# crosbug.com/38094.
+
+Usage:
+  lab_deploy.py (sync,restart) (devservers, drones, scheduler)+.
+
+Examples:
+lab_deploy.py sync drones scheduler
+  Syncs the source code on all the autotest drones and scheduler.
+
+lab_deploy.py restart drones scheduler
+  Restarts all the drones/scheduler.
+
+lab_deploy.py sync devserver
+  Syncs all the devserver code.

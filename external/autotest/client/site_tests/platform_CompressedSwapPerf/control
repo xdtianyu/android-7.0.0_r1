@@ -1,0 +1,16 @@
+NAME = "platform_CompressedSwapPerf"
+PURPOSE = "Measure performance of compressed swap."
+CRITERIA = """
+This test will fail if:
+  - compressed swap is not configured.
+"""
+AUTHOR = "smbarber@chromium.org (Stephen Barber)"
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+DOC = """
+Run some basic performance benchmarks on compressed swap.
+"""
+
+job.run_test('platform_CompressedSwapPerf')

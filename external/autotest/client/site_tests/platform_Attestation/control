@@ -1,0 +1,20 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Authors"
+NAME = "platform_Attestation"
+PURPOSE = "Tests the TPM attestation enrollment process."
+CRITERIA = "Fails if attestation enrollment fails."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This test verifies that the TPM attestation enrollment process works correctly.
+The enrollment is performed using a live Privacy CA.  Network requests are sent
+using curl.
+"""
+
+job.run_test('platform_Attestation')

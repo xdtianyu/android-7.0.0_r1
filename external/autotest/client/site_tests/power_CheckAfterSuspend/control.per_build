@@ -1,0 +1,28 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "The Chromium OS Authors"
+NAME = "power_CheckAfterSuspend.per_build"
+ATTRIBUTES = "suite:jailed_build"
+SUITE = "jailed_build"
+PURPOSE = "Check of the system state after S3"
+CRITERIA = "Check that the system is in the expected state after S3 Resume."
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Hardware"
+TEST_TYPE = "Client"
+
+DOC = """
+    A check of the state of the system after S3 Resume
+"""
+
+# Comma-separated list of test names to run before and after the suspend.
+tests = ['audio_Aplay', 'hardware_TPMCheck']
+
+
+dict_args = utils.args_to_dict(args)
+iterations = int(dict_args.get('iterations', 1))
+
+
+job.run_test('power_CheckAfterSuspend', tests=tests, iterations=iterations)

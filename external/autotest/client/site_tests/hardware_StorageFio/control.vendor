@@ -1,0 +1,38 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_StorageFio.vendor'
+AUTHOR = 'puthik'
+PURPOSE = 'Test the internal device for new storage vendor'
+TIME = 'LENGTHY'
+TEST_TYPE = 'client'
+
+DOC = """
+This test uses FIO test for new storage vendor using the following workload.
+And collect the IOPs / Bandwidth and latency
+- Trim the drive
+- QD32 16K random write 1st pass
+- QD32 16K random read 1st pass
+- QD32 16K random write 2nd pass
+- QD32 16K random read 2nd pass
+- QD32 16K random write 3rd pass
+- QD32 16K random read 3rd pass
+- Trim the drive
+- QD1 512K seq write 1st pass
+- QD1 512K seq read 1st pass
+- QD1 512K seq write 2nd pass
+- QD1 512K seq read 2nd pass
+- QD1 512K seq write 3rd pass
+- QD1 512K seq read 3rd pass
+- Trim the drive
+- QD4 1M read 15% random read write 1st pass
+- QD4 1M read 15% random read write 2nd pass
+- QD4 1M read 15% random read write 3rd pass
+- Trim the drive
+
+NOTE: Must boot from USB or SD card to run this test.
+"""
+
+job.run_test(url='hardware_StorageFio', filesize=0,
+             requirements = [('vendor_perf_fill_device', [])])

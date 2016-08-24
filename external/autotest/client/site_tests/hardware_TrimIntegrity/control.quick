@@ -1,0 +1,22 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_TrimIntegrity.quick'
+AUTHOR = 'puthik'
+PURPOSE = 'Perform data integrity trim test on an unmounted partition.'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:experimental"
+SUITE = 'experimental'
+
+DOC = """
+Performs data integrity trim test on an unmounted partition.
+
+This test will write 16 MB of data and verify that trimmed data are gone and
+untrimmed data are unaffected. The verification will be run in 5 passes with
+0%, 25%, 50%, 75%, and 100% of data trimmed.
+
+"""
+
+job.run_test('hardware_TrimIntegrity', file_size=16*1024*1024)

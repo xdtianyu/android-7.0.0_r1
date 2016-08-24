@@ -1,0 +1,21 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Authors"
+NAME = "platform_Pkcs11InitUnderErrors"
+PURPOSE = "Tests PKCS#11 initialization under various system states."
+CRITERIA = "Fails if initialization fails under any of the initial states."
+ATTRIBUTES = "suite:regression"
+SUITE = "regression"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This tests PKCS#11 initialization under various kinds of error conditions -
+missing opencryptoki files, corrupted state information, etc.
+"""
+
+job.run_test('platform_Pkcs11InitUnderErrors')

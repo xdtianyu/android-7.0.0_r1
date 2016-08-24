@@ -1,0 +1,26 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "mohsinally"
+NAME = "power_SuspendStress.stress"
+PURPOSE = "Run repeated iterations of suspend/resume to find rare errors."
+ATTRIBUTES = "suite:stress"
+SUITE = "stress"
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+Runs multiple minutes of bare suspend/resume cycles without additional workload.
+Follows this by a few short checks to make sure the system is still in a good
+state (work in progress, feel free to add some more).
+"""
+
+job.run_test('power_SuspendStress', duration=600, tag='bare')
+
+job.run_test('hardware_EC', tag='power_SuspendStress')
+job.run_test('login_LoginSuccess', tag='power_SuspendStress')
+job.run_test('hardware_TPMCheck', tag='power_SuspendStress')
+job.run_test('audio_Aplay', tag='power_SuspendStress')

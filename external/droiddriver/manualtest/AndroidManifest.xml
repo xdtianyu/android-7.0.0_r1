@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.appium.droiddriver.manualtest">
+
+    <instrumentation
+        android:name="io.appium.droiddriver.runner.TestRunner"
+        android:targetPackage="io.appium.droiddriver.manualtest" />
+
+    <!-- Needed for Android.mk -->
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="19"
+        tools:ignore="OldTargetApi,GradleOverrides" />
+
+    <application
+        android:allowBackup="false"
+        tools:ignore="MissingApplicationIcon">
+        <uses-library android:name="android.test.runner" />
+    </application>
+
+</manifest>

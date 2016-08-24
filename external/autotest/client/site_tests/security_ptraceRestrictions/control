@@ -1,0 +1,22 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "security_ptraceRestrictions"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Verify ptrace restrictions introduced by the Yama LSM"
+CRITERIA = "Fails if kernel lacks ptrace restrictions"
+TIME = "SHORT"
+ATTRIBUTES = "suite:bvt-inline"
+SUITE = "bvt-inline"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+    Checks that the kernel correctly restricts the use of ptrace between
+    processes.
+"""
+
+job.run_test('security_ptraceRestrictions')

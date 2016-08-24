@@ -1,0 +1,25 @@
+; Copyright (c) 2009 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; A quick test of write and verify.
+; "size" is chosen so as to finish at least one write/verify cycle for
+; most cases.
+;
+
+[read_write_verify]
+filename=${FILENAME}
+size=16777216
+
+time_based
+runtime=10
+
+ioengine=libaio
+iodepth=1
+direct=1
+
+readwrite=write
+verify=md5
+
+bs=4096k
+

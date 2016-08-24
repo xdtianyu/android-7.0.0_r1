@@ -1,0 +1,33 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GIdentifiers.zte-mf190"
+PURPOSE = "Verify cellular modem provides correct identification information."
+CRITERIA = """
+This test will fail if one of the following conditions occur:
+  - Cellular modem does not provide an identifier
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+ATTRIBUTES = "suite:network3g"
+SUITE = "network3g"
+DEPENDENCIES = "modem:zte-mf190"
+DOC = """
+  Tests that a cellular modem provides correct identification information
+
+  The test queries the modem for the following identifiers:
+    - MEID
+    - IMEI
+    - IMSI
+    - ICCID
+    - SIM operator ID
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+test_env = test_environment.CellularOTATestEnvironment()
+job.run_test('network_3GIdentifiers', tag='zte-mf190', test_env=test_env)

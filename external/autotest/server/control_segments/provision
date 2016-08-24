@@ -1,0 +1,66 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+
+from autotest_lib.client.cros import constants
+from autotest_lib.server.cros import provision
+
+
+# job_labels should be a string like "name:setting,name:setting"
+# non-provisionable labels are currently skipped, so they're safe to pass in.
+job_labels = locals().get('job_labels') or ','.join(args)
+labels_list = [label.strip() for label in job_labels.split(',') if label]
+
+
+def provision_machine(machine):
+    """
+    Run the appropriate provisioning tests to make the machine's labels match
+    those given in job_labels.
+    """
+    host = hosts.create_host(machine, try_lab_servo=True)
+
+    fixed, provisionable = provision.filter_labels(labels_list)
+
+    job.record('START', None, 'provision')
+    try:
+        job.sysinfo.add_logdir(constants.AUTOUPDATE_PRESERVE_LOG)
+        provision.run_special_task_actions(job, host, labels_list,
+                                           provision.Provision)
+    except Exception as e:
+        logging.exception(e)
+        job.record('END FAIL', None, 'provision')
+        # Raising a blank exception is done here because any message we can
+        # give here would be less useful than whatever the failing test left as
+        # its own exception message.
+        #
+        # The gory details of how raising a blank exception accomplishes this
+        # is as follows:
+        #
+        # The scheduler only looks at the return code of autoserv to see if
+        # the special task failed.  Therefore we need python to exit because
+        # of an unhandled exception or because someone called sys.exit(1).
+        #
+        # We can't call sys.exit, since there's post-job-running logic (like
+        # cleanup) that we'd be skipping out on.  So therefore, we need to
+        # raise an exception.  However, if we raise an exception, this
+        # exception ends up triggering server_job to write an INFO line with
+        # job_abort_reason equal to str(e), which the tko parser then picks
+        # up as the reason field for the job when the status.log we generate is
+        # parsed as the job's results.
+        #
+        # So therefore, we raise a blank exception, which then generates an
+        # empty job_abort_reason which the tko parser ignores just inserts as
+        # a SERVER_JOB failure with no reason, which we then ignore at suite
+        # results reporting time.
+        raise Exception('')
+    else:
+        # If we finish successfully, nothing in autotest ever looks at the
+        # status.log, so it's purely for human consumption and tracability.
+        job.record('END GOOD', None, 'provision',
+                   '%s provisioned successfully' % machine)
+
+
+job.parallel_simple(provision_machine, machines)
+
+# vim: set syntax=python :

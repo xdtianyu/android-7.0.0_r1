@@ -1,0 +1,25 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'avakulenko, wiley, keybuk'
+NAME = 'buffet_WebServerSanity'
+TIME = 'FAST'
+TEST_TYPE = 'Server'
+ATTRIBUTES = "suite:tendo_experimental"
+SUITE = 'tendo_experimental'
+
+DOC = """
+This test verifies that the web server running on the device responds to simple
+HTTP requests at http://<ip>:8080/privet/ping URL and returns the expected
+payload. This verifies the web server operation as well as the firewall to
+make sure the TCP port is open and accessible from outside.
+
+"""
+
+def run(machine):
+    job.run_test('buffet_WebServerSanity',
+                 host=hosts.create_host(machine))
+
+
+parallel_simple(run, machines)

@@ -1,0 +1,21 @@
+bintray {
+    publish = true
+    configurations = ['archives']
+    user = bintrayUser
+    key = bintrayKey
+    pkg {
+        repo = 'maven'
+        userOrg = 'appium'
+        name = "${ddGroup}:${ddArtifactId}"
+        websiteUrl = ddWebsite
+        issueTrackerUrl = ddTracker
+        vcsUrl = ddGit
+        desc = ddDescription
+        licenses = ['The Apache Software License, Version 2.0']
+        publicDownloadNumbers = true
+        version {
+            name = ddVersion
+            desc = ddDescription
+        }
+    }
+}

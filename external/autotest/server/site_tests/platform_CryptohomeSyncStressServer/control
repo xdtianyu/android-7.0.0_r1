@@ -1,0 +1,35 @@
+# Copyright (c) 2009 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "CryptohomeSyncStressServer"
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+
+DOC = """
+This test logs in, waits a random interval between 0 and 120s, then
+automatically reboots power to the system using a remotely controlled power
+strip. After the system restarts, it verifies that login completes and
+cryptohome mounts successfully. Best used on an account with many things to
+sync, so the crash happens during various stages of the syncing process.
+This test runs continuously and fails iff it stops running.
+"""
+
+# convert autoserv args to something usable
+opts = dict([[k, v] for (k, e, v) in [x.partition('=') for x in args]])
+
+power_addr = opts.get('power_addr', None)
+outlet = opts.get('outlet', None)
+username = opts.get('user', None)
+password = opts.get('pass', None)
+iterations = opts.get('iter', '1000000')
+
+iterations = int(iterations)
+
+host = hosts.create_host(machines[0])
+job.run_test('platform_CryptohomeSyncStressServer', host=host,
+             power_addr=power_addr, outlet=outlet,
+             username=username, password=password, iterations=iterations)

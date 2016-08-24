@@ -1,0 +1,32 @@
+; Copyright (c) 2014 The Chromium Authors. All rights reserved.
+; Use of this source code is governed by a BSD-style license that can be
+; found in the LICENSE file.
+;
+; test suite for ram disk
+;
+[global]
+filename=${FILENAME}
+size=${FILESIZE}
+ioengine=libaio
+iodepth=32
+thread=8
+loops=3
+
+[rand_write]
+readwrite=randwrite
+bs=4k
+
+[rand_read]
+stonewall
+readwrite=randread
+bs=4k
+
+[seq_write]
+stonewall
+readwrite=write
+bs=1m
+
+[seq_read]
+stonewall
+readwrite=read
+bs=1m

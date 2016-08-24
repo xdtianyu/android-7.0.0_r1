@@ -1,0 +1,20 @@
+#!/bin/sh
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+. $(dirname $0)/time.sh
+
+if grep -q '^ok$' "$1" 2>/dev/null; then
+	# Take down tlsdated
+	kill -TERM $PPID
+	exit 1
+fi
+
+if ! grep -q '^first-fail$' "$1" 2>/dev/null; then
+	echo 'first-fail' > "$1"
+	exit 2
+fi
+
+echo 'ok' >> "$1"
+print_time $(date +%s)
+exit 0

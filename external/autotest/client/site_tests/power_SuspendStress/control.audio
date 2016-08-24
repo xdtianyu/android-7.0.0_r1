@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "jwerner, chromeos-power, truty"
+NAME = "power_SuspendStress.audio"
+ATTRIBUTES = "suite:jailed_build"
+SUITE = "jailed_build"
+PURPOSE = "Run repeated iterations of suspend/resume while rendering audio."
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+Runs eight minutes of suspend/resume cycles in the background of an audio tone.
+"""
+
+job.parallel([lambda: job.run_test('power_SuspendStress', tag='audio',
+                                   duration=480, init_delay=10, min_suspend=7)],
+             [lambda: job.run_test('audio_Aplay', duration=460,
+                                   tag='power_SuspendStress')])

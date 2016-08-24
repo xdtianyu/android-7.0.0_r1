@@ -1,0 +1,8 @@
+bslot=@BSLOT@
+
+Name: libbrillo-glib
+Description: brillo glib wrapper library
+Version: ${bslot}
+Requires.private: @PRIVATE_PC@
+Libs: -lbrillo-glib-${bslot}
+

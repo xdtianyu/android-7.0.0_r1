@@ -1,0 +1,1263 @@
+#!/bin/sh
+# Try and be like autotools configure, but without autotools
+
+echo "configure args: $*"
+exec 3>config.log
+
+# Ensure that we do not inherit these from env
+HOOKSET=false
+INET=
+INET6=
+ARC4RANDOM=
+CLOSEFROM=
+GETLINE=
+STRLCPY=
+UDEV=
+OS=
+BUILD=
+HOST=
+HOSTCC=
+TARGET=
+DEBUG=
+FORK=
+STATIC=
+INCLUDEDIR=
+DEVS=
+EMBEDDED=
+POLL=
+DBUS=
+
+for x do
+	opt=${x%%=*}
+	var=${x#*=}
+	case "$opt" in
+	--os|OS) OS=$var;;
+	--debug) DEBUG=$var;;
+	--disable-debug) DEBUG=no;;
+	--enable-debug) DEBUG=yes;;
+	--fork) FORK=$var;;
+	--disable-fork) FORK=no;;
+	--enable-fork) FORK=yes;;
+	--disable-static) STATIC=no;;
+	--enable-static) STATIC=yes;;
+	--disable-ipv4) INET=no;;
+	--enable-ipv4) INET=yes;;
+	--disable-ipv6) INET6=no;;
+	--enable-ipv6) INET6=yes;;
+	--disable-embedded) EMBEDDED=no;;
+	--enable-embedded) EMBEDDED=yes;;
+	--enable-dbus) DBUS=yes;;
+	--disable-dbus) DBUS=no;;
+	--prefix) PREFIX=$var;;
+	--sysconfdir) SYSCONFDIR=$var;;
+	--bindir|--sbindir) SBINDIR=$var;;
+	--libexecdir) LIBEXECDIR=$var;;
+	--statedir|--localstatedir) STATEDIR=$var;;
+	--dbdir) DBDIR=$var;;
+	--rundir) RUNDIR=$var;;
+	--mandir) MANDIR=$var;;
+	--with-ccopts|CFLAGS) CFLAGS=$var;;
+	CC) CC=$var;;
+	CPPFLAGS) CPPFLAGS=$var;;
+	--with-hook) HOOKSCRIPTS="$HOOKSCRIPTS${HOOKSCRIPTS:+ }$var";;
+	--with-hooks|HOOKSCRIPTS) HOOKSCRIPTS=$var; HOOKSET=true;;
+	--build) BUILD=$var;;
+	--host) HOST=$var; HOSTCC=$var-;;
+	--target) TARGET=$var;;
+	--libdir) LIBDIR=$var;;
+	--without-arc4random) ARC4RANDOM=no;;
+	--without-closefrom) CLOSEFROM=no;;
+	--without-getline) GETLINE=no;;
+	--without-strlcpy) STRLCPY=no;;
+        --without-posix_spawn) POSIX_SPAWN=no;;
+	--without-md5) MD5=no;;
+	--without-sha2) SHA2=no;;
+	--without-sha256) SHA2=no;;
+	--without-dev) DEV=no;;
+	--without-udev) UDEV=no;;
+	--with-poll) POLL="$var";;
+	--serviceexists) SERVICEEXISTS=$var;;
+	--servicecmd) SERVICECMD=$var;;
+	--servicestatus) SERVICESTATUS=$var;;
+	--includedir) eval INCLUDEDIR="$INCLUDEDIR${INCLUDEDIR:+ }$var";;
+	--datadir|--infodir) ;; # ignore autotools
+	--disable-maintainer-mode|--disable-dependency-tracking) ;;
+	--disable-silent-rules) ;;
+	-V|--version)
+		v=$(sed -ne 's/.*VERSION[[:space:]]*"\([^"]*\).*/\1/p' defs.h);
+		c=$(sed -ne 's/^.*copyright\[\] = "\([^"]*\).*/\1/p' dhcpcd.c);
+		echo "dhcpcd-$v $c";
+		exit 0;;
+	-h|--help) cat <<EOF
+\`configure' configures this package to adapt to many kinds of systems.
+
+Usage: configure [OPTION]... [VAR=VALUE]...
+
+To assign environment variables (e.g., CC, CFLAGS...), specify them as
+VAR=VALUE.  See below for descriptions of some of the useful variables.
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+      --help=short        display options specific to this package
+  -V, --version           display version information and exit
+
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX [/]
+
+By default, \`make install' will install all the files in \'/sbin',
+\`/libexec', etc. You can specify
+an installation prefix other than \`/' using \`--prefix',
+for instance \`--prefix=$HOME'.
+
+For better control, use the options below.
+
+Fine tuning of the installation directories:
+  --bindir=DIR            user executables [PREFIX/bin]
+  --sbindir=DIR           system admin executables [PREFIX/sbin]
+  --libexecdir=DIR        program executables [PREFIX/libexec]
+  --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
+  --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
+  --libdir=DIR            object code libraries [PREFIX/lib]
+  --includedir=DIR        C header files [PREFIX/include]
+  --mandir=DIR            man documentation [PREFIX/man]
+
+System types:
+  --build=BUILD           configure for building on BUILD [guessed]
+  --host=HOST       build programs to run on HOST [BUILD]
+  --target=TARGET   configure for building compilers for TARGET [HOST]
+
+Optional Features:
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+
+Some influential environment variables:
+  CC          C compiler command
+  CFLAGS      C compiler flags
+  LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+              nonstandard directory <lib dir>
+  CPPFLAGS    C/C++ preprocessor flags, e.g. -I<include dir> if you have
+              headers in a nonstandard directory <include dir>
+  CPP         C preprocessor
+
+Use these variables to override the choices made by \`configure' or to help
+it to find libraries and programs with nonstandard names/locations.
+EOF
+exit 0
+;;
+	*) echo "$0: WARNING: unknown option $opt" >&2;;
+	esac
+done
+
+: ${SED:=sed}
+: ${GREP:=grep}
+: ${WC:=wc}
+
+: ${FORK:=yes}
+: ${SYSCONFDIR:=$PREFIX/etc}
+: ${SBINDIR:=$PREFIX/sbin}
+: ${LIBDIR:=$PREFIX/lib}
+: ${LIBEXECDIR:=$PREFIX/libexec}
+: ${STATEDIR:=/var}
+: ${DBDIR:=$STATEDIR/db}
+: ${RUNDIR:=$STATEDIR/run}
+: ${MANDIR:=${PREFIX:-/usr}/share/man}
+
+eval SYSCONFDIR="$SYSCONFDIR"
+eval LIBDIR="$LIBDIR"
+eval LIBEXECDIR="$LIBEXECDIR"
+eval STATEDIR="$STATEDIR"
+eval DBDIR="$DBDIR"
+eval RUNDIR="$RUNDIR"
+eval MANDIR="$MANDIR"
+
+_which()
+{
+	x="$(which "$1" 2>/dev/null)"
+	if [ -n "$x" ]; then
+		echo "$x"
+		return 0
+	fi
+	for x in /sbin/"$1" /usr/sbin/"$1" \
+		/usr/pkg/sbin/"$1" /usr/local/sbin/"$1"
+	do
+		if [ -e "$x" ]; then
+			echo "$x"
+			return 0
+		fi
+	done
+	return 1
+}
+
+CONFIG_H=config.h
+CONFIG_MK=config.mk
+
+if [ -z "$BUILD" ]; then
+	# autoconf target triplet: cpu-vendor-os
+	BUILD=$(uname -m)-unknown-$(uname -s | tr '[:upper:]' '[:lower:]')
+fi
+: ${HOST:=$BUILD}
+
+if [ -z "$OS" ]; then
+	echo "Deriving operating system from ... $HOST"
+	# Derive OS from cpu-vendor-[kernel-]os
+	CPU=${HOST%%-*}
+	REST=${HOST#*-}
+	if [ "$CPU" != "$REST" ]; then
+		VENDOR=${REST%%-*}
+		REST=${REST#*-}
+		if [ "$VENDOR" != "$REST" ]; then
+			# Use kernel if given, otherwise os
+			OS=${REST%%-*}
+		else
+			# 2 tupple
+			OS=$VENDOR
+			VENDOR=
+		fi
+	fi
+
+        # Work with cpu-kernel-os, ie Debian
+	case "$VENDOR" in
+	linux*|kfreebsd*) OS=$VENDOR; VENDOR= ;;
+	esac
+	# Special case
+	case "$OS" in
+	gnu*) OS=hurd;; # No HURD support as yet
+	esac
+fi
+
+echo "Configuring dhcpcd for ... $OS"
+rm -f $CONFIG_H $CONFIG_MK
+echo "# $OS" >$CONFIG_MK
+echo "/* $OS */" >$CONFIG_H
+
+for x in SYSCONFDIR SBINDIR LIBDIR LIBEXECDIR DBDIR RUNDIR; do
+	eval v=\$$x
+	# Make files look nice for import
+	l=$((10 - ${#x}))
+	unset t
+	[ $l -gt 3 ] && t="	"
+	echo "$x=$t	$v" >>$CONFIG_MK
+	unset t
+	[ $l -gt 2 ] && t="	"
+	echo "#define $x$t	\"$v\"" >>$CONFIG_H
+done
+echo "LIBDIR=		$LIBDIR" >>$CONFIG_MK
+echo "MANDIR=		$MANDIR" >>$CONFIG_MK
+
+# Always obey CC.
+if [ -n "$CC" ]; then
+	HOSTCC=
+else
+	CC=cc
+	_COMPILERS="cc clang gcc pcc icc"
+fi
+# Only look for a cross compiler if --host and --build are not the same
+if [ -n "$HOSTCC" -a "$BUILD" != "$HOST" ]; then
+	for _CC in $_COMPILERS; do
+		_CC=$(_which "$HOSTCC$_CC")
+		if [ -x "$_CC" ]; then
+			CC=$_CC
+			break
+		fi
+	done
+fi
+if ! type "$CC" >/dev/null 2>&1; then
+	for _CC in $_COMPILERS; do
+		_CC=$(_which "$_CC")
+		if [ -x "$_CC" ]; then
+			CC=$_CC
+			break
+		fi
+	done
+fi
+
+# Set to blank, then append user config
+# We do this so our SED call to append to XCC remains portable
+if [ -n "$CFLAGS" ]; then
+	echo "CFLAGS=" >>$CONFIG_MK
+	echo "CFLAGS+=	$CFLAGS" >>$CONFIG_MK
+fi
+if [ -n "$CPPFLAGS" ]; then
+	echo "CPPFLAGS=" >>$CONFIG_MK
+	echo "CPPFLAGS+=	$CPPFLAGS" >>$CONFIG_MK
+fi
+if [ -n "$LDFLAGS" ]; then
+	echo "LDFLAGS=" >>$CONFIG_MK
+	echo "LDFLAGS+=	$LDFLAGS" >>$CONFIG_MK
+fi
+
+# NetBSD: Even if we build for $PREFIX, the clueless user might move us to /
+LDELF=/libexec/ld.elf_so
+if [ -e "$LDELF" ]; then
+	echo "Linking against $LDELF"
+	echo "LDFLAGS+=	-Wl,-dynamic-linker=$LDELF" >>$CONFIG_MK
+	echo "LDFLAGS+=	-Wl,-rpath=${LIBDIR}" >>$CONFIG_MK
+fi
+
+if [ -z "$PREFIX" -o "$PREFIX" = / ]; then
+	ALLOW_USR_LIBS=false
+else
+	ALLOW_USR_LIBS=true
+fi
+case "$OS" in
+linux*|sunos*) ;;
+*)
+	if ! [ -x "$LDELF" -o -x /libexec/ld-elf.so.[0-9]* ] && \
+	    [ -z "$PREFIX" -o "$PREFIX" = "/" ]
+	then
+		echo "Forcing a static build for $OS and \$PREFIX of /"
+		STATIC=yes
+		ALLOW_USR_LIBS=true
+	fi
+	;;
+esac
+if [ "$STATIC" = yes ]; then
+	echo "LDFLAGS+=	-static" >>$CONFIG_MK
+fi
+for x in $INCLUDEDIR; do
+	echo "CPPFLAGS+=	-I$x" >>$CONFIG_MK
+done
+
+if [ -z "$DEBUG" -a -f .fslckout ]; then
+	printf "Found fossil checkout ... "
+	DEBUG=yes
+fi
+if [ -n "$DEBUG" -a "$DEBUG" != no -a "$DEBUG" != false ]; then
+	echo "Adding debugging CFLAGS"
+	cat <<EOF >>$CONFIG_MK
+CFLAGS+=	-g -Wall -Wextra
+CFLAGS+=	-Wmissing-prototypes -Wmissing-declarations
+CFLAGS+=	-Wmissing-format-attribute -Wnested-externs
+CFLAGS+=	-Winline -Wcast-align -Wcast-qual -Wpointer-arith
+CFLAGS+=	-Wreturn-type -Wswitch -Wshadow
+CFLAGS+=	-Wcast-qual -Wwrite-strings
+CFLAGS+=	-Wconversion
+CFLAGS+=	-Wformat=2
+CFLAGS+=	-Wpointer-sign -Wmissing-noreturn
+EOF
+	case "$OS" in
+	mirbsd*|openbsd*);; # OpenBSD has many redundant decs in system headers
+	*)		echo "CFLAGS+=	-Wredundant-decls" >>$CONFIG_MK;;
+	esac
+
+	case "$OS" in
+	sunos*);;
+	*)		echo "CFLAGS+=	-Wstrict-overflow" >>$CONFIG_MK;;
+	esac
+fi
+
+if [ -z "$EMBEDDED" -o "$EMBEDDED" = yes ]; then
+	echo "dhcpcd-definitions.conf will be embedded in dhcpcd itself"
+	echo "DHCPCD_SRCS+=	dhcpcd-embedded.c" >>$CONFIG_MK
+else
+	echo "dhcpcd-definitions.conf will be installed to $LIBEXECDIR"
+	echo "CFLAGS+= -DEMBEDDED_CONFIG=\\\"$LIBEXECDIR/dhcpcd-definitions.conf\\\"" >>$CONFIG_MK
+	echo "EMBEDDEDINSTALL=	_embeddedinstall" >>$CONFIG_MK
+fi
+
+if [ -n "$FORK" -a "$FORK" != yes -a "$FORK" != true ]; then
+	echo "There is no fork"
+	echo "CPPFLAGS+=	-DTHERE_IS_NO_FORK" >>$CONFIG_MK
+fi
+
+case "$OS" in
+freebsd*|kfreebsd*)
+	echo "CPPFLAGS+=	-D_GNU_SOURCE" >>$CONFIG_MK
+	echo "DHCPCD_SRCS+=	if-bsd.c" >>$CONFIG_MK
+	;;
+linux*)
+	echo "CPPFLAGS+=	-D_GNU_SOURCE" >>$CONFIG_MK
+	# Large File Support, should be fine for 32-bit systems.
+	# But if this is the case, why is it not set by default?
+	echo "CPPFLAGS+=	-D_FILE_OFFSET_BITS=64" >>$CONFIG_MK
+	echo "CPPFLAGS+=	-D_LARGEFILE_SOURCE" >>$CONFIG_MK
+	echo "CPPFLAGS+=	-D_LARGEFILE64_SOURCE" >>$CONFIG_MK
+	echo "DHCPCD_SRCS+=	if-linux.c" >>$CONFIG_MK
+	# for RTM_NEWADDR and friends
+	echo "#include		<asm/types.h> /* fix broken headers */" >>$CONFIG_H
+	echo "#include		<linux/rtnetlink.h>" >>$CONFIG_H
+	;;
+qnx*)
+	echo "CPPFLAGS+=	-D__EXT" >>$CONFIG_MK
+	echo "DHCPCD_SRCS+=	if-bsd.c" >>$CONFIG_MK
+	;;
+sunos*)
+	echo "WARNING!!! Solaris support is at early development stage!" >&2
+	echo "so don't expect it to work just yet, patches welcome" >&2
+	echo "CPPFLAGS+=	-D_XPG4_2 -D__EXTENSIONS__ -DBSD_COMP" \
+	    >>$CONFIG_MK
+	echo "DHCPCD_SRCS+=	if-sun.c" >>$CONFIG_MK
+
+	# IPv6 won't work, but it will at least compile.
+	echo "CPPFLAGS+=	-DIN6_IFF_DETACHED=0" >>$CONFIG_MK
+	echo "CPPFLAGS+=	-DIN6_IFF_TENTATIVE=0" >>$CONFIG_MK
+	echo "CPPFLAGS+=	-DIN6_IFF_DUPLICATED=0" >>$CONFIG_MK
+	;;
+*)
+	echo "DHCPCD_SRCS+=	if-bsd.c" >>$CONFIG_MK
+	;;
+esac
+
+if [ -z "$INET" -o "$INET" = yes ]; then
+	echo "CPPFLAGS+=	-DINET" >>$CONFIG_MK
+	echo "DHCPCD_SRCS+=	arp.c dhcp.c ipv4.c ipv4ll.c" >>$CONFIG_MK
+fi
+if [ -z "$INET6" -o "$INET6" = yes ]; then
+	echo "CPPFLAGS+=	-DINET6" >>$CONFIG_MK
+	echo "DHCPCD_SRCS+=	ipv6.c ipv6nd.c dhcp6.c" >>$CONFIG_MK
+fi
+
+if [ "$DBUS" = yes ]; then
+	echo "DBUS_SUPPORT= yes" >>$CONFIG_MK
+	echo "DBUSINSTALL=  _dbusinstall" >>$CONFIG_MK
+	echo "CPPFLAGS+=    -DPASSIVE_MODE" >>$CONFIG_MK
+	echo "DHCPCD_SRCS+= dbus/dbus-dict.c dbus/rpc-dbus.c" >>$CONFIG_MK
+else
+	echo "DHCPCD_SRCS+= rpc-stub.c" >>$CONFIG_MK
+fi
+
+if [ -z  "$HOOKSCRIPTS" ]; then
+	echo "DHCPCD_SRCS+= script-stub.c" >>$CONFIG_MK
+else
+	echo "HOOK_SUPPORT= yes" >>$CONFIG_MK
+	echo "SCRIPTSINSTALL=  _scriptsinstall" >>$CONFIG_MK
+	echo "DHCPCD_SRCS+= script.c" >>$CONFIG_MK
+fi
+
+echo "Using compiler .. $CC"
+# Add CPPFLAGS and CFLAGS to CC for testing features
+XCC="$CC `$SED -n -e 's/CPPFLAGS+=*\(.*\)/\1/p' $CONFIG_MK`"
+XCC="$XCC `$SED -n -e 's/CFLAGS+=*\(.*\)/\1/p' $CONFIG_MK`"
+
+# Now test we can use the compiler with our CFLAGS
+cat <<EOF >_test.c
+int main(void) {
+	return 0;
+}
+EOF
+_CC=false
+if $XCC _test.c -o _test >/dev/null 2>&3; then
+	[ -x _test ] && _CC=true
+fi
+rm -f _test.c _test
+if ! $_CC; then
+	echo "$CC does not create executables"
+	exit 1
+fi
+[ "$CC" != cc ] && echo "CC=	$CC" >>$CONFIG_MK
+$CC --version | $SED -e '1!d'
+
+if [ "$OS" = linux ]; then
+	printf "Testing for nl80211 ... "
+	cat <<EOF >_nl80211.c
+#include <linux/nl80211.h>
+int main(void) {
+	return 0;
+}
+EOF
+	if $XCC _nl80211.c -o _nl80211 2>&3; then
+		echo "yes"
+		echo "#define HAVE_NL80211_H" >>$CONFIG_H
+	else
+		echo "no"
+	fi
+	rm -f _nl80211.c _nl80211
+
+	# Even though we have nl80211, we only use it as a fallback
+	# because it's currently possible to configure a kernel
+	# where the SSID associated to won't be reported by nl80211
+	# but will be via WEXT.
+	echo "DHCPCD_SRCS+=	if-linux-wext.c" >>$CONFIG_MK
+fi
+
+abort=false
+# We require the libc to support non standard functions, like getifaddrs
+printf "Testing for getifaddrs ... "
+cat <<EOF >_getifaddrs.c
+#include <sys/types.h>
+#include <ifaddrs.h>
+int main(void) {
+	struct ifaddrs *ifap;
+	return getifaddrs(&ifap);
+}
+EOF
+if $XCC _getifaddrs.c -o _getifaddrs 2>&3; then
+	echo "yes"
+elif $XCC _getifaddrs.c -o _getifaddrs -lsocket 2>&3; then
+	echo "yes (-lsocket)"
+	echo "LDADD+=		-lsocket" >>$CONFIG_MK
+else
+	echo "no"
+	echo "libc support for getifaddrs is required - aborting" >&2
+	abort=true
+fi
+rm -f _getifaddrs.c _getifaddrs
+$abort && exit 1
+
+printf "Testing for clock_gettime ... "
+cat <<EOF >_clock_gettime.c
+#include <time.h>
+int main(void) {
+	struct timespec ts;
+	return clock_gettime(CLOCK_MONOTONIC, &ts);
+}
+EOF
+if $XCC _clock_gettime.c -o _clock_gettime 2>&3; then
+	echo "yes"
+elif $XCC _clock_gettime.c -lrt -o _clock_gettime 2>&3; then
+	echo "yes (-lrt)"
+	echo "LDADD+=		-lrt" >>$CONFIG_MK
+else
+	echo "no"
+	echo "libc support for clock_getttime is required - aborting" >&2
+	abort=true
+fi
+rm -f _clock_gettime.c _clock_gettime
+$abort && exit 1
+
+printf "Testing for inet_ntoa ... "
+cat <<EOF >_inet_ntoa.c
+#include <netinet/in.h>
+#include <arpa/inet.h>
+int main(void) {
+	struct in_addr in;
+	inet_ntoa(in);
+	return 0;
+}
+EOF
+if $XCC _inet_ntoa.c -o _inet_ntoa 2>&3; then
+	echo "yes"
+elif $XCC _inet_ntoa.c -lnsl -o _inet_ntoa 2>&3; then
+	echo "yes (-lnsl)"
+	echo "LDADD+=		-lnsl" >>$CONFIG_MK
+elif $XCC _inet_ntoa.c -lsocket -o _inet_ntoa 2>&3; then
+	echo "yes (-lsocket)"
+	echo "LDADD+=		-lsocket" >>$CONFIG_MK	
+else
+	echo "no"
+	echo "libc support for inet_ntoa is required - aborting" >&2
+	abort=true
+fi
+rm -f _inet_ntoa.c _inet_ntoa
+$abort && exit 1
+
+if [ -z "$ARC4RANDOM" ]; then
+	printf "Testing for arc4random ... "
+	cat <<EOF >_arc4random.c
+#include <stdlib.h>
+int main(void) {
+	arc4random();
+	return 0;
+}
+EOF
+	if $XCC _arc4random.c -o _arc4random 2>&3; then
+		ARC4RANDOM=yes
+	else
+		ARC4RANDOM=no
+	fi
+	echo "$ARC4RANDOM"
+	rm -f _arc4random.c _arc4random
+fi
+if [ "$ARC4RANDOM" = no ]; then
+	echo "COMPAT_SRCS+=	compat/arc4random.c" >>$CONFIG_MK
+	echo "#include		\"compat/arc4random.h\"" >>$CONFIG_H
+fi
+
+if [ -z "$ARC4RANDOM_UNIFORM" ]; then
+	printf "Testing for arc4random_uniform ... "
+	cat <<EOF >_arc4random_uniform.c
+#include <stdlib.h>
+int main(void) {
+	arc4random_uniform(100);
+	return 0;
+}
+EOF
+	if $XCC _arc4random_uniform.c -o _arc4random_uniform 2>&3; then
+		ARC4RANDOM_UNIFORM=yes
+	else
+		ARC4RANDOM_UNIFORM=no
+	fi
+	echo "$ARC4RANDOM"
+	rm -f _arc4random_uniform.c _arc4random_uniform
+fi
+if [ "$ARC4RANDOM_UNIFORM" = no ]; then
+	echo "COMPAT_SRCS+=	compat/arc4random_uniform.c" >>$CONFIG_MK
+	echo "#include		\"compat/arc4random_uniform.h\"" >>$CONFIG_H
+fi
+
+if [ -z "$CLOSEFROM" ]; then
+	printf "Testing for closefrom ... "
+	cat <<EOF >_closefrom.c
+#include <unistd.h>
+int main(void) {
+	closefrom(3);
+	return 0;
+}
+EOF
+	if $XCC _closefrom.c -o _closefrom 2>&3; then
+		CLOSEFROM=yes
+	else
+		CLOSEFROM=no
+	fi
+	echo "$CLOSEFROM"
+	rm -f _closefrom.c _closefrom
+fi
+if [ "$CLOSEFROM" = no ]; then
+	echo "COMPAT_SRCS+=	compat/closefrom.c" >>$CONFIG_MK
+	echo "#include		\"compat/closefrom.h\"" >>$CONFIG_H
+fi
+
+if [ -z "$GETLINE" ]; then
+	printf "Testing for getline ... "
+	cat <<EOF >_getline.c
+#include <stdio.h>
+int main(void) {
+	char *buf = NULL;
+	size_t n = 0;
+	getline(&buf, &n, stdin);
+	return 0;
+}
+EOF
+	if $XCC _getline.c -o _getline 2>&3; then
+		GETLINE=yes
+	else
+		GETLINE=no
+	fi
+	echo "$GETLINE"
+	rm -f _getline.c _getline
+fi
+if [ "$GETLINE" = no ]; then
+	echo "COMPAT_SRCS+=	compat/getline.c" >>$CONFIG_MK
+	echo "#include		\"compat/getline.h\"" >>$CONFIG_H
+fi
+
+if [ -z "$STRLCPY" ]; then
+	printf "Testing for strlcpy ... "
+	cat <<EOF >_strlcpy.c
+#include <string.h>
+int main(void) {
+	const char s1[] = "foo";
+	char s2[10];
+	strlcpy(s2, s1, sizeof(s2));
+	return 0;
+}
+EOF
+	if $XCC _strlcpy.c -o _strlcpy 2>&3; then
+		STRLCPY=yes
+	else
+		STRLCPY=no
+	fi
+	echo "$STRLCPY"
+	rm -f _strlcpy.c _strlcpy
+fi
+if [ "$STRLCPY" = no ]; then
+	echo "COMPAT_SRCS+=	compat/strlcpy.c" >>$CONFIG_MK
+	echo "#include		\"compat/strlcpy.h\"" >>$CONFIG_H
+fi
+
+if [ -z "$STRTOI" ]; then
+	printf "Testing for strtoi ... "
+	cat <<EOF >_strtoi.c
+#include <stdlib.h>
+#include <limits.h>
+#include <inttypes.h>
+int main(void) {
+	int e;
+	return strtoi("1234", NULL, 0, 0, INT32_MAX, &e);
+}
+EOF
+	if $XCC _strtoi.c -o _strtoi 2>&3; then
+		STRTOI=yes
+	else
+		STRTOI=no
+	fi
+	echo "$STRTOI"
+	rm -f _strtoi.c _strtoi
+fi
+if [ "$STRTOI" = no ]; then
+	echo "COMPAT_SRCS+=	compat/strtoi.c" >>$CONFIG_MK
+	echo "#include		\"compat/strtoi.h\"" >>$CONFIG_H
+fi
+
+if [ -z "$DPRINTF" ]; then
+	printf "Testing for dprintf ... "
+	cat <<EOF >_dprintf.c
+#include <stdio.h>
+int main(void) {
+	return dprintf(0, "%d", 0);
+}
+EOF
+	if $XCC _dprintf.c -o _dprintf 2>&3; then
+		DPRINTF=yes
+	else
+		DPRINTF=no
+	fi
+	echo "$DPRINTF"
+	rm -f _dprintf.c _dprintf
+fi
+if [ "$DPRINTF" = no ]; then
+	echo "COMPAT_SRCS+=	compat/dprintf.c" >>$CONFIG_MK
+	echo "#include		\"compat/dprintf.h\"" >>$CONFIG_H
+fi
+
+if [ -z "$TAILQ_FOREACH_SAFE" ]; then
+	printf "Testing for TAILQ_FOREACH_SAFE ... "
+	cat <<EOF >_queue.c
+#include <sys/queue.h>
+int main(void) {
+#ifndef TAILQ_FOREACH_SAFE
+#error TAILQ_FOREACH_SAFE
+#endif
+	return 0;
+}
+EOF
+	if $XCC _queue.c -o _queue 2>&3; then
+		TAILQ_FOREACH_SAFE=yes
+		TAILQ_FOREACH=yes
+	else
+		TAILQ_FOREACH_SAFE=no
+	fi
+	echo "$TAILQ_FOREACH_SAFE"
+	rm -f _queue.c _queue
+fi
+
+if [ -z "$TAILQ_CONCAT" ]; then
+	printf "Testing for TAILQ_CONCAT ..."
+	cat <<EOF >_queue.c
+#include <sys/queue.h>
+int main(void) {
+#ifndef TAILQ_CONCAT
+#error TAILQ_CONCAT
+#endif
+	return 0;
+}
+EOF
+	if $XCC _queue.c -o _queue 2>&3; then
+		TAILQ_CONCAT=yes
+		TAILQ_FOREACH=yes
+	else
+		TAILQ_CONCAT=no
+	fi
+	echo "$TAILQ_CONCAT"
+	rm -f _queue.c _queue
+fi
+
+if [ -z "$TAILQ_FOREACH" ]; then
+	printf "Testing for TAILQ_FOREACH ... "
+	cat <<EOF >_queue.c
+#include <sys/queue.h>
+int main(void) {
+#ifndef TAILQ_FOREACH
+#error TAILQ_FOREACH
+#endif
+	return 0;
+}
+EOF
+	if $XCC _queue.c -o _queue 2>&3; then
+		TAILQ_FOREACH=yes
+	else
+		TAILQ_FOREACH=no
+	fi
+	echo "$TAILQ_FOREACH"
+	rm -f _queue.c _queue
+fi
+
+if [ "$TAILQ_FOREACH_SAFE" = no -o "$TAILQ_CONCAT" = no ]; then
+	# If we don't include sys/queue.h then clang analyser finds
+	# too many false positives.
+	# See http://llvm.org/bugs/show_bug.cgi?id=18222
+	# Strictly speaking this isn't needed, but I like it to help
+	# catch any nasties.
+	if [ "$TAILQ_FOREACH" = yes ]; then
+		echo "#include		<sys/queue.h>">>$CONFIG_H
+	fi
+	echo "#include		\"compat/queue.h\"">>$CONFIG_H
+else
+	echo "#include		<sys/queue.h>" >>$CONFIG_H
+fi
+
+if [ -z "$POSIX_SPAWN" ]; then
+	printf "Testing for posix_spawn ... "
+	cat <<EOF >_posix_spawn.c
+#include <spawn.h>
+#include <stdlib.h>
+
+#ifdef __OpenBSD__
+#  include <sys/param.h>
+#  if OpenBSD<201505
+#    error posix_spawn was fixed in OpenBSD-5.7
+#  endif
+#endif
+
+int main(void) {
+	posix_spawn(NULL, NULL, NULL, NULL, NULL, NULL);
+	return 0;
+}
+EOF
+	if $XCC _posix_spawn.c -o _posix_spawn 2>&3; then
+		POSIX_SPAWN=yes
+	else
+		POSIX_SPAWN=no
+	fi
+	echo "$POSIX_SPAWN"
+	rm -f _posix_spawn.c _posix_spawn
+fi
+if [ "$POSIX_SPAWN" = no ]; then
+	echo "COMPAT_SRCS+=	compat/posix_spawn.c" >>$CONFIG_MK
+else
+	echo "#define HAVE_SPAWN_H" >>$CONFIG_H
+fi
+
+if [ -z "$POLL" ]; then
+	printf "Testing for kqueue1 ... "
+	cat <<EOF >_kqueue.c
+#include <sys/types.h>
+#include <sys/event.h>
+int main(void) {
+	return kqueue1(0);
+}
+EOF
+	if $XCC _kqueue.c -o _kqueue 2>&3; then
+		POLL=kqueue1
+ 		echo "yes"
+ 	else
+ 		echo "no"
+ 	fi
+	rm -f _kqueue.c _kqueue
+fi
+if [ -z "$POLL" ]; then
+	printf "Testing for kqueue ... "
+	cat <<EOF >_kqueue.c
+#include <sys/types.h>
+#include <sys/event.h>
+int main(void) {
+	return kqueue();
+}
+EOF
+	if $XCC _kqueue.c -o _kqueue 2>&3; then
+		POLL=kqueue
+ 		echo "yes"
+ 	else
+ 		echo "no"
+ 	fi
+	rm -f _kqueue.c _kqueue
+fi
+if [ -z "$POLL" ]; then
+	printf "Testing for epoll ... "
+	cat <<EOF >_epoll.c
+#ifdef __linux__
+#include <linux/version.h>
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 37)
+#error kernel has buggy epoll_wait timeout
+#endif
+#endif
+
+#include <sys/epoll.h>
+#include <unistd.h>
+int main(void) {
+	epoll_create1(EPOLL_CLOEXEC);
+	epoll_pwait(-1, NULL, 0, 0, NULL);
+	return 0;
+}
+EOF
+	if $XCC _epoll.c -o _epoll 2>&3; then
+		POLL=epoll
+		echo "#define HAVE_EPOLL" >>$CONFIG_MK
+		echo "yes"
+	else
+		echo "no"
+	fi
+	rm -f _epoll.c _epoll
+fi
+if [ -z "$POLL" ]; then
+	printf "Testing for ppoll ... "
+	cat <<EOF >_ppoll.c
+#include <poll.h>
+#include <stdlib.h>
+int main(void) {
+	ppoll(NULL, 0, NULL, NULL);
+	return 0;
+}
+EOF
+	if $XCC _ppoll.c -o _ppoll 2>&3; then
+		POLL=ppoll
+ 		echo "yes"
+ 	else
+ 		echo "no"
+ 	fi
+	rm -f _ppoll.c _ppoll
+fi
+if [ -z "$POLL" ]; then
+	printf "Testing for pselect ... "
+	cat <<EOF >_pselect.c
+#include <sys/select.h>
+#include <stdlib.h>
+int main(void) {
+	pselect(0, NULL, NULL, NULL, NULL, NULL);
+	return 0;
+}
+EOF
+	if $XCC _pselect.c -o _pselect 2>&3; then
+		POLL=pselect
+		echo "yes"
+	else
+		echo "no"
+	fi
+	rm -f _pselect.c _pselect
+fi
+case "$POLL" in
+kqueue1)
+	echo "#define HAVE_KQUEUE" >>$CONFIG_H
+	echo "#define HAVE_KQUEUE1" >>$CONFIG_H
+	;;
+kqueue)
+	echo "#define HAVE_KQUEUE" >>$CONFIG_H
+	;;
+epoll)
+	echo "#define HAVE_EPOLL" >>$CONFIG_H
+	;;
+ppoll)
+	echo "#define pollts		ppoll" >>$CONFIG_H
+	;;
+pselect)
+	echo "COMPAT_SRCS+=	compat/pselect.c" >>$CONFIG_MK
+	echo "#include		\"compat/pollts.h\"" >>$CONFIG_H
+	;;
+*)
+	echo "COMPAT_SRCS+=	compat/pollts.c" >>$CONFIG_MK
+	echo "#include		\"compat/pollts.h\"" >>$CONFIG_H
+	;;
+esac
+
+if [ -z "$BE64ENC" ]; then
+	printf "Testing for be64enc ... "
+	cat <<EOF >_be64enc.c
+#include <sys/endian.h>
+#include <stdlib.h>
+int main(void) {
+	be64enc(NULL, 0);
+}
+EOF
+	if $XCC _be64enc.c -o _be64enc 2>&3; then
+		BE64ENC=yes
+	else
+		BE64ENC=no
+	fi
+	echo "$BE64ENC"
+	rm -f _be64enc.c _be64enc
+fi
+if [ "$BE64ENC" = no ]; then
+	echo "#include		\"compat/endian.h\"" >>$CONFIG_H
+fi
+
+if [ -z "$MD5" ]; then
+	MD5_LIB=
+	printf "Testing for MD5Init ... "
+	cat <<EOF >_md5.c
+#include <sys/types.h>
+#include <md5.h>
+#include <stdlib.h>
+int main(void) {
+	MD5_CTX context;
+	MD5Init(&context);
+	return 0;
+}
+EOF
+	# We only want to link to libmd if it exists in /lib
+	if $ALLOW_USR_LIBS; then
+		set -- /
+	else
+		set -- $(ls /lib/libmd.so.* 2>/dev/null)
+	fi
+	if $XCC _md5.c -o _md5 2>&3; then
+		MD5=yes
+	elif [ -e "$1" ] && $XCC _md5.c -lmd -o _md5 2>&3; then
+		MD5="yes (-lmd)"
+		MD5_LIB=-lmd
+	else
+		MD5=no
+	fi
+	echo "$MD5"
+	rm -f _md5.c _md5
+fi
+if [ "$MD5" = no ]; then
+	echo "MD5_SRC=	crypt/md5.c" >>$CONFIG_MK
+else
+	echo "MD5_SRC=" >>$CONFIG_MK
+	echo "#define HAVE_MD5_H" >>$CONFIG_H
+	[ -n "$MD5_LIB" ] && echo "LDADD+=		$MD5_LIB" >>$CONFIG_MK
+fi
+
+if [ -z "$SHA2_H" -a -z "$SHA2" -o "$SHA2" != no ]; then
+	printf "Testing for sha2.h ... "
+	if [ -e /usr/include/sha2.h ]; then
+		SHA2_H=sha2.h
+	elif [ -e /usr/include/sha256.h ]; then
+		SHA2_H=sha256.h
+	fi
+	if [ -n "$SHA2_H" ]; then
+		echo "$SHA2_H"
+	else
+		echo "no"
+	fi
+fi
+
+if [ -z "$SHA2" ]; then
+	SHA2_LIB=
+	SHA2_RENAMED=
+	printf "Testing for SHA256_Init ... "
+	cat <<EOF >_sha256.c
+#include <sys/types.h>
+EOF
+	[ -n "$SHA2_H" ] && echo "#include <$SHA2_H>">>_sha256.c
+	cat <<EOF >>_sha256.c
+#include <stdlib.h>
+int main(void) {
+	SHA256_CTX context;
+	SHA256_Init(&context);
+	return 0;
+}
+EOF
+	# We only want to link to libmd if it exists in /lib
+	if $ALLOW_USR_LIBS; then
+		set -- /
+	else
+		set -- $(ls /lib/libmd.so.* 2>/dev/null)
+	fi
+	if $XCC _sha256.c -o _sha256 2>&3; then
+		SHA2=yes
+	elif [ -e "$1" ] && $XCC _sha256.c -lmd -o _sha256 2>&3; then
+		SHA2="yes (-lmd)"
+		SHA2_LIB=-lmd
+	else
+		SHA2=no
+	fi
+	echo "$SHA2"
+	rm -f _sha256.c _sha256
+	if [ "$SHA2" = no ]; then
+		# Did OpenBSD really change this? grrrr
+		printf "Testing for SHA256Init ... "
+		cat <<EOF >_sha256.c
+#include <sys/types.h>
+EOF
+		[ -n "$SHA2_H" ] && echo "#include <$SHA2_H>">>_sha256.c
+		cat <<EOF >>_sha256.c
+#include <stdlib.h>
+int main(void) {
+	SHA2_CTX context;
+	SHA256Init(&context);
+	return 0;
+}
+EOF
+		# We only want to link to libmd if it exists in /lib
+		if $ALLOW_USR_LIBS; then
+			set -- /
+		else
+			set -- $(ls /lib/libmd.so.* 2>/dev/null)
+		fi
+		if $XCC	_sha256.c -o _sha256 2>&3; then
+			SHA2=yes
+			SHA2_RENAMED=yes
+		elif [ -e "$1" ] && $XCC _sha256.c -lmd -o _sha256 2>&3
+		then
+			SHA2="yes (-lmd)"
+			SHA2_LIB=-lmd
+			SHA2_RENAMED=yes
+		else
+			SHA2=no
+		fi
+		echo "$SHA2"
+		rm -f _sha256.c _sha256
+	fi
+fi
+if [ "$SHA2" = no ]; then
+	echo "SHA256_SRC=	crypt/sha256.c" >>$CONFIG_MK
+else
+	echo "SHA256_SRC=" >>$CONFIG_MK
+	echo "#define SHA2_H		<$SHA2_H>" >>$CONFIG_H
+	if [ "$SHA2_RENAMED" = yes ]; then
+		echo "#define SHA256_CTX	SHA2_CTX" >>$CONFIG_H
+		echo "#define SHA256_Init	SHA256Init" >>$CONFIG_H
+		echo "#define SHA256_Update	SHA256Update" >>$CONFIG_H
+		echo "#define SHA256_Final	SHA256Final" >>$CONFIG_H
+	fi
+	[ -n "$SHA2_LIB" ] && echo "LDADD+=		$SHA2_LIB" >>$CONFIG_MK
+fi
+
+if [ "$DEV" != no -a "$UDEV" != no ]; then
+	printf "Checking for libudev ... "
+	if type pkg-config >/dev/null 2>&1; then
+		LIBUDEV_CFLAGS=$(pkg-config --cflags libudev 2>&3)
+		LIBUDEV_LIBS=$(pkg-config --libs libudev 2>&3)
+	fi
+fi
+if [ "$DEV" != no -a "$UDEV" != no -a -n "$LIBUDEV_LIBS" ]; then
+	echo "yes"
+	[ -z "$DEV" ] && DEV=yes
+	echo "DEV_PLUGINS+=	udev" >>$CONFIG_MK
+	if [ -n "$LIBUDEV_CFLAGS" ]; then
+		echo "LIBUDEV_CFLAGS=		$LIBUDEV_CFLAGS" >>$CONFIG_MK
+	fi
+	echo "LIBUDEV_LIBS=	$LIBUDEV_LIBS" >>$CONFIG_MK
+
+	printf "Checking udev_monitor_filter_add_match_subsystem_devtype ... "
+	cat <<EOF >_udev.c
+#include <libudev.h>
+#include <stdlib.h>
+int main(void) {
+	udev_monitor_filter_add_match_subsystem_devtype(NULL, NULL, NULL);
+	return 0;
+}
+EOF
+	if $XCC $LIBUDEV_CFLAGS _udev.c -o _udev $LIBUDEV_LIBS 2>&3
+	then
+		echo "yes"
+	else
+		echo "LIBUDEV_CPPFLAGS+=	-DLIBUDEV_NOFILTER" >>$CONFIG_MK
+		echo "no"
+	fi
+	rm -f _udev.c _udev
+
+	printf "Checking udev_device_get_is_initialized ... "
+	cat <<EOF >_udev.c
+#include <libudev.h>
+#include <stdlib.h>
+int main(void) {
+	udev_device_get_is_initialized(NULL);
+	return 0;
+}
+EOF
+	if $XCC $LIBUDEV_CFLAGS _udev.c -o _udev $LIBUDEV_LIBS 2>&3
+	then
+		echo "yes"
+	else
+		echo "LIBUDEV_CPPFLAGS+=	-DLIBUDEV_NOINIT" >>$CONFIG_MK
+		echo "no"
+	fi
+	rm -f _udev.c _udev
+elif [ "$DEV" != no -a "$UDEV" != no ]; then
+	echo "no"
+fi
+
+if [ "$DEV" = yes ]; then
+	echo "DHCPCD_SRCS+=	dev.c" >>$CONFIG_MK
+	echo "CPPFLAGS+=	-DPLUGIN_DEV" >>$CONFIG_MK
+	echo "MKDIRS+=	dev" >>$CONFIG_MK
+
+	printf "Testing for dlopen ... "
+	cat <<EOF >_dlopen.c
+#include <dlfcn.h>
+#include <stdlib.h>
+int main(void) {
+	dlopen(NULL, 0);
+	return 0;
+}
+EOF
+	if $XCC _dlopen.c -o _dlopen 2>&3; then
+		echo "yes"
+	elif $XCC _dlopen.c -ldl -o _dlopen 2>&3; then
+		echo "yes (-ldl)"
+		echo "LDADD+=		-ldl" >>$CONFIG_MK
+	else
+		echo "no"
+		echo "libc for dlopen is required - aborting"
+	fi
+	rm -f _dlopen.c _dlopen
+	$abort && exit 1
+fi
+
+# Transform for a make file
+SERVICEEXISTS=$(echo "$SERVICEEXISTS" | $SED \
+	-e 's:\\:\\\\:g' \
+	-e 's:\&:\\\&:g' \
+	-e 's:\$:\\\\\$\$:g' \
+)
+echo "SERVICEEXISTS=	$SERVICEEXISTS" >>config.mk
+SERVICECMD=$(echo "$SERVICECMD" | $SED \
+	-e 's:\\:\\\\:g' \
+	-e 's:\&:\\\&:g' \
+	-e 's:\$:\\\\\$\$:g' \
+)
+echo "SERVICECMD=	$SERVICECMD" >>config.mk
+SERVICESTATUS=$(echo "$SERVICESTATUS" | $SED \
+	-e 's:\\:\\\\:g' \
+	-e 's:\&:\\\&:g' \
+	-e 's:\$:\\\\\$\$:g' \
+)
+echo "SERVICESTATUS=	$SERVICESTATUS" >>config.mk
+
+HOOKS=
+if ! $HOOKSET; then
+	printf "Checking for ntpd ... "
+	NTPD=$(_which ntpd)
+	if [ -n "$NTPD" ]; then
+		echo "$NTPD (50-ntp.conf)"
+		HOOKS="$HOOKS${HOOKS:+ }50-ntp.conf"
+	else
+		echo "not found"
+	fi
+
+	printf "Checking for ypbind ... "
+	YPBIND=$(_which ypbind)
+	if [ -n "$YPBIND" ]; then
+		YPHOOK="50-ypbind"
+		if strings "$YPBIND" | $GREP -q yp\\.conf; then
+			YPHOOK="50-yp.conf"
+			YPOS="Linux"
+		elif strings "$YPBIND" | $GREP -q \\.ypservers; then
+			YPOS="NetBSD"
+			echo "YPDOMAIN_DIR=	/var/yp" >>$CONFIG_MK
+			echo "YPDOMAIN_SUFFIX=.ypservers" >>$CONFIG_MK
+		elif strings "$YPBIND" | $GREP -q /etc/yp; then
+			YPOS="OpenBSD"
+			echo "YPDOMAIN_DIR=	/etc/yp" >>$CONFIG_MK
+			echo "YPDOMAIN_SUFFIX=" >>$CONFIG_MK
+		else
+			YPOS="FreeBSD"
+			echo "YPDOMAIN_DIR=" >>$CONFIG_MK
+			echo "YPDOMAIN_SUFFIX=" >>$CONFIG_MK
+		fi
+		echo "$YPBIND ($YPHOOK${YPOS:+ }$YPOS)"
+		HOOKS="$HOOKS${HOOKS:+ }$YPHOOK"
+	else
+		echo "not found"
+	fi
+fi
+
+if cd dhcpcd-hooks; then
+	for x in $HOOKSCRIPTS; do
+		printf "Finding hook $x ... "
+		for h in [0-9][0-9]"-$x" \
+		    [0-9][0-9]"-$x.sh" \
+		    [0-9][0-9]"-$x.conf"
+		do
+			[ -e "$h" ] && break
+		done
+		if [ ! -e "$h" ]; then
+			echo "no"
+		else
+			echo "$h"
+			case " $HOOKS " in
+			*" $h "*)	;;
+			*)		HOOKS="$HOOKS${HOOKS:+ }$h";;
+			esac
+		fi
+	done
+	cd ..
+fi
+echo "HOOKSCRIPTS=	$HOOKS" >>$CONFIG_MK
+
+echo
+echo "   SYSCONFDIR =		$SYSCONFDIR"
+echo "   SBINDIR =		$SBINDIR"
+echo "   LIBDIR =		$LIBDIR"
+echo "   LIBEXECDIR =		$LIBEXECDIR"
+echo "   DBDIR =		$DBDIR"
+echo "   RUNDIR =		$RUNDIR"
+echo "   MANDIR =		$MANDIR"
+echo "   HOOKSCRIPTS =	$HOOKS"
+echo
+
+rm -f dhcpcd tests/test

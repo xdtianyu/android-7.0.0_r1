@@ -1,0 +1,31 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GSmokeTest.wardmodem_e362"
+PURPOSE = "Verify 3G modem can connect to the network."
+CRITERIA = """
+This test will fail if one of the following conditions occur:
+  - 3G modem fails to connect to network
+  - the modem is not left in a working state
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DOC = """
+  Tests that 3G modem can connect to the network
+
+  The test attempts to connect using an E362 wardmodem. The test then
+  disconnects from the network, and verifies that the modem still
+  responds to modem manager DBUS API calls.  It repeats the
+  connect/disconnect sequence several times.
+  Since this test uses the wardmodem, it has no hardware dependencies.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+test_env = test_environment.CellularWardModemTestEnvironment(
+        wardmodem_modem='e362')
+job.run_test('network_3GSmokeTest', tag='wardmodem_e362', test_env=test_env)

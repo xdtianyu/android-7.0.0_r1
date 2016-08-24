@@ -1,0 +1,30 @@
+/*
+ * This build.gradle file is to be used with the AOSP tools gradle-based build.
+ * It is not meant as a standalone build setup.
+ */
+apply plugin: 'java'
+apply plugin: 'sdk-java-lib'
+
+archivesBaseName = 'emma_device'
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ['core/data', 'core/java12', 'core/java13', 'core/java14']
+    }
+    resources {
+      srcDirs = ['core/res', 'pregenerated/res']
+    }
+  }
+}
+
+sdk {
+  common {
+    item('lib/emma.jar') {
+      into 'lib'
+    }
+    item('lib/emma_ant.jar') {
+      into 'lib'
+    }
+  }
+}

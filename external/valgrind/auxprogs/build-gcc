@@ -1,0 +1,55 @@
+#!/bin/sh -e
+
+# Simple script to build GCC natively including its prerequisites.
+#
+# Depending on your needs you maybe able to speed up the GCC build:
+#
+# (a) Do not build a c++ compiler
+#     c++ is only needed for "make check" and running regression tests
+#     --> choose  LANGUEGES=c   below
+# (b) Do not build a compiler that can produce 32-bit executables
+#     on a 64-bit platform
+#     --> choose  MULTILIB=--disable-multilib   below
+#
+# Define the following 5 variables:
+
+BUILD_DIR=/tmp/build-gcc
+INSTALL_DIR=/tmp/install
+
+GCC_VERSION=5.1.0
+LANGUAGES=c,c++
+MULTILIB=
+#LANGUAGES=c
+#MULTILIB=--disable-multilib
+
+#-----------------------------------------------------------
+# No changes should be needed below this line
+#-----------------------------------------------------------
+
+# Create build directory
+echo "...creating build directory $BUILD_DIR"
+mkdir -p $BUILD_DIR
+cd $BUILD_DIR
+
+# Download tarballs
+echo "...downloading tarball"
+wget ftp://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.bz2
+
+# Build GCC
+echo "...building GCC"
+rm -rf gcc-$GCC_VERSION
+tar xf gcc-$GCC_VERSION.tar.bz2
+cd gcc-$GCC_VERSION
+./contrib/download_prerequisites
+cd ..
+rm -rf objdir
+mkdir objdir
+cd objdir
+../gcc-$GCC_VERSION/configure --prefix=$INSTALL_DIR --disable-bootstrap \
+       $MULTILIB --enable-languages=$LANGUAGES  2>&1 > gcc-config.log
+make -s 2>&1 > gcc-make.log
+make -s install 2>&1 > gcc-install.log
+mv gcc-config.log gcc-make.log gcc-install.log ..
+
+# done
+echo "...done"

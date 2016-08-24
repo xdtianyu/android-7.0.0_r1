@@ -1,0 +1,14 @@
+URL: http://code.google.com/p/guava-libraries/source/checkout
+Version: v18.0
+License: Apache 2
+Description: "Guava: Google Core Libraries for Java 1.7"
+
+Local Modifications:
+   Replace usages of Unsafe.compareAndSwap(Int|Long) in Striped64.java with Atomic(Integer|Long)FieldUpdater classes
+   Remove usages of Unsafe in UnsignedBytes.java and use standard Java
+   Add Closeables.closeQuietly(Closeable) back in temporarily until all usages are removed
+
+Guava-libraries are a grab bag of utility libraries published by Google as
+open source, including among other things the Google collections libraries.
+
+This code is built as a static library.

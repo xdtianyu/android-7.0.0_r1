@@ -1,0 +1,26 @@
+<!-- This is a test html file for Youtube video tests. -->
+<html>
+  <body>
+    <iframe id="yt_frame" type="text/html" width="640" height="390"
+        src="http://www.youtube.com/embed/QNdT65_4xtQ?enablejsapi=1&nohtml5=1"
+        frameborder="0"></iframe>
+    <br>
+    <script>
+      var tag = document.createElement('script');
+      tag.src = "http://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      var player;
+      function onYouTubeIframeAPIReady() {
+        new YT.Player('yt_frame', {
+          events: {
+            'onReady': onPlayerReady,
+          }
+        });
+      }
+      function onPlayerReady(event) {
+        player = event.target;
+      }
+    </script>
+  </body>
+</html>

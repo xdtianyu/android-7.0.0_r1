@@ -1,0 +1,23 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'kernel_MemoryRamoop'
+AUTHOR = 'puthik'
+PURPOSE = 'Check that kernel log preserve correctly in RAM'
+TIME = 'SHORT'
+TEST_CLASS = 'kernel'
+TEST_TYPE = 'server'
+ATTRIBUTES = "suite:experimental"
+SUITE = 'experimental'
+
+DOC = """
+This test verify that /dev/pstore/console-ramoops is preserved correctly
+after system reboot/kernel crash and also verify integrity of that log.
+"""
+
+def run_kernel_MemoryRamoop(machine):
+    job.run_test('kernel_MemoryRamoop', client_ip=machine)
+
+job.parallel_simple(run_kernel_MemoryRamoop, machines)
+

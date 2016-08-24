@@ -1,0 +1,28 @@
+# Copyright (c) 2009 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Kobic@codeaurora.org (Kobi Cohen-Arazi)"
+NAME = "platform_Rootdev"
+PURPOSE = "Test rootdev correctness on x86 and arm"
+CRITERIA = """
+Will check it with options to rootdev e.g. -d
+on x86 it should be /dev/sd{a,b} (-d) or /dev/sd{a,b}3
+on arm is should be /dev/mmcblk{0,1} (-d) or /dev/mmcblk{0,1}p3
+"""
+ATTRIBUTES = "suite:regression"
+SUITE = "regression"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+Definitions of the results:
+
+on x86 it should be /dev/sda (-d) or /dev/sda3
+on arm is should be /dev/mmcblk{0,1} (-d) or /dev/mmcblk{0,1}p3
+
+"""
+
+job.run_test('platform_Rootdev')

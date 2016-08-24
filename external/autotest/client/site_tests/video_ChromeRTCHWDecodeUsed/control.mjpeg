@@ -1,0 +1,28 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_ChromeCameraMJpegHWDecodeUsed"
+PURPOSE = "Verify MJPEG camera video are HW accelerated."
+ATTRIBUTES = "suite:bvt-cq, suite:partners"
+SUITE = "bvt-cq, partners"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES = "hw_jpeg_acc_dec"
+JOB_RETRIES = 2
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+Verify MJPEG camera video streams are HW accelerated.
+"""
+
+job.run_test('video_ChromeRTCHWDecodeUsed',
+             video_name='crowd720_25frames.mjpeg',
+             histogram_name='Media.VideoCaptureGpuJpegDecoder.InitDecodeSuccess',
+             histogram_bucket_val=1)

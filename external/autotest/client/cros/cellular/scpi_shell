@@ -1,0 +1,55 @@
+#!/usr/bin/python
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""Interact with a SCPI device, checking for errors each time."""
+
+import cellular_system_error
+import logging
+import prologix_scpi_driver
+import scpi
+import sys
+
+try:
+    [target] = sys.argv[1:]
+except ValueError:
+    print 'usage: %s gpib_host_name' % sys.argv[0]
+    # Default to the PXT.
+    target = '172.22.50.244'
+
+logging.basicConfig(level=logging.INFO)
+
+driver = prologix_scpi_driver.PrologixScpiDriver(hostname=target,
+                                                 port=1234,
+                                                 read_timeout_seconds=1)
+s = scpi.Scpi(driver)
+s.opc_on_stanza = False
+
+while True:
+    try:
+        line = raw_input('scpi> ').rstrip()
+    except EOFError:
+        print
+        exit(0)
+
+    try:
+        if line[-1:] == '?':
+            try:
+                s.Query(line)
+            #  Catch everything, we always want to try to recover.
+            except Exception:
+                print "**************"
+                print "Query did not result in any data before the timeout"
+                print "**************"
+        else:
+            try:
+                s.SendStanza([line])
+            #  Catch everything, we always want to try to recover.
+            except Exception as e:
+                print "**************"
+                print "Command failed"
+                print "**************"
+
+    except cellular_system_error:
+        continue

@@ -1,0 +1,49 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "kernel_usb"
+PURPOSE = "USB peripherals detection."
+CRITERIA = "All tests with SUITE=kernel_usb must pass."
+
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This is the kernel_usb test suite.
+
+This suite is meant to cover boards on different kernel version
+for ARM and non-ARM boards. USB detection tests will be exercizing
+short detect tests and stress scenarios.
+Consistent failure to detect peripherals will indicate kernel
+regression.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on.  Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+_BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'Cr-OS-Kernel', 'KernelUsb-Bug'],
+    'owner': 'kalin@chromium.org',
+}
+
+
+args_dict['add_experimental'] = True
+args_dict['bug_template'] = _BUG_TEMPLATE
+args_dict['name'] = 'kernel_usb'
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['job'] = job
+
+dynamic_suite.reimage_and_run(**args_dict)

@@ -1,0 +1,19 @@
+touch_ScrollDirection test uses four gesture files that scroll. All scrolls
+recorded should be unaccelerated and done in a single motion (i.e. do not
+lift fingers and continue to scroll). Having the scroll stop in the middle of
+the test would break the test. The gesture files for each device recorded are:
+
+<DEVICE NAME>_touchpad_Touch ID_scroll-down  - Two finger scroll on touchpad in downward direction.
+<DEVICE NAME>_touchpad_Touch ID_scroll-right - Two finger scroll on touchpad in right direction.
+<DEVICE NAME>_touchpad_Touch ID_scroll-left  - Two finger scroll on touchpad in left direction.
+<DEVICE NAME>_touchpad_Touch ID_scroll-up    - Two finger scroll on touchpad in upward direction.
+
+To position the cursor on center of page, center_cursor gesture file is used:
+
+center_cursor - Use mouse to move the mouse pointer to center of the screen.
+                We do not know where the pointer would show up at the start
+                of this test so must ensure that any starting cursor position
+                will result in a centered cursor. Move the cursor well into a
+                corner of the screen, and then move the cursor back to center of
+                the test page. Do not pause the movement until pointer is at
+                the center of page.

@@ -1,0 +1,21 @@
+
+<LocationMatch "^/(afe|tko|new_tko|loginz).*">
+    AuthType google-sso
+    AuthName ChromeOSAutotest
+    RpMode v2_v1accepted
+    KeysFile /var/lib/mod_google_sso/verifiers
+    TicketSigningKey /etc/apache2/google_sso/login.crt
+    ServiceRoot /
+    LoginServer https://login.corp.google.com
+    Require group eng eng-intern chromeos-testing android-comms-tvc nonconf
+    Order allow,deny
+    allow from all
+</LocationMatch>
+
+<LocationMatch "^/(afe|new_tko)/server/noauth/">
+    Order allow,deny
+    Allow from all
+    Satisfy any
+</LocationMatch>
+
+

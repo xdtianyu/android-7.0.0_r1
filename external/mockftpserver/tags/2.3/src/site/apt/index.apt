@@ -1,0 +1,57 @@
+		--------------------------------------------------
+								Home
+		--------------------------------------------------
+
+MockFtpServer
+~~~~~~~~~~~~~
+
+  The <<MockFtpServer>> project provides a mock/dummy FTP server implementations that can be very 
+  useful for testing of FTP client code. Two FTP Server implementations are provided, each at a different
+  level of abstraction.
+
+  <<FakeFtpServer>> provides a higher-level abstraction for an FTP server and is suitable for most testing
+  and simulation scenarios. You define a filesystem (virtual, in-memory) containing an arbitrary set of
+  files and directories. These files and directories can (optionally) have associated access permissions.
+  You also configure a set of one or more user accounts that control which users can login to the FTP server,
+  and their home (default) directories. The user account is also used when assigning file and directory
+  ownership for new files. See {{{fakeftpserver-features.html}FakeFtpServer Features and Limitations}}.
+
+  <<StubFtpServer>> is a "stub" implementation of an FTP server. It supports the main FTP commands by
+  implementing command handlers for each of the corresponding low-level FTP server commands (e.g. RETR,
+  DELE, LIST). These <CommandHandler>s can be individually configured to return custom data or reply codes,
+  allowing simulation of a complete range of both success and failure scenarios. The <CommandHandler>s can
+  also be interrogated to verify command invocation data such as command parameters and timestamps.
+  See {{{stubftpserver-features.html}StubFtpServer Features and Limitations}}.
+
+  See the {{{fakeftpserver-versus-stubftpserver.html}FakeFtpServer or StubFtpServer?}} page for more
+  information on deciding whether to use <<FakeFtpServer>> or <<StubFtpServer>>.
+
+  The <<MockFtpServer>> project is written in Java, and is ideally suited to testing Java code. But because
+  communication with the FTP server is across the network using sockets, it can be used to test FTP client 
+  code written in any language.
+
+
+* Requirements
+~~~~~~~~~~~~~~
+
+  The <<MockFtpServer>> project requires:
+
+  *  Java (JDK) version 1.4 or later
+
+  * The {{{http://logging.apache.org/log4j/index.html}Log4J}} jar, version 1.2.13 or later, accessible on the CLASSPATH.
+
+
+* Maven Support
+~~~~~~~~~~~~~~~
+
+  For projects built using {{{http://maven.apache.org/}Maven}}, <<MockFtpServer>> is now available
+  from the <<Maven Central Repository>>. Add a dependency to your POM like this:
+
+--------------------
+  <dependency>
+    <groupId>org.mockftpserver</groupId>
+    <artifactId>MockFtpServer</artifactId>
+    <version>2.3</version>
+    <scope>test</scope>
+  </dependency>
+--------------------

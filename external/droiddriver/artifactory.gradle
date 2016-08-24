@@ -1,0 +1,42 @@
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.artifactory'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId ddGroup
+            artifactId ddArtifactId
+            version ddVersion
+            artifact "${project.buildDir}/outputs/aar/${project.name}-release.aar"
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml { xmlProvider ->
+                // Create string from project.ext.pomXml
+                def pomString = new StringWriter()
+                pomXml.writeTo(pomString)
+                pomString = pomString.toString()
+
+                // Replace default xml with pomXml
+                def xmlStringBuilder = xmlProvider.asString()
+                xmlStringBuilder.setLength(0)
+                xmlStringBuilder.append(pomString)
+            }
+        }
+    }
+}
+
+artifactory {
+    contextUrl = 'http://oss.jfrog.org/artifactory'
+    publish {
+        repository {
+            repoKey = 'oss-snapshot-local'
+            username = bintrayUser
+            password = bintrayKey
+            maven = true
+        }
+        defaults {
+            publications('mavenJava')
+        }
+    }
+}

@@ -1,0 +1,23 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Enforces a whitelist of known, allowed processes with open network listens
+"""
+NAME = "security_NetworkListeners"
+PURPOSE = "To maintain a minimal set of network-facing attack surface"
+CRITERIA = """
+Fail if the list of processes listening on the network doesn't match the
+baseline
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+job.run_test("security_NetworkListeners")

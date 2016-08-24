@@ -1,0 +1,30 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Project, chromeos-video@google.com"
+NAME = "video_ChromeVidResChangeHWDecode.vp8"
+PURPOSE = "Verify that VDA works for VP8 resolution-changing video."
+CRITERIA = """
+This test will fail if VDA doesn't work for webm resolution-changing video.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES = "hw_video_acc_vp8"
+JOB_RETRIES = 2
+BUG_TEMPLATE = {
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+    'cc': ['chromeos-video-test-failures@google.com'],
+}
+
+DOC = """
+This test verifies VP8 resolution-changing video decode acceleration works.
+"""
+
+video = ('http://commondatastorage.googleapis.com/'
+            'chromiumos-test-assets-public/MSE/switch_1080p_720p.webm')
+job.run_test('video_ChromeVidResChangeHWDecode', video_file=video, video_len=30)

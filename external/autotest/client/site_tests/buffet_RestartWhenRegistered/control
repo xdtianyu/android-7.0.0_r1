@@ -1,0 +1,17 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'zeuthen, wiley, avakulenko'
+NAME = 'buffet_RestartWhenRegistered'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:tendo_experimental"
+SUITE = 'tendo_experimental'
+
+DOC = """
+Test that buffet keeps registration details across restarts.
+"""
+
+
+job.run_test('buffet_RestartWhenRegistered')

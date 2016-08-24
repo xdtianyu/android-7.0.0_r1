@@ -1,0 +1,25 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "hardware_LightSensor"
+PURPOSE = "Verify the Light Sensor Device is supported."
+CRITERIA = """
+Fails if the light sensor kernel module is not loaded, or its sys files
+are not exported.
+"""
+ATTRIBUTES = "suite:hwqual"
+SUITE = "hwqual"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+
+DOC = """
+This tests the interface provided by the light sensor kernel module for
+controlling various light sensors (TSL2560/1/2/3, ISL29018, etc)
+light-to-digital converters (ie, light sensor chips).
+"""
+
+job.run_test('hardware_LightSensor')

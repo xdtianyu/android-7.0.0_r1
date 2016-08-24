@@ -1,0 +1,26 @@
+apply plugin: 'java'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+}
+
+dependencies {
+    compile getAndroidPrebuilt('18')
+    compile files('lib/main/android-support-v4.jar')
+    compile files('lib/main/commons-codec-1.6.jar')
+    compile files('lib/main/commons-logging-1.1.1.jar')
+    compile files('lib/main/httpclient-4.0.3.jar')
+    compile files('lib/main/httpcore-4.0.1.jar')
+    compile files('lib/main/javassist-3.14.0-GA.jar')
+    compile files('lib/main/json-20080701.jar')
+    compile files('lib/main/maps_v16.jar')
+    compile files('lib/main/sqlite-jdbc-3.7.2.jar')
+    compile files('lib/main/xpp3-1.1.4c.jar')
+    compile project(':hamcrest')
+    compile project(path: ':junit', configuration: 'host')
+    compile project(':objenesis')
+}

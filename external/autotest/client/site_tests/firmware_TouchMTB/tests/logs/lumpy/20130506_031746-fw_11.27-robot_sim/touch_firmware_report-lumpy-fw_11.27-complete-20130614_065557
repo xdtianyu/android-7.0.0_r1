@@ -1,0 +1,204 @@
+    Record program: mtplot /dev/input/event6 -d :0 -g 1024x544+0+256
+    
+[1;34m<one_finger_physical_click>[0m:
+    Use one finger to physically click the [1;32mcenter[0m of the touch surface.
+    
+
+    CountTrackingIDValidator
+        count of trackid IDs: 1
+        criteria_str: == 1
+    score: 1.000000
+    
+
+    PhysicalClickValidator
+        Count of 1-finger physical clicks: 1
+        criteria_str: == 1
+    score: 1.000000
+    
+
+    ReportRateValidator
+        Report rate: 86.01 Hz
+        criteria_str: >= 60
+    score: 1.000000
+    
+
+    StationaryFingerValidator
+        Largest distance slot0: 4 px
+        criteria_str: <= 20, ~ +20
+    score: 1.000000
+    (saved: /var/tmp/touch_firmware_test/20130506_031746-fw_11.27-robot_sim/one_finger_physical_click.center-lumpy-fw_11.27-complete-20130614_065557.dat)
+
+    
+[1;34m<one_finger_physical_click>[0m:
+    Use one finger to physically click the [1;32mbottom left corner[0m of the touch surface.
+    
+
+    CountTrackingIDValidator
+        count of trackid IDs: 1
+        criteria_str: == 1
+    score: 1.000000
+    
+
+    PhysicalClickValidator
+        Count of 1-finger physical clicks: 1
+        criteria_str: == 1
+    score: 1.000000
+    
+
+    ReportRateValidator
+        Report rate: 83.63 Hz
+        criteria_str: >= 60
+    score: 1.000000
+    
+
+    StationaryFingerValidator
+        Largest distance slot0: 11 px
+        criteria_str: <= 20, ~ +20
+    score: 1.000000
+    (saved: /var/tmp/touch_firmware_test/20130506_031746-fw_11.27-robot_sim/one_finger_physical_click.bottom_left-lumpy-fw_11.27-complete-20130614_065601.dat)
+
+    
+[1;34m<one_finger_physical_click>[0m:
+    Use one finger to physically click the [1;32mbottom side[0m of the touch surface.
+    
+
+    CountTrackingIDValidator
+        count of trackid IDs: 1
+        criteria_str: == 1
+    score: 1.000000
+    
+
+    PhysicalClickValidator
+        Count of 1-finger physical clicks: 1
+        criteria_str: == 1
+    score: 1.000000
+    
+
+    ReportRateValidator
+        Report rate: 93.44 Hz
+        criteria_str: >= 60
+    score: 1.000000
+    
+
+    StationaryFingerValidator
+        Largest distance slot0: 8 px
+        criteria_str: <= 20, ~ +20
+    score: 1.000000
+    (saved: /var/tmp/touch_firmware_test/20130506_031746-fw_11.27-robot_sim/one_finger_physical_click.bottom_side-lumpy-fw_11.27-complete-20130614_065603.dat)
+
+    
+[1;34m<one_finger_physical_click>[0m:
+    Use one finger to physically click the [1;32mbottom right corner[0m of the touch surface.
+    
+
+    CountTrackingIDValidator
+        count of trackid IDs: 1
+        criteria_str: == 1
+    score: 1.000000
+    
+
+    PhysicalClickValidator
+        Count of 1-finger physical clicks: 1
+        criteria_str: == 1
+    score: 1.000000
+    
+
+    ReportRateValidator
+        Report rate: 90.44 Hz
+        criteria_str: >= 60
+    score: 1.000000
+    
+
+    StationaryFingerValidator
+        Largest distance slot0: 6 px
+        criteria_str: <= 20, ~ +20
+    score: 1.000000
+    (saved: /var/tmp/touch_firmware_test/20130506_031746-fw_11.27-robot_sim/one_finger_physical_click.bottom_right-lumpy-fw_11.27-complete-20130614_065605.dat)
+
+    
+[1;34m<two_fingers_physical_click>[0m:
+    Use two fingers physically click the center of the touch surface.
+    
+
+    CountTrackingIDValidator
+        count of trackid IDs: 2
+        criteria_str: == 2
+    score: 1.000000
+    
+
+    PhysicalClickValidator
+        Count of 2-finger physical clicks: 1
+        criteria_str: == 1
+    score: 1.000000
+    
+
+    ReportRateValidator
+        Report rate: 92.33 Hz
+        criteria_str: >= 60
+    score: 1.000000
+    
+
+    StationaryFingerValidator
+        Largest distance slot0: 18 px
+        criteria_str: <= 100, ~ +100
+    score: 1.000000
+    
+
+    StationaryFingerValidator
+        Largest distance slot1: 14 px
+        criteria_str: <= 100, ~ +100
+    score: 1.000000
+    (saved: /var/tmp/touch_firmware_test/20130506_031746-fw_11.27-robot_sim/two_fingers_physical_click-lumpy-fw_11.27-complete-20130614_065607.dat)
+
+    
+[1;34m<one_finger_tracking>[0m:
+    Take [1;32m3 seconds[0m to draw a straight, [1;32mhorizontal[0m line [1;32mfrom left to right[0m using a ruler.
+    
+
+    CountTrackingIDValidator
+        count of trackid IDs: 1
+        criteria_str: == 1
+    score: 1.000000
+    
+
+    Linearity(Middle)Validator
+        ave fitting error: 4.88 px
+        deviation slot0: 0.49 mm
+        criteria_str: <= 0.8, ~ +2.4
+    score: 1.000000
+    
+
+    Linearity(BothEnds)Validator
+        ave fitting error: 14.69 px
+        deviation slot0: 1.47 mm
+        criteria_str: <= 0.8, ~ +2.4
+    score: 0.820138
+    
+
+    NoGapValidator
+        Largest gap ratio slot0: 1.720465
+        criteria_str: <= 1.8, ~ +1.0
+    score: 1.000000
+    
+
+    NoReversedMotion(Middle)Validator
+        Reversed motions slot0: {'X': 0} px
+        criteria_str: <= 5, ~ +30
+    score: 1.000000
+    
+
+    NoReversedMotion(BothEnds)Validator
+        Reversed motions slot0: {'X': -2} px
+        criteria_str: <= 5, ~ +30
+    score: 1.000000
+    
+
+    ReportRateValidator
+        Report rate: 112.55 Hz
+        criteria_str: >= 60
+    score: 1.000000
+    
+[1;34m<one_finger_tracking>[0m:
+    Take [1;32m1 second[0m to draw a straight, [1;32mhorizontal[0m line [1;32mfrom left to right[0m using a ruler.
+    (deleted: /var/tmp/touch_firmware_test/20130506_031746-fw_11.27-robot_sim/one_finger_tracking.left_to_right.normal-lumpy-fw_11.27-complete-20130614_065610.dat)
+

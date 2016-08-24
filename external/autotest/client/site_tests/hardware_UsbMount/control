@@ -1,0 +1,30 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.cros import storage as storage_mod
+
+NAME = "hardware_UsbMount"
+AUTHOR = "Cosimo Alfarano <cosimo.alfarano@collabora.co.uk"
+PURPOSE = "Verify a USB drive can mount/umount"
+CRITERIA = """Fails if it cannot issue mount/umount commands or if filesystem
+is not still mounted after suspend.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+
+DOC = """
+Mounts/umounts several times a filesystem, creating a file and checking it"s
+presence/content integrity in beetween mountng cycles.
+
+Also checks that after suspending with the file system mounted and resuming,
+the file sysem is still mounted
+
+This test requires a USB drive inserted before the test begins.
+This test will prepare the USB drive formatting its partition before starting
+the test.
+"""
+
+job.run_test("hardware_UsbMount")

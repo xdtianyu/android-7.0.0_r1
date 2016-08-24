@@ -1,0 +1,22 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "sonnyrao@chromium.org (Sonny Rao)"
+DOC = """
+This test is to make sure the cpu frequency minimum and maximum values
+can be adjusted.
+"""
+NAME = "kernel_CpufreqMinMax"
+PURPOSE = ""
+CRITERIA = """
+Fails if cpufreq min or max settings cannot be adjusted.
+"""
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+
+job.run_test('kernel_CpufreqMinMax')

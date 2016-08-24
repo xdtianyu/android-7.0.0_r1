@@ -1,0 +1,42 @@
+From 0e9cf719da76a6da8dd8b67517198490a9b9b271 Mon Sep 17 00:00:00 2001
+From: "Ilja H. Friedel" <ihf@chromium.org>
+Date: Tue, 27 Oct 2015 21:59:58 -0700
+Subject: [PATCH 1/2] Patch index.html
+
+so it works with autotest graphics_WebGLPerformance.
+
+BUG=chromium:341333
+---
+ index.html | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/index.html b/index.html
+index 66b498b..0d0891b 100644
+--- a/index.html
++++ b/index.html
+@@ -13,6 +13,10 @@
+   var sumOfResults = 0;
+   var sumOfLogResults = 0;
+   var numberOfResults = 0;
++  // These variables are used to communicate with autotest.
++  var test_report = "Tests did not complete.";
++  var time_ms_geom_mean = -1.0;
++  var test_completed = false;
+   var rawResults = {};
+   var useiframe = document.location.hash.indexOf("useWindow") == -1;
+   var testwindow;
+@@ -67,7 +71,10 @@
+     }
+     t += "</table>";
+     resultsDiv.innerHTML = t;
+-
++    // Fill out copy of results for autotest harness.
++    time_ms_geom_mean = Math.round(100 * Math.exp(sumOfLogResults / numberOfResults)) / 100;
++    test_report = t;
++    test_completed = true;
+     if (window.SpeedTests) {
+       // we loaded the speedtest framework, so send the results
+       var sr = { value: Math.exp(sumOfLogResults / numberOfResults),
+-- 
+2.1.2
+

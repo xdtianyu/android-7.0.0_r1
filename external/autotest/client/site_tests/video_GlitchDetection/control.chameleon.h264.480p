@@ -1,0 +1,39 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Mussa Kiroga"
+NAME = "video_GlitchDetection_chameleon_h264_480p"
+PURPOSE = "Verify that Chrome Video Playback is glitch and corruption free"
+CRITERIA = """
+
+"""
+ATTRIBUTES = "suite:video_image_comparison_chameleon"
+SUITE = "video_image_comparison_chameleon"
+TIME = "LONG"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES = "video_glitch_detection, chameleon:hdmi"
+BUG_TEMPLATE = {
+    'owner': 'avkodipelli@chromium.org',
+    'cc': ['mussa@chromium.org', 'rohitbm@chromium.org'],
+    'labels': ['VideoTestFailure', 'OS-Chrome']
+}
+
+DOC = """
+This test uses cloud based image comparison to determine test PASS or FAIL.
+Images are captured using Chameleon and compared locally first. If that
+comparison fails, images will be uploaded to a web comparer for viewing test
+results.
+
+"""
+host = next(iter(job.hosts))
+
+job.run_test('video_GlitchDetection',
+              source_path=('https://storage.googleapis.com/'
+              'chromiumos-test-assets-public/Shaka-Dash/480.mp4'),
+              codec='h264',
+              resolution='480p',
+              host=host,
+              args=args)

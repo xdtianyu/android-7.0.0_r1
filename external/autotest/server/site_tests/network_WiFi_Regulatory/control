@@ -1,0 +1,36 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, wiley, quiche'
+NAME = 'network_WiFi_Regulatory'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:wifi_matfunc, suite:wifi_matfunc_bcm4371'
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test verifies that DUT will move off-channel if it is sent a
+Spectrum Management action frame that contains a Channel Move
+element.  Such frames are sent on a DFS network to vacate the
+channel if radar is detected.
+"""
+
+
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    a_mode = hostap_config.HostapConfig.MODE_11A
+    configurations = [
+	(hostap_config.HostapConfig(
+	    channel=64, mode=a_mode, spectrum_mgmt_required=True), 36)]
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_Regulatory',
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=configurations)
+
+
+parallel_simple(run, machines)

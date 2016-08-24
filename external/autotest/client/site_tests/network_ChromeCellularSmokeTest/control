@@ -1,0 +1,27 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_ChromeCellularSmokeTest"
+PURPOSE = "Verify that chrome.networkingPrivate can connect to the network"
+CRITERIA = """
+  The test will fail if the Chrome fails to connect to the network or if shill
+  or the pseudomodem are not left in a working state.
+"""
+ATTRIBUTES = "suite:network_ui"
+SUITE = "network_ui"
+TIME = "FAST"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DOC = """
+  Tests that Chrome can bring the network to a connected state and effectively
+  access the internet through the cellular network. The test repeats a
+  connect/disconnect sequence several times and makes sure that Chrome can
+  always connect to the network via chrome.networkingPrivate.
+"""
+
+job.run_test('network_ChromeCellularSmokeTest', family='3GPP', tag='3GPP')
+job.run_test('network_ChromeCellularSmokeTest', family='CDMA', tag='CDMA')
+

@@ -1,0 +1,26 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "kernel_AsyncDriverProbe"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Verify kernel correctly implements asynchronous driver probing"
+CRITERIA = """
+   Fails if device registration for devices controlled by drivers requesting
+   asynchronous probing takes too long.
+"""
+TIME = "SHORT"
+ATTRIBUTES = "suite:kernel_per-build_regression"
+SUITE = "kernel_per-build_regression"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+
+DOC = """
+    Checks that the kernel correctly implements asynchronous probing for
+    drivers that request it by checking time needed to execute
+    platform_device_register() and platform_driver_register() calls with
+    driver that takes 10 secs to probe device.
+"""
+
+job.run_test('kernel_AsyncDriverProbe')

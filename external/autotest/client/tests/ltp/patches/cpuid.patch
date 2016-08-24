@@ -1,0 +1,180 @@
+From 397690adc6271011fd191c3b1fbb888e0726a1df Mon Sep 17 00:00:00 2001
+From: Mike Frysinger <vapier@gentoo.org>
+Date: Thu, 8 Mar 2012 18:34:38 -0500
+Subject: [PATCH] cpuid: add common header
+
+Add a helper function for people to execute the cpuid asm code.
+This takes care of all the ugly asm issues (such as PIC/ebx).
+
+Signed-off-by: Mike Frysinger <vapier@gentoo.org>
+---
+ include/ltp_cpuid.h                                |   31 ++++++++++++++++++++
+ .../sched/hyperthreading/ht_affinity/ht_utils.c    |   17 +---------
+ .../sched/hyperthreading/ht_enabled/ht_utils.c     |   17 +---------
+ .../sched/hyperthreading/ht_interrupt/ht_utils.c   |   17 +---------
+ 4 files changed, 37 insertions(+), 45 deletions(-)
+ create mode 100644 include/ltp_cpuid.h
+
+diff --git a/include/ltp_cpuid.h b/include/ltp_cpuid.h
+new file mode 100644
+index 0000000..9052e29
+--- /dev/null
++++ b/include/ltp_cpuid.h
+@@ -0,0 +1,31 @@
++/*
++ * Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
++ *
++ * Licensed under the BSD 3-clause.
++ */
++
++#ifndef __LTP_CPUID_H__
++#define __LTP_CPUID_H__
++
++static inline void cpuid(unsigned int info, unsigned int *eax, unsigned int *ebx,
++                         unsigned int *ecx, unsigned int *edx)
++{
++#if defined(__i386__) || defined(__x86_64__)
++	unsigned int _eax = info, _ebx, _ecx, _edx;
++	asm volatile(
++		"mov %%ebx, %%edi;" // save ebx (for PIC)
++		"cpuid;"
++		"mov %%ebx, %%esi;" // pass to caller
++		"mov %%edi, %%ebx;" // restore ebx
++		: "+a" (_eax), "=S" (_ebx), "=c" (_ecx), "=d" (_edx)
++		:       /* inputs: eax is handled above */
++		: "edi" /* clobbers: we hit edi directly */
++	);
++	if (eax) *eax = _eax;
++	if (ebx) *ebx = _ebx;
++	if (ecx) *ecx = _ecx;
++	if (edx) *edx = _edx;
++#endif
++}
++
++#endif
+diff --git a/testcases/kernel/sched/hyperthreading/ht_affinity/ht_utils.c b/testcases/kernel/sched/hyperthreading/ht_affinity/ht_utils.c
+index 2f9b841..54167dd 100644
+--- a/testcases/kernel/sched/hyperthreading/ht_affinity/ht_utils.c
++++ b/testcases/kernel/sched/hyperthreading/ht_affinity/ht_utils.c
+@@ -6,6 +6,7 @@
+ #include <alloca.h>
+ #include <string.h>
+ #include <linux/unistd.h>
++#include "ltp_cpuid.h"
+ 
+ #define PROC_PATH	"/proc"
+ #define BUFF_SIZE	8192
+@@ -15,27 +16,13 @@
+ 
+ char buffer[BUFF_SIZE];
+ 
+-inline void cpuid(int op, int *eax, int *ebx, int *ecx, int *edx)
+-{
+-#if (!defined __i386__ && !defined __x86_64__)
+-	return;
+-#else
+-	__asm__("cpuid"
+-		: "=a" (*eax),
+-		  "=b" (*ebx),
+-		  "=c" (*ecx),
+-		  "=d" (*edx)
+-		: "0" (op));
+-#endif
+-}
+-
+ int is_ht_cpu()
+ {
+ 	/*Number of logic processor in a physical processor*/
+ 	int smp_num_siblings = -1;
+ 	/*ht flag*/
+ 	int ht = -1;
+-	int eax,ebx,ecx,edx;
++	unsigned int eax,ebx,ecx,edx;
+ 	cpuid(1,&eax,&ebx,&ecx,&edx);
+ 	smp_num_siblings = (ebx&0xff0000) >> 16;
+ 	ht = (edx&0x10000000) >> 28;
+diff --git a/testcases/kernel/sched/hyperthreading/ht_enabled/ht_utils.c b/testcases/kernel/sched/hyperthreading/ht_enabled/ht_utils.c
+index 3cb1e54..fdb545a 100644
+--- a/testcases/kernel/sched/hyperthreading/ht_enabled/ht_utils.c
++++ b/testcases/kernel/sched/hyperthreading/ht_enabled/ht_utils.c
+@@ -6,6 +6,7 @@
+ #include <alloca.h>
+ #include <string.h>
+ #include <linux/unistd.h>
++#include "ltp_cpuid.h"
+ 
+ #define PROC_PATH	"/proc"
+ #define BUFF_SIZE	8192
+@@ -18,27 +19,13 @@
+ 
+ char buffer[BUFF_SIZE];
+ 
+-inline void cpuid(int op, int *eax, int *ebx, int *ecx, int *edx)
+-{
+-#if (!defined __i386__ && !defined __x86_64__)
+-	return;
+-#else
+-	__asm__("cpuid"
+-		: "=a" (*eax),
+-		  "=b" (*ebx),
+-		  "=c" (*ecx),
+-		  "=d" (*edx)
+-		: "0" (op));
+-#endif
+-}
+-
+ int is_ht_cpu()
+ {
+ 	/*Number of logic processor in a physical processor*/
+ 	int smp_num_siblings = -1;
+ 	/*ht flag*/
+ 	int ht = -1;
+-	int eax,ebx,ecx,edx;
++	unsigned int eax,ebx,ecx,edx;
+ 	cpuid(1,&eax,&ebx,&ecx,&edx);
+ 	smp_num_siblings = (ebx&0xff0000) >> 16;
+ 	ht = (edx&0x10000000) >> 28;
+diff --git a/testcases/kernel/sched/hyperthreading/ht_interrupt/ht_utils.c b/testcases/kernel/sched/hyperthreading/ht_interrupt/ht_utils.c
+index d8bbdab..e829b31 100644
+--- a/testcases/kernel/sched/hyperthreading/ht_interrupt/ht_utils.c
++++ b/testcases/kernel/sched/hyperthreading/ht_interrupt/ht_utils.c
+@@ -6,6 +6,7 @@
+ #include <alloca.h>
+ #include <string.h>
+ #include <linux/unistd.h>
++#include "ltp_cpuid.h"
+ 
+ #define PROC_PATH	"/proc"
+ #define BUFF_SIZE	8192
+@@ -58,27 +59,13 @@ int is_ht_kernel()
+ 	return 0;
+ }
+ 
+-inline void cpuid(int op, int *eax, int *ebx, int *ecx, int *edx)
+-{
+-#if (!defined __i386__ && !defined __x86_64__)
+-	return;
+-#else
+-	__asm__("cpuid"
+-		: "=a" (*eax),
+-		  "=b" (*ebx),
+-		  "=c" (*ecx),
+-		  "=d" (*edx)
+-		: "0" (op));
+-#endif
+-}
+-
+ int is_ht_cpu()
+ {
+ 	/*Number of logic processor in a physical processor*/
+ 	int smp_num_siblings = -1;
+ 	/*ht flag*/
+ 	int ht = -1;
+-	int eax,ebx,ecx,edx;
++	unsigned int eax,ebx,ecx,edx;
+ 	cpuid(1,&eax,&ebx,&ecx,&edx);
+ 	smp_num_siblings = (ebx&0xff0000) >> 16;
+ 	ht = (edx&0x10000000) >> 28;
+-- 
+1.7.8.4
+

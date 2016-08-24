@@ -1,0 +1,51 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+import logging
+
+from autotest_lib.client.common_lib import error, utils
+
+
+AUTHOR = "sbasi, chromeos-lab-infrastructure@google.com"
+NAME = "generic_RebootTest"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Generic"
+TEST_TYPE = "server"
+
+DOC = """
+This server side test checks if a host, specified through the command line,
+can successfully reboot. It automatically detects the type of the host,
+creates the appropriate host object, and calls reboot on the host object.
+
+Example usage:
+test_that generic_RebootTest <sonic/cros/beaglobonedevice ip> --board=<board>
+A note about --board: <unless you're emerging sonic sources you
+can just use a chromeos board here, as all we need is test_that
+from the sysroot>.
+
+Typically, for the case of an adb host, we can send adb commands to the
+android device either through usb or tcp. If no device_hostname is specified
+the adb commands are sent to the android device over usb, via the beaglebone,
+whereas if the ip of the android device is specified through device_hostname
+we'll send the adb commands over tcp.
+"""
+
+args_dict = utils.args_to_dict(args)
+
+def run_reboot_test(machine):
+    device_hostname = args_dict.get('device_hostname', None)
+    try:
+        host = hosts.create_host(machine,
+                                 device_hostname=device_hostname)
+    except error.AutoservError as e:
+        raise error.AutoservError(
+            'Failed to create host for %s: %s. If this is an android host that '
+            'requires a beaglebone jump host, you need to specify the device '
+            'hostname through test_that --args="device_hostname=<android ip>".'
+            % (machine, e))
+
+    job.run_test("generic_RebootTest", host=host, disable_sysinfo=True)
+
+
+parallel_simple(run_reboot_test, machines)

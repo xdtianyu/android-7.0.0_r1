@@ -1,0 +1,42 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Harpreet Grewal <harpreet@chromium.org>"
+NAME = "hotrod"
+PURPOSE = "Automated testing of hotrod."
+CRITERIA = "All tests with SUITE=hotrod must pass."
+
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "server"
+
+DOC = """
+This suite runs the set of hotrod tests on various CFM devices in the lab.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+# Values specified in this bug template will override default values when
+# filing bugs on tests that are a part of this suite. If left unspecified
+# the bug filer will fallback to it's defaults.
+_BUG_TEMPLATE = {
+    'labels': ['Proj-Hotrod', 'Hotrod-Auto-Bug'],
+    'owner': 'harpreet@chromium.org',
+    'status': None,
+    'summary': None,
+    'title': None,
+    'cc': ['dtosic@chromium.org', 'stevenh@chromium.org',
+           'vidster@chromium.org', 'jennyz@chromium.org']
+}
+
+args_dict['name'] = 'hotrod'
+args_dict['add_experimental'] = True
+args_dict['bug_template'] = _BUG_TEMPLATE
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['job'] = job
+
+dynamic_suite.reimage_and_run(**args_dict)

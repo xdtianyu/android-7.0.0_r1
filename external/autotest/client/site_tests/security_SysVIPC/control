@@ -1,0 +1,17 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME = "SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = "Security tripwire for SysV IPC attack surfaces"
+NAME = "security_SysVIPC"
+PURPOSE = "Detect emergence of new attack surfaces in SysV IPC"
+CRITERIA = "Fails if shm, mqueues, or semaphores do not match expectations."
+ATTRIBUTES = "suite:security"
+SUITE = "security"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+
+job.run_test("security_SysVIPC")

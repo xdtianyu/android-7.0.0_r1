@@ -1,0 +1,14 @@
+<html>
+  <head>
+    <title>Test page</title>
+  </head>
+  <body>
+  <div style="text-align: center;margin:10em;">
+    <h3 id="the_string"> Nothing to echo </h3>
+  </div>
+  <script>
+    var h = document.getElementById('the_string');
+    h.innerText = decodeURIComponent(document.location.search.substring(1));
+  </script>
+  </body>
+</html>

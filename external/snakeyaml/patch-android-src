@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2016 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Given a source file, for example Constructor.java, find the patch file for it and apply it.
+# Patch is applied to a copy (as opposed to in-place), for example into a build artifact location.
+
+if [[ $# -lt 3 ]]; then
+  echo "Usage: $(basename $0) <src-file-prefix> <src-file> <dst-file>"
+  exit 1
+fi
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ANDROID_PATCHES_DIR="$DIR/src/patches/android"
+
+src_file_prefix="$1"
+src_file="$2"
+src_file_with_prefix="$2"
+dst_file="$3"
+dst_dir="$(dirname "$dst_file")"
+
+# Sanity checking
+
+if ! [[ -d $ANDROID_PATCHES_DIR ]]; then
+  echo "FATAL: Android patch directory $ANDROID_PATCHES_DIR does not exist." >&2
+  exit 1
+fi
+
+if ! [[ $src_file == $src_file_prefix* ]]; then
+  echo "$src_file_prefix is not a valid prefix of $src_file" >&2
+  exit 1
+fi
+
+if ! [[ -f $src_file ]]; then
+  echo "Source file $src_file does not exist." >&2
+  exit 1
+fi
+
+# Remove the src file prefix, giving us the correct grep target for the .patch files.
+src_file="${src_file#$src_file_prefix}"
+
+patch_file_src=$(grep --files-with-matches -R "diff --git a/$src_file" "$ANDROID_PATCHES_DIR")
+if [[ $? -ne 0 ]]; then
+  echo "Error: Could not find a corresponding .patch file for $src_file" >&2
+  exit 1
+fi
+
+# Parse the source file from the .patch file (assumes exactly one file diff per .patch file)
+src_file_check=$(cat "$patch_file_src" | grep "diff --git a/" | sed -e "s:diff --git a\/::g" | sed -e "s: b\/.*::g")
+
+
+if ! [[ -f $patch_file_src ]]; then
+  echo "Patch file $patch_file_src does not exist." >&2
+  exit 1
+fi
+
+if ! cat "$patch_file_src" | grep "diff --git a/" > /dev/null; then
+  echo "File $patch_file_src is not a valid diff file" >&2
+  exit 1
+fi
+
+if [[ $src_file != $src_file_check ]]; then
+  echo "Check-fail: $src_file was not same as found in patch file ($src_file_check)" >&2
+  exit 1
+fi
+
+set -e
+
+# Copy the src file and then apply the patch to it.
+mkdir -p "$dst_dir"
+cp "$src_file_with_prefix" "$dst_file"
+if ! [[ -f "$dst_file" ]]; then
+  echo "File "$dst_file" does not exist; patching will fail" >&2
+  exit 1
+fi
+cd "$dst_dir"
+patch "$(basename "$dst_file")" "$patch_file_src"
+echo "Successfully applied patch $patch_file_src into copy of file $dst_file"

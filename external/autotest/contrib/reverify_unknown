@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Force a verify job for any host that hasn't seen activity in
+# the past day.
+#
+# Various scripts/cron jobs look for DUTs that aren't working.  To
+# be conservative, those scripts assume that a DUT that hasn't run
+# any jobs within a reasonable time interval isn't working, since
+# some of the ways a DUT may be unavailable manifest as inactivity.
+#
+# In some cases, we'd like to be more certain as to a DUT's status.
+# This script goes through the entire AFE hosts table, and
+# identifies unlocked hosts that would otherwise be flagged as "not
+# working due to lack of activity", and forces a Verify job.
+#
+# Locked hosts are skipped because they can't run jobs, and because
+# we want them to show up as suspicious anyway.
+
+
+cd $(dirname $0)/..
+
+# Gather all the hosts under supervision of the SKC fire team.
+# Basically, that's any host in the suites, bvt, cq, or pfq pool.
+
+GET_HOSTS='
+  /pool:(suites|bvt|cq|continuous)/ {
+    print $1
+  }
+'
+HOSTS=( $(cli/atest host list --unlocked | awk "$GET_HOSTS") )
+
+
+# Go through the gathered hosts, and use dut_status to find the
+# ones with unknown state (anything without a positive "OK" or
+# "NO" diagnosis).
+
+NEED_VERIFY='
+  /OK/ || /NO/ { next }
+  /^chromeos/ {
+    print $1
+  }
+'
+VERIFY=( $(site_utils/dut_status.py -d 19 "${HOSTS[@]}" | awk "$NEED_VERIFY") )
+
+# Reverify the unknown hosts.
+contrib/reverify_hosts "${VERIFY[@]}"

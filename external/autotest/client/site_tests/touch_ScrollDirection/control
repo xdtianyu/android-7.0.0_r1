@@ -1,0 +1,26 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "kathrelkeld"
+NAME = "touch_ScrollDirection"
+PURPOSE = "Test that scrolling occurs and in the correct direction."
+CRITERIA = """
+This test will fail if, after playback of touch events, no scrolling is detected
+or if scrolling is in the wrong direction.
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:touch"
+SUITE = "bvt-perbuild,touch"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "touch"
+TEST_TYPE = "client"
+DEPENDENCIES = "touchpad"
+
+DOC = """
+Detects presence of touchscreen to determine whether Australian scrolling
+should be default.  Plays back touch movements and checks for scroll up or down.
+Toggles Australian scrolling and repeats.
+"""
+
+job.run_test('touch_ScrollDirection')

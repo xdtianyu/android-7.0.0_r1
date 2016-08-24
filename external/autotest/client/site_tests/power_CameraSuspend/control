@@ -1,0 +1,18 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "spang, chromeos-kernel"
+NAME = "power_CameraSuspend"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+DEPENDENCIES = "webcam"
+
+DOC = """
+Suspend the system with the camera device open.
+"""
+
+job.add_sysinfo_logfile('/sys/kernel/debug/suspend_stats', on_every_test=True)
+job.run_test('power_CameraSuspend', save_images=False)

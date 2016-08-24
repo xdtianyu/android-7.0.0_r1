@@ -1,0 +1,23 @@
+touch_TapSettings test uses two gesture files that do tap and drag functions.
+All playback movements recorded should be unaccelerated and be done in a single
+motion (i.e. do not record multipe taps or drags). Having the drag stop in the
+middle of the test (tap and no drag) or multiple drag recording etc would break
+the test. The gesture files for each device
+recorded are:
+
+<DEVICE NAME>_touchpad_Touch ID_tap-drag-right - Tap_drag means: Tap (one full tap) and then half tap
+                                                 (do not release tap) to start the drag. Without lifting it,
+                                                 drag your finger to the right to record a drag action.
+
+<DEVICE NAME>_touchpad_Touch ID_tap-click - Tap on touchpad and record the gestures.
+                                            Note: Tap is a gentle touch on the touchpad and NOT a physical click.
+
+To position the cursor on center of page, center_cursor gesture file is used:
+
+center_cursor - Use mouse to move the mouse pointer to center of the screen.
+                As we do not know where the pointer would show up at the start
+                of this test, hence to ensure that any starting cursor position
+                will result in a centered cursor, move the cursor well into a
+                corner of the screen and then move the cursor back to center of
+                the test page. Do not pause the movement until pointer is at
+                the center of page.

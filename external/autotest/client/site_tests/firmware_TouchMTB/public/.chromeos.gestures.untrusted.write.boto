@@ -1,0 +1,49 @@
+# This file contains credentials and other configuration information needed
+# by the boto library, used by gsutil. You can edit this file (e.g., to add
+# credentials) but be careful not to mis-edit any of the variable names (like
+# "gs_access_key_id") or remove important markers (like the "[Credentials]" and
+# "[Boto]" section delimeters).
+#
+# This file was created by gsutil version "2011-09-06 15:34:49-07:00"
+# at 2011-09-27 14:43:20.
+#
+# You can create additional configuration files by running
+# gsutil config [options] [-o <config-file>]
+
+
+[Credentials]
+
+# Google OAuth2 credentials (for "gs://" URIs):
+# The following OAuth2 token is authorized for scope(s):
+#     https://www.googleapis.com/auth/devstorage.read_write
+gs_oauth2_refresh_token = 1/7hB6K3lhWIqB04Sqjp-xWJPNBNYq370V96pwEFjTx9g
+
+
+[Boto]
+
+# Set 'https_validate_certificates' to False to disable server certificate
+# checking. This is useful if you want to capture/analyze traffic using an
+# intercepting proxy. This option should always be set to True in production
+# environments.
+# In gsutil, the default for this option is True. *However*, the default for
+# this option in the boto library itself is currently 'False'; it is therefore
+# recommended to always set this option explicitly to True in configuration
+# files.
+https_validate_certificates = True
+
+
+[GSUtil]
+
+# 'default_api_version' specifies the default Google Storage API version to
+# use use. If not set below gsutil defaults to API version 1.
+default_api_version = 2
+
+# 'default_project_id' specifies the default Google Storage project ID to use
+# with the 'mb' and 'ls' commands. If defined it overrides the default value
+# you set in the API Console. Either of these defaults can be overridden
+# by specifying the -p option to the 'mb' and 'ls' commands.
+default_project_id = 449962335547
+
+
+[OAuth2]
+# This section specifies options used with OAuth2 authentication.

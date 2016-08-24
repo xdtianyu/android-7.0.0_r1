@@ -1,0 +1,31 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_StorageFio.hwqual'
+AUTHOR = 'The Chromium OS Authors'
+PURPOSE = 'Benchmark storage performance using an unmounted root partition.'
+CRITERIA = 'This test is a benchmark.'
+ATTRIBUTES = "suite:hwqual"
+SUITE = "hwqual"
+TIME = 'MEDIUM'
+TEST_CLASS = "hardware"
+TEST_CATEGORY = 'Performance'
+TEST_TYPE = 'client'
+
+DOC = """
+This test uses FIO to spawn a number of threads to perform a particular type of
+I/O. This test will use block sizes of 4k, 8k, and 16k. It will also attempt
+to simulate the disk traffic during a boot, login, and web surfing. It tests
+both sequential and random data access.
+
+NOTE: If autoupdate or another program accesses the spare root partition
+while this test is running corruption may occur.
+"""
+
+job.run_test('hardware_StorageFio',
+             constraints=[
+                 '_seq_read_read_bw_mean >= 50 * 1024',
+                 '_seq_write_write_bw_mean >= 15 * 1024',
+                 '_16k_write_write_iops >= 10',
+             ])

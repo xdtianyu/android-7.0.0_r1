@@ -1,0 +1,21 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "beeps@chromium.org"
+NAME = "desktopui_SetFieldsWithChromeDriver"
+PURPOSE = "Verify that we can set fields with chromedriver."
+CRITERIA = """
+This test will fail if we are unable to load the specified page and set a text
+box field.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+
+DOC = """
+This test opens a test page with chromedriver and sets a form field.
+"""
+
+job.run_test('desktopui_SetFieldsWithChromeDriver')

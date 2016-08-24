@@ -1,0 +1,26 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dunno@chromium.org"
+NAME = "video_YouTubePage.last_second"
+PURPOSE = "Verify that YouTube page HTML5 video plays last second of video."
+CRITERIA = """
+This test will fail if YouTube page HTML5 video fails to continuously play the
+last second of the video.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+BUG_TEMPLATE = {
+    'labels': ['VideoTestFailure', 'OS-Chrome'],
+}
+
+DOC = """
+This test verifies a YouTube video plays the last second fully.
+"""
+
+_TEST_NAME = 'last_second'
+job.run_test('video_YouTubePage', subtest_name=_TEST_NAME,
+             subdir_tag=_TEST_NAME)

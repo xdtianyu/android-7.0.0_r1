@@ -1,0 +1,29 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'zqiu, wiley, pstew'
+NAME = 'apmanager_SimpleConnect.bridge'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test verifies that DUT can connect to an WiFi network configured in bridge
+mode.
+"""
+
+from autotest_lib.client.common_lib.cros.network import apmanager_constants
+
+def run(machine):
+    # Bridge mode configuration.
+    configurations = {apmanager_constants.CONFIG_OPERATION_MODE: \
+                              apmanager_constants.OPERATION_MODE_BRIDGE}
+    host = hosts.create_host(machine)
+    job.run_test('apmanager_SimpleConnect',
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=configurations)
+
+
+parallel_simple(run, machines)

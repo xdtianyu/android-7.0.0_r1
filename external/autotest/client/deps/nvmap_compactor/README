@@ -1,0 +1,7 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+This deps brings install ChromeOS nvmap_compactor into an image. Tests that depend
+on nvmap_compactor should add this as a dep in the setup. It leverages the Chrome OS
+build system and installs the package that gets created for nvmap_compactor.

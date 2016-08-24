@@ -1,0 +1,28 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'harpreet, krisr, wiley'
+TIME = 'SHORT'
+NAME = 'network_WiFi_ChromeEndToEnd.transitionWiFiNetworks'
+TEST_TYPE = 'Server'
+ATTRIBUTES = ('suite:wifi_endtoend, suite:wifi_matfunc_bcm4371, '
+              'suite:wifi_release')
+SUITE = 'wifi_endtoend, wifi_matfunc_bcm4371, wifi_release'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+WiFi_ChromeEndToEnd test configures two APs and runs the client side
+network_ChromeWifiEndToEnd test which tries to transition from one
+wifi network to another via Chrome.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_ChromeEndToEnd',
+                 host=host,
+                 raw_cmdline_args=args,
+                 test='transitionWiFiNetworks')
+
+
+parallel_simple(run, machines)

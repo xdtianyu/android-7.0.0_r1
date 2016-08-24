@@ -1,0 +1,26 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "cellular_OutOfCreditsSubscriptionState"
+PURPOSE = "Verify shill out-of-credits behavior using subscription state."
+CRITERIA = """
+This test will fail if one of the following conditions occurs:
+  - Shill does not mark a cellular service as out-of-credits when the modem
+    reports it as so.
+  - Shill does not clear the out-of-credits flag when the subscription state
+    transitions to provisioned after being out-of-credits.
+"""
+ATTRIBUTES = "suite:network3g_pseudomodem"
+SUITE = "network3g_pseudomodem"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DOC = """
+  Tests that shill marks a cellular service as out-of-credits according to the
+  modem subscription state by using a pseudomodem.
+"""
+
+job.run_test('cellular_OutOfCreditsSubscriptionState')

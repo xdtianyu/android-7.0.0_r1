@@ -1,0 +1,19 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "The Chromium OS Authors"
+DOC = """
+Tests that tlsdate actually can connect to our time host, fetch and set time.
+"""
+NAME = "platform_TLSDateActual"
+PURPOSE = "Real-world integration test for tlsdate"
+CRITERIA = """
+Fail if tlsdate fails to actually work.
+"""
+TEST_CLASS = "platform"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+
+job.run_test("platform_TLSDateActual")

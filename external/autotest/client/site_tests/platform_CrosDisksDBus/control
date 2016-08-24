@@ -1,0 +1,23 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "platform_CrosDisksDBus"
+PURPOSE = "Verify that cros-disks d-bus API is running correctly"
+
+CRITERIA = """
+"""
+ATTRIBUTES = "suite:bvt-inline, suite:smoke"
+SUITE = "bvt-inline, smoke"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+Exercises the cros-disks d-bus API
+"""
+
+job.run_test('platform_CrosDisksDBus', timeout_s=20)

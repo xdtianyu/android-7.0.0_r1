@@ -1,0 +1,55 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.common_lib import utils
+
+AUTHOR = "llozano@chromium.org c-compiler-chrome@google.com"
+NAME = "telemetry_AFDOGenerate"
+PURPOSE = "Produce profile (AFDO format) of normal browsing for optimization."
+ATTRIBUTES = "suite:AFDO_record"
+SUITE = "AFDO_record"
+TIME = "LONG"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "telemetry"
+TEST_TYPE = "server"
+# The test uses gsutil to do upload, which is not supported in container.
+REQUIRE_SSP = False
+
+DOC = """
+Run a pre-defined set of benchmarks on the DUT and create a sampled profile
+of the chrome execution. The profile is generated in AFDO format.
+See go/afdo for more information about AFDO.
+For now, this test is only designed to run on lumpy and parrot boards.
+It will fail if run on other boards.
+
+Example invocation:
+/usr/bin/test_that --debug --board=lumpy <DUT IP>
+  --args="ignore_failures=True local=True gs_test_location=True"
+  telemetry_PGOGenerate
+"""
+
+args_dict = utils.args_to_dict(args)
+
+profiler = 'custom_perf'
+# These are arguments to the linux "perf" tool.
+# The -e value is processor specific and comes from the Intel SDM vol 3b
+profiler_args = 'record -a -e r20c4 -c 500000 -b '
+
+job.default_profile_only = True
+job.profilers.add(profiler, profiler_args)
+
+def run_telemetry_AFDOGenerate(machine):
+    run_host = hosts.create_host(machine)
+
+    # TODO (llozano):
+    # Pass "disable_sysinfo=True" to run_test since it would be nice
+    # to avoid copying all the logs back to the server. However, we
+    # cannot do this because of crosbug 308646
+    job.run_test('telemetry_AFDOGenerate', host=run_host,
+                  args=args_dict)
+
+job.parallel_simple(run_telemetry_AFDOGenerate, machines)
+
+if profiler:
+    job.profilers.delete(profiler)

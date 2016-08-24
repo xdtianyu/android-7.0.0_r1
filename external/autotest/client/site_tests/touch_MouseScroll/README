@@ -1,0 +1,31 @@
+touch_MouseScroll test uses thirteen gesture files that scroll. All scrolls
+recorded should be done in a single motion (i.e. do not give a pause between
+scroll movement). Having the scroll stop in the middle of the test would break
+the test. The gesture files recorded are:
+
+up_slow    - Scroll the mouse wheel up slowly to record multiple scrolls.
+up_fast    - Scroll the mouse wheel up fast to record multiple scrolls.
+up_1       - Scroll the mouse wheel up (one gear up) to record single scroll.
+down_slow  - Scroll the mouse wheel down slowly to record scrolls.
+down_fast  - Scroll the mouse wheel down fast to record multiple scrolls.
+down_1     - Scroll the mouse wheel down (one gear down) to record single scroll.
+
+To record horizontal scrolls, please emulate a mouse which has this feature and
+start recodring the gesture files as:
+
+right_slow    - Scroll the mouse ball right slowly to record multiple scrolls.
+right_fast    - Scroll the mouse ball right fast to record multiple scrolls.
+right_1       - Scroll the mouse ball right (one gear right) to record single scroll.
+left_slow  - Scroll the mouse ball left slowly to record scrolls.
+left_fast  - Scroll the mouse ball left fast to record multiple scrolls.
+left_1     - Scroll the mouse ball left (one gear left) to record single scroll.
+
+To position the cursor on center of page, center_cursor gesture file is used:
+
+center_cursor - Use mouse to move the mouse pointer to center of the screen.
+                As we do not know where the pointer would show up at the start
+                of this test, hence to ensure that any starting cursor position
+                will result in a centered cursor, move the cursor well into a
+                corner of the screen and then move the cursor back to center of
+                the test page. Do not pause the movement until pointer is at
+                the center of page.

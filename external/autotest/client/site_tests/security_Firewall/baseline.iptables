@@ -1,0 +1,12 @@
+-P INPUT DROP
+-P FORWARD DROP
+-P OUTPUT DROP
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -p udp -j NFQUEUE --queue-num 10000
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+-A INPUT -d 224.0.0.251/32 -p udp -m udp --dport 5353 -j ACCEPT
+-A OUTPUT -d 239.255.255.250/32 -p udp -m udp --dport 1900 -j NFQUEUE --queue-num 10001
+-A OUTPUT -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT
+-A OUTPUT -o lo -j ACCEPT

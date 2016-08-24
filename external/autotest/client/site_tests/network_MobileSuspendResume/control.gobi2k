@@ -1,0 +1,30 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_MobileSuspendResume.gobi2k"
+PURPOSE = "Test 3g modem state after suspend/resume"
+CRITERIA = """
+    Check the 3g state of the device after suspend and resume.  Verify
+    that 3g can be enabled under all situations after resuming of device.
+    Verify that if autoconnect is turned on that the modem autoconnects
+    after resuming.
+"""
+ATTRIBUTES = "suite:network3g_tmobile, suite:network3g_verizon"
+SUITE = "network3g_tmobile, network3g_verizon"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "modem:gobi2k"
+
+DOC = """
+    Verify that 3g can be enabled under all suspend/resume situations.
+"""
+
+# Run all scenarios twice, first with autoconnect off, then with it on
+job.run_test('network_MobileSuspendResume',
+             autoconnect=False, tag='autoconnect_off-gobi2k')
+job.run_test('network_MobileSuspendResume',
+             autoconnect=True, tag='autoconnect_on-gobi2k')

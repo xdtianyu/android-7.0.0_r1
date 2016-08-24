@@ -1,0 +1,45 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_Roam.wifi_roamWPA'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = 'suite:wifi_matfunc, suite:wifi_matfunc_bcm4371'
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test attempts to verify that we can roam between two WPA APs
+in full view of the DUT.
+"""
+
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.client.common_lib.cros.network import xmlrpc_security_types
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    wpa_config = xmlrpc_security_types.WPAConfig(
+            psk='chromeos',
+            wpa_mode=xmlrpc_security_types.WPAConfig.MODE_PURE_WPA2,
+            wpa2_ciphers=[xmlrpc_security_types.WPAConfig.CIPHER_CCMP])
+    configuration = (hostap_config.HostapConfig(
+                             channel=1, security_config=wpa_config),
+                     hostap_config.HostapConfig(
+                             channel=48,
+                             mode=hostap_config.HostapConfig.MODE_11A,
+                             security_config=wpa_config),
+                     xmlrpc_datatypes.AssociationParameters(
+                             security_config=wpa_config))
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_Roam',
+                 tag=NAME.split('.')[1],
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=configuration)
+
+
+parallel_simple(run, machines)

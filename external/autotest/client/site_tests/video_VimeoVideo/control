@@ -1,0 +1,28 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# If you see any error at the Vimeo player end, try updating froogaloop.js.
+# https://raw.github.com/vimeo/player-api/master/javascript/froogaloop.js
+
+AUTHOR = "rohitbm@chromium.org, chromeos-video@google.com"
+NAME = "video_VimeoVideo"
+PURPOSE = "Verify that Vimeo (html5) video works"
+CRITERIA = """
+This test will fail if Vimeo video fails to play.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES = "hw_video_acc_h264"
+BUG_TEMPLATE = {
+    'owner': 'rohitbm@chromium.org',
+    'labels': ['OS-Chrome', 'VideoTestFailure'],
+}
+
+DOC = """
+This test verifies Vimeo video playback and player states.
+"""
+
+job.run_test('video_VimeoVideo')

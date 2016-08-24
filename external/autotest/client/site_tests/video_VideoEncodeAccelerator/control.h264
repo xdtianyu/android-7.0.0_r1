@@ -1,0 +1,40 @@
+# Copyright (c) 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team, chromeos-video@google.com"
+NAME = "video_VideoEncodeAccelerator.h264"
+PURPOSE = "Verify Chromium hardware Video Encode Acceleration works."
+CRITERIA = """
+This test will fail if any of the tests in video_encode_accelerator_unittest
+fails. Running video_encode_accelerator_unittest is skipped on machines that are
+known not to support video encode.
+"""
+ATTRIBUTES = "suite:video"
+SUITE = "video"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "video"
+TEST_TYPE = "client"
+DEPENDENCIES = 'hw_video_acc_enc_h264'
+
+DOC = """
+This is a wrapper test for Chrome video_encode_accelerator_unittest.
+"""
+
+# Format of each stream: (path, width, height, request_bit_rate)
+# Bitrates setting come from http://www.webmproject.org/hardware/rtc-coding-requirements/
+# The bitrate setting of 1080p comes from
+# third_party/libjingle/source/talk/media/webrtc/simulcast.cc.
+# Please do not change bitrates.
+streams = [
+    ('crowd/crowd1080-96f60dd6ff87ba8b129301a0f36efc58.yuv', 1920, 1080, 4000000),
+    ('tulip2/tulip2-1280x720-1b95123232922fe0067869c74e19cd09.yuv', 1280, 720, 1200000),
+    ('tulip2/tulip2-640x360-094bd827de18ca196a83cc6442b7b02f.yuv', 640, 360, 500000),
+    ('tulip2/tulip2-320x180-55be7124b3aec1b72bfb57f433297193.yuv', 320, 180, 100000)]
+# Disable the 240x136 video for http://crbug.com/548109.
+# TODO: Enable the test after PSNR(with block) verification is merged:
+#    ('tulip2/tulip2-240x136-ed58afc99d08e5d21013c1a5056e43bf.yuv', 240, 136, 100000)]
+
+job.run_test('video_VideoEncodeAccelerator', in_cloud=True, streams=streams,
+        profile=1)

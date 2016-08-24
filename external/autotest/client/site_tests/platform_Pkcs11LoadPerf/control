@@ -1,0 +1,18 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dkrahn"
+NAME = "platform_Pkcs11LoadPerf"
+TIME = "SHORT"
+TEST_CATEGORY = "Performance"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This tests the performance of loading a PKCS #11 token.
+"""
+
+job.run_test('platform_Pkcs11LoadPerf',
+             iterations=3,
+             constraints=['cert_ready_ms < 1500', 'key_ready_ms < 3000'])

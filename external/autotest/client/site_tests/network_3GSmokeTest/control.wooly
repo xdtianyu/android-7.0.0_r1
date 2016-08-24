@@ -1,0 +1,33 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_3GSmokeTest.wooly"
+PURPOSE = "Verify 3G modem can connect to the network."
+CRITERIA = """
+This test will fail if one of the following conditions occur:
+  - 3G modem fails to connect to network
+  - the modem is not left in a working state
+"""
+ATTRIBUTES = "suite:network3g_att, suite:network3g_tmobile"
+SUITE = "network3g_att, network3g_tmobile"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+DEPENDENCIES = "modem:wooly"
+DOC = """
+  Tests that 3G modem can connect to the network
+
+  The test attempts to connect using the 3G network.  It assumes that
+  a 3G modem is plugged in and has a signal.  The test then
+  disconnects from the network, and verifies that the modem still
+  responds to modem manager DBUS API calls.  It repeats the
+  connect/disconnect sequence several times.
+"""
+
+from autotest_lib.client.cros.cellular import test_environment
+
+test_env = test_environment.CellularOTATestEnvironment()
+job.run_test('network_3GSmokeTest', tag='wooly', test_env=test_env)

@@ -1,0 +1,15 @@
+Chromium OS version of rootdev
+
+Inspired by git://git.debian.org/~lamont/util-linux.git / 717db2c8177203fe242ea35b31bc312abe9aa3c9
+
+Description: Performs operations to discover and annotate the root block device
+
+Prior to this commit, rootdev was derived from the above link.  However, it has
+been rewritten in its entirety and licensed as per LICENSE.
+
+chromeos-rootdev:
+- Provides core functionality in a library: librootdev
+- Walks sysfs to discover the block devices
+- Supports resolving through to /sys/block/XXX/slaves/*/dev devices
+- Will test and, optionally, symlink to the /dev entry for standard devices.
+- Is testable.

@@ -1,0 +1,32 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'owenlin@chromium.org, chromeos-video@google.com'
+NAME = 'video_VideoDecodeMemoryUsage.vp8'
+PURPOSE = 'Measure the memory usages of video playback'
+ATTRIBUTES = "suite:video"
+SUITE = 'video'
+TIME = 'LONG'
+TEST_CATEGORY = 'Performance'
+TEST_CLASS = 'video'
+TEST_TYPE = 'client'
+
+DOC = """
+Measure the memory usage in different cases:
+  1. Play a video in a loop and check the memory usage.
+  2. Keep switching between two videos.
+  3. Repeat opening a tab and play a video in the tab.
+"""
+
+ASSETS_BASE = 'http://commondatastorage.googleapis.com/chromiumos-test-assets-public/'
+tp101_1080p = ASSETS_BASE + 'tp101/tp101-1920x1080-6b8c6ac748427505de02ab95eefb5043.webm'
+tp101_360p = ASSETS_BASE + 'tp101/tp101-640x360-9fe6db90b9bc0a6d54374b7c8ec20fd6.webm'
+
+testcases = [
+    ['PlayVideo', [tp101_1080p]],
+    ['ChangeVideoSource', [tp101_1080p, tp101_360p]],
+    ['OpenTabPlayVideo', [tp101_1080p]],
+]
+
+job.run_test('video_VideoDecodeMemoryUsage', testcases=testcases)

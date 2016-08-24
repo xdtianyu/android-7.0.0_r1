@@ -1,0 +1,38 @@
+Local Modifications:
+
+include/cblas_f77.h
+  Correct case-mismatch in include guard.
+
+include/cblas_f77.h
+testing/cblas_test.h
+  Rename xerbla_ to cblas_f77_xerbla_, to avoid collisions with the xerbla_
+  exported by LAPACK.
+
+testing/cblas_test.h
+  Rename cblas_f77_xerbla_ back to xerbla_; in tests, we _do_ want to override
+  the xerbla_ exported by LAPACK to capture the error.
+
+include/cblas_f77.h
+src/cblas_dasum.c
+src/cblas_ddot.c
+src/cblas_dnrm2.c
+src/cblas_dsdot.c
+src/cblas_dzasum.c
+src/cblas_dznrm2.c
+src/cblas_icamax.c
+src/cblas_idamax.c
+src/cblas_isamax.c
+src/cblas_izamax.c
+src/cblas_sasum.c
+src/cblas_scasum.c
+src/cblas_scnrm2.c
+src/cblas_sdot.c
+src/cblas_sdsdot.c
+src/cblas_snrm2.c
+src/*.f
+  Replace Fortran wrappers either with calls to the Eigen "subroutine" versions
+  for functions that return complex values, or with calls to the standard
+  "function" versions for functions that return real values.  Delete unsupported
+  variants from cblas_f77.h.
+
+  

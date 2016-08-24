@@ -1,0 +1,55 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_SimpleConnect.wifi_checkOddWPAPassphrases'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = ('suite:wifi_matfunc, suite:wifi_matfunc_bcm4371, '
+              'suite:wifi_release')
+SUITE = 'wifi_matfunc, wifi_matfunc_bcm4371, wifi_release'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This tests verifies that we can connect to an AP broadcasting a WPA network
+with a variety of unusual passphrases.
+"""
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.client.common_lib.cros.network import xmlrpc_security_types
+from autotest_lib.server.cros.network import hostap_config
+
+
+def get_configurations():
+  wpa_configs = []
+  psks = ['\xe4\xb8\x80\xe4\xba\x8c\xe4\xb8\x89',  # Pure unicode.
+          'abcdef\xc2\xa2',  # Mixed unicode and ASCII.
+          ' !"#$%&\'()>*+,-./:;<=>?@[\\]^_{|}~']  # All punctuation.
+  for psk in psks:
+      wpa_configs.append(xmlrpc_security_types.WPAConfig(
+              psk=psk,
+              wpa_mode=xmlrpc_security_types.WPAConfig.MODE_PURE_WPA2,
+              wpa2_ciphers=[xmlrpc_security_types.WPAConfig.CIPHER_CCMP]))
+      wpa_configs.append(xmlrpc_security_types.WPAConfig(
+              psk=psk,
+              wpa_mode=xmlrpc_security_types.WPAConfig.MODE_PURE_WPA,
+              wpa_ciphers=[xmlrpc_security_types.WPAConfig.CIPHER_TKIP]))
+  return [(hostap_config.HostapConfig(
+                   frequency=2412,
+                   mode=hostap_config.HostapConfig.MODE_11G,
+                   security_config=wpa_config),
+           xmlrpc_datatypes.AssociationParameters(security_config=wpa_config))
+          for wpa_config in wpa_configs]
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test('network_WiFi_SimpleConnect',
+                 tag=NAME.split('.')[1],
+                 host=host,
+                 raw_cmdline_args=args,
+                 additional_params=get_configurations())
+
+
+parallel_simple(run, machines)

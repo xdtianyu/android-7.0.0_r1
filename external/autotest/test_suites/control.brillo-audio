@@ -1,0 +1,29 @@
+# Copyright 2016 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ralphnathan"
+NAME = "brillo-audio"
+PURPOSE = "Test audio functionality on brillo."
+CRITERIA = "All tests should pass"
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+Suite for kicking off the Brillo audio specific PTS tests. Requires a loopback
+device to be connected to the DUT.
+"""
+
+import common
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+
+args_dict['max_runtime_mins'] = 20
+args_dict['name'] = 'brillo-audio'
+args_dict['job'] = job
+args_dict['add_experimental'] = True
+
+dynamic_suite.reimage_and_run(**args_dict)

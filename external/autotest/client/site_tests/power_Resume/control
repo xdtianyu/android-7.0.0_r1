@@ -1,0 +1,24 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_Resume"
+PURPOSE = "Measure the amount of time it takes to resume from suspend."
+CRITERIA = "This test is a benchmark."
+ATTRIBUTES = "suite:crosbolt_perf_perbuild"
+SUITE = "crosbolt_perf_perbuild"
+TIME = "SHORT"
+TEST_CATEGORY = "Logging"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+This test will search /var/log/messages for pertinent strings to determine if
+the cpu is sleeping. It will wait for a number of seconds before suspending to
+ram. It will then calculate how many seconds the system was suspended, and
+how many seconds it took to resume. As a precaution it will ensure your
+network interface is UP after it has resumed.
+"""
+
+job.run_test('power_Resume')

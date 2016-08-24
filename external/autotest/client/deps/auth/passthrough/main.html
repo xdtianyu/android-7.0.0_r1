@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<script>
+var msg = {
+  'method': 'completeLogin',
+  'email': 'performance.test.account@gmail.com',
+  'password': 'perfsmurf'
+};
+
+window.parent.postMessage(msg, 'chrome://oobe/');
+</script>
+<body>Passthrough auth extension - fakes login process</body></html>
+

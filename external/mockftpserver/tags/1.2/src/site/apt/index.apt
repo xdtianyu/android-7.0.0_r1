@@ -1,0 +1,18 @@
+		--------------------------------------------------
+								Home
+		--------------------------------------------------
+
+MockFtpServer
+
+  The <<MockFtpServer>> project provides a mock/dummy FTP server implementation that can be very 
+  useful for testing of FTP client code. It can be configured to return custom data or reply codes, 
+  to simulate either success or failure scenarios. Expected command invocations can also be verified. 
+
+  <<MockFtpServer>> is written in Java, and is ideally suited to testing Java code. But because 
+  communication with the FTP server is across the network using sockets, it can be used to test FTP client 
+  code written in any language.
+
+  The <<MockFtpServer>> project may one day provide multiple mock/dummy FTP server implementations,
+  at different levels of abstraction. Currently, however, <<StubFtpServer>> is the only one provided, 
+  though others are being considered. <<StubFtpServer>> is a "stub" implementation of an FTP server. 
+  See the {{{stubftpserver-getting-started.html}StubFtpServer Getting Started Guide}} for more information.

@@ -1,0 +1,27 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Project"
+NAME = "desktopui_AudioFeedback"
+PURPOSE = "Verify Flash video sound is audible"
+CRITERIA = """
+This test will fail if Flash video sound is not audible.
+"""
+ATTRIBUTES = "suite:audio"
+SUITE = "audio"
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "desktopui"
+TEST_TYPE = "client"
+DEPENDENCIES = 'audio_loopback_dongle'
+
+DOC = """
+Test that Flash video sound can be heard by arecord at mic in.
+
+NOTE: For this test to pass you need to have the line out looped back to mic-in.
+This can be through a 3.5mm male-to-male cable or a loopback dongle depending on
+your device.
+"""
+
+job.run_test('desktopui_AudioFeedback', constraints=['rms_value > 0.05'])

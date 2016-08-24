@@ -1,0 +1,27 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "sque dhsharp rapati"
+NAME = "platform_Quipper"
+PURPOSE = "Test CWP's quipper tool."
+
+CRITERIA = """
+Successfully collect a perf data profile through quipper and make sure there is
+a non-empty protobuf output.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+ATTRIBUTES = "suite:experimental"
+SUITE = "experimental"
+
+DOC = """
+Verify that CWP's quipper tool can successfully call perf to collect a profile,
+process it, and serialize it to a protobuf.
+"""
+
+job.run_test('platform_Quipper')

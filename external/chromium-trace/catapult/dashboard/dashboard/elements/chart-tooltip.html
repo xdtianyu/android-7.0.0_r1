@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<!--
+Copyright 2016 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+-->
+<!--
+The chart-tooltip element is the box that is shown when you hover over or click
+on a point on a graph. It shows more detailed information about the point that
+was just clicked.
+-->
+
+<link rel="import" href="/components/paper-dialog/paper-action-dialog.html">
+
+<link rel="import" href="/dashboard/elements/alert-remove-box.html">
+<link rel="import" href="/dashboard/elements/bisect-button.html">
+<link rel="import" href="/dashboard/elements/trace-button.html">
+<link rel="import" href="/dashboard/elements/triage-dialog.html">
+
+<polymer-element
+    name="chart-tooltip"
+    attributes="testPath value bugId pointId revisions links alerts xsrfToken">
+  <template>
+    <style>
+      #container {
+        position: absolute;
+        margin: 20px;
+      }
+
+      #tooltip {
+        position: relative;
+        margin: 0px;
+        padding: 0px;
+      }
+    </style>
+
+    <div id="container">
+      <triage-dialog id="triage"
+                     xsrfToken="{{xsrfToken}}"
+                     alerts="{{alerts}}"></triage-dialog>
+
+      <paper-action-dialog id="tooltip" layered="false" autoCloseDisabled="true">
+        <style>
+          #test-name {
+            width : 300px;
+            word-wrap: break-word;
+          }
+
+          div:not(:last-of-type) {
+            margin-bottom: 15px;
+          }
+        </style>
+
+        <!-- TODO(qyearsley): Either (1) Display alert details on mouse-over as
+             well as click (The alerts attribute is only set currently on click,
+             not on hover) OR (2) Display alert details in the triage dialog. -->
+        <template bind repeat="{{alerts}}">
+          <div class="important">
+            <b>Alert information:</b><br>
+            Median of segment before: {{median_before_anomaly}}<br>
+            Median of segment after: {{median_after_anomaly}}<br>
+            Relative change: {{percent_changed}}<br>
+          </div>
+        </template>
+
+        <div id="test-name">
+          Test: {{parentPath}}/<b>{{seriesName}}</b>
+        </div>
+
+        <div>
+          Value: <b>{{value}}</b> <span hidden?={{!stddev}}>(± {{stddev}})</span>
+        </div>
+
+        <div>
+          <span hidden?={{!pointId}}>Point ID: {{pointId}}</span><br>
+          <span hidden?={{!timestamp}}>Time added: {{timestamp}}</span>
+        </div>
+
+        <template bind if="{{bugId}}">
+          <div>
+            <span hidden?={{alertInvalidOrIgnored}}>Bug ID:
+              <b><a target="_blank" href="http://crbug.com/{{bugId}}">{{bugId}}</a></b>
+            </span>
+
+            <span hidden?="{{bugId != -1}}">Invalid alert</span>
+            <span hidden?="{{bugId != -2}}">Ignored alert</span>
+            <span hidden?="{{!recovered}}">Recovered alert</span>
+            <alert-remove-box key="{{alertKey}}" xsrfToken="{{xsrfToken}}" on-untriaged="{{onUntriaged}}">
+            </alert-remove-box><br>
+            <a href="/group_report?keys={{alertKey}}">View alert graph</a>
+          </div>
+        </template>
+
+        <div>
+          <template repeat={{revisions}}>
+            {{name}}<template bind if="{{start}}"> range</template>:
+            <b>
+              <a href="{{url}}" on-click="{{onRevisionRangeClick}}">
+                <template bind if="{{start}}">{{displayStart}} - </template>
+                {{displayEnd}}
+              </a>
+            </b><br>
+          </template>
+        </div>
+
+        <div>
+          <template repeat={{links}}>
+            <span class="annotation-link"><a href="{{url}}" target="_blank">{{text}}</a></span><br />
+          </template>
+        </div>
+
+        <bisect-button affirmative xsrfToken="{{xsrfToken}}"
+                       bugId="{{bugId}}"
+                       bisectInfo="{{bisectInfo}}"></bisect-button>
+        <trace-button affirmative xsrfToken="{{xsrfToken}}"
+                      bugId="{{bugId}}"
+                      traceInfo="{{bisectInfo}}"></trace-button>
+
+      </paper-action-dialog>
+    </div>
+  </template>
+  <script>
+    'use strict';
+    Polymer('chart-tooltip', {
+      traceName: null,
+      value: null,
+      stddev: null,
+      hideStddev: true,
+      bugId: null,
+      stdioUri: null,
+      hideStdioUri: true,
+      revisions: [],
+
+      ready: function() {
+        // This allows tooltip to show beyond the current window size.
+        // Our tooltip size is determined by 'sizingTarget' which is default to
+        // the  window size.  Here we set it to '#scroller' which is the
+        // content's container.
+        // 'core-overlay' API:
+        //   https://github.com/Polymer/core-overlay/blob/master/core-overlay.html
+        //
+        // Note: Though this deep shadow DOM selector was deprecated, it was
+        // a solution in Polymer 0.5 to customize elements.  This can be done
+        // using custom CSS properties when migrating to Polymer 1.0.
+        this.$.tooltip.sizingTarget = document.querySelector(
+            'html /deep/ paper-action-dialog::shadow #scroller');
+
+        // We're going to call 'open' tooltip and hide it's container on
+        // 'ready' to avoid 'core-overlay' initial element focus which causes
+        // the page to jump.
+        // TODO(chrisphan): Figure out a better way to do this.
+        this.$.container.hidden = true;
+        this.$.tooltip.open();
+      },
+
+      testPathChanged: function() {
+        if (this.testPath) {
+          var parts = this.testPath.split('/');
+          this.seriesName = parts.pop();
+          this.parentPath = parts.join('/');
+        }
+      },
+
+      /**
+       * Shows the CL descriptions for the given revision range.
+       */
+      onRevisionRangeClick: function(event, detail, sender) {
+        window.open(sender.href, 'changelog', 'width=1000,height=1000');
+        event.preventDefault();
+      },
+
+      /**
+       * Updates the display of the triage-dialog.
+       * This method is called whenever the value of this.alerts changes,
+       * e.g. by chart-container when an alert is triaged.
+       */
+      alertsChanged: function() {
+        // The triage-dialog should be shown when there is some non-triaged
+        // alert, and hidden otherwise.
+        if (this.alerts && this.alerts.length) {
+          this.$.triage.show();
+        } else {
+          this.$.triage.close();
+        }
+      },
+
+      /**
+       * Fires a 'triaged' event, which should be caught in chart-container.
+       */
+      onUntriaged: function(event, detail, sender) {
+        this.fire('triaged', {
+          'alerts': this.triagedAlerts,
+          'bugid': null
+        });
+      },
+
+      open: function() {
+        if (this.closeTooltipJob) {
+          this.closeTooltipJob.stop();
+        }
+        this.$.tooltip.open();
+        this.$.container.hidden = false;
+      },
+
+      close: function() {
+        // Add a short delay before closing as a workaround for a bug in
+        // core-overlay where core-overlay is opened and closed too frequent.
+        // See: https://github.com/dart-lang/paper-elements/issues/83"
+        this.closeTooltipJob = this.job(
+            this.closeTooltipJob,
+            function() {
+              this.$.container.hidden = true;
+            },
+            200);
+      },
+
+      setPosition: function(top, left) {
+        this.$.container.style.top = top + 'px';
+        this.$.container.style.left = left + 'px';
+      }
+    });
+  </script>
+</polymer-element>

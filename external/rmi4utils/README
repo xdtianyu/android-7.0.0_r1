@@ -1,0 +1,11 @@
+Build on Linux:
+$ make
+
+Build for Android:
+This tool depends on HIDRAW being compiled into the Android device's kernel. This may not be enabled by default. When developing on platforms you may need to rebuild the kernel to enable it.
+
+Then:
+Install the latest verison of the Android NDK.
+Copy from the kernel source include/linux/hid.h and include/linux/hidraw.h to $(ANDROID_NDK)/platforms/android-19/arch-arm/usr/include/linux/
+Then run:
+$ make android

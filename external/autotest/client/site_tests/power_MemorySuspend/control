@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "jwerner, chromeos-power"
+NAME = "power_MemorySuspend"
+ATTRIBUTES = "suite:jailed_build"
+SUITE = "jailed_build"
+TIME = "FAST"
+TEST_CATEGORY = "Regression"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+Memory suspend test: uses the memory_suspend_test binary to fill all
+available memory with 0x55 and 0xAA patterns before suspend and verify
+them afterwards. This is intended to catch memory initializaton regressions
+on resume and other forms of silent memory corruption in the suspend path.
+"""
+
+job.add_sysinfo_logfile('/sys/kernel/debug/suspend_stats', on_every_test=True)
+job.run_test('power_MemorySuspend')

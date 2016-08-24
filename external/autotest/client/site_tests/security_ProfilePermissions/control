@@ -1,0 +1,25 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+TIME="SHORT"
+AUTHOR = "jorgelo"
+DOC = """
+Ensures appropriate permissions on data within the chronos profile.
+"""
+NAME = "security_ProfilePermissions"
+PURPOSE = "Protect the security boundary enforced by filesystem permissions"
+CRITERIA = """
+Fail if there are any files or directories writable by group/other in ~.
+"""
+ATTRIBUTES = "suite:bvt-inline"
+SUITE = "bvt-inline"
+TEST_CLASS = "security"
+TEST_CATEGORY = "Functional"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+job.run_test("security_ProfilePermissions",
+        logged_in=True, tag='login')
+job.run_test("security_ProfilePermissions",
+        logged_in=False, tag='guest')

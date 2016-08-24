@@ -1,0 +1,34 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_EthernetStressPlug"
+PURPOSE = "Stress-test Ethernet plug/unplug"
+CRITERIA = """
+This test fails if device fails to obtain dhcp through ethernet.
+"""
+ATTRIBUTES = "suite:stress_experimental"
+SUITE = "stress_experimental"
+
+TIME = "SHORT"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Stress-tests simulating plugging/unplugging the ethernet dongle.
+"""
+
+# We want the default number of loops per test run
+# to be 100.
+num_iterations = 100
+
+# Parse comma-separated args.
+for arg in args:
+    for item in arg.split(','):
+        key, val = item.split('=')
+        if key == 'num_iterations':
+            num_iterations = int(val)
+
+job.run_test('network_EthernetStressPlug', num_iterations=num_iterations)

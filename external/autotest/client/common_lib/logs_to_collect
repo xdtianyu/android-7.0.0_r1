@@ -1,0 +1,26 @@
+# A list of paths to the logs that will be collected in Crash Collect.
+# When chromeos-install is executed with argument lab_preserve_logs set to
+# the full path to this file, chromeos-install will attempt to collect these
+# files to /mnt/stateful_partition/unencrypted/prior_logs folder on ssd.
+
+# This is the relative path to mounted stateful partition. Files in this folder
+# will be collected during chromeos-install when argument lab_preserve_logs has
+# value set to the full path of this logs_to_collect file.
+# crash collect will ignore this path as it does not exist without specifying
+# the folder of mounted stateful partition.
+dev_image/autotest/results
+
+# The is the absolute path for autotest results folder. This path will be used
+# by crash collect to collect autotest results after dut is up.
+# chromeos-install will not collect this folder as it does not exist on a
+# clean test image.
+/usr/local/autotest/results
+
+# Only available on intel systems. i915 contains the Intel graphics state. It
+# might contain useful data when a DUT hangs, times out or crashes.
+/sys/kernel/debug/dri/0/i915_error_state
+
+/dev/pstore/console-ramoops
+
+/var/log
+/var/spool/crash

@@ -1,0 +1,29 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_MobileSuspendResumeStress.stress"
+PURPOSE = "Test 3g modem state after suspend/resume over many iterations"
+CRITERIA = """
+    Check the 3g state of the device after many iterations of suspend/resume.
+    Verify that 3g can be enabled under all situations after resuming of device.
+    Verify that if autoconnect is turned on that the modem autoconnects
+    after resuming.
+"""
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+    Verify that 3g can be enabled under all suspend/resume situations.
+"""
+
+# Run all scenarios twice, first with autoconnect off, then with it on
+job.run_test('network_MobileSuspendResume',
+             autoconnect=False, tag='autoconnect_off-stress',
+             scenario_group='stress', stress_iterations=100)
+job.run_test('network_MobileSuspendResume',
+             autoconnect=True, tag='autoconnect_on-stress',
+             scenario_group='stress', stress_iterations=100)

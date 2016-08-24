@@ -1,0 +1,32 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "cellular_Throughput"
+PURPOSE = "Measure speed of emulated cellular network."
+CRITERIA = """Bandwidth a reasonable fraction of max for the technology."""
+ATTRIBUTES = "suite:cell_emulator"
+SUITE = "cell_emulator"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+  Measures modem throughput.
+
+  NB: This test is not designed to run standalone.  If you run without
+  the server test cellular_ThroughputController, you are responsible
+  for running the http server.
+"""
+
+from autotest_lib.client.cros.cellular import labconfig
+
+config = labconfig.Configuration(args)
+
+for technology in config.get_technologies():
+    job.run_test('cellular_Throughput',
+                 config=config,
+                 technology=technology,
+                 tag=technology)

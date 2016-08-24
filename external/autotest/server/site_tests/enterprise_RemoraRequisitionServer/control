@@ -1,0 +1,26 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "achuith, zelidrag"
+NAME = "enterprise_RemoraRequisitionServer"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "enterprise"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:hotrod"
+SUITE="hotrod"
+
+DOC = """
+This test clears the TPM if necessary, kicks off a client side test that enrolls
+a device as a remora device and clears the TPM again. Every time the TPM is
+cleared, the system is rebooted.
+"""
+
+
+def run_test(machine):
+    host = hosts.create_host(machine)
+    job.run_test('enterprise_RemoraRequisitionServer', host=host)
+
+
+parallel_simple(run_test, machines)

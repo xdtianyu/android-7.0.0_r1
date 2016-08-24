@@ -1,0 +1,236 @@
+{
+    "boards": {
+        "x86-alex-release": {
+            "platforms": [
+                {"platform": "alex", "au_test": false},
+                {"platform": "alex", "test_suite": true},
+                {"platform": "alex",
+                 "groups": ["network_3g_modem_gobi2k", "network_3g_modem_gobi3k", "network_3g_modem_y3300", "network_3g_modem_y3400", "network_3g_gobi_test_gobi2k", "network_3g_gobi_test_gobi3k", "audio", "desktopui_pyauto_perf", "enterprise", "pagecycler"]},
+                {"platform": "alex_enterprise",
+                 "groups": ["enroll_enterprise"]}
+            ]
+        },
+
+        "x86-zgb-release": {
+            "platforms": [
+                {"platform": "zgb", "au_test": false},
+                {"platform": "zgb", "test_suite": true},
+                {"platform": "zgb",
+                 "groups": ["network_3g_modem_gobi2k", "audio", "desktopui_pyauto_perf", "enterprise", "pagecycler"]},
+                {"platform": "zgb_enterprise",
+                 "groups": ["enroll_enterprise"]}
+            ]
+        },
+
+        "x86-mario-release": {
+            "archive_server": "gs://chromeos-releases/beta-channel/x86-mario",
+            "archive_path": "%(build_version)s/ChromeOS-%(build)s-x86-mario.zip",
+            "platforms": [
+                {"platform": "mario", "au_test": true},
+                {"platform": "mario",
+                 "groups": ["network_3g_modem_gobi2k", "desktopui_pyauto_perf", "pagecycler"]}
+            ]
+        },
+
+       "stumpy-release": {
+            "platforms": [
+                {"platform": "stumpy",
+                 "groups": ["desktopui_pyauto_perf_celeron", "enterprise", "pagecycler_celeron", "audio"]},
+                {"platform": "stumpy", "au_test": false},
+                {"platform": "stumpy", "test_suite": true}
+            ]
+        },
+
+       "lumpy-release": {
+            "platforms": [
+                {"platform": "lumpy",
+                 "groups": ["desktopui_pyauto_perf_celeron", "enterprise", "pagecycler_celeron", "audio"]},
+                {"platform": "lumpy", "au_test": false},
+                {"platform": "lumpy", "test_suite": true}
+            ]
+        }
+    },
+
+    "default_groups": [
+        "build", "desktopui", "kernel", "perfx3", "power"
+    ],
+
+    "default_tot_groups": [
+        "build", "desktopui", "kernel", "pagecycler", "perfx3", "power"
+    ],
+
+    "groups": {
+        "autoupdate": [
+            {"name": "au",
+             "control": "server/site_tests/suites/control.au"}
+        ],
+
+        "audio": [
+            {"name": "audio",
+             "control": "server/site_tests/suites/control.audio"}
+        ],
+
+        "bvt": [
+            {"name": "bvt",
+             "control": "server/site_tests/suites/control.bvt"}
+        ],
+
+        "bvtx4": [
+            {"name": "bvt",
+             "control": "server/site_tests/suites/control.bvt",
+             "count": 4,
+             "sync": true}
+        ],
+
+        "build": [
+            {"name": "security",
+             "control": "server/site_tests/suites/control.security"}
+        ],
+
+        "desktopui": [
+            {"name": "browsertests",
+             "control": "server/site_tests/suites/control.desktopui_browsertest"},
+
+            {"name": "pyauto",
+             "control": "server/site_tests/suites/control.desktopui_pyautofunctionaltests"},
+
+            {"name": "pyauto_basic",
+             "control": "server/site_tests/suites/control.desktopui_pyauto_basic"},
+
+            {"name": "sync",
+             "control": "server/site_tests/suites/control.desktopui_syncintegrationtests"}
+        ],
+
+        "desktopui_pyauto_perf": [
+            {"name": "pyauto_perf",
+             "control": "server/site_tests/suites/control.desktopui_pyauto_perf"}
+        ],
+
+        "desktopui_pyauto_perf_celeron": [
+            {"name": "pyauto_perf",
+             "control": "server/site_tests/suites/control.desktopui_pyauto_perf",
+             "labels": ["cpu:celeron"]}
+        ],
+
+        "desktopui_tegra2": [
+            {"name": "omx",
+             "control": "server/site_tests/suites/control.desktopui_omxtest"}
+        ],
+
+        "enterprise": [
+            {"name": "enterprise",
+             "control": "server/site_tests/suites/control.desktopui_enterprise"}
+        ],
+
+        "enroll_enterprise": [
+            {"name": "enroll_enterprise",
+             "control": "server/site_tests/suites/control.desktopui_enroll_enterprise"}
+        ],
+
+        "power": [
+            {"name": "power_build",
+             "control": "server/site_tests/suites/control.power_build"}
+        ],
+
+        "perf": [
+            {"name": "perfalerts",
+             "control": "server/site_tests/suites/control.perfalerts"}
+        ],
+
+        "perfx3": [
+            {"name": "perfalerts",
+             "control": "server/site_tests/suites/control.perfalerts",
+             "count": 3,
+             "sync": true}
+        ],
+
+        "network_3g_modem_y3300": [
+            {"name": "network_3g",
+             "control": "server/site_tests/suites/control.network_3g",
+             "labels": ["modem:y3300"]}
+        ],
+
+        "network_3g_modem_y3400": [
+            {"name": "network_3g",
+             "control": "server/site_tests/suites/control.network_3g",
+             "labels": ["modem:y3400"]}
+        ],
+
+        "network_3g_modem_gobi2k": [
+            {"name": "network_3g",
+             "control": "server/site_tests/suites/control.network_3g",
+             "labels": ["modem:gobi2k"]}
+        ],
+
+        "network_3g_modem_gobi3k": [
+            {"name": "network_3g",
+             "control": "server/site_tests/suites/control.network_3g",
+             "labels": ["modem:gobi3k"]}
+        ],
+
+        "network_3g_gobi_test_gobi2k": [
+            {"name": "network_3g_gobi",
+             "control": "server/site_tests/suites/control.network_3g_gobi",
+             "labels": ["modem:gobi2k"]}
+        ],
+
+        "network_3g_gobi_test_gobi3k": [
+            {"name": "network_3g_gobi",
+             "control": "server/site_tests/suites/control.network_3g_gobi",
+             "labels": ["modem:gobi3k"]}
+        ],
+
+        "network_wifi": [
+            {"name": "network_wifi",
+             "control": "server/site_tests/suites/control.network_wifi"}
+        ],
+
+        "pagecycler": [
+            {"name": "pagecycler",
+             "control": "server/site_tests/suites/control.pagecycler"}
+        ],
+
+        "pagecycler_celeron": [
+            {"name": "pagecycler",
+             "control": "server/site_tests/suites/control.pagecycler",
+             "labels": ["cpu:celeron"]}
+        ],
+
+        "kernel": [
+            {"name": "kernel_per_build_benchmarks",
+             "control": "server/site_tests/suites/control.kernel_per_build_benchmarks"},
+
+            {"name": "kernel_per_build_regression",
+             "control": "server/site_tests/suites/control.kernel_per_build_regression"}
+        ],
+
+        "sbstage": [
+            {"name": "sbstage",
+             "control": "server/site_tests/suites/control.sbstage"}
+        ],
+
+        "touch": [
+            {"name": "touch",
+             "control": "server/site_tests/suites/control.touch"}
+        ]
+    },
+
+    "import_hosts": [
+        {
+            "host": "cautotest.corp.google.com",
+            "path": "/usr/local/autotest",
+            "user": "chromeos-test"
+        }
+    ],
+
+    "dev_server": {
+        "dev_host": "172.22.50.2",
+        "path": "/home/chromeos-test/images",
+        "user": "chromeos-test"
+    },
+
+    "appengine": {
+        "dash_url": "https://cros-test-dash.appspot.com",
+        "upload_from": "cautotest.corp.google.com"
+    }
+}

@@ -1,0 +1,30 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'angli, sbasi'
+NAME = 'android_ACTS.SampleTest'
+TIME = 'MEDIUM'
+TEST_TYPE = 'Server'
+SUITE = ''
+
+DOC = """
+This test runs SampleTest against a SampleTestBed.
+
+"""
+import common
+from autotest_lib.server import utils
+
+args_dict = utils.args_to_dict(args)
+config_file = args_dict.get('config_file')
+test_case = args_dict.get('test_case')
+
+def run(machine):
+    job.run_test('android_ACTS',
+                 testbed=hosts.create_testbed(machine),
+                 config_file='sample_config.txt',
+                 testbed_name='SampleTestBed',
+                 test_case='SampleTest')
+
+
+parallel_simple(run, machines)

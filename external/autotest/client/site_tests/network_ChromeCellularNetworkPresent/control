@@ -1,0 +1,24 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_ChromeCellularNetworkPresent"
+PURPOSE = "Verify that a cellular network is visible via networkingPrivate"
+ATTRIBUTES = "suite:network_ui"
+SUITE = "network_ui"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+
+This test is meant as a simple example of client/cros/networking/chrome_testing.
+It uses telemetry and pseudomodem to setup a fake network and verify that it
+properly propagates to Chrome.
+
+"""
+
+job.run_test('network_ChromeCellularNetworkPresent', family='3GPP', tag='3GPP')
+job.run_test('network_ChromeCellularNetworkPresent', family='CDMA', tag='CDMA')

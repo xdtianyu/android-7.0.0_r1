@@ -1,0 +1,51 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_ExternalUsbPeripherals.stress"
+PURPOSE = "Servo based USB boot stress test"
+CRITERIA = "This test will fail if any of the actions or checks fail."
+TIME = "LONG"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+ATTRIBUTES = "suite:stress"
+SUITE = "stress"
+DEPENDENCIES = "servo"
+
+DOC = """
+This test uses servo to connect/disconnect servo USB hub before and
+after events like reboot, login, suspend, resume etc.
+
+The test fails if
+- crash files are generated
+- device is pingable when suspended
+- wrong action passed through action_sequence flag
+- USB detected peripherals are different than expected
+- there is no servo board attached
+
+Repeats the sequence of actions for few times only.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+
+    repeat = int(args_dict.get("repeat", 2))
+
+    default_actions = str("reboot,unplug,plug,login,unplug,plug,"
+                          "suspend,resume,unplug,suspend,plug,resume,"
+                          "suspend,unplug,resume,plug")
+
+    action_sequence = str(args_dict.get("action_sequence", default_actions))
+
+    job.run_test("platform_ExternalUsbPeripherals", host=host,
+                 disable_sysinfo=True, client_autotest="desktopui_SimpleLogin",
+                 action_sequence=action_sequence, repeat=repeat, tag="stress")
+
+parallel_simple(run, machines)

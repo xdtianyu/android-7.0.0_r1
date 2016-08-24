@@ -1,0 +1,178 @@
+// Copyright (C) 2009 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+//
+
+// Gtest builds 2 libraries: libgtest and libgtest_main. libgtest
+// contains most of the code (assertions...) and libgtest_main just
+// provide a common main to run the test (ie if you link against
+// libgtest_main you won't/should not provide a main() entry point.
+//
+// We build these 2 libraries for the target device and for the host if
+// it is running linux and using ASTL.
+//
+
+// TODO: The targets below have some redundancy. Check if we cannot
+// condense them using function(s) for the common code.
+
+cc_defaults {
+    name: "libgtest_defaults",
+    local_include_dirs: [
+        "include",
+    ],
+    export_include_dirs: [
+        "include",
+    ],
+    cflags: ["-Wno-missing-field-initializers"],
+    cppflags: ["-std=gnu++98"],
+    target: {
+        android: {
+            product_variables: {
+                unbundled_build: {
+                    // Don't build for unbundled branches
+                    enabled: false,
+                },
+            },
+        },
+    },
+}
+
+cc_defaults {
+    name: "libgtest_host_defaults",
+
+    target: {
+        windows: {
+            enabled: true,
+        },
+    },
+}
+
+//######################################################################
+// gtest lib for the NDK
+
+cc_library_static {
+    name: "libgtest_ndk",
+    defaults: ["libgtest_defaults"],
+
+    sdk_version: "9",
+    stl: "stlport_static",
+
+    srcs: ["src/gtest-all.cc"],
+}
+
+//######################################################################
+// gtest_main for the NDK
+
+cc_library_static {
+    name: "libgtest_main_ndk",
+    defaults: ["libgtest_defaults"],
+
+    sdk_version: "9",
+    stl: "stlport_static",
+
+    srcs: ["src/gtest_main.cc"],
+}
+
+
+
+//######################################################################
+// gtest lib
+
+cc_library_static {
+    name: "libgtest",
+    defaults: ["libgtest_defaults", "libgtest_host_defaults"],
+
+    host_supported: true,
+    clang: true,
+
+    srcs: ["src/gtest-all.cc"],
+
+    sanitize: ["never"],
+    rtti: true,
+}
+
+//######################################################################
+// gtest_main lib
+
+cc_library_static {
+    name: "libgtest_main",
+    defaults: ["libgtest_defaults", "libgtest_host_defaults"],
+
+    host_supported: true,
+    clang: true,
+
+    srcs: ["src/gtest_main.cc"],
+
+    sanitize: ["never"],
+}
+
+// Legacy libraries for makefiles that refer to libgtest_host
+
+cc_library_host_static {
+    name: "libgtest_host",
+    whole_static_libs: ["libgtest"],
+    defaults: ["libgtest_host_defaults"],
+}
+
+cc_library_host_static {
+    name: "libgtest_main_host",
+    whole_static_libs: ["libgtest_main"],
+    defaults: ["libgtest_host_defaults"],
+}
+
+
+// Test for gtest. Run using 'runtest'.
+// The linux build and tests are run under valgrind by 'runtest'.
+
+cc_test {
+    name: "gtest",
+    cflags: ["-Wno-empty-body"],
+    local_include_dirs: ["include"],
+    host_supported: true,
+    target: {
+        android: {
+            product_variables: {
+                unbundled_build: {
+                    // Don't build for unbundled branches
+                    enabled: false,
+                },
+            },
+        },
+    },
+    test_per_src: true,
+    srcs: [
+        "test/gtest_all_test.cc",
+        "test/gtest-death-test_test.cc",
+        "test/gtest_environment_test.cc",
+        "test/gtest-listener_test.cc",
+        "test/gtest_main_unittest.cc",
+        "test/gtest_no_test_unittest.cc",
+        "test/gtest-param-test2_test.cc",
+        "test/gtest_premature_exit_test.cc",
+        "test/gtest_repeat_test.cc",
+        "test/gtest_sole_header_test.cc",
+        "test/gtest_stress_test.cc",
+        "test/gtest-unittest-api_test.cc",
+
+        // We don't have exceptions.
+        //"test/gtest-death-test_ex_test.cc",
+        //"test/gtest_throw_on_failure_ex_test.cc",
+        // We don't have tr1::tuple.
+        //"test/gtest-tuple_test.cc",
+        // These don't build.
+        //"test/gtest-param-test_test.cc",
+        //"test/gtest-printers_test.cc",
+    ],
+}
+

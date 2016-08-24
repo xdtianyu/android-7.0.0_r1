@@ -1,0 +1,21 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'hardware_Memtester.quick'
+AUTHOR = 'puthik'
+PURPOSE = 'Verify memory integrity using memtester.'
+CRITERIA = 'Fails if memory corrupt'
+TIME='SHORT'
+TEST_CLASS = "hardware"
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = 'bvt-cq'
+
+DOC = """
+This test uses memtester to find memory subsystem faults. The quick test
+uses 10 MB of memory.
+"""
+
+job.run_test('hardware_Memtester', tag='quick', size=10 * 1024, loop=1)

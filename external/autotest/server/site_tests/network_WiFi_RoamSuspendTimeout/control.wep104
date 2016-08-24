@@ -1,0 +1,45 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_RoamSuspendTimeout.wep104'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+ATTRIBUTES = "suite:wifi_flaky"
+SUITE = 'wifi_flaky'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test case verifies that the DUT can reconnect to an AP using WEP
+shared system authentication after deauthentication while the DUT is suspended.
+"""
+
+
+from autotest_lib.client.common_lib.cros.network import xmlrpc_datatypes
+from autotest_lib.client.common_lib.cros.network import xmlrpc_security_types
+from autotest_lib.server.cros.network import hostap_config
+
+
+
+def run(machine):
+    # FYI: D-Bus requires string parameters must be valid UTF-8.
+    wep_keys = ['0123456789abcdef0123456789',
+                '123456789abcdef01234567890',
+                '23456789abcdef012345678901',
+                '3456789abcdef0123456789012']
+    wep_config = xmlrpc_security_types.WEPConfig(
+            wep_keys,
+            wep_default_key=2,
+            auth_algorithm=xmlrpc_security_types.WEPConfig.AUTH_ALGORITHM_SHARED)
+    job.run_test('network_WiFi_RoamSuspendTimeout',
+                 tag=NAME.split('.')[1],
+                 host=hosts.create_host(machine),
+                 raw_cmdline_args=args,
+                 additional_params=hostap_config.HostapConfig(
+                         frequency=2412,
+                         mode=hostap_config.HostapConfig.MODE_11G,
+                         security_config=wep_config))
+
+
+parallel_simple(run, machines)

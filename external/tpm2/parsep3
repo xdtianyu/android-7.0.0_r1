@@ -1,0 +1,76 @@
+#!/usr/bin/python
+
+import sys
+import re
+
+header = '''// This file was extracted from the TCG Published
+// Trusted Platform Module Library
+// Part 3: Commands
+// Family "2.0"
+// Level 00 Revision 01.16
+// October 30, 2014
+
+'''
+
+head_spaces = re.compile('^\s*[0-9]+\s{0,4}')
+source_lines = open(sys.argv[1], 'r').read().splitlines()
+
+def strip_line_num(line):
+    line = head_spaces.sub('', line)
+    return line
+
+def postprocess_lines(buffer):
+    # get rid of heading line numbers and spaces.
+    buffer = [head_spaces.sub('', x) for x in buffer]
+
+    # Drop the file level conditional compilation statement.
+    for i in range(len(buffer)):
+        if buffer[i].startswith('#include'):
+            continue
+        if buffer[i].startswith(
+                '#ifdef TPM_CC') and buffer[-1].startswith(
+                    '#endif // CC_'):
+            buffer = buffer[:i] + buffer[i + 1:-1]
+        break
+    return header + '\n'.join(buffer) + '\n'
+
+text = []
+for line in source_lines:
+    text.append(line)
+    if line == '' and text[-2].startswith('') and text[-5] == '':
+        text = text[:-5]
+
+func_file = None
+func_name = ''
+prev_num = 0
+line_buffer = []
+output_buffer = []
+for line in text:
+    f = re.match('^\s*[0-9]+\.[0-9]+\s+(\S+)$', line)
+    if f:
+        func_name = re.sub('^TPM2_', '', f.groups(0)[0])
+
+    num = re.match('^\s*([0-9]+)[$ ]', line + ' ')
+    if num:
+        line_num = int(num.groups(0)[0])
+        if line_num == 1:
+            # this is the first line of a file
+            if func_file:
+                func_file.write(postprocess_lines(output_buffer))
+                func_file.close()
+            func_file = open('%s.c' % func_name, 'w')
+            output_buffer = [line,]
+            prev_num = 1
+            line_buffer = []
+            continue
+        if line_num == prev_num + 1:
+            if line_buffer:
+                output_buffer.append('\n'.join(line_buffer))
+                line_buffer = []
+            output_buffer.append(line)
+            prev_num = line_num
+        continue
+    line_buffer.append('//' + line)
+
+func_file.write(postprocess_lines(output_buffer))
+func_file.close()

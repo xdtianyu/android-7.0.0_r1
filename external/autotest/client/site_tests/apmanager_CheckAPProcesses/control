@@ -1,0 +1,18 @@
+# Copyright 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'zqiu, wiley, pstew'
+NAME = 'apmanager_CheckAPProcesses'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+ATTRIBUTES = "suite:tendo_experimental"
+SUITE = 'tendo_experimental'
+
+DOC = """
+  Verify the required processes (hostapd and dnsmasq) are started/terminated
+  when an AP service is started/terminated.
+
+"""
+
+job.run_test('apmanager_CheckAPProcesses')

@@ -1,0 +1,27 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "UReadAheadServer"
+AUTHOR = "Chrome OS Team"
+TIME = "SHORT"
+TEST_CLASS = "platform"
+TEST_TYPE = "server"
+JOB_RETRIES = 2
+ATTRIBUTES = "suite:bvt-perbuild"
+SUITE = "bvt-perbuild"
+BUG_TEMPLATE = {
+    "labels": ["Cr-OS-Kernel"]
+}
+
+DOC = """
+This test deletes the existing ureadahead pack files from the client, reboots
+the client, and checks whether new ureadahead pack files were created on
+reboot.
+"""
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test("platform_UReadAheadServer", host=host)
+
+parallel_simple(run, machines)

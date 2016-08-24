@@ -1,0 +1,12 @@
+AUTHOR = "Colby Ranger <cranger@google.com>"
+TIME = "MEDIUM"
+NAME = "Barrier Test"
+TEST_TYPE = "client"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Stress"
+DOC = """\
+This tests barriers which can be used for multiple threads/processes/hosts
+to coordinate within a test.  This is for testing Autotest itself.
+"""
+
+job.run_test('barriertest')

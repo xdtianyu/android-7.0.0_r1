@@ -1,0 +1,36 @@
+#!/bin/bash
+
+export CC="$(ls "${ANDROID_TOOLCHAIN}" | grep "\-gcc$")"
+export LD="$(ls "${ANDROID_TOOLCHAIN}" | grep "\-ld$")"
+
+T="${ANDROID_BUILD_TOP}"
+CFLAGS=(
+  "-isystem ${T}/external/libcxx/include"
+  "-isystem ${T}/bionic/libc/include/"
+  "-isystem ${T}/bionic/libc/arch-arm/include"
+  "-isystem ${T}/bionic/libc/kernel/uapi/"
+  "-isystem ${T}/bionic/libc/kernel/uapi/asm-arm/"
+  "-isystem ${T}/bionic/libm/include"
+  "-isystem ${T}/build/core/combo/include/arch/linux-arm/"
+  "-include ${T}/build/core/combo/include/arch/linux-arm/AndroidConfig.h"
+  "-fno-exceptions"
+  "-ffunction-sections"
+  "-fdata-sections"
+  "-fstack-protector"
+  "-fno-short-enums"
+  "-no-canonical-prefixes"
+  "-fmessage-length=0"
+  "-fomit-frame-pointer"
+  "-fPIC"
+  "-fno-strict-aliasing"
+  "-nostdlib"
+)
+
+
+./buildconf
+CFLAGS="${CFLAGS[@]}"
+./configure --host=arm-linux-androideabi --with-ssl="${T}/external/boringssl" \
+  CFLAGS="${CFLAGS}"  LIBS="-lc" CPPFLAGS="${CFLAGS} -I${T}/external/zlib/src" \
+  LDFLAGS="-L${ANDROID_PRODUCT_OUT}/obj/lib/" --disable-ntlm-wb --enable-ipv6 \
+  --with-zlib
+

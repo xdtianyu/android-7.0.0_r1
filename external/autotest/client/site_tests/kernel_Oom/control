@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+DOC = """
+Verify that we get low memory notification from /dev/chromeos-low-mem
+before we kill processes (OOM) when we consume a lot of memory.
+"""
+NAME = "kernel_Oom"
+PURPOSE = "Checks that processes get killed in very low memory conditions."
+CRITERIA = """
+Fails if /dev/chromeos-low-mem does not exist or does not behave as expected.
+Fails if we OOM (ie, processes get killed) before we get low memory
+notification.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "kernel"
+TEST_TYPE = "client"
+
+job.run_test('platform_CompressedSwap', checking_for_oom=True)

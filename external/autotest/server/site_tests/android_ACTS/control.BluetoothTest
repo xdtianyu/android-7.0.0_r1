@@ -1,0 +1,27 @@
+# Copyright 2016 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'angli, sbasi'
+NAME = 'android_ACTS.BluetoothTest'
+TIME = 'MEDIUM'
+TEST_TYPE = 'Server'
+SUITE = ''
+
+DOC = """
+This test runs BluetoothTest against a Bluetooth test bed.
+
+"""
+import common
+from autotest_lib.server import utils
+
+
+def run(machine):
+    job.run_test('android_ACTS',
+                 testbed=hosts.create_testbed(machine),
+                 config_file='shamu_testbed8.config',
+                 testbed_name='shamu_x_shamu_testbed_8',
+                 test_file='bt_and_ble_sanity')
+
+
+parallel_simple(run, machines)

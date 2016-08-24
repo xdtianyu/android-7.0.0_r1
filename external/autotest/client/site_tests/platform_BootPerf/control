@@ -1,0 +1,47 @@
+# Copyright (c) 2009 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "platform_BootPerf"
+PURPOSE = "Collect boot performance metrics from the last system reboot."
+CRITERIA = """
+The test will fail if startup times or shut down times are exceeded. These
+values are set in the suite control file.
+"""
+ATTRIBUTES = "suite:crosbolt_perf_nightly"
+SUITE = "crosbolt_perf_nightly"
+TIME = "SHORT"
+TEST_CATEGORY = "Benchmark"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+Definitions of the results:
+
+  - reboots_in_syslog:
+    - the count of the number of reboots in syslog.
+  - seconds_firmware_boot:
+    - how long it took just the firmware to boot.
+  - seconds_kernel_to_login:
+    - how long from kernel startup to login screen display.
+  - seconds_kernel_to_startup:
+    - how long we've been up before starting the kernel.
+  - seconds_kernel_to_startup_done:
+    - how long we've been up after starting the kernel.
+  - seconds_power_on_to_login:
+    - total number of seconds from power on to login screen display. This is
+      the sum of the other values, and represents the total startup time.
+  - seconds_reboot_time:
+    - This is the total time from start of a reboot until the firmware has
+      booted.
+  - seconds_shutdown_time:
+    - This is the total time from the beginning of a shutdown until
+      power off.  This is actually measured as time for a complete
+      reboot, minus the seconds_firmware_boot time.
+  - sectors_read_kernel_to_login:
+    - This is the number of disk sectors read from kernel boot until
+      login screen display.
+"""
+
+job.run_test('platform_BootPerf')

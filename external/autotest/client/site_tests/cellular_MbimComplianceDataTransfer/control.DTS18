@@ -1,0 +1,31 @@
+# Copyright 2016 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "cellular_MbimComplianceDataTransfer.DTS18"
+PURPOSE = """
+MBIM Compliance Test: Validation of the Last wDatagramIndex.
+"""
+CRITERIA = """
+This test will fail if the modem is not MBIM compliant.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+ATTRIBUTES = "suite:cellular_mbim_compliance"
+SUITE="cellular_mbim_compliance"
+
+DOC = """
+DTS_18 Test listed in the MBIM Compliance Test Suite specification.
+Validation of the Last wDatagramIndex.
+
+This test verifies the MBIM NTB-16 data transfer capability of the device.
+"""
+
+from autotest_lib.client.cros.cellular.mbim_compliance import mbim_constants
+
+job.run_test('cellular_MbimComplianceDataTransfer',
+             subtest_name='cellular_MbimComplianceDTS1824',
+             ntb_format=mbim_constants.NTB_FORMAT_16)

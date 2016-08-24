@@ -1,0 +1,11 @@
+touch_TouchscreenScroll uses four gesture files per device.
+
+<DEVICE_NAME>_touchscreen_Touch ID_scroll-* for [up, down, left, right]
+
+Single finger is pressed to touchscreen and then dragged in the direction
+indicated.  Make no stray marks with additional fingers and do not pause the
+scroll during the movement.  Scroll should be continuous.
+
+Name refers to the physical direction the finger is moving.  E.g.
+samus_touchscreen_scroll-up refers to a single finger moving from the
+side of the screen closest to hinges up to the oposite side of the screen.

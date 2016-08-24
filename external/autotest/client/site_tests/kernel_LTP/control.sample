@@ -1,0 +1,26 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "kernel_ltp"
+AUTHOR = "The Chromium OS Authors,chromeos-kernel-test@google.com"
+TIME = "MEDIUM"
+TEST_CATEGORY = "FUNCTIONAL"
+TEST_CLASS = "KERNEL"
+TEST_TYPE = "CLIENT"
+DOC = """
+Sample invocation of ltp supplying a cmd file that
+limits the tests executed.
+"""
+
+# A list of cmdfiles enabled to run.
+cmd_file_list = ['syscalls']
+
+# A single expression used in a grep to filter tests from alltests.
+test_name_re = 'nanosleep01'
+
+ltp_args = '-f "%s"' % ','.join(cmd_file_list)
+if test_name_re:
+  ltp_args += ' -s "%s"' % test_name_re
+
+job.run_test('kernel_LTP', args=ltp_args)

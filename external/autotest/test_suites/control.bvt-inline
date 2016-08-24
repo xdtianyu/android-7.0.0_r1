@@ -1,0 +1,69 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "bvt-inline"
+PURPOSE = "Test critical functionality."
+CRITERIA = "All tests with SUITE=bvt-inline must pass."
+
+TIME = "SHORT"
+TEST_CATEGORY = "General"
+TEST_CLASS = "suite"
+TEST_TYPE = "Server"
+
+DOC = """
+This is the portion of the Build Verification Test suite required
+to pass before any other tests may run.  Test failures in this
+suite trigger automatic actions:
+  * Failures in the Commit Queue or Pre-Flight Queue fail the build,
+    and block running tests from the bvt-cq suite.
+  * Failures in the canary turn the tree red, block all other tests
+    for the build, and generally mean that QA cannot further
+    evaluate the build's fitness for release.
+
+Requirements for a test to be in this suite:
+ 1. The test should be SHORT, and should not require any specialized
+    lab resources.
+ 2. A test failure should indicate one or more of the following
+    impacts is possible:
+     * The failure may impact the stability of the test lab.
+     * The failure may prevent discovery of other bugs.
+     * The failure may block ordinary development tasks.
+ 3. A test failure must reliably indicate a bug in the product, and
+    not a bug in the test.
+
+@param build: The name of the image to test.
+              Ex: x86-mario-release/R17-1412.33.0-a1-b29
+@param board: The board to test on. Ex: x86-mario
+@param pool: The pool of machines to utilize for scheduling. If pool=None
+             board is used.
+@param check_hosts: require appropriate live hosts to exist in the lab.
+@param SKIP_IMAGE: (optional) If present and True, don't re-image devices.
+"""
+
+import common
+from autotest_lib.server.cros import provision
+from autotest_lib.server.cros.dynamic_suite import dynamic_suite
+
+
+# Values specified in this bug template will override default values when
+# filing bugs on tests that are a part of this suite. If left unspecified
+# the bug filer will fallback to it's defaults.
+_BUG_TEMPLATE = {
+    'labels': ['bvt'],
+    'owner': '',
+    'status': None,
+    'summary': None,
+    'title': None,
+    'ccs': ['chromeos-lab-errors@google.com']
+}
+
+args_dict['max_runtime_mins'] = 20
+args_dict['name'] = 'bvt-inline'
+args_dict['job'] = job
+args_dict['add_experimental'] = True
+args_dict['version_prefix'] = provision.CROS_VERSION_PREFIX
+args_dict['bug_template'] = _BUG_TEMPLATE
+
+dynamic_suite.reimage_and_run(**args_dict)

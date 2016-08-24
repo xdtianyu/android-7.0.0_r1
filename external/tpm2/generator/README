@@ -1,0 +1,33 @@
+********************
+TPM2 CODE GENERATION
+********************
+
+Code generation scripts for libtpm2 process TCG TPM2 library specification in
+HTML form and generate the appropriate type definitions and interface code.
+
+
+====================
+ TPM SPECIFICATION
+====================
+
+See http://www.trustedcomputinggroup.org.  This version of libtpm2 is based on
+Family TPM 2.0 Level 00 Revision 01.16.
+
+Parts 2,3 and 4 of the specification were converted from PDF into HTML using
+Adobe Acrobat editor, and tarred and zipped into TPM2_Parts_2_3_4.tgz.
+
+Note that presently the scripts still do not process part4, and ignore all
+source code included in part 3.
+
+=========================================
+      REGENERATING TPM2 SOURCE CODE
+=========================================
+
+Run this command in the root tpm2 directory:
+
+$ generator/generator.py generator/TPM2_Parts_2_3_4.tgz
+
+The generator can also be invoked with separate html files as command line
+arguments:
+
+$ generator/generator.py <part2>.html <part3>.html

@@ -1,0 +1,32 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_WiFi_Perf.11g'
+ATTRIBUTES = 'suite:wifi_perf, suite:wifi_perf_bcm4371'
+SUITE = 'wifi_perf, wifi_perf_bcm4371'
+TIME = 'SHORT'
+TEST_TYPE = 'Server'
+DEPENDENCIES = 'wificell'
+
+DOC = """
+This test uses netperf to measure the maximal receiving and transmitting
+throughput on a DUT with an open 802.11g network.
+"""
+
+
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    host = hosts.create_host(machine)
+    mode = hostap_config.HostapConfig.MODE_11G
+    configs = [hostap_config.HostapConfig(channel=channel, mode=mode)
+               for channel in (6,)]
+    job.run_test('network_WiFi_Perf', tag=NAME.split('.')[1],
+                 host=host, raw_cmdline_args=args,
+                 additional_params=configs)
+
+
+parallel_simple(run, machines)

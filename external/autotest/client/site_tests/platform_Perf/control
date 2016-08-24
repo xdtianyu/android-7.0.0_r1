@@ -1,0 +1,26 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'sque dhsharp rapati'
+NAME = 'platform_Perf'
+PURPOSE = 'Verify that the perf tool works properly.'
+
+CRITERIA = """
+Successfully collect a perf data profile and verify that the contents are well
+formed.
+"""
+TIME = 'SHORT'
+TEST_CATEGORY = 'Functional'
+TEST_CLASS = 'platform'
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+
+ATTRIBUTES = "suite:bvt-cq"
+SUITE = 'bvt-cq'
+
+DOC = """
+Runs 'perf record' and 'perf report'.
+"""
+
+job.run_test('platform_Perf')

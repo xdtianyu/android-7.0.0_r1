@@ -1,0 +1,40 @@
+# Copyright (c) 2012 Collabora Ltd. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.client.cros import storage as storage_mod
+
+NAME = "hardware_Usb30Throughput"
+AUTHOR = "Cosimo Alfarano <cosimo.alfarano@collabora.co.uk>"
+PURPOSE = "Check that there are no transfer speed downgrade after suspend."
+CRITERIA = "Fails if transfer rate is below expectations"
+TIME="SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+
+DOC = """Measure transfer rates for a number of times.
+If any of the transfer rate is below expectation the test fails.
+
+This test need a high-speed USB 3.0 device connected, with a mountable file
+system on a single partition.
+No user should be logged in via GUI to avoid automounter interfere with the
+test.
+
+@param measurements: (10) number of times to repeat xfer rate measureaments
+@param size: (10Mb) the size of the file to transfer for each |measureaments|
+@param fs_uuid: UUID for USB storage define volume, if auto detection does not
+       work.
+@param min_speed: (300Mb/sec) a float number for the minimum speed accepted.
+       Any |measureaments| performing below it will make the test fail
+"""
+
+storage_filter, args_dict = storage_mod.args_to_storage_dict(args)
+if not storage_filter:
+    storage_filter = {'bus': 'usb'}
+measurements = int(args_dict.get('measurements', 10))
+size = int(args_dict.get('size', 10))
+min_speed = float(args_dict.get('min_speed', 300))
+
+job.run_test('hardware_Usb30Throughput', storage_filter=storage_filter,
+             measurements=measurements, size=size, min_speed=min_speed)

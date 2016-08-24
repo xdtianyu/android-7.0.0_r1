@@ -1,0 +1,216 @@
+# The set of ICU4J Javadoc replacements.
+
+# This is a version of the upstream UCharacter docs from ICU56 with some changes:
+# Removal of paragraphs that make no sense on Android.
+--type:android.icu.lang.UCharacter
+/**
+ * {@icuenhanced java.lang.Character}.{@icu _usage_}
+ *
+ * <p>The UCharacter class provides extensions to the {@link java.lang.Character} class.
+ * These extensions provide support for more Unicode properties.
+ * Each ICU release supports the latest version of Unicode available at that time.
+ *
+ * <p>For some time before Java 5 added support for supplementary Unicode code points,
+ * The ICU UCharacter class and many other ICU classes already supported them.
+ * Some UCharacter methods and constants were widened slightly differently than
+ * how the Character class methods and constants were widened later.
+ * In particular, {@link Character#MAX_VALUE} is still a char with the value U+FFFF,
+ * while the {@link UCharacter#MAX_VALUE} is an int with the value U+10FFFF.
+ *
+ * <p>Code points are represented in these API using ints. While it would be
+ * more convenient in Java to have a separate primitive datatype for them,
+ * ints suffice in the meantime.
+ *
+ * <p>Aside from the additions for UTF-16 support, and the updated Unicode
+ * properties, the main differences between UCharacter and Character are:
+ * <ul>
+ * <li> UCharacter is not designed to be a char wrapper and does not have
+ *      APIs to which involves management of that single char.<br>
+ *      These include:
+ *      <ul>
+ *        <li> char charValue(),
+ *        <li> int compareTo(java.lang.Character, java.lang.Character), etc.
+ *      </ul>
+ * <li> UCharacter does not include Character APIs that are deprecated, nor
+ *      does it include the Java-specific character information, such as
+ *      boolean isJavaIdentifierPart(char ch).
+ * <li> Character maps characters 'A' - 'Z' and 'a' - 'z' to the numeric
+ *      values '10' - '35'. UCharacter also does this in digit and
+ *      getNumericValue, to adhere to the java semantics of these
+ *      methods.  New methods unicodeDigit, and
+ *      getUnicodeNumericValue do not treat the above code points
+ *      as having numeric values.  This is a semantic change from ICU4J 1.3.1.
+ * </ul>
+ * <p>
+ * In addition to Java compatibility functions, which calculate derived properties,
+ * this API provides low-level access to the Unicode Character Database.
+ * </p>
+ * <p>
+ * Unicode assigns each code point (not just assigned character) values for
+ * many properties.
+ * Most of them are simple boolean flags, or constants from a small enumerated list.
+ * For some properties, values are strings or other relatively more complex types.
+ * </p>
+ * <p>
+ * For more information see
+ * <a href="http://www.unicode/org/ucd/">"About the Unicode Character Database"</a>
+ * (http://www.unicode.org/ucd/)
+ * and the <a href="http://www.icu-project.org/userguide/properties.html">ICU
+ * User Guide chapter on Properties</a>
+ * (http://www.icu-project.org/userguide/properties.html).
+ * </p>
+ * <p>
+ * There are also functions that provide easy migration from C/POSIX functions
+ * like isblank(). Their use is generally discouraged because the C/POSIX
+ * standards do not define their semantics beyond the ASCII range, which means
+ * that different implementations exhibit very different behavior.
+ * Instead, Unicode properties should be used directly.
+ * </p>
+ * <p>
+ * There are also only a few, broad C/POSIX character classes, and they tend
+ * to be used for conflicting purposes. For example, the "isalpha()" class
+ * is sometimes used to determine word boundaries, while a more sophisticated
+ * approach would at least distinguish initial letters from continuation
+ * characters (the latter including combining marks).
+ * (In ICU, BreakIterator is the most sophisticated API for word boundaries.)
+ * Another example: There is no "istitle()" class for titlecase characters.
+ * </p>
+ * <p>
+ * ICU 3.4 and later provides API access for all twelve C/POSIX character classes.
+ * ICU implements them according to the Standard Recommendations in
+ * Annex C: Compatibility Properties of UTS #18 Unicode Regular Expressions
+ * (http://www.unicode.org/reports/tr18/#Compatibility_Properties).
+ * </p>
+ * <p>
+ * API access for C/POSIX character classes is as follows:
+ * <pre>{@code
+ * - alpha:     isUAlphabetic(c) or hasBinaryProperty(c, UProperty.ALPHABETIC)
+ * - lower:     isULowercase(c) or hasBinaryProperty(c, UProperty.LOWERCASE)
+ * - upper:     isUUppercase(c) or hasBinaryProperty(c, UProperty.UPPERCASE)
+ * - punct:     ((1<<getType(c)) & ((1<<DASH_PUNCTUATION)|(1<<START_PUNCTUATION)|
+ *               (1<<END_PUNCTUATION)|(1<<CONNECTOR_PUNCTUATION)|(1<<OTHER_PUNCTUATION)|
+ *               (1<<INITIAL_PUNCTUATION)|(1<<FINAL_PUNCTUATION)))!=0
+ * - digit:     isDigit(c) or getType(c)==DECIMAL_DIGIT_NUMBER
+ * - xdigit:    hasBinaryProperty(c, UProperty.POSIX_XDIGIT)
+ * - alnum:     hasBinaryProperty(c, UProperty.POSIX_ALNUM)
+ * - space:     isUWhiteSpace(c) or hasBinaryProperty(c, UProperty.WHITE_SPACE)
+ * - blank:     hasBinaryProperty(c, UProperty.POSIX_BLANK)
+ * - cntrl:     getType(c)==CONTROL
+ * - graph:     hasBinaryProperty(c, UProperty.POSIX_GRAPH)
+ * - print:     hasBinaryProperty(c, UProperty.POSIX_PRINT)}</pre>
+ * </p>
+ * <p>
+ * The C/POSIX character classes are also available in UnicodeSet patterns,
+ * using patterns like [:graph:] or \p{graph}.
+ * </p>
+ *
+ * {@icunote} There are several ICU (and Java) whitespace functions.
+ * Comparison:<ul>
+ * <li> isUWhiteSpace=UCHAR_WHITE_SPACE: Unicode White_Space property;
+ *       most of general categories "Z" (separators) + most whitespace ISO controls
+ *       (including no-break spaces, but excluding IS1..IS4 and ZWSP)
+ * <li> isWhitespace: Java isWhitespace; Z + whitespace ISO controls but excluding no-break spaces
+ * <li> isSpaceChar: just Z (including no-break spaces)</ul>
+ * </p>
+ * <p>
+ * This class is not subclassable.
+ * </p>
+ * @author Syn Wee Quek
+ * @stable ICU 2.1
+ * @see com.ibm.icu.lang.UCharacterEnums
+ */
+--
+
+# Remove @see reference to non-public class TimeUnitAmount.
+--type:android.icu.util.TimeUnit
+/**
+ * Measurement unit for time units.
+ * @see TimeUnit
+ * @author markdavis
+ * @stable ICU 4.0
+ */
+--
+
+# Remove references to setDefault* methods that are hidden on Android.
+--type:android.icu.util.TimeZone
+/**
+ * {@icuenhanced java.util.TimeZone}.{@icu _usage_}
+ *
+ * <p><code>TimeZone</code> represents a time zone offset, and also computes daylight
+ * savings.
+ *
+ * <p>Typically, you get a <code>TimeZone</code> using {@link #getDefault()}
+ * which creates a <code>TimeZone</code> based on the time zone where the program
+ * is running. For example, for a program running in Japan, <code>getDefault</code>
+ * creates a <code>TimeZone</code> object based on Japanese Standard Time.
+ *
+ * <p>You can also get a <code>TimeZone</code> using {@link #getTimeZone(String)}
+ * along with a time zone ID. For instance, the time zone ID for the
+ * U.S. Pacific Time zone is "America/Los_Angeles". So, you can get a
+ * U.S. Pacific Time <code>TimeZone</code> object with:
+ *
+ * <blockquote>
+ * <pre>
+ * TimeZone tz = TimeZone.getTimeZone("America/Los_Angeles");
+ * </pre>
+ * </blockquote>
+ * You can use the {@link #getAvailableIDs()} method to iterate through
+ * all the supported time zone IDs, or getCanonicalID method to check
+ * if a time zone ID is supported or not. You can then choose a
+ * supported ID to get a <code>TimeZone</code>.
+ * If the time zone you want is not represented by one of the
+ * supported IDs, then you can create a custom time zone ID with
+ * the following syntax:
+ *
+ * <blockquote>
+ * <pre>
+ * GMT[+|-]hh[[:]mm]
+ * </pre>
+ * </blockquote>
+ *
+ * For example, you might specify GMT+14:00 as a custom
+ * time zone ID.  The <code>TimeZone</code> that is returned
+ * when you specify a custom time zone ID uses the specified
+ * offset from GMT(=UTC) and does not observe daylight saving
+ * time. For example, you might specify GMT+14:00 as a custom
+ * time zone ID to create a TimeZone representing 14 hours ahead
+ * of GMT (with no daylight saving time). In addition,
+ * <code>getCanonicalID</code> can also be used to
+ * normalize a custom time zone ID.
+ *
+ * <p>For compatibility with JDK 1.1.x, some other three-letter time zone IDs
+ * (such as "PST", "CTT", "AST") are also supported. However, <strong>their
+ * use is deprecated</strong> because the same abbreviation is often used
+ * for multiple time zones (for example, "CST" could be U.S. "Central Standard
+ * Time" and "China Standard Time"), and the Java platform can then only
+ * recognize one of them.
+ *
+ * @see          Calendar
+ * @see          GregorianCalendar
+ * @see          SimpleTimeZone
+ * @author       Mark Davis, David Goldsmith, Chen-Lieh Huang, Alan Liu
+ * @stable ICU 2.0
+ */
+--
+
+# Remove the reference to ULocale.setDefault() and remove system properties information.
+--method:android.icu.util.ULocale#getDefault()
+/**
+     * Returns the current default ULocale.
+     * <p>
+     * The default ULocale is synchronized to the default Java Locale. This method checks
+     * the current default Java Locale and returns an equivalent ULocale.
+     *
+     * @return the default ULocale.
+     * @stable ICU 2.8
+     */
+--
+
+# Removal of sentence containing link to class that is not exposed in Android API
+--type:android.icu.text.UnicodeFilter
+/**
+ * <code>UnicodeFilter</code> defines a protocol for selecting a
+ * subset of the full range (U+0000 to U+FFFF) of Unicode characters.
+ * @stable ICU 2.0
+ */
+--

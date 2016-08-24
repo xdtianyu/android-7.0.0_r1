@@ -1,0 +1,23 @@
+#!/usr/bin/python
+# Simple utility to trigger a Verify job on a bunch of hosts.
+#
+# CAVEAT:  no error checking; if any argument isn't a valid
+# host, it will be silently ignored.  If there are no command
+# line arguments, silently succeed.
+
+import sys
+
+import common
+
+from autotest_lib.server import frontend
+
+# I _think_ (but I don't know) that the AFE calls operate on all the
+# hosts if there are no arguments given.  I do know for certain that
+# with hostnames=[], the call takes longer than I was willing to
+# wait.
+#
+# To protect against pointless exercises in futility, do nothing
+# if there are no arguments.
+
+if len(sys.argv) >= 2:
+    frontend.AFE().reverify_hosts(hostnames=sys.argv[1:])

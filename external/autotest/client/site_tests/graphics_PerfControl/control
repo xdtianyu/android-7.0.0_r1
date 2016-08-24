@@ -1,0 +1,30 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = 'graphics_PerfControl'
+AUTHOR = 'chromeos-gfx'
+PURPOSE = 'Verifies that we are able to obtain a cool and idle machine.'
+CRITERIA = """
+If there are problems reading temperature sensors this test will fail.
+This test will also fail if more than 10 percent of the system CPU
+even after a wait of 60 seconds.
+"""
+ATTRIBUTES = "suite:bvt-perbuild, suite:graphics, suite:graphics_per-day, suite:graphics_system"
+SUITE = 'bvt-perbuild, graphics_per-day, graphics, graphics_system'
+TIME='fast'
+TEST_CATEGORY = 'Performance'
+TEST_CLASS = "Performance"
+TEST_TYPE = 'client'
+JOB_RETRIES = 2
+BUG_TEMPLATE = {
+    'labels': ['Cr-OS-Kernel-Graphics'],
+}
+
+DOC = """
+Performance tests should be wrapped in a PerfControl object to ensure
+consistent thermal state and performance results. This test exercises
+this basic functionality with a Noop performance test.
+"""
+
+job.run_test('graphics_PerfControl')

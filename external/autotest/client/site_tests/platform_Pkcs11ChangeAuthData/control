@@ -1,0 +1,20 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chromium OS Authors"
+NAME = "platform_Pkcs11ChangeAuthData"
+PURPOSE = "Tests changing authorization data for a PKCS #11 token."
+CRITERIA = "Fails if token does not correctly change authorization data."
+ATTRIBUTES = "suite:experimental"
+SUITE= "experimental"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This tests changing authorization data for a PKCS #11 token.
+"""
+
+job.run_test('platform_Pkcs11ChangeAuthData')

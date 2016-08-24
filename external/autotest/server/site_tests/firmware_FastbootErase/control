@@ -1,0 +1,30 @@
+# Copyright (c) 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "firmware_FastbootErase"
+PURPOSE = "Android Fastboot test for verifying erase function"
+CRITERIA = "This test will erase the kernel and try to boot up"
+ATTRIBUTES = "suite:faft, suite:faft_normal_ryu"
+SUITE = "faft,faft_normal_ryu"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "firmware"
+TEST_TYPE = "server"
+
+DOC = """
+This test tests erasing kernel partition in DUT through fastboot
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run_FastbootErase(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("firmware_FastbootErase", host=host, cmdline_args=args,
+                 disable_sysinfo=True, dev_mode=False, tag="normal")
+
+parallel_simple(run_FastbootErase, machines)

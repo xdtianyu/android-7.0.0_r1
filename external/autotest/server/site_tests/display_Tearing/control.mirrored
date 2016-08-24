@@ -1,0 +1,31 @@
+# Copyright 2015 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "chromeos-chameleon"
+NAME = "display_Tearing.mirrored"
+PURPOSE = "Remotely test whether there is screen tearing."
+CRITERIA = "This test will fail if detecting screen tearing or missing/redundant/wrong frames."
+ATTRIBUTES = "suite:chameleon_dp, suite:chameleon_hdmi, suite:chameleon_hdmi_nightly, suite:chameleon_vga"
+SUITE = "chameleon_dp, chameleon_hdmi, chameleon_hdmi_nightly, chameleon_vga"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "display"
+TEST_TYPE = "server"
+DEPENDENCIES = 'chameleon'
+
+DOC = """
+This is a test for screen tearing using the Chameleon board.
+"""
+
+args_dict = utils.args_to_dict(args)
+chameleon_args = hosts.CrosHost.get_chameleon_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, chameleon_args=chameleon_args)
+    job.run_test("display_Tearing", host=host, test_mirrored=True,
+                 tag="mirrored")
+
+parallel_simple(run, machines)

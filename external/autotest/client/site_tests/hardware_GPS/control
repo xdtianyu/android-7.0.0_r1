@@ -1,0 +1,22 @@
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "hardware_GPS"
+PURPOSE = "Verify basic functionality of a GPS device."
+CRITERIA = """
+Fail if GPS device is not found or if expected settings are missing.
+"""
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "hardware"
+TEST_TYPE = "client"
+
+DOC = """
+This is a an automated test that checks the basic functionality of a GPS
+device and software stack (gpsd). Before running the test, make sure your
+GPS device us connected through an USB port.
+"""
+
+job.run_test('hardware_GPS')

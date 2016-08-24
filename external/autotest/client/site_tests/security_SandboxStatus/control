@@ -1,0 +1,20 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "jorgelo"
+NAME = "security_SandboxStatus"
+ATTRIBUTES = "suite:bvt-inline"
+SUITE = "bvt-inline"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "security"
+TEST_TYPE = "client"
+JOB_RETRIES = 2
+
+DOC = """
+Checks the status of the sandbox by looking at chrome://sandbox and
+chrome://gpu.
+"""
+
+job.run_test('security_SandboxStatus')

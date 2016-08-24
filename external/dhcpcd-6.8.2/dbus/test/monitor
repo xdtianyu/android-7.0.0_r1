@@ -1,0 +1,19 @@
+#!/usr/bin/python
+
+import gobject
+import dbus
+import dbus.mainloop.glib
+
+def event(pid, reason, value):
+	print "pid %s %s: %s" % (pid, reason, value)
+
+if __name__ == '__main__':
+	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+
+	bus = dbus.SystemBus()
+
+	bus.add_signal_receiver(event, bus_name="org.chromium.dhcpcd",
+	    signal_name = "Event")
+
+	mainloop = gobject.MainLoop()
+	mainloop.run()

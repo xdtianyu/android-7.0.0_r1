@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2016 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Nominally used to generate the "Version.java" file, but in theory could be used
+# for any super simple template generation as well.
+
+if [[ $# -lt 4 ]]; then
+  echo "Usage: $(basename $0) <template-file> <template-variable> <value-file> <value-variable>" >&2
+  echo ""
+  echo 'For example, ./generate-version-file src/main/resources/org/testng/internal/VersionTemplateJava "@version@" kobalt/src/Build.kt "VERSION"'
+  exit 1
+fi
+
+template_file="$1"
+template_variable="$2"
+value_file="$3"
+value_variable="$4"
+
+if ! [[ -f $template_file ]]; then
+  echo "Error: Template file $template_file does not exist." >&2
+  exit 1
+fi
+
+if ! [[ -f $value_file ]]; then
+  echo "Error: Value file $value_File does not exist." >&2
+  exit 1
+fi
+
+# Read a 'val VERSION = "SOME_VERSION"' from the file, trim down to $SOME_VERSION.
+stored_value="$(egrep "val[[:space:]]+$value_variable" "$value_file" | awk 'NF>1{print $NF}' | tr -d '"')"
+if [[ $? -ne 0 ]]; then
+  echo "Error: Could not find value $value_variable in $value_file of syntax 'val $value_variable = \"SOME_VALUE\"'" >&2
+  exit 1
+fi
+
+# Ensure that the template does indeed have @version@
+if ! grep --silent "$template_variable" "$template_file"; then
+  echo "Error: Template file $template_file has no instances of template variable $template_variable." >&2
+  exit 1
+fi
+
+set -e
+
+# Apply the template, replacing @version@ with the VERSION.
+sed -e "s:$template_variable:$stored_value:g" "$template_file"

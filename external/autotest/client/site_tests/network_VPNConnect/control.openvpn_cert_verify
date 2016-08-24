@@ -1,0 +1,30 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'pstew, wiley, quiche'
+NAME = 'network_VPNConnect.openvpn_cert_verify'
+ATTRIBUTES = "suite:bvt-perbuild, suite:network_nightly"
+SUITE = 'bvt-perbuild, network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that we can complete OpenVPN authentication with a server where
+  the client performs subject name and hash verification.  This is a
+  client-only test which verifies function of the OpenVPN client.  Since
+  the server it is testing against is itself, this test is best suited for
+  verifying that the connection manager is correctly passing parameters to
+  the underlying VPN client to have it properly connect.
+
+  This test fails if the DUT cannot successfully verify the remote VPN
+  server using the "verify-hash" and "verify-x509-name" parameters.  It
+  also tests using the "extra-certs" parameter.  The server runs at the
+  other end of a virtual Ethernet interface.
+
+"""
+
+vpn_types = [ '%s_%s' % (NAME.split('.')[1], subtest)
+              for subtest in ('', 'cn_only', 'incorrect_subject',
+                              'incorrect_hash', 'incorrect_cn') ]
+job.run_test('network_VPNConnect', vpn_types=vpn_types, tag=NAME.split('.')[1])

@@ -1,0 +1,26 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "TPMSmogcheck"
+PURPOSE = "Execute automated TPM functionality checks."
+TIME = "SHORT"  # <= 15 minutes in execution
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "suite"
+TEST_TYPE = "client"
+
+DOC = """
+This test suite runs automated TPM Smogcheck tests. The purpose of
+the suite is to sanity test basic TPM functionality in less than 10 minutes.
+"""
+
+# TPM_TakeOwnership
+# 'loop=10' means run this test for 10 consecutive iterations
+# 'max_acceptable_delay=50' sets the upper bound of per-iteration delay in sec
+# 'max_delay_in_sec_actual' is an attribute that will be calculated in the test
+#     body after measurements are taken for all iterations
+# 'constraints' means to declare test FAIL if value of 'max_delay_in_sec_actual'
+#     exceeds 50 sec
+job.run_test('hardware_TPMTakeOwnership', loop=10, max_acceptable_delay=50,
+             constraints=['max_delay_in_sec_actual <= 50'])

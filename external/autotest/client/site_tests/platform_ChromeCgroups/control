@@ -1,0 +1,22 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "abrestic, sonnyrao"
+NAME = "platform_ChromeCgroups"
+PURPOSE = "Verify that the chrome_renderers cgroups are created and used."
+CRITERIA = "Fails if the required cgroups do not exist or are empty."
+ATTRIBUTES = "suite:regression"
+SUITE = "regression"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "platform"
+TEST_TYPE = "client"
+
+DOC = """
+This test verifies that the chrome_renderers foreground and background
+cgroups exist and that tasks are placed in those cgroups when multiple
+tabs are open.
+"""
+
+job.run_test('platform_ChromeCgroups')

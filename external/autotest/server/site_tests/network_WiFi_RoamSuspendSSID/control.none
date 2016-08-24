@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+TIME = 'SHORT'
+NAME = 'network_WiFi_RoamSuspendSSID.none'
+TEST_TYPE = 'Server'
+DOC = """
+This test verifies that the connection manager connects to a
+previously connected network on resume from suspend when an
+SSID disappears during suspend.
+
+"""
+
+from autotest_lib.server.cros.network import hostap_config
+
+
+def run(machine):
+    ap_config0 = hostap_config.HostapConfig(channel=1)
+    ap_config1 = hostap_config.HostapConfig(channel=11)
+    job.run_test('network_WiFi_RoamSuspendSSID',
+                 tag=NAME.split('.')[1],
+                 host=hosts.create_host(machine),
+                 raw_cmdline_args=args,
+                 additional_params=(ap_config0, ap_config1))
+
+
+parallel_simple(run, machines)

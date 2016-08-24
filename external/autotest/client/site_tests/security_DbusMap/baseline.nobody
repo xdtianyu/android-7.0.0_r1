@@ -1,0 +1,341 @@
+[
+  {
+    "Object_name": "fi.w1.wpa_supplicant1",
+    "interfaces": [
+      {
+        "interface": "fi.w1.wpa_supplicant1",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "InterfaceAdded",
+          "InterfaceRemoved",
+          "PropertiesChanged"
+        ]
+      },
+      {
+        "interface": "fi.w1.wpa_supplicant1.BSS",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "PropertiesChanged"
+        ]
+      },
+      {
+        "interface": "fi.w1.wpa_supplicant1.Interface",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "BSSAdded",
+          "BSSRemoved",
+          "BlobAdded",
+          "BlobRemoved",
+          "NetworkAdded",
+          "NetworkRemoved",
+          "NetworkSelected",
+          "PropertiesChanged",
+          "ScanDone"
+        ]
+      }
+    ]
+  },
+  {
+    "Object_name": "org.chromium.Cashew",
+    "interfaces": [
+      {
+        "interface": "org.chromium.Cashew",
+        "methods": [
+          "GetDataPlans",
+          "IsAlive",
+          "RequestCellularUsageInfo",
+          "RequestDataPlansUpdate"
+        ],
+        "properties": [],
+        "signals": [
+          "DataPlansUpdate"
+        ]
+      },
+      {
+        "interface": "org.freedesktop.DBus.Introspectable",
+        "methods": [
+          "Introspect"
+        ],
+        "properties": [],
+        "signals": []
+      }
+    ]
+  },
+  {
+    "Object_name": "org.chromium.CrosDisks",
+    "interfaces": [
+      {
+        "interface": "org.chromium.CrosDisks",
+        "methods": [
+          "EnumerateAutoMountableDevices",
+          "EnumerateDevices",
+          "FilesystemMount",
+          "FilesystemUnmount",
+          "FormatDevice",
+          "GetDeviceFilesystem",
+          "GetDeviceProperties",
+          "IsAlive",
+          "Mount",
+          "Unmount"
+        ],
+        "signals": [
+          "DeviceAdded",
+          "DeviceRemoved",
+          "DeviceScanned",
+          "DiskAdded",
+          "DiskChanged",
+          "DiskRemoved",
+          "FormattingFinished",
+          "MountCompleted"
+        ]
+      },
+      {
+        "interface": "org.freedesktop.DBus.Introspectable",
+        "methods": [
+          "Introspect"
+        ],
+        "properties": [],
+        "signals": []
+      },
+      {
+        "interface": "org.freedesktop.DBus.Properties",
+        "methods": [
+          "Get",
+          "GetAll",
+          "Set"
+        ],
+        "properties": [],
+        "signals": []
+      }
+    ]
+  },
+  {
+    "Object_name": "org.chromium.Cryptohome",
+    "interfaces": [
+      {
+        "interface": "org.chromium.CryptohomeInterface",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "AsyncCallStatus",
+          "TpmInitStatus"
+        ]
+      }
+    ]
+  },
+  {
+    "Object_name": "org.chromium.LibCrosService",
+    "interfaces": [
+      {
+        "interface": "org.chromium.LibCrosServiceInterface",
+        "methods": [
+          "ResolveNetworkProxy"
+        ],
+        "properties": [],
+        "signals": []
+      },
+      {
+        "interface": "org.freedesktop.DBus.Introspectable",
+        "methods": [
+          "Introspect"
+        ],
+        "properties": [],
+        "signals": []
+      },
+      {
+        "interface": "org.freedesktop.DBus.Properties",
+        "methods": [
+          "Get",
+          "GetAll",
+          "Set"
+        ],
+        "properties": [],
+        "signals": []
+      }
+    ]
+  },
+  {
+    "Object_name": "org.chromium.ModemManager",
+    "interfaces": [
+      {
+        "interface": "org.chromium.ModemManager.Modem.Gobi",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "DormancyStatus"
+        ]
+      },
+      {
+        "interface": "org.freedesktop.ModemManager",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "DeviceAdded",
+          "DeviceRemoved"
+        ]
+      },
+      {
+        "interface": "org.freedesktop.ModemManager.Modem",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "StateChanged"
+        ]
+      },
+      {
+        "interface": "org.freedesktop.ModemManager.Modem.Cdma",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "ActivationStateChanged",
+          "RegistrationStateChanged",
+          "SignalQuality"
+        ]
+      }
+    ]
+  },
+  {
+    "Object_name": "org.chromium.PowerManager",
+    "interfaces": [
+      {
+        "interface": "org.chromium.PowerManager",
+        "methods": [
+          "DecreaseScreenBrightness",
+          "IncreaseScreenBrightness"
+        ],
+        "properties": [],
+        "signals": []
+      },
+      {
+        "interface": "org.freedesktop.DBus.Introspectable",
+        "methods": [
+          "Introspect"
+        ],
+        "properties": [],
+        "signals": []
+      },
+      {
+        "interface": "org.freedesktop.DBus.Properties",
+        "methods": [
+          "Get",
+          "GetAll",
+          "Set"
+        ],
+        "properties": [],
+        "signals": []
+      }
+    ]
+  },
+  {
+    "Object_name": "org.chromium.SessionManager",
+    "interfaces": [
+      {
+        "interface": "org.chromium.SessionManagerInterface",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "SessionStateChanged"
+        ]
+      }
+    ]
+  },
+  {
+    "Object_name": "org.chromium.UpdateEngine",
+    "interfaces": [
+      {
+        "interface": "org.chromium.UpdateEngineInterface",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "StatusUpdate"
+        ]
+      }
+    ]
+  },
+  {
+    "Object_name": "org.chromium.flimflam",
+    "interfaces": [
+      {
+        "interface": "org.chromium.flimflam.Device",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "PropertyChanged"
+        ]
+      },
+      {
+        "interface": "org.chromium.flimflam.IPConfig",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "PropertyChanged"
+        ]
+      },
+      {
+        "interface": "org.chromium.flimflam.Manager",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "PropertyChanged",
+          "StateChanged"
+        ]
+      },
+      {
+        "interface": "org.chromium.flimflam.Network",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "PropertyChanged"
+        ]
+      },
+      {
+        "interface": "org.chromium.flimflam.Profile",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "PropertyChanged"
+        ]
+      },
+      {
+        "interface": "org.chromium.flimflam.Service",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "PropertyChanged"
+        ]
+      }
+    ]
+  },
+  {
+    "Object_name": "org.freedesktop.DBus",
+    "interfaces": [
+      {
+        "interface": "org.freedesktop.DBus",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "NameAcquired",
+          "NameLost",
+          "NameOwnerChanged"
+        ]
+      }
+    ]
+  },
+  {
+    "Object_name": "org.freedesktop.ModemManager",
+    "interfaces": [
+      {
+        "interface": "org.freedesktop.ModemManager",
+        "methods": [],
+        "properties": [],
+        "signals": [
+          "DeviceAdded",
+          "DeviceRemoved"
+        ]
+      }
+    ]
+  }
+]

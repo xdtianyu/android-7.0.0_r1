@@ -1,0 +1,21 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = 'wiley, pstew, quiche'
+NAME = 'network_DhcpRenew'
+ATTRIBUTES = "suite:network_nightly"
+SUITE = 'network_nightly'
+TIME = 'SHORT'
+TEST_TYPE = 'client'
+
+DOC = """
+  Tests that shill can renew leases through dhcpcd, and deconfigures an
+  interface when the DHCP server does not renew the license.
+
+  This test fails if shill ignores the T1, T2, or lease timeouts.  Since
+  the logic handling these timeouts is handled through dhcpcd, this tests
+  some of the interraction between shill and dhcpcd.
+"""
+
+job.run_test('network_DhcpRenew')

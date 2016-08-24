@@ -1,0 +1,35 @@
+This is libevent-2.0.22-stable from http://libevent.org/.
+
+No changes were made apart from the following:
+
+* copied LICENSE to NOTICE
+* added empty MODULE_LICENSE_BSD_LIKE
+* Removed directories:
+  - WIN32-Code
+  - compat
+  - m4
+  - sample
+  - test
+* added Android.mk
+* added CleanSpec.mk
+* added missing include of event-internal.h to buffer.c
+* added custom include/event2/event-config.h
+
+
+To uprev this project, you'll likely need to reverse engineer the autotools
+generated makefiles again.  This is the recipe I used:
+
+BRANCH_ROOT=/usr/local/google/home/wiley/mnc-dev
+PATH="${BRANCH_ROOT}/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin:${PATH}"
+NDK_ROOT="${BRANCH_ROOT}/prebuilts/ndk/current/platforms/android-21/arch-arm64/usr"
+
+./configure --host=arm --build=`./config.guess` \
+  CC=arm-eabi-gcc \
+  CPPFLAGS="-I${NDK_ROOT}/usr/include" \
+  CFLAGS="-nostdlib
+          -Wl,-rpath-link=${BRANCH_ROOT}/out/target/product/hammerhead/obj/lib
+          -L${BRANCH_ROOT}/out/target/product/hammerhead/obj/lib
+          -I${BRANCH_ROOT}/prebuilts/ndk/current/platforms/android-21/arch-arm/usr/include" \
+  LIBS="-lc "
+
+Note that I built hammerhead first and used prebuilts from the most recent NDK.

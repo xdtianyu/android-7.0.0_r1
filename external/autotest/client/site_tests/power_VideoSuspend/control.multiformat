@@ -1,0 +1,33 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_VideoSuspend.multiformat"
+ATTRIBUTES = "suite:kernel_daily_regression"
+SUITE = "kernel_daily_regression"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "client"
+
+DOC = """
+Suspends the system with a video playing.
+
+This version of the test plays multiple formats (mp4, webm, ogg).
+"""
+
+videos = [
+    'big_buck_bunny/big_buck_bunny_trailer_400p.mp4',
+    'big_buck_bunny/big_buck_bunny_trailer_400p.ogg',
+    'big_buck_bunny/big_buck_bunny_trailer_400p.webm',
+    'big_buck_bunny/big_buck_bunny_trailer_1080p.mp4',
+    'big_buck_bunny/big_buck_bunny_trailer_1080p.ogg',
+    'big_buck_bunny/big_buck_bunny_trailer_1080p.webm',
+]
+
+base_url = 'http://commondatastorage.googleapis.com/chromeos-test-public/'
+video_urls = [base_url + video for video in videos]
+
+job.add_sysinfo_logfile('/sys/kernel/debug/suspend_stats', on_every_test=True)
+job.run_test('power_VideoSuspend', video_urls=video_urls, tag='multiformat')

@@ -1,0 +1,32 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# Test expects to be run on a jailbroken device in developer mode.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "power_SuspendShutdown"
+ATTRIBUTES = "suite:kernel_daily_regression"
+SUITE = "kernel_daily_regression"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "server"
+DEPENDENCIES = "servo"
+
+DOC = """
+This test simulates a system that is unable to suspend, and verifies
+that upon repeatedly failing to suspend, the system shuts down.
+"""
+
+args_dict = utils.args_to_dict(args)
+servo_args = hosts.CrosHost.get_servo_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, servo_args=servo_args)
+    job.run_test("power_SuspendShutdown", host=host, disable_sysinfo=True,
+                 client_autotest='desktopui_SimpleLogin')
+
+parallel_simple(run, machines)

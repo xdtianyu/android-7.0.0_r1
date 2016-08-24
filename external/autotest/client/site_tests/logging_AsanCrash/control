@@ -1,0 +1,21 @@
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "dpolukhin, fdeng, yunlian"
+NAME = "logging_AsanCrash"
+PURPOSE = "Verify Address Sanitizer does catch memory errors."
+CRITERIA = "Fails if no message appears in a log after simulating memory bug."
+ATTRIBUTES = "suite:smoke"
+SUITE = "smoke"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "logging"
+TEST_TYPE = "client"
+
+DOC = """
+This is a positive test for Address Sanitizer.
+Test that memory error causes Chrome to abort with descriptive message in a log.
+"""
+
+job.run_test('logging_AsanCrash')

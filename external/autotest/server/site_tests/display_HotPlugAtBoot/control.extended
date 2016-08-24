@@ -1,0 +1,31 @@
+# Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "chromeos-chameleon"
+NAME = "display_HotPlugAtBoot.extended"
+PURPOSE = "Remotely controlled display hot-plug and reboot test."
+CRITERIA = "This test will fail if DUT doesn't see the display after boot."
+ATTRIBUTES = "suite:chameleon_dp, suite:chameleon_hdmi_perbuild, suite:chameleon_hdmi, suite:chameleon_vga"
+SUITE = "chameleon_dp,chameleon_hdmi_perbuild,chameleon_hdmi,chameleon_vga"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "display"
+TEST_TYPE = "server"
+DEPENDENCIES = 'chameleon'
+JOB_RETRIES = 2
+
+DOC = """
+This test remotely emulates external display hot-plug and reboot.
+"""
+
+args_dict = utils.args_to_dict(args)
+chameleon_args = hosts.CrosHost.get_chameleon_arguments(args_dict)
+
+def run(machine):
+    host = hosts.create_host(machine, chameleon_args=chameleon_args)
+    job.run_test("display_HotPlugAtBoot", host=host, tag="extended")
+
+parallel_simple(run, machines)

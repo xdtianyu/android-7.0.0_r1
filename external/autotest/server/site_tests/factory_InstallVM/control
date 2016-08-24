@@ -1,0 +1,26 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from autotest_lib.server import utils
+
+AUTHOR = "Chrome OS Team"
+NAME = "Factory Install VM"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "factory"
+TEST_TYPE = "server"
+
+DOC = """
+This test creates and runs a mini-Omaha server, boots a VM from the
+factory install shim, installs ChromeOS, runs a subset of factory
+tests, and finally boots into ChromeOS.
+"""
+
+
+parallel_simple(
+    lambda machine:
+        job.run_test('factory_InstallVM',
+                     host=hosts.create_host(machine),
+                     **utils.args_to_dict(args)),
+    machines)

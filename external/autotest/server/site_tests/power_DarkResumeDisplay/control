@@ -1,0 +1,31 @@
+# Copyright 2016 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# Test expects to be run on a jailbroken device in developer mode.
+
+from autotest_lib.server import utils
+
+AUTHOR = "seanpaul, dbasehore, snanda"
+NAME = "power_DarkResumeDisplay"
+ATTRIBUTES = "suite:kernel_daily_regression"
+SUITE = "kernel_daily_regression"
+TIME = "SHORT"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "power"
+TEST_TYPE = "server"
+DEPENDENCIES = "servo"
+
+DOC = """
+Test that there are no crtc errors generated during dark resume that would
+result in a display error when the device resumes to the user
+"""
+
+args_dict = utils.args_to_dict(args)
+
+def run(machine):
+    host = hosts.create_host(machine)
+    job.run_test("power_DarkResumeDisplay", host=host, disable_sysinfo=True)
+
+parallel_simple(run, machines)
+

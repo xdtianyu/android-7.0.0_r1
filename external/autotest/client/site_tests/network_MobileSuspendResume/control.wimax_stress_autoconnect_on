@@ -1,0 +1,26 @@
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+AUTHOR = "ChromeOS Team"
+NAME = "network_MobileSuspendResumeStress.wimax_stress_autoconnect_on"
+PURPOSE = "Test wimax device state after suspend/resume over many iterations"
+CRITERIA = """
+    Check the wimax state of the device after many iterations of suspend/resume.
+    Verify that wimax can be enabled under all situations after resuming of
+    device. Verify that if autoconnect is turned on that the device autoconnects
+    after resuming.
+"""
+TIME = "LONG"
+TEST_CATEGORY = "Stress"
+TEST_CLASS = "network"
+TEST_TYPE = "client"
+
+DOC = """
+    Verify that the wimax device can be enabled under all suspend/resume
+    situations.
+"""
+
+job.run_test('network_MobileSuspendResume', autoconnect=True,
+             tag='autoconnect_on-stress_wimax', scenario_group='stress',
+             stress_iterations=1000, device_type='wimax')

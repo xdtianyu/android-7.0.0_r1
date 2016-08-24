@@ -1,0 +1,19 @@
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+NAME = "hardware_TPMtspi"
+AUTHOR = "The Chromium OS Authors"
+PURPOSE = "Exercise TPM modules using TSPI library API"
+CRITERIA = "Check TPM functionality"
+TIME = "MEDIUM"
+TEST_CATEGORY = "Functional"
+TEST_CLASS = "Hardware"
+TEST_TYPE = "Client"
+
+DOC = """
+This test exercises the basic functionalities of the TPM
+ (Trusted Platform Module) module (e.g. version & self-test).
+"""
+
+job.run_test('hardware_TPMtspi')
