@@ -1,0 +1,32 @@
+# rmt_storage daemon
+type rmt_storage, domain;
+type rmt_storage_exec, exec_type, file_type;
+
+init_daemon_domain(rmt_storage)
+
+# Drop (user, group) to (nobody, nobody)
+allow rmt_storage self:capability { setuid setgid };
+
+# Opens and reads /dev/block/mmcblk0.
+allow rmt_storage root_block_device:blk_file r_file_perms;
+
+# Allow access to /dev/uio0.
+allow rmt_storage uio_device:chr_file rw_file_perms;
+
+# Allow access to /dev/smem_log.
+allow rmt_storage smem_log_device:chr_file rw_file_perms;
+
+# Allow access to modem related block devices.
+allow rmt_storage modem_block_device:blk_file rw_file_perms;
+
+# Allow access to SSD related block devices.
+allow rmt_storage ssd_block_device:blk_file rw_file_perms;
+
+allow rmt_storage self:socket create_socket_perms;
+
+allow rmt_storage sysfs:file r_file_perms;
+
+allow rmt_storage sysfs:dir r_dir_perms;
+
+# Wake lock access.
+wakelock_use(rmt_storage)

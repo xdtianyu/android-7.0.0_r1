@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+    <dimen name="account_selector_popup_width">400dip</dimen>
+
+    <!-- Account info left margin in Compact editor. -->
+    <dimen name="compact_editor_account_left_margin">4dp</dimen>
+
+    <!-- Initial height of transparent space above QuickContacts -->
+    <dimen name="quickcontact_starting_empty_height">150dp</dimen>
+    <!-- Initial size of QuickContact's title size -->
+    <dimen name="quickcontact_maximum_title_size">32dp</dimen>
+    <!-- Initial size of QuickContact's phonetic name size -->
+    <dimen name="quickcontact_maximum_phonetic_name_size">28dp</dimen>
+    <!-- When QC is uncollapsed, the title has this much margin on its left and right. -->
+    <dimen name="quickcontact_title_initial_margin">16dp</dimen>
+    <!-- When QC is uncollapsed, the title has this much margin on its bottom -->
+    <dimen name="quickcontact_title_initial_bottom_margin">8dp</dimen>
+    <!-- The ratio of width:height for the contact's photo in landscape -->
+    <item name="quickcontact_landscape_photo_ratio" type="dimen" format="float">0.7</item>
+    <!-- How far QuickContacts can be dragged and released from the top of the window before we dismiss it. -->
+    <dimen name="quickcontact_dismiss_distance_on_release">40dp</dimen>
+    <!-- How far QuickContacts can be dragged from the top of the window before we dismiss it. -->
+    <dimen name="quickcontact_dismiss_distance_on_scroll">100dp</dimen>
+    <!-- When first flinging QuickContacts towards the top of the window if the fling is
+        predicted to scroll past the window top by less than this amount, then QuickContacts
+        snaps to the top of the window. -->
+    <dimen name="quickcontact_snap_to_top_slop_height">33dp</dimen>
+
+    <!-- The ratio of width:height (360:184) for the compact editor contact photo in portrait -->
+    <item name="editor_portrait_photo_ratio" type="dimen" format="float">1.96</item>
+
+    <!-- Padding of the rounded plus/minus/expand/collapse buttons in the editor  -->
+    <dimen name="editor_round_button_padding_left">16dip</dimen>
+    <dimen name="editor_round_button_padding_right">16dip</dimen>
+    <dimen name="editor_round_button_padding_top">16dip</dimen>
+    <dimen name="editor_round_button_padding_bottom">16dip</dimen>
+
+    <!-- Minimum height of a row in the Editor. This is the target height for editor "rows",
+        including the "More fields" button/row. -->
+    <dimen name="editor_min_line_item_height">54dp</dimen>
+
+    <!-- Width of the delete button (X) in the raw contact editor -->
+    <dimen name="editor_delete_button_width">48dp</dimen>
+
+    <!-- The height and width of the delete button should be the same size as an editor row -->
+    <dimen name="editor_delete_button_size">@dimen/editor_min_line_item_height</dimen>
+
+    <!-- Top margin applied to mime-type icons inside the editor. This is needed to give the
+        appearance that the icons are top aligned with the text, since visible text doesn't
+        start at the very top of TextViews. -->
+    <dimen name="editor_kind_icon_top_margin">14dp</dimen>
+
+    <!-- RHS padding added to spinners in the editor. This separates the spinner text from the
+        spinner graphic since b/18194928 causes the spinner to always be on the RHS.
+        In LTR mode this shouldn't have an observable affect. We set paddingRight instead of
+        drawablePadding since the spinner graphic is not a normal drawable.  -->
+    <dimen name="editor_spinner_right_padding_workaround">24dip</dimen>
+
+    <!-- RHS padding added to spinners for L devices -->
+    <dimen name="editor_spinner_right_padding">40dip</dimen>
+
+    <!-- Size of input form text inside the contact editor -->
+    <dimen name="editor_form_text_size">16sp</dimen>
+
+    <!-- Width and height of the mime-type icons inside the editor -->
+    <dimen name="editor_kind_icon_size">24dp</dimen>
+
+    <!-- Total width of data-kind icon, including its start and end padding -->
+    <dimen name="editor_kind_icon_total_width">68dp</dimen>
+
+    <!-- Padding below every editor view, such as LabeledEditorView. This value is chosen
+        to give 19dp of apparent padding between EditText's in the Raw Contact Editor. -->
+    <dimen name="editor_padding_between_editor_views">2dp</dimen>
+
+    <!-- Padding below every readonly editor view. This value is chosen to give 19dp of apparent
+        padding between TextView's in the readonly Raw Contact Editor. -->
+    <dimen name="editor_padding_between_read_only_editor_views">9dp</dimen>
+
+    <!-- Padding above and below the photo editor. This value is chosen to give 19dp of apparent
+        padding between TextView's and the photo's ImageView. -->
+    <dimen name="editor_padding_around_read_only_photo_editor">15dp</dimen>
+
+    <!-- Padding below the photo editor. This value is larger than
+        editor_padding_between_editor_views, since ImageView's don't have space between the bottom
+        of their visual bottom, like an EditText does. -->
+    <dimen name="editor_padding_below_photo">9dp</dimen>
+
+    <!-- Width of the Type-Label in the Editor -->
+    <dimen name="editor_type_label_width">150dip</dimen>
+
+    <!-- Width of the drop down that appears when you click on the Type-Label spinner in the editor -->
+    <dimen name="editor_type_label_dropdown_width">150dp</dimen>
+
+    <!-- Left padding of the label in the add field button for the contact editor -->
+    <dimen name="editor_add_field_label_left_padding">16dip</dimen>
+
+    <!-- Top margin for the first field of the compact contact editor -->
+    <dimen name="editor_compact_first_field_padding">10dp</dimen>
+
+    <!-- Top and bottom padding for the two text views in editor account header expandable -->
+    <dimen name="editor_account_header_expandable_top_bottom_padding">24dp</dimen>
+
+    <!-- left padding for the two text views in editor account header expandable -->
+    <dimen name="editor_account_header_expandable_left_padding">4dp</dimen>
+
+    <!-- Width and height of the expanded contact photo on the contact detail page -->
+    <dimen name="detail_contact_photo_expanded_size">400dip</dimen>
+
+    <!-- This is the minimum amount of space to leave underneath an expanded contact detail
+         photo -->
+    <dimen name="expanded_photo_height_offset">100dip</dimen>
+
+    <!-- Minimum width for the photo action popup options -->
+    <dimen name="photo_action_popup_min_width">300dip</dimen>
+
+    <!-- Top and bottom padding for a contact detail item -->
+    <dimen name="detail_item_vertical_margin">8dip</dimen>
+
+    <!-- Minimum height of a row in the contact detail -->
+    <dimen name="detail_min_line_item_height">48dip</dimen>
+
+    <!-- Font size used for the contact name in the widget -->
+    <dimen name="widget_text_size_name">14sp</dimen>
+
+    <!-- Font size used for the social status in the widget -->
+    <dimen name="widget_text_size_snippet">13sp</dimen>
+
+    <!-- Height of list sections (A, B, C) that show the first character of the contacts -->
+    <dimen name="list_section_height">25dip</dimen>
+
+    <!-- Account title left padding -->
+    <dimen name="account_container_left_padding">16dip</dimen>
+
+    <!-- Left padding for a group member list item -->
+    <dimen name="group_member_item_left_padding">4dip</dimen>
+
+    <!-- Left and right padding for the group editor view -->
+    <dimen name="group_editor_side_padding">16dip</dimen>
+
+    <!-- Left margin for the group member list to match the built in margin in the autocomplete asset -->
+    <dimen name="group_editor_member_list_left_margin">4dip</dimen>
+
+    <!-- Right margin for the group member list to match the built in margin in the autocomplete asset -->
+    <dimen name="group_editor_member_list_right_margin">4dip</dimen>
+
+    <!-- Left padding of the auto complete field to line hint text up with member list -->
+    <dimen name="group_editor_autocomplete_left_padding">8dip</dimen>
+
+    <!-- Border padding for the group detail fragment -->
+    <dimen name="group_detail_border_padding">0dip</dimen>
+
+    <!-- Height of the quick contact photo container (for screens that are too large to use the screen width/height as a constraint)-->
+    <dimen name="quick_contact_photo_container_height">180dip</dimen>
+
+    <!-- Width of search view in action bar.  Use 0dip for MATCH_PARENT -->
+    <dimen name="search_view_width">0dip</dimen>
+
+    <!-- For join screen. Mainly for tablet. -->
+    <dimen name="join_header_left_margin">@dimen/contact_browser_list_header_left_margin</dimen>
+    <dimen name="join_header_right_margin">@dimen/contact_browser_list_header_right_margin</dimen>
+    <dimen name="join_header_top_margin">16dip</dimen>
+    <dimen name="join_header_bottom_margin">0dip</dimen>
+
+    <dimen name="no_accounts_message_margin">20dip</dimen>
+
+    <dimen name="contact_filter_header_min_height">24dip</dimen>
+
+    <!-- Max width of the SearchView when the contact picker is a dialog (on wide
+         screen devices). -->
+    <dimen name="contact_picker_search_view_max_width">550dip</dimen>
+
+    <!-- Min height of the list of contacts when the contact picker is a dialog (on
+        wide screen devices). -->
+    <dimen name="contact_picker_contact_list_min_height">550dip</dimen>
+
+
+    <!-- Margins for ExpandingEntryCardView -->
+    <dimen name="expanding_entry_card_marginStartEnd">8dp</dimen>
+    <dimen name="expanding_entry_card_marginBottom">12dp</dimen>
+    <!-- Width of the grey border surrounding the expanding entry cards. If we ever add
+         a rounded corner to the expanding entry cards, than we will need to increase this value -->
+    <dimen name="expanding_entry_card_border_width">12dp</dimen>
+
+    <!-- Top margin for the communication card, used to add space from header. -->
+    <dimen name="first_card_marginTop">12dp</dimen>
+
+    <!-- Elevation of an ExpandingEntryCard, for the sake of shadow casting -->
+    <dimen name="expanding_entry_card_elevation">2dp</dimen>
+    <!-- Elevation of the QuickContact's Toolbar, for the sake of shadow casting -->
+    <dimen name="quick_contact_toolbar_elevation">4.5dp</dimen>
+
+    <!-- Size of the title text for a ExpandingEntryCardView -->
+    <dimen name="expanding_entry_card_title_text_size">16sp</dimen>
+    <!-- Padding for the title text for a ExpandingEntryCardView -->
+    <dimen name="expanding_entry_card_title_padding">16dp</dimen>
+    <!-- Extra top padding if the title is set to null -->
+    <dimen name="expanding_entry_card_null_title_top_extra_padding">2dp</dimen>
+
+    <!-- Height of the separator between entries in an ExpandingEntryCardView and contact editor. -->
+    <dimen name="divider_line_height">1dp</dimen>
+
+    <!-- Dimensions for an entry in ExpandingEntryCardView -->
+    <dimen name="expanding_entry_card_item_padding_start">20dp</dimen>
+    <dimen name="expanding_entry_card_item_padding_end">8dp</dimen>
+    <dimen name="expanding_entry_card_item_padding_top">13dp</dimen>
+    <dimen name="expanding_entry_card_item_padding_bottom">16dp</dimen>
+    <dimen name="expanding_entry_card_item_image_spacing">27dp</dimen>
+
+    <!-- Dimensions for a button in ExpandingEntryCardView -->
+    <dimen name="expanding_entry_card_button_padding_vertical">18dp</dimen>
+
+    <dimen name="expanding_entry_card_item_text_icon_margin_top">7dp</dimen>
+    <dimen name="expanding_entry_card_item_text_icon_margin_right">7dp</dimen>
+    <dimen name="expanding_entry_card_item_sub_header_icon_margin_right">4dp</dimen>
+    <dimen name="expanding_entry_card_item_sub_header_icon_margin_bottom">14dp</dimen>
+
+    <dimen name="expanding_entry_card_item_icon_margin_top">12dp</dimen>
+    <dimen name="expanding_entry_card_item_icon_margin_bottom">12dp</dimen>
+    <dimen name="expanding_entry_card_item_icon_margin_left">12dp</dimen>
+    <dimen name="expanding_entry_card_item_icon_margin_right">12dp</dimen>
+    <dimen name="expanding_entry_card_item_header_only_margin_top">6dp</dimen>
+
+    <dimen name="expanding_entry_card_badge_separator_margin">8dp</dimen>
+    <dimen name="expanding_entry_card_card_corner_radius">2dp</dimen>
+    <dimen name="expanding_entry_card_header_margin_bottom">2dp</dimen>
+    <!-- The top margin when the sub header and text views are both gone -->
+    <dimen name="expanding_entry_card_item_header_only_margin_bottom">2dp</dimen>
+    <dimen name="expanding_entry_card_item_no_icon_margin_top">6dp</dimen>
+
+    <dimen name="quickcontact_suggestion_card_icon_height">40dp</dimen>
+    <dimen name="quickcontact_suggestion_card_icon_width">40dp</dimen>
+    <dimen name="quickcontact_suggestion_card_image_spacing">20dp</dimen>
+    <dimen name="quickcontact_suggestion_card_layout_margin">8dp</dimen>
+    <dimen name="quickcontact_suggestion_card_checkbox_right_margin">16dp</dimen>
+    <dimen name="quickcontact_collapse_view_height">48dp</dimen>
+    <dimen name="quickcontact_collapse_icon_size">24dp</dimen>
+    <dimen name="quickcontact_collapse_text_padding">12dp</dimen>
+    <dimen name="quickcontact_collapse_image_padding">20dp</dimen>
+    <dimen name="quickcontact_expanding_help_text_size">14sp</dimen>
+    <dimen name="quickcontact_expanding_button_right_padding">16dp</dimen>
+    <dimen name="quickcontact_expanding_item_height">72dp</dimen>
+    <dimen name="quickcontact_expanding_item_padding">8dp</dimen>
+    <dimen name="quickcontact_expanding_item_image_padding">12dp</dimen>
+    <dimen name="quickcontact_expanding_button_section_height">48dp</dimen>
+    <dimen name="quickcontact_expanding_button_section_padding">8dp</dimen>
+
+    <!-- The width the that the tabs occupy in the ActionBar when in landscape mode.
+         426dp is the height of a "small" screen. We should leave 240dp for
+         the title and menu items -->
+    <dimen name="people_activity_landscape_tabs_width">186dip</dimen>
+    <!-- The size of the text displayed in the ActionBar tabs in landscape mode.
+         Text in the tabs should must be width dependent, otherwise it won't fit in the tabs.
+         In portrait mode, the tabs look okay when overflowing their allocated space.
+         We have to be more careful in landscape. -->
+    <dimen name="people_activity_landscape_tabs_text_size">8dp</dimen>
+
+    <dimen name="update_contact_list_top_margin">120dp</dimen>
+
+    <dimen name="expanding_entry_card_item_icon_height">24dp</dimen>
+    <dimen name="expanding_entry_card_item_icon_width">24dp</dimen>
+
+    <!-- Width of the box around a tab when the tab has focus -->
+    <dimen name="tab_focused_stroke_width">1dp</dimen>
+
+    <!-- This value should be kept at (?android:attr/listPreferredItemHeight -
+      @dimen/contact_browser_list_item_photo_size) / 2 or greater. Otherwise, this padding
+      will never take affect inside list items. As a result, the padding at the very top
+      of ListView's will not match the padding inside list items -->
+    <dimen name="contact_browser_list_item_padding_top_or_bottom">12dp</dimen>
+
+    <!-- Ideal item width in photo picker -->
+    <dimen name="photo_picker_item_ideal_width">135dp</dimen>
+
+    <!-- Margin between name field and whatever fields are above it. -->
+    <dimen name="compact_editor_name_top_margin">8dp</dimen>
+
+    <!-- Top margin for "Saving to" account header text field. -->
+    <dimen name="compact_editor_account_header_top_margin">3dp</dimen>
+
+</resources>

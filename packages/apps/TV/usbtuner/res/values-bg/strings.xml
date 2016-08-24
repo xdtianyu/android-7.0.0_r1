@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"Телевизия през USB тунер"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"Включване"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"Изключване"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"Моля, изчакайте обработването да завърши"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"Избиране на източника на канала ви"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"Няма сигнал"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"Настройването към „<xliff:g id="CHANNEL_NAME">%s</xliff:g>“ не бе успешно"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"Промяната не бе успешна"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"Софтуерът на USB тунера е актуализиран наскоро. Моля, сканирайте отново каналите."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"Не е налице аудио във формат AC3"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"Настройване на тунера за канали"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"Настройване на USB тунера за канали"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"Потвърдете, че USB тунерът е включен и свързан с източник на телевизионен сигнал.\n\nАко използвате безжична антена, може да се наложи да коригирате разположението или посоката й, за да получите най-много канали. За най-добри резултати я поставете високо и близо до прозорец."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"Напред"</item>
+    <item msgid="7745727658174773453">"Не сега"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"Да се стартира ли отново настройването на каналите?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"Ще се премахнат каналите, намерени от USB тунера, и ще трябва да сканирате повторно за нови.\n\nПотвърдете, че USB тунерът е включен и свързан с източник на телевизионен сигнал.\n\nАко използвате безжична антена, може да се наложи да коригирате разположението или посоката й, за да получите най-много канали. За най-добри резултати я поставете високо и близо до прозорец."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"Напред"</item>
+    <item msgid="4432431398374089710">"Отказ"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"Изберете типа на връзката"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"Изберете „Антена“, ако с тунера е свързана външна антена. Посочете „Кабел“, ако източникът на каналите ви е доставчик на кабелна услуга. В случай че не сте сигурни, ще се сканира и за двата типа, но това може да отнеме по-дълго време."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"Антена"</item>
+    <item msgid="2445879869338877559">"Кабел"</item>
+    <item msgid="597328838068074806">"Не знам със сигурност"</item>
+    <item msgid="3613410733017077040">"Само програмиране"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"Настройване на USB тунера за канали"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"Това може да отнеме няколко минути"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="other">Намерени са %1$d канала</item>
+      <item quantity="one">Намерен е %1$d канал</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"СПИРАНЕ НА СКАНИРАНЕТО ЗА КАНАЛИ"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="other">Намерени са %1$d канала</item>
+      <item quantity="one">Намерен е %1$d канал</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="other">Много добре! По време на сканирането бяха намерени %1$d канала. Ако това не изглежда вярно, опитайте да коригирате позицията на антената и сканирайте отново.</item>
+      <item quantity="one">Много добре! По време на сканирането бе намерен %1$d канал. Ако това не изглежда вярно, опитайте да коригирате позицията на антената и сканирайте отново.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"Готово"</item>
+    <item msgid="496688122303154468">"Повторно сканиране"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"Няма намерени канали"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"При сканирането не бяха открити канали. Потвърдете, че USB тунерът е включен и свързан с източник на телевизионен сигнал.\n\nАко използвате безжична антена, коригирайте разположението или посоката й. За най-добри резултати я поставете високо и близо до прозорец и сканирайте отново."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"Повторно сканиране"</item>
+    <item msgid="6784975565864102291">"Готово"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"Сканиране за телевизионни канали"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"Настройване на USB тунера за канали"</string>
+</resources>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/**
+ * Copyright (C) 2014 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label" msgid="2400883737290705700">"Служебен потребителски профил: Настройване"</string>
+    <string name="provisioning_error_title" msgid="6320515739861578118">"Ами сега!"</string>
+    <string name="setup_work_profile" msgid="1468934631731845267">"Настройване на служебен потребителски профил"</string>
+    <string name="company_controls_workspace" msgid="2808025277267917221">"Организацията ви контролира този потребителски профил и се грижи за сигурността му. Вие управлявате всичко останало на устройството си."</string>
+    <string name="company_controls_device" msgid="8230957518758871390">"Организацията ви ще управлява това устройство и ще се грижи за сигурността му."</string>
+    <string name="the_following_is_your_mdm" msgid="6613658218262376404">"Следното приложение ще трябва да има достъп до този потребителски профил:"</string>
+    <string name="the_following_is_your_mdm_for_device" msgid="6717973404364414816">"Следното приложение ще управлява устройството ви:"</string>
+    <string name="next" msgid="1004321437324424398">"Напред"</string>
+    <string name="setting_up_workspace" msgid="4517537806569988620">"Служебният ви потребителски профил се настройва…"</string>
+    <string name="admin_has_ability_to_monitor_profile" msgid="4138671070145317359">"Администраторът ви може да наблюдава и управлява настройките, корпоративния достъп, приложенията, разрешенията и данните, свързани с този потребителски профил, включително активността ви в мрежата, както и информацията за местоположението на устройството ви, историята на обажданията и тази на търсенията на контакти."</string>
+    <string name="admin_has_ability_to_monitor_device" msgid="7400390654083275019">"Администраторът ви може да наблюдава и управлява настройките, корпоративния достъп, приложенията, разрешенията, функциите за защита при кражба и данните, свързани с това устройство, включително активността в мрежата и информацията за местоположението му."</string>
+    <string name="theft_protection_disabled_warning" msgid="3708092473574738478">"За да използвате функциите за защита при кражба, трябва да имате парола като опция за заключване на екрана на устройството си."</string>
+    <string name="contact_your_admin_for_more_info" msgid="5959191345827902911">"Свържете се с администратора си за още информация, включително относно правилата за поверителност на организацията си."</string>
+    <string name="learn_more_link" msgid="3012495805919550043">"Научете повече"</string>
+    <string name="cancel_setup" msgid="2949928239276274745">"Отказ"</string>
+    <string name="ok_setup" msgid="4593707675416137504">"OK"</string>
+    <string name="user_consent_msg" msgid="8820951802130353584">"Приемам"</string>
+    <string name="default_managed_profile_name" msgid="5370257687074907055">"Служебен потребителски профил"</string>
+    <string name="default_first_meat_user_name" msgid="7540515892748490540">"Основен потребител"</string>
+    <string name="delete_profile_title" msgid="3097803266123463699">"Да се премахне ли служебният потребителски профил?"</string>
+    <string name="opening_paragraph_delete_profile_unknown_company" msgid="2139238673477554356">"Вече съществува служебен потребителски профил и той се управлява от:"</string>
+    <string name="opening_paragraph_delete_profile_known_company" msgid="3126629826260821264">"Този служебен потребителски профил се управлява от %s посредством:"</string>
+    <string name="read_more_delete_profile" msgid="7789171620401666343">"Преди да продължите, "<a href="#read_this_link">"прочетете това"</a>"."</string>
+    <string name="sure_you_want_to_delete_profile" msgid="6927697984573575564">"Ако продължите, всички приложения и данни в този потребителски профил ще бъдат изтрити."</string>
+    <string name="delete_profile" msgid="2299218578684663459">"Изтриване"</string>
+    <string name="cancel_delete_profile" msgid="5155447537894046036">"Отказ"</string>
+    <string name="encrypt_device_text_for_profile_owner_setup" msgid="4325067657681168120">"За да продължите с настройването на служебния си потребителски профил, трябва да шифровате устройството си. Това може да отнеме известно време."</string>
+    <string name="encrypt_device_text_for_device_owner_setup" msgid="9206667711446040692">"За да продължите с настройването на устройството си, трябва да го шифровате. Това може да отнеме известно време."</string>
+    <string name="encrypt_device_launch_settings" msgid="826115154646195837">"Шифроване"</string>
+    <string name="continue_provisioning_notify_title" msgid="5191449100153186648">"Шифроването завърши"</string>
+    <string name="continue_provisioning_notify_text" msgid="1066841819786425980">"Докоснете, за да продължите с настройването на служебния си потребителски профил"</string>
+    <string name="managed_provisioning_error_text" msgid="7063621174570680890">"Служебният ви потребителски профил не можа да се настрои. Свържете се с отдела си за информационни технологии или опитайте отново по-късно."</string>
+    <string name="managed_provisioning_not_supported" msgid="6582227325719911795">"Устройството ви не поддържа служебни потребителски профили"</string>
+    <string name="user_cannot_have_work_profile" msgid="5694385275116701139">"Този потребител не може да има служебен потребителски профил"</string>
+    <string name="device_owner_exists" msgid="8020080296133337023">"Служебните потребителски профили не могат да се настройват на управлявано устройство"</string>
+    <string name="maximum_user_limit_reached" msgid="4821228722266114449">"Служебният потребителски профил не може да бъде създаден, защото сте достигнали максималния брой потребители на устройството си. Премахнете поне един от тях и опитайте отново."</string>
+    <string name="managed_provisioning_not_supported_by_launcher" msgid="8710138269807942163">"Служебният ви потребителски профил не се поддържа от това приложение за стартов панел. Трябва да превключите към съвместим панел."</string>
+    <string name="cancel_provisioning" msgid="3408069559452653724">"Отказ"</string>
+    <string name="pick_launcher" msgid="4257084827403983845">"OK"</string>
+    <string name="user_setup_incomplete" msgid="6494920045526591079">"Настройването на потребителя не е завършено"</string>
+    <string name="default_owned_device_username" msgid="3915120202811807955">"Потребител на служебното устройство"</string>
+    <string name="setup_work_device" msgid="4243324420514896773">"Настройване на служебно устройство"</string>
+    <string name="progress_data_process" msgid="1707745321954672971">"Данните за настройването се обработват…"</string>
+    <string name="progress_connect_to_wifi" msgid="472251154628863539">"Установява се връзка с Wi-Fi…"</string>
+    <string name="progress_download" msgid="3522436271691064624">"Приложението за администриране се изтегля…"</string>
+    <string name="progress_install" msgid="2258045670385866183">"Приложението за администриране се инсталира…"</string>
+    <string name="progress_set_owner" msgid="8214062820093757961">"Собственикът на устройството се задава…"</string>
+    <string name="preprovisioning_error_encryption_not_supported" msgid="4633230675475838898">"Устройството ви не поддържа шифроване. Свържете се с отдела си за информационни технологии."</string>
+    <string name="device_owner_cancel_message" msgid="2529288571742712065">"Искате ли да спрете настройването и да изтриете данните на устройството си?"</string>
+    <string name="device_owner_cancel_cancel" msgid="1052951540909389275">"Отказ"</string>
+    <string name="device_owner_error_ok" msgid="2002250763093787051">"OK"</string>
+    <string name="device_owner_error_reset" msgid="1609782972753569267">"Нулиране"</string>
+    <string name="device_owner_error_general" msgid="5962462955470123776">"Устройството ви не можа да се настрои. Свържете се с отдела си за информационни технологии."</string>
+    <string name="device_owner_error_already_provisioned" msgid="49944866843771627">"Това устройство вече е настроено."</string>
+    <string name="device_owner_error_wifi" msgid="4256310285761332378">"Не можа да се установи връзка с Wi-Fi"</string>
+    <string name="device_owner_error_frp" msgid="7053630342416280252">"Това устройство е заключено чрез защитата срещу възстановяване на фабричните настройки. Свържете се с отдела си за информационни технологии."</string>
+    <string name="frp_clear_progress_title" msgid="8628074089458234965">"Изтрива се"</string>
+    <string name="frp_clear_progress_text" msgid="1740164332830598827">"Моля, изчакайте..."</string>
+    <string name="device_owner_error_hash_mismatch" msgid="184518450016295596">"Приложението за администриране не можа да се използва поради грешка в контролната сума. Свържете се с отдела си за информационни технологии."</string>
+    <string name="device_owner_error_download_failed" msgid="4520111971592657116">"Приложението за администриране не можа да се изтегли"</string>
+    <string name="device_owner_error_package_invalid" msgid="3816725179069202140">"Приложението за администриране не може да се използва. В него липсват компоненти или то е повредено. Свържете се с отдела си за информационни технологии."</string>
+    <string name="device_owner_error_installation_failed" msgid="684566845601079360">"Приложението за администриране не можа да се инсталира"</string>
+    <string name="profile_owner_cancel_message" msgid="6868736915633023477">"Да се спре ли настройването?"</string>
+    <string name="profile_owner_cancel_cancel" msgid="4408725524311574891">"Не"</string>
+    <string name="profile_owner_cancel_ok" msgid="5951679183850766029">"Да"</string>
+    <string name="profile_owner_cancelling" msgid="5679573829145112822">"Анулира се…"</string>
+    <string name="work_profile_setup_later_title" msgid="9069148190226279892">"Да се спре ли настройването на потр. профил?"</string>
+    <string name="work_profile_setup_later_message" msgid="2446733709871989895">"Можете да настроите служебния си потребителски профил по-късно от използваното от организацията ви приложение за управление на устройствата."</string>
+    <string name="work_profile_setup_continue" msgid="6549708818974016509">"Напред"</string>
+    <string name="work_profile_setup_stop" msgid="6772128629992514750">"Спиране"</string>
+    <string name="provisioning" msgid="4512493827019163451">"Сертификатите се предоставят"</string>
+    <string name="copying_certs" msgid="5697938664953550881">"Сертификатите от сертиф. органи се настройват"</string>
+    <string name="setup_profile_start_setup" msgid="6793984532953528297">"Настройване на потребителския ви профил. Стартиране на процеса"</string>
+    <string name="setup_profile_encryption" msgid="5241291404536277038">"Настройване на потребителския ви профил. Шифроване"</string>
+    <string name="setup_profile_progress" msgid="7742718527853325656">"Настройване на потребителския ви профил. Показва се ходът"</string>
+    <string name="setup_device_start_setup" msgid="4351340224000741826">"Настройване на устройството ви. Стартиране на процеса"</string>
+    <string name="setup_device_encryption" msgid="7852944465414197103">"Настройване на устройството ви. Шифроване"</string>
+    <string name="setup_device_progress" msgid="7035335208571175393">"Настройване на устройството ви. Показва се ходът"</string>
+    <string name="learn_more_label" msgid="2723716758654655009">"бутон „Научете повече“"</string>
+    <string name="mdm_icon_label" msgid="3399134595549660561">"икона за <xliff:g id="ICON_LABEL">%1$s</xliff:g>"</string>
+    <string name="cancel_setup_and_factory_reset_dialog_title" msgid="5416045931532004811">"Прекр. на настр. и възст. на фабр. настройки?"</string>
+    <string name="cancel_setup_and_factory_reset_dialog_msg" msgid="808442439937994485">"С прекратяването на настройването ще се възстановят фабричните настройки на устройството ви и ще се върнете на първия екран."</string>
+    <string name="cancel_setup_and_factory_reset_dialog_cancel" msgid="2810966091829264727">"Отказ"</string>
+    <string name="cancel_setup_and_factory_reset_dialog_ok" msgid="7168008267496150529">"Нулиране на устройството"</string>
+</resources>

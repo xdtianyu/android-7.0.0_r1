@@ -1,0 +1,7 @@
+# Vehicle network service
+type vns, domain;
+type vns_exec, exec_type, file_type;
+
+init_daemon_domain(vns)
+
+binder_use(vns);

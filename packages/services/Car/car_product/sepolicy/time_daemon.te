@@ -1,0 +1,19 @@
+# Policies for time daemon
+type time_daemon, domain;
+type time_daemon_exec, exec_type, file_type;
+
+init_daemon_domain(time_daemon)
+
+# Allow access to /dev/smem_log.
+allow time_daemon smem_log_device:chr_file rw_file_perms;
+
+# Add rules for access permissions
+allow time_daemon rtc_device:chr_file r_file_perms;
+allow time_daemon alarm_device:chr_file rw_file_perms;
+
+# Allo access to /data/time/*.
+allow time_daemon time_data_file:file r_file_perms;
+
+allow time_daemon self:socket create_socket_perms;
+
+allow time_daemon self:capability { setuid setgid };

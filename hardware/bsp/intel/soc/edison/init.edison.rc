@@ -1,0 +1,43 @@
+#
+# Copyright 2015 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+on init
+    # Android creates by-name disk links with the disk controller
+    # in the generated path, so that the names pulled out of the GPT
+    # can be associated with the correct disk. Create a shortcut to
+    # /dev/block/by-name so that we can use the same fstabs everywhere.
+    symlink /dev/block/pci/pci0000:00/0000:00:01.0/by-name /dev/block/by-name
+    chown system root /dev/watchdog
+    chown root system /sys/module/bcm4334x/parameters/firmware_path
+    chmod 0660 /sys/module/bcm4334x/parameters/firmware_path
+    chown root system /sys/module/bcm4334x/parameters/nvram_path
+    chmod 0660 /sys/module/bcm4334x/parameters/nvram_path
+
+
+on fs
+    mount_all /fstab.${ro.hardware}
+    mkdir /dev/usb-ffs 0770 shell shell
+    mkdir /dev/usb-ffs/adb 0770 shell shell
+    mount functionfs adb /dev/usb-ffs/adb uid=2000,gid=2000
+    write /sys/class/android_usb/android0/f_ffs/aliases adb
+    write /sys/class/android_usb/android0/iSerial ${ro.serialno}
+
+service watchdogd /sbin/watchdogd
+    user system
+    group root
+    class core
+    critical
+    seclabel u:r:watchdogd:s0

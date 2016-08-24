@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2015 The Android Open Source Project
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <android.car.ui.provider.CarDrawerLayout
+        android:id="@+id/drawer_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:id="@+id/drawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:layout_marginEnd="96dp"
+            android:background="@color/car_card"
+            android:paddingTop="@dimen/car_drawer_header_height" >
+
+            <android.car.ui.provider.PagedListView
+                android:id="@+id/list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingEnd="32dp" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:indeterminate="true" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/truncated_list_card"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/car_list_truncated_list_card_height"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="@dimen/car_list_truncated_list_padding"
+                android:layout_marginRight="@dimen/car_list_truncated_list_padding"
+                android:layout_marginBottom="@dimen/car_list_truncated_list_padding"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/car_blue_grey_800"
+                app:cardCornerRadius="@dimen/car_card_view_corner_radius"
+                app:cardElevation="@dimen/car_card_view_elevation" >
+
+                <TextView
+                    style="@style/CarTruncatedList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="@dimen/car_list_truncated_list_icon_padding"
+                    android:drawablePadding="@dimen/car_list_truncated_list_drawable_padding"
+                    android:gravity="center_vertical"
+                    android:drawableLeft="@drawable/ic_remove_circle"
+                    android:text="@string/truncated_list" />
+
+            </android.support.v7.widget.CardView>
+        </FrameLayout>
+    </android.car.ui.provider.CarDrawerLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/car_drawer_header_height">
+        <ImageView
+            android:id="@+id/car_drawer_button"
+            android:layout_width="@dimen/car_drawer_header_menu_button_size"
+            android:layout_height="@dimen/car_drawer_header_height"
+            android:background="@drawable/car_header_button_background"
+            android:focusable="false"
+            android:scaleType="center"
+            android:layout_gravity="left|top"
+            />
+        <FrameLayout
+            android:id="@+id/car_drawer_title_container"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+            <TextView
+                android:id="@+id/car_drawer_title"
+                style="@style/CarTitle.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:focusable="false"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                />
+        </FrameLayout>
+        <android.support.v7.widget.CardView
+            android:id="@+id/car_search_box"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            app:cardBackgroundColor="@android:color/transparent" >
+
+            <FrameLayout
+                android:id="@+id/car_search_box_contents"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="false">
+
+                <FrameLayout
+                    android:id="@+id/car_search_box_search_logo_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingStart="16dp" >
+
+                    <ImageView
+                        android:id="@+id/car_search_box_search_logo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center_vertical"
+                        android:paddingTop="6dp" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/car_search_box_super_logo"
+                        android:layout_width="@dimen/car_list_item_icon_size_small"
+                        android:layout_height="@dimen/car_list_item_icon_size_small"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="24dp"
+                        android:scaleType="center" />
+                    <!--
+                        Use a 0x0 drawable for textSelectHandle; null drawable crashes, so does
+                        transparent color. Also set textCursorDrawable to null because this forces
+                        Android to render a cursor using the text color instead of not rendering
+                        one at all. See
+                        http://stackoverflow.com/questions/21397977/android-edit-text-cursor-is-not-visible
+                    -->
+
+                    <android.support.car.input.CarRestrictedEditText
+                        android:id="@+id/car_search_box_edit_text"
+                        style="@style/CarTitle.Dark"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:imeOptions="actionSearch"
+                        android:paddingEnd="16dp"
+                        android:paddingStart="36dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@null"
+                        android:textSelectHandle="@drawable/car_empty" />
+
+                    <FrameLayout
+                        android:id="@+id/car_search_box_end_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+            </FrameLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+</FrameLayout>

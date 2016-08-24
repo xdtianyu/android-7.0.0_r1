@@ -1,0 +1,8 @@
+# modem-sh service
+type modem-sh, domain;
+type modem-sh_exec, exec_type, file_type;
+
+# Started by init
+init_daemon_domain(modem-sh)
+
+allow modem-sh shell_exec:file r_file_perms;

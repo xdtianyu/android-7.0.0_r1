@@ -1,0 +1,22 @@
+# qmuxd daemon
+type qmuxd, domain;
+type qmuxd_exec, exec_type, file_type;
+
+init_daemon_domain(qmuxd)
+net_domain(qmuxd)
+
+# Allow access to /dev/hsicctl*.
+allow qmuxd hsic_device:chr_file rw_file_perms;
+
+# Allow access to /sys/devices/virtual/smdpkt/smdcntl*/open_timeout.
+allow qmuxd sysfs_smd_open_timeout:file w_file_perms;
+
+# Allow access to /sys/devices/virtual/hsicctl/hsicctl*/modem_wait.
+allow qmuxd sysfs_hsic_modem_wait:file w_file_perms;
+
+userdebug_or_eng(`
+    allow qmuxd diag_device:chr_file rw_file_perms;
+')
+
+# Allow qmuxd to have the CAP_BLOCK_SUSPEND capability
+wakelock_use(qmuxd)

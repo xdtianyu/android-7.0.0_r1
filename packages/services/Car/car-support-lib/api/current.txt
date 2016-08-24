@@ -1,0 +1,1047 @@
+package android.support.car {
+
+  public class Car {
+    method public void connect() throws java.lang.IllegalStateException;
+    method public static android.support.car.Car createCar(android.content.Context, android.support.car.ServiceConnectionListener, android.os.Looper);
+    method public static android.support.car.Car createCar(android.content.Context, android.support.car.ServiceConnectionListener);
+    method public void disconnect();
+    method public int getCarConnectionType() throws android.support.car.CarNotConnectedException;
+    method public java.lang.Object getCarManager(java.lang.String) throws android.support.car.CarNotConnectedException, android.support.car.CarNotSupportedException;
+    method public boolean isConnected();
+    method public boolean isConnectedToCar();
+    method public boolean isConnecting();
+    method public void registerCarConnectionListener(android.support.car.CarConnectionListener) throws android.support.car.CarNotConnectedException, java.lang.IllegalStateException;
+    method public void unregisterCarConnectionListener(android.support.car.CarConnectionListener);
+    field public static final java.lang.String APP_CONTEXT_SERVICE = "app_context";
+    field public static final java.lang.String AUDIO_SERVICE = "audio";
+    field public static final int CONNECTION_TYPE_ADB_EMULATOR = 4; // 0x4
+    field public static final int CONNECTION_TYPE_EMBEDDED = 5; // 0x5
+    field public static final int CONNECTION_TYPE_EMULATOR = 0; // 0x0
+    field public static final int CONNECTION_TYPE_ON_DEVICE_EMULATOR = 3; // 0x3
+    field public static final int CONNECTION_TYPE_USB = 1; // 0x1
+    field public static final int CONNECTION_TYPE_WIFI = 2; // 0x2
+    field public static final java.lang.String INFO_SERVICE = "info";
+    field public static final java.lang.String PACKAGE_SERVICE = "package";
+    field public static final java.lang.String PERMISSION_FUEL = "android.car.permission.CAR_FUEL";
+    field public static final java.lang.String PERMISSION_MILEAGE = "android.car.permission.CAR_MILEAGE";
+    field public static final java.lang.String PERMISSION_SPEED = "android.car.permission.CAR_SPEED";
+    field public static final java.lang.String PERMISSION_VENDOR_EXTENSION = "android.car.permission.CAR_VENDOR_EXTENSION";
+    field public static final java.lang.String SENSOR_SERVICE = "sensor";
+  }
+
+  public abstract interface CarConnectionListener {
+    method public abstract void onConnected(int);
+    method public abstract void onDisconnected();
+  }
+
+  public abstract class CarInfoManager {
+    ctor public CarInfoManager();
+    method public abstract java.lang.Float getFloat(java.lang.String) throws android.support.car.CarNotConnectedException, java.lang.IllegalArgumentException;
+    method public abstract java.lang.Integer getInt(java.lang.String) throws android.support.car.CarNotConnectedException, java.lang.IllegalArgumentException;
+    method public abstract java.lang.Long getLong(java.lang.String) throws android.support.car.CarNotConnectedException, java.lang.IllegalArgumentException;
+    method public abstract java.lang.String getString(java.lang.String) throws android.support.car.CarNotConnectedException, java.lang.IllegalArgumentException;
+    field public static final java.lang.String KEY_MANUFACTURER = "manufacturer";
+    field public static final java.lang.String KEY_MODEL = "model";
+    field public static final java.lang.String KEY_MODEL_YEAR = "model-year";
+    field public static final java.lang.String KEY_VEHICLE_ID = "vehicle-id";
+  }
+
+  public class CarNotConnectedException extends java.lang.Exception {
+    ctor public CarNotConnectedException();
+    ctor public CarNotConnectedException(java.lang.String);
+    ctor public CarNotConnectedException(java.lang.String, java.lang.Throwable);
+    ctor public CarNotConnectedException(java.lang.Exception);
+  }
+
+  public class CarNotSupportedException extends java.lang.Exception {
+    ctor public CarNotSupportedException();
+    ctor public CarNotSupportedException(java.lang.String);
+    ctor public CarNotSupportedException(java.lang.String, java.lang.Throwable);
+    ctor public CarNotSupportedException(java.lang.Exception);
+  }
+
+  public abstract interface ServiceConnectionListener {
+    method public abstract void onServiceConnected(android.content.ComponentName);
+    method public abstract void onServiceConnectionFailed(int);
+    method public abstract void onServiceDisconnected(android.content.ComponentName);
+    method public abstract void onServiceSuspended(int);
+  }
+
+}
+
+package android.support.car.annotation {
+
+  public abstract class ValueTypeDef implements java.lang.annotation.Annotation {
+  }
+
+  public abstract class VersionDef implements java.lang.annotation.Annotation {
+  }
+
+}
+
+package android.support.car.app {
+
+  public abstract class CarActivity {
+    ctor public CarActivity(android.support.car.app.CarActivity.Proxy, android.content.Context, android.support.car.Car);
+    method public android.view.View findViewById(int);
+    method public void finish();
+    method public void finishAfterTransition();
+    method public android.support.car.Car getCar();
+    method public android.content.Context getContext();
+    method public android.support.car.input.CarInputManager getInputManager();
+    method public android.content.Intent getIntent();
+    method public java.lang.Object getLastNonConfigurationInstance();
+    method public android.view.LayoutInflater getLayoutInflater();
+    method public android.view.MenuInflater getMenuInflater();
+    method public android.content.res.Resources getResources();
+    method public android.view.Window getWindow();
+    method public boolean isFinishing();
+    method protected void onActivityResult(int, int, android.content.Intent);
+    method protected void onBackPressed();
+    method protected void onConfigurationChanged(android.content.res.Configuration);
+    method protected void onCreate(android.os.Bundle);
+    method public boolean onCreatePanelMenu(int, android.view.Menu);
+    method public android.view.View onCreateView(android.view.View, java.lang.String, android.content.Context, android.util.AttributeSet);
+    method protected void onDestroy();
+    method public void onLowMemory();
+    method protected void onNewIntent(android.content.Intent);
+    method protected void onPause();
+    method protected void onPostResume();
+    method public void onRequestPermissionsResult(int, java.lang.String[], int[]);
+    method protected void onRestart();
+    method protected void onRestoreInstanceState(android.os.Bundle);
+    method protected void onResume();
+    method public java.lang.Object onRetainNonConfigurationInstance();
+    method protected void onSaveInstanceState(android.os.Bundle);
+    method protected void onStart();
+    method protected void onStop();
+    method public void requestPermissions(java.lang.String[], int);
+    method public void runOnUiThread(java.lang.Runnable);
+    method public void setContentView(android.view.View);
+    method public void setContentView(int);
+    method public void setIntent(android.content.Intent);
+    method public void setResult(int);
+    method public void setResult(int, android.content.Intent);
+    method public boolean shouldShowRequestPermissionRationale(java.lang.String);
+    method public void startActivityForResult(android.content.Intent, int);
+  }
+
+  public static abstract class CarActivity.Proxy {
+    ctor public CarActivity.Proxy();
+    method public abstract android.view.View findViewById(int);
+    method public abstract void finish();
+    method public abstract void finishAfterTransition();
+    method public abstract android.support.car.input.CarInputManager getCarInputManager();
+    method public abstract android.content.Intent getIntent();
+    method public abstract android.view.LayoutInflater getLayoutInflater();
+    method public abstract android.view.MenuInflater getMenuInflater();
+    method public abstract android.content.res.Resources getResources();
+    method public abstract android.view.Window getWindow();
+    method public abstract boolean isFinishing();
+    method public void requestPermissions(java.lang.String[], int);
+    method public abstract void setContentView(android.view.View);
+    method public abstract void setContentView(int);
+    method public abstract void setIntent(android.content.Intent);
+    method public abstract void setResult(int);
+    method public abstract void setResult(int, android.content.Intent);
+    method public boolean shouldShowRequestPermissionRationale(java.lang.String);
+    method public void startActivityForResult(android.content.Intent, int);
+  }
+
+  public static abstract interface CarActivity.RequestPermissionsRequestCodeValidator {
+    method public abstract void validateRequestPermissionsRequestCode(int);
+  }
+
+  public class CarFragmentActivity extends android.support.car.app.CarActivity implements android.support.car.app.CarActivity.RequestPermissionsRequestCodeValidator {
+    ctor public CarFragmentActivity(android.support.car.app.CarActivity.Proxy, android.content.Context, android.support.car.Car);
+    method public void dump(java.lang.String, java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]);
+    method public java.lang.Object getLastCustomNonConfigurationInstance();
+    method public android.support.v4.app.FragmentManager getSupportFragmentManager();
+    method public void onBackPressed();
+    method public void onConfigurationChanged(android.content.res.Configuration);
+    method protected void onResumeFragments();
+    method public java.lang.Object onRetainCustomNonConfigurationInstance();
+    method public final java.lang.Object onRetainNonConfigurationInstance();
+    method public void onStateNotSaved();
+    method public void setContentFragment(android.support.v4.app.Fragment, int);
+    method public void startActivityFromFragment(android.support.v4.app.Fragment, android.content.Intent, int);
+    method public void supportFinishAfterTransition();
+    method public final void validateRequestPermissionsRequestCode(int);
+  }
+
+  public class CarProxyActivity extends android.app.Activity {
+    ctor public CarProxyActivity(java.lang.Class);
+    ctor public CarProxyActivity(java.lang.Class, boolean);
+  }
+
+}
+
+package android.support.car.app.menu {
+
+  public abstract class CarDrawerActivity extends android.support.car.app.CarFragmentActivity {
+    ctor public CarDrawerActivity(android.support.car.app.CarActivity.Proxy, android.content.Context, android.support.car.Car);
+    method public void closeDrawer();
+    method protected android.support.car.app.menu.CarUiController createCarUiController();
+    method public int getFragmentContainerId();
+    method public void hideSearchBox();
+    method public boolean isDrawerShowing();
+    method public boolean isSearchBoxEnabled();
+    method public boolean isShowingSearchBox();
+    method public boolean onMenuClicked();
+    method public void openDrawer();
+    method public void restoreMenuButtonDrawable();
+    method public void restoreSearchBox();
+    method public void setAutoLightDarkMode();
+    method public void setBackground(android.graphics.Bitmap);
+    method public void setCarMenuCallbacks(android.support.car.app.menu.CarMenuCallbacks);
+    method public void setContentFragment(android.support.v4.app.Fragment);
+    method public void setDarkMode();
+    method public void setDrawerShowing(boolean);
+    method public void setLightMode();
+    method public void setMenuButtonBitmap(android.graphics.Bitmap);
+    method public void setOnMenuClickedListener(android.support.car.app.menu.CarDrawerActivity.OnMenuClickListener);
+    method public void setScrimColor(int);
+    method public void setSearchBoxColors(int, int, int, int);
+    method public void setSearchBoxEditListener(android.support.car.app.menu.SearchBoxEditListener);
+    method public void setSearchBoxEndView(android.view.View);
+    method public void setTitle(java.lang.CharSequence);
+    method public void showMenu(java.lang.String, java.lang.String);
+    method public void showSearchBox(android.view.View.OnClickListener);
+    method public void showSearchBox();
+    method public void showToast(java.lang.String, int);
+    method public void startInput(java.lang.String);
+    method public void startInput(java.lang.String, android.view.View.OnClickListener);
+    method public void stopInput();
+  }
+
+  public static abstract interface CarDrawerActivity.OnMenuClickListener {
+    method public abstract boolean onClicked();
+  }
+
+  public class CarMenu {
+    ctor public CarMenu(android.util.DisplayMetrics);
+    method public void detach();
+    method public void sendResult(java.util.List<android.support.car.app.menu.CarMenu.Item>);
+  }
+
+  public static class CarMenu.Builder {
+    ctor public CarMenu.Builder(java.lang.String);
+    method public android.support.car.app.menu.CarMenu.Item build();
+    method public android.support.car.app.menu.CarMenu.Builder setFlags(int);
+    method public android.support.car.app.menu.CarMenu.Builder setIcon(android.graphics.Bitmap);
+    method public android.support.car.app.menu.CarMenu.Builder setIconFromSnapshot(android.graphics.drawable.Drawable);
+    method public android.support.car.app.menu.CarMenu.Builder setIsEmptyPlaceHolder(boolean);
+    method public android.support.car.app.menu.CarMenu.Builder setRemoteViews(android.widget.RemoteViews);
+    method public android.support.car.app.menu.CarMenu.Builder setRightIcon(android.graphics.Bitmap);
+    method public android.support.car.app.menu.CarMenu.Builder setRightIconFromSnapshot(android.graphics.drawable.Drawable);
+    method public android.support.car.app.menu.CarMenu.Builder setRightText(java.lang.String);
+    method public android.support.car.app.menu.CarMenu.Builder setText(java.lang.String);
+    method public android.support.car.app.menu.CarMenu.Builder setTitle(java.lang.String);
+    method public android.support.car.app.menu.CarMenu.Builder setWidget(int);
+    method public android.support.car.app.menu.CarMenu.Builder setWidgetState(boolean);
+  }
+
+  public static abstract interface CarMenu.Item {
+    method public abstract int getFlags();
+    method public abstract java.lang.String getId();
+    method public abstract java.lang.String getText();
+    method public abstract java.lang.String getTitle();
+    method public abstract int getWidget();
+    method public abstract boolean getWidgetState();
+  }
+
+  public abstract class CarMenuCallbacks {
+    ctor public CarMenuCallbacks();
+    method public void notifyChildChanged(java.lang.String, android.support.car.app.menu.CarMenu.Item);
+    method public void notifyChildrenChanged(java.lang.String);
+    method public void onCarMenuClosed();
+    method public void onCarMenuClosing();
+    method public void onCarMenuOpened();
+    method public void onCarMenuOpening();
+    method public abstract android.support.car.app.menu.RootMenu onGetRoot(android.os.Bundle);
+    method public void onItemClicked(java.lang.String);
+    method public boolean onItemLongClicked(java.lang.String);
+    method public abstract void onLoadChildren(java.lang.String, android.support.car.app.menu.CarMenu);
+    method public void onStateChanged(int);
+  }
+
+  public abstract class CarUiController {
+    ctor public CarUiController(android.support.car.app.menu.CarDrawerActivity);
+    method public abstract void closeDrawer();
+    method public static android.support.car.app.menu.CarUiController createCarUiController(android.support.car.app.menu.CarDrawerActivity);
+    method public abstract android.view.View getContentView();
+    method public abstract int getFragmentContainerId();
+    method public abstract java.lang.CharSequence getText();
+    method public abstract void onChildChanged(java.lang.String, android.os.Bundle);
+    method public abstract void onChildrenChanged(java.lang.String);
+    method public abstract void onPause();
+    method public abstract void onRestoreInstanceState(android.os.Bundle);
+    method public abstract void onResume();
+    method public abstract void onSaveInstanceState(android.os.Bundle);
+    method public abstract void onStart();
+    method public abstract void onStop();
+    method public abstract void openDrawer();
+    method public abstract void registerCarMenuCallbacks(android.support.car.app.menu.CarMenuCallbacks);
+    method public abstract void restoreMenuButtonDrawable();
+    method public abstract void setAutoLightDarkMode();
+    method public abstract void setBackground(android.graphics.Bitmap);
+    method public abstract void setDarkMode();
+    method public abstract void setLightMode();
+    method public abstract void setMenuButtonBitmap(android.graphics.Bitmap);
+    method public abstract void setScrimColor(int);
+    method public abstract void setSearchBoxColors(int, int, int, int);
+    method public abstract void setSearchBoxEditListener(android.support.car.app.menu.SearchBoxEditListener);
+    method public abstract void setSearchBoxEndView(android.view.View);
+    method public abstract void setTitle(java.lang.CharSequence);
+    method public abstract void showMenu(java.lang.String, java.lang.String);
+    method public abstract void showSearchBox(android.view.View.OnClickListener);
+    method public abstract void showToast(java.lang.String, int);
+    method public abstract android.widget.EditText startInput(java.lang.String, android.view.View.OnClickListener);
+    method public abstract void stopInput();
+    method public abstract void validateCarUiPackage();
+    field protected final android.support.car.app.menu.CarDrawerActivity mActivity;
+  }
+
+  public class RootMenu {
+    ctor public RootMenu(java.lang.String);
+    ctor public RootMenu(java.lang.String, android.os.Bundle);
+    method public android.os.Bundle getBundle();
+    method public java.lang.String getId();
+  }
+
+  public abstract class SearchBoxEditListener {
+    ctor public SearchBoxEditListener();
+    method public abstract void onEdit(java.lang.String);
+    method public abstract void onSearch(java.lang.String);
+  }
+
+  public class Utils {
+    ctor public Utils();
+    method public static android.graphics.Bitmap snapshot(android.util.DisplayMetrics, android.graphics.drawable.Drawable);
+  }
+
+}
+
+package android.support.car.app.menu.compat {
+
+  public class CarMenuConstantsComapt {
+    ctor public CarMenuConstantsComapt();
+  }
+
+  public static class CarMenuConstantsComapt.MenuItemConstants {
+    ctor public CarMenuConstantsComapt.MenuItemConstants();
+    field public static final int FLAG_BROWSABLE = 1; // 0x1
+    field public static final int FLAG_FIRSTITEM = 2; // 0x2
+    field public static final java.lang.String KEY_EMPTY_PLACEHOLDER = "android.car.app.menu.empty_placeholder";
+    field public static final java.lang.String KEY_FLAGS = "android.car.app.menu.flags";
+    field public static final java.lang.String KEY_ID = "android.car.app.menu.id";
+    field public static final java.lang.String KEY_LEFTICON = "android.car.app.menu.leftIcon";
+    field public static final java.lang.String KEY_REMOTEVIEWS = "android.car.app.menu.remoteViews";
+    field public static final java.lang.String KEY_RIGHTICON = "android.car.app.menu.rightIcon";
+    field public static final java.lang.String KEY_RIGHTTEXT = "android.car.app.menu.rightText";
+    field public static final java.lang.String KEY_TEXT = "android.car.app.menu.text";
+    field public static final java.lang.String KEY_TITLE = "android.car.app.menu.title";
+    field public static final java.lang.String KEY_WIDGET = "android.car.app.menu.widget";
+    field public static final java.lang.String KEY_WIDGET_STATE = "android.car.app.menu.widget_state";
+    field public static final int WIDGET_CHECKBOX = 1; // 0x1
+    field public static final int WIDGET_TEXT_VIEW = 2; // 0x2
+  }
+
+  public static abstract class CarMenuConstantsComapt.MenuItemConstants.MenuItemFlags implements java.lang.annotation.Annotation {
+  }
+
+  public static abstract class CarMenuConstantsComapt.MenuItemConstants.WidgetTypes implements java.lang.annotation.Annotation {
+  }
+
+  public class EmbeddedCarMenuCallbacksCompat extends android.car.app.menu.CarMenuCallbacks {
+    ctor public EmbeddedCarMenuCallbacksCompat(android.support.car.app.menu.CarDrawerActivity, android.support.car.app.menu.CarMenuCallbacks);
+    method public android.car.app.menu.RootMenu getRootMenu(android.os.Bundle);
+    method public void onCarMenuClosed();
+    method public void onCarMenuClosing();
+    method public void onCarMenuOpened();
+    method public void onCarMenuOpening();
+    method public void onChildChanged(java.lang.String, android.os.Bundle);
+    method public void onChildrenChanged(java.lang.String);
+    method public void onItemClicked(java.lang.String);
+    method public boolean onItemLongClicked(java.lang.String);
+    method public boolean onMenuClicked();
+    method public void subscribe(java.lang.String, android.car.app.menu.SubscriptionCallbacks);
+    method public void unsubscribe(java.lang.String, android.car.app.menu.SubscriptionCallbacks);
+  }
+
+  public class EmbeddedSearchBoxEditListenerCompat extends android.car.app.menu.SearchBoxEditListener {
+    ctor public EmbeddedSearchBoxEditListenerCompat(android.support.car.app.menu.SearchBoxEditListener);
+    method public void onEdit(java.lang.String);
+    method public void onSearch(java.lang.String);
+  }
+
+}
+
+package android.support.car.content.pm {
+
+  public abstract class CarPackageManager {
+    ctor public CarPackageManager();
+    method public abstract boolean isActivityAllowedWhileDriving(java.lang.String, java.lang.String) throws android.support.car.CarNotConnectedException;
+    method public abstract boolean isServiceAllowedWhileDriving(java.lang.String, java.lang.String) throws android.support.car.CarNotConnectedException;
+  }
+
+}
+
+package android.support.car.hardware {
+
+  public class CarSensorEvent extends android.support.car.os.ExtendableParcelable {
+    ctor public CarSensorEvent(android.os.Parcel);
+    ctor public CarSensorEvent(int, long, int, int);
+    method public int describeContents();
+    method public android.support.car.hardware.CarSensorEvent.AccelerometerData getAccelerometerData(android.support.car.hardware.CarSensorEvent.AccelerometerData);
+    method public android.support.car.hardware.CarSensorEvent.CarSpeedData getCarSpeedData(android.support.car.hardware.CarSensorEvent.CarSpeedData);
+    method public android.support.car.hardware.CarSensorEvent.CompassData getCompassData(android.support.car.hardware.CarSensorEvent.CompassData);
+    method public android.support.car.hardware.CarSensorEvent.DrivingStatusData getDrivingStatusData(android.support.car.hardware.CarSensorEvent.DrivingStatusData);
+    method public android.support.car.hardware.CarSensorEvent.EnvironmentData getEnvironmentData(android.support.car.hardware.CarSensorEvent.EnvironmentData);
+    method public android.support.car.hardware.CarSensorEvent.FuelLevelData getFuelLevelData(android.support.car.hardware.CarSensorEvent.FuelLevelData);
+    method public android.support.car.hardware.CarSensorEvent.GearData getGearData(android.support.car.hardware.CarSensorEvent.GearData);
+    method public android.support.car.hardware.CarSensorEvent.GpsSatelliteData getGpsSatelliteData(android.support.car.hardware.CarSensorEvent.GpsSatelliteData, boolean);
+    method public android.support.car.hardware.CarSensorEvent.GyroscopeData getGyroscopeData(android.support.car.hardware.CarSensorEvent.GyroscopeData);
+    method public android.location.Location getLocation(android.location.Location);
+    method public android.support.car.hardware.CarSensorEvent.NightData getNightData(android.support.car.hardware.CarSensorEvent.NightData);
+    method public android.support.car.hardware.CarSensorEvent.OdometerData getOdometerData(android.support.car.hardware.CarSensorEvent.OdometerData);
+    method public android.support.car.hardware.CarSensorEvent.ParkingBrakeData getParkingBrakeData(android.support.car.hardware.CarSensorEvent.ParkingBrakeData);
+    method public android.support.car.hardware.CarSensorEvent.RpmData getRpmData(android.support.car.hardware.CarSensorEvent.RpmData);
+    method public void writeToParcel(android.os.Parcel, int);
+    field public static final android.os.Parcelable.Creator<android.support.car.hardware.CarSensorEvent> CREATOR;
+    field public static final int DRIVE_STATUS_FULLY_RESTRICTED = 31; // 0x1f
+    field public static final int DRIVE_STATUS_LIMIT_MESSAGE_LEN = 16; // 0x10
+    field public static final int DRIVE_STATUS_NO_CONFIG = 8; // 0x8
+    field public static final int DRIVE_STATUS_NO_KEYBOARD_INPUT = 2; // 0x2
+    field public static final int DRIVE_STATUS_NO_VIDEO = 1; // 0x1
+    field public static final int DRIVE_STATUS_NO_VOICE_INPUT = 4; // 0x4
+    field public static final int DRIVE_STATUS_UNRESTRICTED = 0; // 0x0
+    field public static final int GEAR_DRIVE = 100; // 0x64
+    field public static final int GEAR_EIGHTH = 8; // 0x8
+    field public static final int GEAR_FIFTH = 5; // 0x5
+    field public static final int GEAR_FIRST = 1; // 0x1
+    field public static final int GEAR_FOURTH = 4; // 0x4
+    field public static final int GEAR_NEUTRAL = 0; // 0x0
+    field public static final int GEAR_NINTH = 9; // 0x9
+    field public static final int GEAR_PARK = 101; // 0x65
+    field public static final int GEAR_REVERSE = 102; // 0x66
+    field public static final int GEAR_SECOND = 2; // 0x2
+    field public static final int GEAR_SEVENTH = 7; // 0x7
+    field public static final int GEAR_SIXTH = 6; // 0x6
+    field public static final int GEAR_TENTH = 10; // 0xa
+    field public static final int GEAR_THIRD = 3; // 0x3
+    field public static final int INDEX_ACCELEROMETER_X = 0; // 0x0
+    field public static final int INDEX_ACCELEROMETER_Y = 1; // 0x1
+    field public static final int INDEX_ACCELEROMETER_Z = 2; // 0x2
+    field public static final int INDEX_COMPASS_BEARING = 0; // 0x0
+    field public static final int INDEX_COMPASS_PITCH = 1; // 0x1
+    field public static final int INDEX_COMPASS_ROLL = 2; // 0x2
+    field public static final int INDEX_ENVIRONMENT_PRESSURE = 1; // 0x1
+    field public static final int INDEX_ENVIRONMENT_TEMPERATURE = 0; // 0x0
+    field public static final int INDEX_FUEL_LEVEL_IN_DISTANCE = 1; // 0x1
+    field public static final int INDEX_FUEL_LEVEL_IN_PERCENTILE = 0; // 0x0
+    field public static final int INDEX_FUEL_LOW_WARNING = 0; // 0x0
+    field public static final int INDEX_GPS_SATELLITE_ARRAY_FLOAT_INTERVAL = 4; // 0x4
+    field public static final int INDEX_GPS_SATELLITE_ARRAY_FLOAT_OFFSET = 0; // 0x0
+    field public static final int INDEX_GPS_SATELLITE_ARRAY_INT_INTERVAL = 1; // 0x1
+    field public static final int INDEX_GPS_SATELLITE_ARRAY_INT_OFFSET = 2; // 0x2
+    field public static final int INDEX_GPS_SATELLITE_AZIMUTH_OFFSET = 2; // 0x2
+    field public static final int INDEX_GPS_SATELLITE_ELEVATION_OFFSET = 3; // 0x3
+    field public static final int INDEX_GPS_SATELLITE_NUMBER_IN_USE = 0; // 0x0
+    field public static final int INDEX_GPS_SATELLITE_NUMBER_IN_VIEW = 1; // 0x1
+    field public static final int INDEX_GPS_SATELLITE_PRN_OFFSET = 0; // 0x0
+    field public static final int INDEX_GPS_SATELLITE_SNR_OFFSET = 1; // 0x1
+    field public static final int INDEX_GYROSCOPE_X = 0; // 0x0
+    field public static final int INDEX_GYROSCOPE_Y = 1; // 0x1
+    field public static final int INDEX_GYROSCOPE_Z = 2; // 0x2
+    field public static final int INDEX_LOCATION_ACCURACY = 2; // 0x2
+    field public static final int INDEX_LOCATION_ALTITUDE = 3; // 0x3
+    field public static final int INDEX_LOCATION_BEARING = 5; // 0x5
+    field public static final int INDEX_LOCATION_LATITUDE = 0; // 0x0
+    field public static final int INDEX_LOCATION_LATITUDE_INTS = 1; // 0x1
+    field public static final int INDEX_LOCATION_LONGITUDE = 1; // 0x1
+    field public static final int INDEX_LOCATION_LONGITUDE_INTS = 2; // 0x2
+    field public static final int INDEX_LOCATION_MAX = 5; // 0x5
+    field public static final int INDEX_LOCATION_SPEED = 4; // 0x4
+    field public final float[] floatValues;
+    field public final int[] intValues;
+    field public int sensorType;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.AccelerometerData {
+    ctor public CarSensorEvent.AccelerometerData();
+    field public long timeStampNs;
+    field public float x;
+    field public float y;
+    field public float z;
+  }
+
+  public static class CarSensorEvent.CarSpeedData {
+    ctor public CarSensorEvent.CarSpeedData();
+    field public float carSpeed;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.CompassData {
+    ctor public CarSensorEvent.CompassData();
+    field public float bearing;
+    field public float pitch;
+    field public float roll;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.DrivingStatusData {
+    ctor public CarSensorEvent.DrivingStatusData();
+    field public int status;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.EnvironmentData {
+    ctor public CarSensorEvent.EnvironmentData();
+    field public float pressure;
+    field public float temperature;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.FuelLevelData {
+    ctor public CarSensorEvent.FuelLevelData();
+    field public int level;
+    field public boolean lowFuelWarning;
+    field public float range;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.GearData {
+    ctor public CarSensorEvent.GearData();
+    field public int gear;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.GpsSatelliteData {
+    ctor public CarSensorEvent.GpsSatelliteData();
+    field public float[] azimuth;
+    field public float[] elevation;
+    field public int numberInUse;
+    field public int numberInView;
+    field public int[] prn;
+    field public float[] snr;
+    field public long timeStampNs;
+    field public boolean[] usedInFix;
+  }
+
+  public static class CarSensorEvent.GyroscopeData {
+    ctor public CarSensorEvent.GyroscopeData();
+    field public long timeStampNs;
+    field public float x;
+    field public float y;
+    field public float z;
+  }
+
+  public static class CarSensorEvent.NightData {
+    ctor public CarSensorEvent.NightData();
+    field public boolean isNightMode;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.OdometerData {
+    ctor public CarSensorEvent.OdometerData();
+    field public float kms;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.ParkingBrakeData {
+    ctor public CarSensorEvent.ParkingBrakeData();
+    field public boolean isEngaged;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.RpmData {
+    ctor public CarSensorEvent.RpmData();
+    field public float rpm;
+    field public long timeStampNs;
+  }
+
+  public abstract class CarSensorManager {
+    ctor public CarSensorManager();
+    method public abstract android.support.car.hardware.CarSensorEvent getLatestSensorEvent(int) throws android.support.car.CarNotConnectedException;
+    method public abstract int[] getSupportedSensors() throws android.support.car.CarNotConnectedException;
+    method public abstract boolean isSensorSupported(int) throws android.support.car.CarNotConnectedException;
+    method public static boolean isSensorSupported(int[], int);
+    method public abstract boolean registerListener(android.support.car.hardware.CarSensorManager.CarSensorEventListener, int, int) throws android.support.car.CarNotConnectedException, java.lang.IllegalArgumentException;
+    method public abstract void unregisterListener(android.support.car.hardware.CarSensorManager.CarSensorEventListener) throws android.support.car.CarNotConnectedException;
+    method public abstract void unregisterListener(android.support.car.hardware.CarSensorManager.CarSensorEventListener, int) throws android.support.car.CarNotConnectedException;
+    field public static final int SENSOR_RATE_FAST = 1; // 0x1
+    field public static final int SENSOR_RATE_FASTEST = 0; // 0x0
+    field public static final int SENSOR_RATE_NORMAL = 3; // 0x3
+    field public static final int SENSOR_RATE_UI = 2; // 0x2
+    field public static final int SENSOR_TYPE_CAR_SPEED = 2; // 0x2
+    field public static final int SENSOR_TYPE_COMPASS = 1; // 0x1
+    field public static final int SENSOR_TYPE_DRIVING_STATUS = 11; // 0xb
+    field public static final int SENSOR_TYPE_ENVIRONMENT = 12; // 0xc
+    field public static final int SENSOR_TYPE_FUEL_LEVEL = 5; // 0x5
+    field public static final int SENSOR_TYPE_GEAR = 7; // 0x7
+    field public static final int SENSOR_TYPE_LOCATION = 10; // 0xa
+    field public static final int SENSOR_TYPE_NIGHT = 9; // 0x9
+    field public static final int SENSOR_TYPE_ODOMETER = 4; // 0x4
+    field public static final int SENSOR_TYPE_PARKING_BRAKE = 6; // 0x6
+    field public static final int SENSOR_TYPE_RPM = 3; // 0x3
+    field public static final int SENSOR_TYPE_VENDOR_EXTENSION_END = 1879048191; // 0x6fffffff
+  }
+
+  public static abstract interface CarSensorManager.CarSensorEventListener {
+    method public abstract void onSensorChanged(android.support.car.hardware.CarSensorEvent);
+  }
+
+}
+
+package android.support.car.input {
+
+  public abstract interface CarEditable {
+    method public abstract android.view.inputmethod.InputConnection onCreateInputConnection(android.view.inputmethod.EditorInfo);
+    method public abstract void setCarEditableListener(android.support.car.input.CarEditableListener);
+    method public abstract void setInputEnabled(boolean);
+  }
+
+  public abstract interface CarEditableListener {
+    method public abstract void onUpdateSelection(int, int, int, int);
+  }
+
+  public abstract class CarInputManager {
+    ctor public CarInputManager();
+    method public abstract boolean isCurrentCarEditable(android.widget.EditText);
+    method public abstract boolean isInputActive();
+    method public abstract boolean isValid();
+    method public abstract void startInput(android.widget.EditText);
+    method public abstract void stopInput();
+  }
+
+  public class CarRestrictedEditText extends android.widget.EditText implements android.support.car.input.CarEditable {
+    ctor public CarRestrictedEditText(android.content.Context, android.util.AttributeSet);
+    method public void setCarEditableListener(android.support.car.input.CarEditableListener);
+    method public void setInputEnabled(boolean);
+    method public void setKeyListener(android.support.car.input.CarRestrictedEditText.KeyListener);
+  }
+
+  public static abstract interface CarRestrictedEditText.KeyListener {
+    method public abstract void onCloseKeyboard();
+    method public abstract void onCommitText(java.lang.String);
+    method public abstract void onDelete();
+    method public abstract void onKeyDown(int);
+    method public abstract void onKeyUp(int);
+  }
+
+}
+
+package android.support.car.media {
+
+  public abstract class CarAudioManager {
+    ctor public CarAudioManager();
+    method public abstract int abandonAudioFocus(android.media.AudioManager.OnAudioFocusChangeListener, android.media.AudioAttributes);
+    method public abstract android.media.AudioAttributes getAudioAttributesForCarUsage(int);
+    method public abstract int requestAudioFocus(android.media.AudioManager.OnAudioFocusChangeListener, android.media.AudioAttributes, int, int) throws java.lang.IllegalArgumentException;
+    field public static final int CAR_AUDIO_USAGE_ALARM = 6; // 0x6
+    field public static final int CAR_AUDIO_USAGE_DEFAULT = 0; // 0x0
+    field public static final int CAR_AUDIO_USAGE_MUSIC = 1; // 0x1
+    field public static final int CAR_AUDIO_USAGE_NAVIGATION_GUIDANCE = 3; // 0x3
+    field public static final int CAR_AUDIO_USAGE_NOTIFICATION = 7; // 0x7
+    field public static final int CAR_AUDIO_USAGE_RADIO = 2; // 0x2
+    field public static final int CAR_AUDIO_USAGE_SYSTEM_SAFETY_ALERT = 9; // 0x9
+    field public static final int CAR_AUDIO_USAGE_SYSTEM_SOUND = 8; // 0x8
+    field public static final int CAR_AUDIO_USAGE_VOICE_CALL = 4; // 0x4
+    field public static final int CAR_AUDIO_USAGE_VOICE_COMMAND = 5; // 0x5
+  }
+
+}
+
+package android.support.car.os {
+
+  public abstract class ExtendableParcelable implements android.os.Parcelable {
+    ctor protected ExtendableParcelable(android.os.Parcel, int);
+    ctor protected ExtendableParcelable(int);
+    method protected void completeReading(android.os.Parcel, int);
+    method protected void completeWriting(android.os.Parcel, int);
+    method protected int readHeader(android.os.Parcel);
+    method protected int writeHeader(android.os.Parcel);
+    field public final int version;
+  }
+
+}
+
+package android.support.car.ui {
+
+  public class AnimationListenerAdapter implements android.view.animation.Animation.AnimationListener {
+    ctor public AnimationListenerAdapter();
+    method public void onAnimationEnd(android.view.animation.Animation);
+    method public void onAnimationRepeat(android.view.animation.Animation);
+    method public void onAnimationStart(android.view.animation.Animation);
+  }
+
+  public class CarActionExtender implements android.support.v4.app.NotificationCompat.Action.Extender {
+    ctor public CarActionExtender();
+    ctor public CarActionExtender(android.support.v4.app.NotificationCompat.Action);
+    method public android.support.v4.app.NotificationCompat.Action.Builder extend(android.support.v4.app.NotificationCompat.Action.Builder);
+    method public android.content.Intent getIntent();
+    method public void setIntent(android.content.Intent);
+  }
+
+  public class CarItemAnimator extends android.support.v7.widget.DefaultItemAnimator {
+    ctor public CarItemAnimator(android.support.car.ui.CarLayoutManager);
+  }
+
+  public class CarLayoutManager extends android.support.v7.widget.RecyclerView.LayoutManager {
+    ctor public CarLayoutManager(android.content.Context);
+    method public android.support.v7.widget.RecyclerView.LayoutParams generateDefaultLayoutParams();
+    method public android.view.View getFirstFullyVisibleChild();
+    method public int getFirstFullyVisibleChildIndex();
+    method public int getLastFullyVisibleChildIndex();
+    method public int getPageDownPosition();
+    method public int getPageUpPosition();
+    method public boolean isAtBottom();
+    method public boolean isAtTop();
+    method public void offsetRows();
+    method public void setItemsChangedListener(android.support.car.ui.CarLayoutManager.OnItemsChangedListener);
+    method public void setOffsetRows(boolean);
+    method public void setRowOffsetMode(int);
+    method public boolean settleScrollForFling(android.support.v7.widget.RecyclerView, int);
+    field public static final int ROW_OFFSET_MODE_INDIVIDUAL = 0; // 0x0
+    field public static final int ROW_OFFSET_MODE_PAGE = 1; // 0x1
+  }
+
+  public static abstract interface CarLayoutManager.OnItemsChangedListener {
+    method public abstract void onItemsChanged();
+  }
+
+  public static abstract class CarLayoutManager.RowOffsetMode implements java.lang.annotation.Annotation {
+  }
+
+  public class CarListItemViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder {
+    ctor public CarListItemViewHolder(android.view.View, int);
+    field public final android.widget.ImageView icon;
+    field public final android.widget.FrameLayout iconContainer;
+    field public final android.widget.FrameLayout remoteViewsContainer;
+    field public final android.widget.CheckBox rightCheckbox;
+    field public final android.widget.ImageView rightImage;
+    field public final android.widget.TextView rightText;
+    field public final android.widget.TextView text;
+    field public final android.widget.TextView title;
+  }
+
+  public class CarNavExtender implements android.support.v4.app.NotificationCompat.Extender {
+    ctor public CarNavExtender();
+    ctor public CarNavExtender(android.app.Notification);
+    method public android.support.v4.app.NotificationCompat.Builder extend(android.support.v4.app.NotificationCompat.Builder);
+    method public int getActionIcon();
+    method public int getColor();
+    method public java.lang.Long getContentId();
+    method public android.content.Intent getContentIntent();
+    method public java.lang.CharSequence getContentText();
+    method public java.lang.CharSequence getContentTitle();
+    method public boolean getIgnoreInStream();
+    method public android.graphics.Bitmap getLargeIcon();
+    method public int getNightColor();
+    method public boolean getShowAsHeadsUp();
+    method public boolean getShowInStream();
+    method public java.lang.CharSequence getSubText();
+    method public int getType();
+    method public static int getType(android.app.Notification);
+    method public boolean isExtended();
+    method public static boolean isExtended(android.app.Notification);
+    method public android.support.car.ui.CarNavExtender setActionIcon(int);
+    method public android.support.car.ui.CarNavExtender setColor(int);
+    method public android.support.car.ui.CarNavExtender setContentId(long);
+    method public android.support.car.ui.CarNavExtender setContentIntent(android.content.Intent);
+    method public android.support.car.ui.CarNavExtender setContentText(java.lang.CharSequence);
+    method public android.support.car.ui.CarNavExtender setContentTitle(java.lang.CharSequence);
+    method public android.support.car.ui.CarNavExtender setIgnoreInStream(boolean);
+    method public android.support.car.ui.CarNavExtender setLargeIcon(android.graphics.Bitmap);
+    method public android.support.car.ui.CarNavExtender setNightColor(int);
+    method public android.support.car.ui.CarNavExtender setShowAsHeadsUp(boolean);
+    method public android.support.car.ui.CarNavExtender setShowInStream(boolean);
+    method public android.support.car.ui.CarNavExtender setSubText(java.lang.CharSequence);
+    method public android.support.car.ui.CarNavExtender setType(int);
+    field public static final int TYPE_HERO = 0; // 0x0
+    field public static final int TYPE_NORMAL = 1; // 0x1
+  }
+
+  public class CarRecyclerView extends android.support.v7.widget.RecyclerView {
+    ctor public CarRecyclerView(android.content.Context);
+    ctor public CarRecyclerView(android.content.Context, android.util.AttributeSet);
+    ctor public CarRecyclerView(android.content.Context, android.util.AttributeSet, int);
+    method public void pageDown();
+    method public void pageUp();
+    method public void setFadeLastItem(boolean);
+  }
+
+  public class CarUiResourceLoader {
+    ctor public CarUiResourceLoader();
+    method public static synchronized boolean getBoolean(android.content.Context, java.lang.String, boolean);
+    method public static synchronized float getDimen(android.content.Context, java.lang.String, float);
+    method public static synchronized android.graphics.drawable.Drawable getDrawable(android.content.Context, java.lang.String);
+    method public static synchronized android.graphics.drawable.Drawable getDrawable(android.content.Context, java.lang.String, android.util.DisplayMetrics);
+  }
+
+  public class CheckboxWrapperView extends android.widget.CheckBox {
+    ctor public CheckboxWrapperView(android.content.Context);
+    ctor public CheckboxWrapperView(android.content.Context, android.util.AttributeSet);
+    ctor public CheckboxWrapperView(android.content.Context, android.util.AttributeSet, int);
+  }
+
+  public class CircleBitmapDrawable extends android.graphics.drawable.Drawable {
+    ctor public CircleBitmapDrawable(android.content.res.Resources, android.graphics.Bitmap);
+    method public void draw(android.graphics.Canvas);
+    method public int getOpacity();
+    method public void onBoundsChange(android.graphics.Rect);
+    method public void setAlpha(int);
+    method public void setColorFilter(android.graphics.ColorFilter);
+    method public android.graphics.Bitmap toBitmap(int);
+  }
+
+  public class CircularClipAnimation implements android.animation.Animator.AnimatorListener android.animation.ValueAnimator.AnimatorUpdateListener {
+    ctor public CircularClipAnimation(android.view.ViewGroup);
+    method public void addListener(android.animation.Animator.AnimatorListener);
+    method public void addView(android.support.car.ui.PathClippingView, android.view.View);
+    method public void onAnimationCancel(android.animation.Animator);
+    method public void onAnimationEnd(android.animation.Animator);
+    method public void onAnimationRepeat(android.animation.Animator);
+    method public void onAnimationStart(android.animation.Animator);
+    method public void onAnimationUpdate(android.animation.ValueAnimator);
+    method public void removeView(android.support.car.ui.PathClippingView);
+    method public void setupCenter(int, int);
+    method public void start(boolean, int, int, int, int, android.view.View);
+    field public static final int DURATION_MS = 300; // 0x12c
+  }
+
+  public class ClippableFrameLayout extends android.widget.FrameLayout implements android.support.car.ui.PathClippingView {
+    ctor public ClippableFrameLayout(android.content.Context, android.util.AttributeSet);
+    method public void setClipPath(android.graphics.Path);
+  }
+
+  public class ColorChecker {
+    ctor public ColorChecker();
+    method public static double getContrastRatio(int, int);
+    method public static double getContrastRatio(double, double);
+    method public static double getLuminance(int);
+    method public static int getNonCriticalTintColor(android.content.Context, int);
+    method public static int getNonCriticalTintColor(int, int...);
+    method public static int getTintColor(android.content.Context, int);
+    method public static int getTintColor(int, int...);
+    method public static int getTintColor(double, int, int...);
+  }
+
+  public abstract class CursorRecyclerViewAdapter extends android.support.v7.widget.RecyclerView.Adapter {
+    ctor public CursorRecyclerViewAdapter(android.content.Context, android.database.Cursor);
+    method public void changeCursor(android.database.Cursor);
+    method public android.database.Cursor getCursor();
+    method public int getItemCount();
+    method protected int getRowIdColumnIndex(android.database.Cursor);
+    method public void onBindViewHolder(VH, android.database.Cursor);
+    method public void onBindViewHolder(VH, int);
+    method public android.database.Cursor swapCursor(android.database.Cursor);
+    field protected android.content.Context mContext;
+    field protected android.database.Cursor mCursor;
+    field protected android.database.DataSetObserver mDataSetObserver;
+    field protected int mRowIdColumn;
+  }
+
+  public class DrawerArrowDrawable extends android.graphics.drawable.Drawable {
+    ctor public DrawerArrowDrawable(android.content.Context);
+    method public void draw(android.graphics.Canvas);
+    method public int getOpacity();
+    method public float getProgress();
+    method public boolean isLayoutRtl();
+    method public void setAlpha(int);
+    method public void setColorFilter(android.graphics.ColorFilter);
+    method public void setProgress(float);
+    method protected void setVerticalMirror(boolean);
+  }
+
+  public class FabDrawable extends android.graphics.drawable.Drawable {
+    ctor public FabDrawable(android.content.Context);
+    ctor public FabDrawable(int, int, int);
+    method public void draw(android.graphics.Canvas);
+    method public int getOpacity();
+    method public void setAlpha(int);
+    method public void setColorFilter(android.graphics.ColorFilter);
+    method public void setFabAndStrokeColor(int);
+    method public void setFabAndStrokeColor(int, float);
+    method public void setFabColor(int);
+    method public void setStrokeColor(int);
+  }
+
+  public abstract class GroupingCursorRecyclerViewAdapter extends android.support.car.ui.CursorRecyclerViewAdapter {
+    ctor public GroupingCursorRecyclerViewAdapter(android.content.Context, android.database.Cursor);
+    method protected void addGroup(int, int, boolean);
+    method protected abstract void buildGroups(android.database.Cursor);
+    method public android.database.Cursor getItem(int);
+    method protected abstract void onBindChildViewHolder(VH, android.content.Context, android.database.Cursor);
+    method protected abstract void onBindGroupViewHolder(VH, android.content.Context, android.database.Cursor, int, boolean);
+    method protected abstract void onBindStandAloneViewHolder(VH, android.content.Context, android.database.Cursor);
+    method protected abstract VH onCreateChildViewHolder(android.content.Context, android.view.ViewGroup);
+    method protected abstract VH onCreateGroupViewHolder(android.content.Context, android.view.ViewGroup);
+    method protected abstract VH onCreateStandAloneViewHolder(android.content.Context, android.view.ViewGroup);
+    method public VH onCreateViewHolder(android.view.ViewGroup, int);
+    method public boolean toggleGroup(int);
+    field public static final int VIEW_TYPE_GROUP_HEADER = 1; // 0x1
+    field public static final int VIEW_TYPE_IN_GROUP = 2; // 0x2
+    field public static final int VIEW_TYPE_STANDALONE = 0; // 0x0
+  }
+
+  protected static class GroupingCursorRecyclerViewAdapter.GroupMetadata {
+    ctor protected GroupingCursorRecyclerViewAdapter.GroupMetadata();
+    method public int getActualSize();
+    method public boolean isExpanded();
+    method public boolean isStandAlone();
+  }
+
+  protected static class GroupingCursorRecyclerViewAdapter.PositionMetadata {
+    ctor public GroupingCursorRecyclerViewAdapter.PositionMetadata(int, int, android.support.car.ui.GroupingCursorRecyclerViewAdapter.GroupMetadata);
+  }
+
+  public abstract class GroupingRecyclerViewAdapter extends android.support.v7.widget.RecyclerView.Adapter {
+    ctor public GroupingRecyclerViewAdapter(android.content.Context);
+    method protected void addGroup(int, int, boolean);
+    method protected abstract void buildGroups(java.util.List<E>);
+    method public E getItem(int);
+    method public int getItemCount();
+    method public boolean isGroupExpanded(int);
+    method protected abstract void onBindChildViewHolder(VH, android.content.Context, int);
+    method protected abstract void onBindGroupViewHolder(VH, android.content.Context, int, int, boolean);
+    method protected abstract void onBindStandAloneViewHolder(VH, android.content.Context, int);
+    method public void onBindViewHolder(VH, int);
+    method protected abstract VH onCreateChildViewHolder(android.content.Context, android.view.ViewGroup);
+    method protected abstract VH onCreateGroupViewHolder(android.content.Context, android.view.ViewGroup);
+    method protected abstract VH onCreateStandAloneViewHolder(android.content.Context, android.view.ViewGroup);
+    method public VH onCreateViewHolder(android.view.ViewGroup, int);
+    method public void setData(java.util.List<E>);
+    method public boolean toggleGroup(int, int);
+    field public static final int VIEW_TYPE_GROUP_HEADER = 1; // 0x1
+    field public static final int VIEW_TYPE_IN_GROUP = 2; // 0x2
+    field public static final int VIEW_TYPE_STANDALONE = 0; // 0x0
+    field protected android.content.Context mContext;
+    field protected java.util.List<E> mData;
+  }
+
+  protected static class GroupingRecyclerViewAdapter.GroupMetadata {
+    ctor protected GroupingRecyclerViewAdapter.GroupMetadata();
+    method public int getActualSize();
+    method public boolean isExpanded();
+    method public boolean isStandAlone();
+  }
+
+  protected static class GroupingRecyclerViewAdapter.PositionMetadata {
+    ctor public GroupingRecyclerViewAdapter.PositionMetadata(int, int, android.support.car.ui.GroupingRecyclerViewAdapter.GroupMetadata);
+  }
+
+  public class LogDecelerateInterpolator implements android.view.animation.Interpolator {
+    ctor public LogDecelerateInterpolator(int, int);
+    method public float getInterpolation(float);
+  }
+
+  public class MaxWidthLayout extends android.widget.FrameLayout {
+    ctor public MaxWidthLayout(android.content.Context);
+    ctor public MaxWidthLayout(android.content.Context, android.util.AttributeSet);
+    ctor public MaxWidthLayout(android.content.Context, android.util.AttributeSet, int);
+  }
+
+  public class PagedLayoutManager extends android.support.v7.widget.LinearLayoutManager {
+    ctor public PagedLayoutManager(android.content.Context);
+    method public int getLastScrollPosition();
+    method public boolean isAtBottom();
+    method public boolean isAtTop();
+    method public void setItemsChangedListener(java.lang.Runnable);
+    method public void setScrollingEnabled(boolean);
+    field public java.lang.Runnable mItemsChangedRunnable;
+  }
+
+  public class PagedListView extends android.widget.FrameLayout {
+    ctor public PagedListView(android.content.Context, android.util.AttributeSet);
+    ctor public PagedListView(android.content.Context, android.util.AttributeSet, int);
+    ctor public PagedListView(android.content.Context, android.util.AttributeSet, int, int);
+    method public void addItemDecoration(android.support.v7.widget.RecyclerView.ItemDecoration);
+    method public android.view.View findViewByPosition(int);
+    method public android.support.v7.widget.RecyclerView.Adapter<? extends android.support.v7.widget.RecyclerView.ViewHolder> getAdapter();
+    method protected int getDefaultMaxPages();
+    method public android.support.car.ui.CarLayoutManager getLayoutManager();
+    method public int getMaxPages();
+    method public int getPage(int);
+    method public android.support.car.ui.CarRecyclerView getRecyclerView();
+    method public void onLayout(boolean, int, int, int, int);
+    method public int positionOf(android.view.View);
+    method public void removeDefaultItemDecoration();
+    method public void removeItemDecoration(android.support.v7.widget.RecyclerView.ItemDecoration);
+    method public void resetMaxPages();
+    method public void scrollToPosition(int);
+    method public void setAdapter(android.support.v7.widget.RecyclerView.Adapter<? extends android.support.v7.widget.RecyclerView.ViewHolder>);
+    method public void setAutoDayNightMode();
+    method public void setDarkMode();
+    method public void setDefaultItemDecoration(android.support.car.ui.PagedListView.Decoration);
+    method public void setLightMode();
+    method public void setMaxPages(int);
+    method public void setOnScrollBarListener(android.support.car.ui.PagedListView.OnScrollBarListener);
+  }
+
+  public static class PagedListView.Decoration extends android.support.v7.widget.RecyclerView.ItemDecoration {
+    ctor public PagedListView.Decoration(android.content.Context);
+    method public void updateDividerColor();
+    field protected final android.content.Context mContext;
+    field protected final int mDividerHeight;
+    field protected final android.graphics.Paint mPaint;
+  }
+
+  public static abstract interface PagedListView.ItemCap {
+    method public abstract void setMaxItems(int);
+  }
+
+  public static abstract class PagedListView.OnScrollBarListener {
+    ctor public PagedListView.OnScrollBarListener();
+    method public void onLeaveBottom();
+    method public void onReachBottom();
+  }
+
+  public class PagedScrollBarView extends android.widget.FrameLayout implements android.view.View.OnClickListener android.view.View.OnLongClickListener {
+    ctor public PagedScrollBarView(android.content.Context, android.util.AttributeSet);
+    ctor public PagedScrollBarView(android.content.Context, android.util.AttributeSet, int);
+    ctor public PagedScrollBarView(android.content.Context, android.util.AttributeSet, int, int);
+    method protected boolean isDownEnabled();
+    method public boolean isDownPressed();
+    method public boolean isUpPressed();
+    method public void onClick(android.view.View);
+    method public boolean onLongClick(android.view.View);
+    method protected void setAutoDayNightMode();
+    method protected void setDarkMode();
+    method protected void setDownEnabled(boolean);
+    method protected void setLightMode();
+    method public void setPaginationListener(android.support.car.ui.PagedScrollBarView.PaginationListener);
+    method protected void setParameters(int, int, int, boolean);
+    method protected void setUpEnabled(boolean);
+  }
+
+  public static abstract interface PagedScrollBarView.PaginationListener {
+    method public abstract void onPaginate(int);
+    field public static final int PAGE_DOWN = 1; // 0x1
+    field public static final int PAGE_UP = 0; // 0x0
+  }
+
+  public abstract interface PathClippingView {
+    method public abstract void setClipPath(android.graphics.Path);
+  }
+
+  public class QuantumInterpolator implements android.animation.TimeInterpolator {
+    ctor public QuantumInterpolator(float[], float, float, float);
+    method public float getInterpolation(float);
+    method public float getInterpolation(float, float, float);
+    method public float getReverseInterpolation(float);
+    field public static final float[] FAST_OUT_LINEAR_IN;
+    field public static final float[] FAST_OUT_SLOW_IN;
+    field public static final float[] LINEAR_OUT_SLOW_IN;
+  }
+
+  public class ReversibleInterpolator {
+    ctor public ReversibleInterpolator(android.animation.TimeInterpolator, android.animation.TimeInterpolator);
+    method public float getForwardInterpolation(float);
+    method public float getReverseInterpolation(float);
+  }
+
+}
+

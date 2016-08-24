@@ -1,0 +1,15 @@
+# qcom-c_core-sh service
+type qcom-c_core-sh, domain;
+type qcom-c_core-sh_exec, exec_type, file_type;
+
+# Started by init
+init_daemon_domain(qcom-c_core-sh)
+
+# Set ctl.console properties.
+set_prop(qcom-c_core-sh, ctl_console_prop)
+
+allow qcom-c_core-sh shell_exec:file r_file_perms;
+
+allow qcom-c_core-sh toolbox_exec:file rx_file_perms;
+
+allow qcom-c_core-sh sysfs:file r_file_perms;

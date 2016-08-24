@@ -1,0 +1,14 @@
+type atfwd, domain;
+type atfwd_exec, exec_type, file_type;
+
+init_daemon_domain(atfwd)
+
+# Creates/Talks to qmuxd via the qmux_radio socket.
+qmux_socket(atfwd)
+
+# Set radio.atfwd.* properties.
+set_prop(atfwd, radio_atfwd_prop)
+
+userdebug_or_eng(`
+    allow atfwd diag_device:chr_file rw_file_perms;
+')

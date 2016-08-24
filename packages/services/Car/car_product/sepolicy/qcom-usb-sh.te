@@ -1,0 +1,29 @@
+# qcom-usb-sh service
+type qcom-usb-sh, domain;
+type qcom-usb-sh_exec, exec_type, file_type;
+
+# Started by init
+init_daemon_domain(qcom-usb-sh)
+
+# Allow changing the owner of /sys/devices/virtual/hsicctl/hsicctl0/modem_wait.
+allow qcom-usb-sh sysfs_hsic_modem_wait:file { getattr setattr };
+
+# qcom.usb.sh needs to restore the context of /sys/devices/virtual/hsicctl/hsicctl0/modem_wait
+# as it may not be properly labeled when accessed.
+allow qcom-usb-sh sysfs:file relabelfrom;
+allow qcom-usb-sh sysfs_hsic_modem_wait:file relabelto;
+
+# Follow links from /sys/class/android_usb/* to /sys/devices/virtual/android_usb/*.
+allow qcom-usb-sh sysfs_usb:lnk_file read;
+
+# Allow write access to USB related sysfs nodes.
+allow qcom-usb-sh sysfs_usb:dir search;
+allow qcom-usb-sh sysfs_usb:file w_file_perms;
+
+allow qcom-usb-sh self:capability chown;
+
+allow qcom-usb-sh shell_exec:file r_file_perms;
+
+allow qcom-usb-sh toolbox_exec:file rx_file_perms;
+
+allow qcom-usb-sh rootfs:file r_file_perms;

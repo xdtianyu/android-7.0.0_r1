@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"USB Tuner TV Input"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"I-on"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"I-off"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"Mangyaring maghintay na matapos ang pagpoproseso"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"Piliin ang pinagmulan ng iyong channel"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"Walang Signal"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"Hindi nai-tune sa <xliff:g id="CHANNEL_NAME">%s</xliff:g>"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"Hindi na-tune"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"Na-update kamakailan ang USB tuner software. Paki-scan muli ang mga channel."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"Hindi available ang AC3 audio"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"Pag-setup ng tuner ng channel"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"Pag-setup ng USB tuner ng channel"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"I-verify na nakasaksak at nakakonekta ang USB tuner sa pinagmumulan ng signal ng TV.\n\nKung gumagamit ka ng isang over-the-air na antenna, maaaring kailanganin mong ayusin ang pagkakalagay o ang direksyon nito upang masagap ang pinakamaraming channel. Upang makasagap ng mas maraming channel, ilagay ito sa isang mataas na lugar na malapit sa bintana."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"Magpatuloy"</item>
+    <item msgid="7745727658174773453">"Walang makitang channel"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"Gusto mo bang muling patakbuhin ang pag-setup ng channel?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"Kapag isinagawa mo ito, maaalis ang mga channel na nakita mula sa USB tuner at muli itong mag-ii-scan ng mga bagong channel.\n\nI-verify na nakasaksak at nakakonekta ang USB tuner sa pinagmumulan ng signal ng TV.\n\nKung gumagamit ka ng isang over-the-air na antenna, maaaring kailanganin mong ayusin ang pagkakalagay o ang direksyon nito upang masagap ang pinakamaraming channel. Upang makasagap ng mas maraming channel, ilagay ito sa isang mataas na lugar na malapit sa bintana."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"Magpatuloy"</item>
+    <item msgid="4432431398374089710">"Kanselahin"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"Piliin ang uri ng koneksyon"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"Piliin ang Antenna kung may nakakonektang external na antenna sa tuner. Piliin ang Cable kung nanggagaling ang iyong mga channel sa isang service provider ng cable. Kung hindi ka nakakatiyak, iii-scan ang parehong nabanggit na uri, ngunit maaaring matagalan ito."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"Antenna"</item>
+    <item msgid="2445879869338877559">"Cable"</item>
+    <item msgid="597328838068074806">"Hindi nakakatiyak"</item>
+    <item msgid="3613410733017077040">"Development lang"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"Pag-setup ng USB tuner ng channel"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"Maaaring abutin ito ng ilang minuto"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="one">Nakahanap ng %1$d channel</item>
+      <item quantity="other">Nakahanap ng %1$d na channel</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"IHINTO ANG PAG-SCAN NG CHANNEL"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="one">Nakahanap ng %1$d channel</item>
+      <item quantity="other">Nakahanap ng %1$d na channel</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="one">Ayos! Nakahanap ng %1$d channel noong nag-ii-scan ng channel. Kung sa palagay mo ay kulang pa ito, subukang ayusin ang posisyon ng antenna at muling mag-scan.</item>
+      <item quantity="other">Ayos! Nakahanap ng %1$d na channel noong nag-ii-scan ng channel. Kung sa palagay mo ay kulang pa ito, subukang ayusin ang posisyon ng antenna at muling mag-scan.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"Tapos Na"</item>
+    <item msgid="496688122303154468">"Muling mag-scan"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"Walang nakitang Mga Channel"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"Walang nakitang anumang mga channel noong nag-ii-scan. I-verify na nakasaksak at nakakonekta ang USB tuner sa pinagmumulan ng signal ng TV.\n\nKung gumagamit ka ng isang over-the-air na antenna, ayusin ang pagkakalagay o ang direksyon nito. Upang makasagap ng mas maraming channel, ilagay ito sa isang mataas na lugar na malapit sa bintana at muling mag-scan."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"Muling mag-scan"</item>
+    <item msgid="6784975565864102291">"Tapos Na"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"Mag-scan ng mga channel sa TV"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"Pag-setup ng USB tuner ng channel"</string>
+</resources>

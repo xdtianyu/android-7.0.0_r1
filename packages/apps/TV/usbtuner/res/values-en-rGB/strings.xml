@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"USB Tuner TV Input"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"On"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"Off"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"Please wait to finish processing"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"Select your channel source"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"No Signal"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"Failed to tune to <xliff:g id="CHANNEL_NAME">%s</xliff:g>"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"Failed to tune"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"USB tuner software has been recently updated. Please re-scan the channels."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"AC3 audio not available"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"Channel tuner setup"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"USB channel tunner setup"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"Verify the USB tuner is plugged in and connected to a TV signal source.\n\nIf using an over-the-air aerial, you may need to adjust its placement or direction to receive the most channels. For best results, place it high and near a window."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"Continue"</item>
+    <item msgid="7745727658174773453">"Not now"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"Rerun channel setup?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"This will remove the channels found from the USB tuner and scan for new channels again.\n\nVerify the USB tuner is plugged in and connected to a TV signal source.\n\nIf using an over-the-air aerial, you may need to adjust its placement or direction to receive the most channels. For best results, place it high and near a window."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"Continue"</item>
+    <item msgid="4432431398374089710">"Cancel"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"Select the connection type"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"Choose Aerial if there is an external Aerial connected to the tuner. Choose Cable if your channels come from a cable service provider. If you are not sure, both types will be scanned, but this may take longer."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"Aerial"</item>
+    <item msgid="2445879869338877559">"Cable"</item>
+    <item msgid="597328838068074806">"Not sure"</item>
+    <item msgid="3613410733017077040">"Development only"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"USB channel tuner setup"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"This may take several minutes"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="other">%1$d channels found</item>
+      <item quantity="one">%1$d channel found</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"STOP CHANNEL SCAN"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="other">%1$d channels found</item>
+      <item quantity="one">%1$d channel found</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="other">Nice! %1$d channels were found during the channel scan. If this doesn’t seem right, try adjusting the antenna position and scan again.</item>
+      <item quantity="one">Nice! %1$d channel was found during the channel scan. If this doesn’t seem right, try adjusting the antenna position and scan again.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"Finished"</item>
+    <item msgid="496688122303154468">"Scan again"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"No Channels found"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"The scan did not find any channels. Verify the USB tuner is plugged in and connected to a TV signal source.\n\nIf using an over-the-air aerial, adjust its placement or direction. For best results, place it high and near a window and scan again."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"Scan again"</item>
+    <item msgid="6784975565864102291">"Finished"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"Scan for TV channels"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"USB channel tuner setup"</string>
+</resources>

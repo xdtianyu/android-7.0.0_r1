@@ -1,0 +1,10 @@
+type start_hci_filter, domain;
+type start_hci_filter_exec, exec_type, file_type;
+
+init_daemon_domain(start_hci_filter);
+
+# Allow access to /dev/ttyHS0
+allow start_hci_filter serial_device:chr_file rw_file_perms;
+
+# Allow access to wc_transport.* properties.
+set_prop(start_hci_filter, wc_transport_prop)

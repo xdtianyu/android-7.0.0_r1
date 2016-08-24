@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"‏إدخال موالف تلفزيون USB"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"تشغيل"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"إيقاف"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"الرجاء الانتظار لحين انتهاء المعالجة"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"حدد القناة المصدر"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"لا توجد إشارة"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"أخفق الضبط على <xliff:g id="CHANNEL_NAME">%s</xliff:g>"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"أخفق الضبط"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"‏تم تحديث برنامج موالف USB مؤخرًا. الرجاء إعادة البحث عن القنوات."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"‏لا يتوفر صوت AC3"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"إعداد موالف القنوات"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"‏إعداد موالف القنوات من النوع USB"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"‏تحقق من توصيل الموالف من نوع USB بمصدر إشارة التلفزيون.\n\nإذا كنت تستخدم هوائيًا للتحديث عبر الهواء، فربما يلزمك تعديل موضعه أو اتجاهه لاستقبال معظم القنوات، وللحصول على أفضل النتائج، ضعه عاليًا بالقرب من النافذة."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"متابعة"</item>
+    <item msgid="7745727658174773453">"ليس الآن"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"هل تريد إعادة تشغيل إعداد القنوات؟"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"‏سيؤدي هذا إلى إزالة القنوات التي تم العثور عليها من الموالف من النوع USB والبحث ثانية عن قنوات جديدة.\n\nتحقق من توصيل الموالف من نوع USB بمصدر إشارة التلفزيون.\n\nإذا كنت تستخدم هوائي للتحديث عبر الهواء، فربما يلزمك تعديل موضعه أو اتجاهه لاستقبال معظم القنوات، وللحصول على أفضل النتائج، ضعه عاليًا بالقرب من النافذة."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"متابعة"</item>
+    <item msgid="4432431398374089710">"إلغاء"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"تحديد نوع الاتصال"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"اختر \"الهوائي\" في حال توصيل هوائي خارجي بالموالف، واختر \"الكابل\" في حال كان مصدر القنوات هو مقدم خدمة عبر الكابل، أما إذا لم تكن متأكدًا، فسيتم البحث عن القنوات في النوعين غير أن هذا قد يستغرق وقتًا أطول."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"الهوائي"</item>
+    <item msgid="2445879869338877559">"الكابل"</item>
+    <item msgid="597328838068074806">"لست متأكدًا"</item>
+    <item msgid="3613410733017077040">"للتطوير فقط"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"‏إعداد موالف قنوات USB"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"قد يستغرق هذا عدة دقائق"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="zero">‏تم العثور على %1$d قناة</item>
+      <item quantity="two">‏تم العثور على قناتين (%1$d)</item>
+      <item quantity="few">‏تم العثور على %1$d قنوات</item>
+      <item quantity="many">‏تم العثور على %1$d قناة</item>
+      <item quantity="other">‏تم العثور على %1$d قناة</item>
+      <item quantity="one">‏تم العثور على %1$d قناة</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"إيقاف البحث عن القنوات"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="zero">‏تم العثور على %1$d قناة</item>
+      <item quantity="two">‏تم العثور على قناتين (%1$d)</item>
+      <item quantity="few">‏تم العثور على %1$d قنوات</item>
+      <item quantity="many">‏تم العثور على %1$d قناة</item>
+      <item quantity="other">‏تم العثور على %1$d قناة</item>
+      <item quantity="one">‏تم العثور على %1$d قناة</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="zero">‏جيد! تم العثور على %1$d قناة أثناء البحث عن القنوات. إذا كان ذلك لا يبدو صحيحًا، فجرِّب ضبط موضع الهوائي وإعادة البحث.</item>
+      <item quantity="two">‏جيد! تم العثور على قناتين (%1$d) أثناء البحث عن القنوات. إذا كان ذلك لا يبدو صحيحًا، فجرِّب ضبط موضع الهوائي وإعادة البحث.</item>
+      <item quantity="few">‏جيد! تم العثور على %1$d قنوات أثناء البحث عن القنوات. إذا كان ذلك لا يبدو صحيحًا، فجرِّب ضبط موضع الهوائي وإعادة البحث.</item>
+      <item quantity="many">‏جيد! تم العثور على %1$d قناة أثناء البحث عن القنوات. إذا كان ذلك لا يبدو صحيحًا، فجرِّب ضبط موضع الهوائي وإعادة البحث.</item>
+      <item quantity="other">‏جيد! تم العثور على %1$d قناة أثناء البحث عن القنوات. إذا كان ذلك لا يبدو صحيحًا، فجرِّب ضبط موضع الهوائي وإعادة البحث.</item>
+      <item quantity="one">‏جيد! تم العثور على %1$d قناة أثناء البحث عن القنوات. إذا كان ذلك لا يبدو صحيحًا، فجرِّب ضبط موضع الهوائي وإعادة البحث.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"تم"</item>
+    <item msgid="496688122303154468">"بحث مرة أخرى"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"لم يتم العثور على قنوات"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"‏لم يتم العثور على أية قنوات أثناء البحث، تحقق من توصيل الموالف من نوع USB بمصدر إشارة التلفزيون.\n\nإذا كنت تستخدم هوائيًا للتحديث عبر الهواء، فعدّل موضعه أو اتجاهه، وللحصول على أفضل النتائج، ضعه عاليًا بالقرب من النافذة ثم أعد البحث."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"بحث مرة أخرى"</item>
+    <item msgid="6784975565864102291">"تم"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"البحث عن قنوات تلفزيونية"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"‏إعداد موالف قنوات USB"</string>
+</resources>

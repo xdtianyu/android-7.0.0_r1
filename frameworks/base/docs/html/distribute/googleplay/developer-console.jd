@@ -1,0 +1,302 @@
+page.title=Developer Console
+page.metaDescription=Learn about the Developer Console, your home for app publishing on Google Play.
+page.image=images/cards/dev-console_2x.jpg
+page.tags="play, publish, google, google play"
+Xnonavpage=true
+
+@jd:body
+
+    <div id="qv-wrapper">
+  <div id="qv">
+    <h2>Features</h2>
+    <ol>
+      <li><a href="#latest">Latest blog posts</a></li>
+      <li><a href="#publish">Publish with confidence</a></li>
+      <li><a href="#aquire-users">Acquire users</a></li>
+      <li><a href="#insights">Actionable insights</a></li>
+      <li><a href="#manage">Manage your app</a></li>
+    </ol>
+  </div>
+</div>
+
+<p>
+  The <a href="https://play.google.com/apps/publish/">Google Play Developer
+  Console</a> is your home for publishing operations and tools.
+</p>
+
+<img src="{@docRoot}images/distribute/googleplay/gp-devconsole-home.png" style="width:480px;">
+
+<p>
+  Upload apps, build your product pages, configure prices and distribution, and
+  publish. You can manage all phases of publishing on Google Play through the
+  Developer Console, from any web browser.
+</p>
+
+<p>
+  Once you've <a href=
+  "{@docRoot}distribute/googleplay/start.html">registered</a> and received
+  verification by email, you can sign in to your Google Play Developer Console.
+</p>
+
+
+<p style="clear:both">
+</p>
+
+<div class="dynamic-grid">
+<div class="headerLine">
+<h2 id="latest">Latest blog posts</h2>
+</div>
+
+<div class="resource-widget resource-flow-layout col-13"
+  data-query="type:blog+tag:developerconsole+tag:featured"
+  data-sortOrder="-timestamp"
+  data-cardSizes="6x3"
+  data-maxResults="3"></div>
+  </div>
+
+<h2 id="publish">Publish with confidence</h2>
+
+<div class="wrap">
+  <h3 id="alpha-beta">Alpha and beta tests</h3>
+
+  <div class="cols" style="margin-top:2em;">
+    <div class="col-3of12">
+      <p>
+        Distribute your pre-release app to users as an open beta with a
+        one-click, opt-in URL or as a closed beta using an email list, Google
+        Group, or Google+ community. Users can then provide feedback, while not
+        affecting your app’s public reviews and rating. This valuable feedback
+        will help you test features and improve the quality of your app.
+        <a href="{@docRoot}distribute/engage/beta.html">Learn more</a>.
+      </p>
+    </div>
+
+    <div class="col-8of12 col-push-1of12">
+      <img src=
+      "{@docRoot}images/distribute/googleplay/dev-console_running-a-beta-test.png"
+      srcset=
+      "{@docRoot}images/distribute/googleplay/dev-console_running-a-beta-test.png 1x, {@docRoot}images/distribute/googleplay/dev-console_running-a-beta-test_2x.png 2x"
+      width="500">
+    </div>
+  </div>
+
+  <h3 id="cloud-test">Cloud Test Lab</h3>
+
+  <div class="cols" style="margin-top:2em;">
+    <div class="col-3of12">
+      <p>
+        Get free automated testing of your app on physical devices covering
+        nearly every brand, model, and version of the devices your users might
+        be using. The lab will help you quickly find compatibility issues you
+        may miss using only your available test devices. Sign-up in the
+        Developer Console to become an early tester before this feature becomes
+        more widely available. <a href=
+        "https://developers.google.com/cloud-test-lab/" class=
+        "external-link">Learn more and sign up for updates.</a>
+      </p>
+    </div>
+
+    <div class="col-8of12 col-push-1of12">
+      <img src=
+      "{@docRoot}images/distribute/googleplay/dev-console_cloud-test-lab.png"
+      srcset=
+      "{@docRoot}images/distribute/googleplay/dev-console_cloud-test-lab.png 1x, {@docRoot}images/distribute/googleplay/dev-console_cloud-test-lab_2x.png 2x"
+      width="500">
+    </div>
+  </div>
+</div>
+
+<h3 id="staged-rollouts">Staged rollouts</h3>
+
+<p>
+  Release app updates progressively to an increasing portion of your users and
+  monitor for missed issues. Then take the opportunity to fix problems before
+  all your users are affected. <a href=
+  "https://support.google.com/googleplay/android-developer/answer/3131213"
+  class="external-link">Learn more.</a>
+</p>
+
+<p class="aside">
+  <strong>Tip:</strong> If you find an issue during a rollout stage you can
+  halt the rollout to further minimize the effect, and then resume rollout once
+  a fix has been made.
+</p>
+
+<h2 id="aquire-users">Aquire users</h2>
+
+  <h3 id="adwords">AdWords Universal App Campaigns</h3>
+
+  <p>
+    Easily and conveniently buy AdWords app install ads, across Search
+    (including Play Search), YouTube, AdMob, and the Google Display Network.
+    Simply set a budget and cost per acquisition and Google takes care of the
+    rest. <a href="{@docRoot}distribute/users/promote-with-ads.html">Learn
+    more</a>.
+  </p>
+
+<div class="wrap">
+  <h3 id="listing-experiments">Store Listing Experiments</h3>
+
+  <div class="cols" style="margin-top:2em;">
+    <div class="col-3of12">
+      <p>
+        Test variations of the images and text used to promote and describe
+        your app on your Play store listing. Then when enough data has been
+        collected, choose to make the winning combination visible on Google
+        Play. <a href="{@docRoot}distribute/users/experiments.html">Learn
+        more</a>.
+      </p>
+
+      <p class="aside">
+        <strong>Tip:</strong> You can even try out different orders for your
+        screenshots and other images to discover which grabs users’ attention
+        the best.
+      </p>
+    </div>
+
+    <div class="col-8of12 col-push-1of12">
+      <img src=
+      "{@docRoot}images/distribute/googleplay/dev-console_store-listing-experiment.png"
+      srcset=
+      "{@docRoot}images/distribute/googleplay/dev-console_store-listing-experiment.png 1x, {@docRoot}images/distribute/googleplay/dev-console_store-listing-experiment_2x.png 2x"
+      width="500">
+    </div>
+  </div>
+
+  <h3 id="user-perf-report">User Acquisition performance report</h3>
+
+  <div class="cols" style="margin-top:2em;">
+    <div class="col-3of12">
+      <p>
+        Discover where visitors to your Play Store listing come from, how many
+        go on to install your app, and how many buy your in-app products in the
+        User Acquisition performance report; compare cohorts, examine
+        acquisition channels, and see details of users and buyers. <a href=
+        "{@docRoot}distribute/users/user-acquisition.html">Learn more</a>.
+      </p>
+    </div>
+
+    <div class="col-8of12 col-push-1of12">
+      <img src=
+      "{@docRoot}images/distribute/googleplay/dev-console_conversion-funnel.png"
+      srcset=
+      "{@docRoot}images/distribute/googleplay/dev-console_conversion-funnel.png 1x, {@docRoot}images/distribute/googleplay/dev-console_conversion-funnel_2x.png 2x"
+      width="500">
+    </div>
+  </div>
+</div>
+
+<h2 id="insights">Actionable insights</h2>
+
+<div class="wrap">
+
+<h3 id="player-analytics">Player Analytics</h3>
+
+  <div class="cols" style="margin-top:2em;">
+    <div class="col-3of12">
+      <p>
+        With Google Play game services integration, discover more about the
+        behaviour of your game players; how they play and how they buy. Also get
+        help setting and monitoring revenue budgets. <a href=
+        "{@docRoot}distribute/engage/game-services.html">Learn more</a>.
+      </p>
+    </div>
+
+    <div class="col-8of12 col-push-1of12">
+      <img src=
+      "{@docRoot}images/distribute/googleplay/dev-console_player-analytics.png"
+      srcset=
+      "{@docRoot}images/distribute/googleplay/dev-console_player-analytics.png 1x, {@docRoot}images/distribute/googleplay/dev-console_player-analytics_2x.png 2x"
+      width="500">
+    </div>
+  </div>
+
+<h3 id="stats">Detailed statistics and reports</h3>
+
+  <div class="cols" style="margin-top:2em;">
+    <div class="col-3of12">
+      <p>
+        Get a wide range of reports on the performance of your app and behaviour
+        of users; such as installs, revenue, crashes, and more. Turn on email
+        alerts to be notified of any sudden changes to important stats. <a href=
+        "https://support.google.com/googleplay/android-developer/topic/3450942?ref_topic=3450986"
+        class="external-link">Learn more.</a>
+      </p>
+    </div>
+
+    <div class="col-8of12 col-push-1of12">
+      <img src=
+      "{@docRoot}images/distribute/googleplay/dev-console_statistics.png" srcset=
+      "{@docRoot}images/distribute/googleplay/dev-console_statistics.png 1x, {@docRoot}images/distribute/googleplay/dev-console_statistics_2x.png 2x"
+      width="500">
+    </div>
+  </div>
+</div>
+
+
+<h3 id="optimization"> Optimization tips</h3>
+
+<p>
+  Get tips, based on automatic app scanning, on ways in which you can improve
+  your app, everything from updating old APIs to suggestions for languages you
+  should consider localizing to.
+</p>
+
+<h2 id="manage">Manage your app</h2>
+
+<h3 id="manage-apks">Manage your APKs</h3>
+
+<p>
+  Upload and manage your Android application packages (APK) to the Developer
+  Console as drafts or to your Alpha, Beta, or Production channels. <a href=
+  "https://support.google.com/googleplay/android-developer/answer/113469?ref_topic=3450986"
+  class="external-link">Learn more.</a>
+</p>
+
+<p class="aside">
+  <strong>Tip:</strong> Ensure users get the best possible experience for the
+  smallest app downloads by creating multiple APKs with just the right content
+  for device screen size, hardware features and more.
+</p>
+
+<h3 id="iap">In-app products and subscriptions</h3>
+
+<p>
+  Manage your in-app products and price them for local markets accordingly.
+  Offer weekly, monthly, annual, or seasonal subscriptions and take advantage
+  of features such as grace periods and trials. <a href=
+  "https://support.google.com/googleplay/android-developer/topic/3452896?ref_topic=3452890"
+  class="external-link">Learn more.</a>
+</p>
+
+<h3 id="pricing">Pricing and distribution</h3>
+
+<p>
+  Control the price of your app for each country you choose to distribute to.
+  Make your app available to new audiences — opt-in to Android Auto, Android
+  TV, and Android Wear, as well as Designed for Families, Google Play for Work,
+  and Google Play for Education. <a href=
+  "https://support.google.com/googleplay/android-developer/answer/113469#pricing"
+  class="external-link">Learn more</a>.
+</p>
+
+<p class="external-link">
+  <strong>Tip:</strong> You can set prices in other countries automatically
+  based on current exchange rates using the <strong>auto-convert prices
+  now</strong> feature.
+</p>
+
+<p style="clear:both">
+</p>
+
+<div class="dynamic-grid">
+<div class="headerLine">
+<h2 id="related-resources">Related Resources</h2>
+</div>
+
+<div class="resource-widget resource-flow-layout col-13"
+  data-query="collection:distribute/googleplay/developerconsole/related"
+  data-sortOrder="-timestamp"
+  data-cardSizes="9x3"
+  data-maxResults="6"></div>
+  </div>

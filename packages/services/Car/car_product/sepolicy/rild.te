@@ -1,0 +1,6 @@
+# Creates/Talks to qmuxd via the qmux_radio socket.
+qmux_socket(rild);
+
+userdebug_or_eng(`
+    allow rild diag_device:chr_file rw_file_perms;
+')

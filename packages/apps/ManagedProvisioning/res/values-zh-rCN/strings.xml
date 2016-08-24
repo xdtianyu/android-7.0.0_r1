@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/**
+ * Copyright (C) 2014 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label" msgid="2400883737290705700">"工作资料设置"</string>
+    <string name="provisioning_error_title" msgid="6320515739861578118">"糟糕，出错了！"</string>
+    <string name="setup_work_profile" msgid="1468934631731845267">"设置工作资料"</string>
+    <string name="company_controls_workspace" msgid="2808025277267917221">"您的单位可控制此资料，并确保其安全。您可以控制设备上的所有其他内容。"</string>
+    <string name="company_controls_device" msgid="8230957518758871390">"您的单位将控制此设备，并确保其安全无虞。"</string>
+    <string name="the_following_is_your_mdm" msgid="6613658218262376404">"以下应用需要此资料的访问权限："</string>
+    <string name="the_following_is_your_mdm_for_device" msgid="6717973404364414816">"以下应用将管理您的设备："</string>
+    <string name="next" msgid="1004321437324424398">"下一步"</string>
+    <string name="setting_up_workspace" msgid="4517537806569988620">"正在设置您的工作资料…"</string>
+    <string name="admin_has_ability_to_monitor_profile" msgid="4138671070145317359">"您单位的管理员能够监控和管理与此资料相关的设置、企业权限、应用、权限以及数据（其中包括您的网络活动以及您设备的位置信息、通话记录和联系人搜索记录）。"</string>
+    <string name="admin_has_ability_to_monitor_device" msgid="7400390654083275019">"您单位的管理员能够监控和管理与此设备相关的设置、企业权限、应用、权限、防盗保护功能以及数据（其中包括网络活动和您设备的位置信息）。"</string>
+    <string name="theft_protection_disabled_warning" msgid="3708092473574738478">"要使用防盗保护功能，您必须为您的设备设置一种采用密码保护的屏幕锁定方式。"</string>
+    <string name="contact_your_admin_for_more_info" msgid="5959191345827902911">"请与您单位的管理员联系以了解详情，包括单位的隐私权政策。"</string>
+    <string name="learn_more_link" msgid="3012495805919550043">"了解详情"</string>
+    <string name="cancel_setup" msgid="2949928239276274745">"取消"</string>
+    <string name="ok_setup" msgid="4593707675416137504">"确定"</string>
+    <string name="user_consent_msg" msgid="8820951802130353584">"我同意"</string>
+    <string name="default_managed_profile_name" msgid="5370257687074907055">"工作资料"</string>
+    <string name="default_first_meat_user_name" msgid="7540515892748490540">"主用户"</string>
+    <string name="delete_profile_title" msgid="3097803266123463699">"要移除工作资料吗？"</string>
+    <string name="opening_paragraph_delete_profile_unknown_company" msgid="2139238673477554356">"工作资料已存在，且由以下应用管理："</string>
+    <string name="opening_paragraph_delete_profile_known_company" msgid="3126629826260821264">"%s 的此工作资料通过以下应用管理："</string>
+    <string name="read_more_delete_profile" msgid="7789171620401666343">"请先"<a href="#read_this_link">"阅读此文"</a>"，然后再继续。"</string>
+    <string name="sure_you_want_to_delete_profile" msgid="6927697984573575564">"如果您继续，系统将删除此工作资料中的所有应用和数据。"</string>
+    <string name="delete_profile" msgid="2299218578684663459">"删除"</string>
+    <string name="cancel_delete_profile" msgid="5155447537894046036">"取消"</string>
+    <string name="encrypt_device_text_for_profile_owner_setup" msgid="4325067657681168120">"要继续设置工作资料，您需要对设备进行加密。此过程可能需要一段时间。"</string>
+    <string name="encrypt_device_text_for_device_owner_setup" msgid="9206667711446040692">"要继续设置您的设备，您需要对其进行加密。此过程可能需要一段时间。"</string>
+    <string name="encrypt_device_launch_settings" msgid="826115154646195837">"加密"</string>
+    <string name="continue_provisioning_notify_title" msgid="5191449100153186648">"加密已完成"</string>
+    <string name="continue_provisioning_notify_text" msgid="1066841819786425980">"点按即可继续设置您的工作资料"</string>
+    <string name="managed_provisioning_error_text" msgid="7063621174570680890">"无法设置您的工作资料，请与您公司的IT部门联系或稍后重试。"</string>
+    <string name="managed_provisioning_not_supported" msgid="6582227325719911795">"您的设备不支持工作资料"</string>
+    <string name="user_cannot_have_work_profile" msgid="5694385275116701139">"此用户无法创建工作资料"</string>
+    <string name="device_owner_exists" msgid="8020080296133337023">"无法在受管理的设备上设置工作资料"</string>
+    <string name="maximum_user_limit_reached" msgid="4821228722266114449">"您设备上的用户数量已达到上限，因此无法创建工作资料。请至少移除一个用户，然后重试。"</string>
+    <string name="managed_provisioning_not_supported_by_launcher" msgid="8710138269807942163">"此启动器应用不支持工作资料。您需要改用兼容的启动器。"</string>
+    <string name="cancel_provisioning" msgid="3408069559452653724">"取消"</string>
+    <string name="pick_launcher" msgid="4257084827403983845">"确定"</string>
+    <string name="user_setup_incomplete" msgid="6494920045526591079">"用户设置未完成"</string>
+    <string name="default_owned_device_username" msgid="3915120202811807955">"工作设备的用户"</string>
+    <string name="setup_work_device" msgid="4243324420514896773">"设置工作设备"</string>
+    <string name="progress_data_process" msgid="1707745321954672971">"正在处理设置数据…"</string>
+    <string name="progress_connect_to_wifi" msgid="472251154628863539">"正在连接到 WLAN 网络…"</string>
+    <string name="progress_download" msgid="3522436271691064624">"正在下载管理应用…"</string>
+    <string name="progress_install" msgid="2258045670385866183">"正在安装管理应用…"</string>
+    <string name="progress_set_owner" msgid="8214062820093757961">"正在设置设备所有者…"</string>
+    <string name="preprovisioning_error_encryption_not_supported" msgid="4633230675475838898">"您的设备不支持加密功能，请与您的 IT 部门联系。"</string>
+    <string name="device_owner_cancel_message" msgid="2529288571742712065">"要停止设置并清除您设备上的数据吗？"</string>
+    <string name="device_owner_cancel_cancel" msgid="1052951540909389275">"取消"</string>
+    <string name="device_owner_error_ok" msgid="2002250763093787051">"确定"</string>
+    <string name="device_owner_error_reset" msgid="1609782972753569267">"重置"</string>
+    <string name="device_owner_error_general" msgid="5962462955470123776">"无法设置您的设备，请与您公司的IT部门联系。"</string>
+    <string name="device_owner_error_already_provisioned" msgid="49944866843771627">"之前已对此设备进行了设置。"</string>
+    <string name="device_owner_error_wifi" msgid="4256310285761332378">"无法连接到WLAN"</string>
+    <string name="device_owner_error_frp" msgid="7053630342416280252">"此设备已被恢复出厂设置保护功能锁定。请与您公司的 IT 部门联系。"</string>
+    <string name="frp_clear_progress_title" msgid="8628074089458234965">"正在清除"</string>
+    <string name="frp_clear_progress_text" msgid="1740164332830598827">"请稍候…"</string>
+    <string name="device_owner_error_hash_mismatch" msgid="184518450016295596">"由于校验和错误，无法使用此管理应用。请与您公司的IT部门联系。"</string>
+    <string name="device_owner_error_download_failed" msgid="4520111971592657116">"无法下载管理应用"</string>
+    <string name="device_owner_error_package_invalid" msgid="3816725179069202140">"由于缺少组件或软件包已损坏，无法使用此管理应用。请与您公司的IT部门联系。"</string>
+    <string name="device_owner_error_installation_failed" msgid="684566845601079360">"无法安装管理应用"</string>
+    <string name="profile_owner_cancel_message" msgid="6868736915633023477">"要停止设置吗？"</string>
+    <string name="profile_owner_cancel_cancel" msgid="4408725524311574891">"否"</string>
+    <string name="profile_owner_cancel_ok" msgid="5951679183850766029">"是"</string>
+    <string name="profile_owner_cancelling" msgid="5679573829145112822">"正在取消…"</string>
+    <string name="work_profile_setup_later_title" msgid="9069148190226279892">"要停止资料设置吗？"</string>
+    <string name="work_profile_setup_later_message" msgid="2446733709871989895">"您稍后可以通过您所在单位使用的设备管理应用来设置自己的工作资料。"</string>
+    <string name="work_profile_setup_continue" msgid="6549708818974016509">"继续"</string>
+    <string name="work_profile_setup_stop" msgid="6772128629992514750">"停止"</string>
+    <string name="provisioning" msgid="4512493827019163451">"正在配置"</string>
+    <string name="copying_certs" msgid="5697938664953550881">"正在设置 CA 证书"</string>
+    <string name="setup_profile_start_setup" msgid="6793984532953528297">"设置您的个人资料。开始设置"</string>
+    <string name="setup_profile_encryption" msgid="5241291404536277038">"设置您的个人资料。加密"</string>
+    <string name="setup_profile_progress" msgid="7742718527853325656">"设置您的个人资料。当前显示的是进程"</string>
+    <string name="setup_device_start_setup" msgid="4351340224000741826">"设置您的设备。开始设置"</string>
+    <string name="setup_device_encryption" msgid="7852944465414197103">"设置您的设备。加密"</string>
+    <string name="setup_device_progress" msgid="7035335208571175393">"设置您的设备。当前显示的是进程"</string>
+    <string name="learn_more_label" msgid="2723716758654655009">"“了解详情”按钮"</string>
+    <string name="mdm_icon_label" msgid="3399134595549660561">"“<xliff:g id="ICON_LABEL">%1$s</xliff:g>”图标"</string>
+    <string name="cancel_setup_and_factory_reset_dialog_title" msgid="5416045931532004811">"要取消这项设置并恢复出厂设置吗？"</string>
+    <string name="cancel_setup_and_factory_reset_dialog_msg" msgid="808442439937994485">"如果您取消这项设置，设备将恢复出厂设置，而且您会返回首屏画面。"</string>
+    <string name="cancel_setup_and_factory_reset_dialog_cancel" msgid="2810966091829264727">"取消"</string>
+    <string name="cancel_setup_and_factory_reset_dialog_ok" msgid="7168008267496150529">"重置设备"</string>
+</resources>

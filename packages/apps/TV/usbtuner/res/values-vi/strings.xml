@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"Đầu vào TV của bộ điều chỉnh USB"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"Bật"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"Tắt"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"Vui lòng đợi để hoàn tất xử lý"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"Chọn nguồn kênh của bạn"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"Không có tín hiệu"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"Không chỉnh được tới <xliff:g id="CHANNEL_NAME">%s</xliff:g>"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"Dò không thành công"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"Phần mềm bộ điều chỉnh USB đã được cập nhật gần đây. Hãy quét lại các kênh."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"Không có âm thanh AC3"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"Thiết lập bộ dò kênh"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"Thiết lập bộ dò kênh USB"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"Xác minh rằng bộ dò USB đã được cắm và được kết nối với nguồn tín hiệu TV.\n\nNếu sử dụng ăng-ten không dây, có thể bạn cần phải điều chỉnh vị trí hoặc hướng của ăng-ten đó để thu được nhiều kênh nhất. Để có kết quả tốt nhất, hãy đặt ăng-ten lên cao và gần cửa sổ."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"Tiếp tục"</item>
+    <item msgid="7745727658174773453">"Không phải bây giờ"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"Chạy lại quá trình thiết lập kênh?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"Quá trình này sẽ xóa các kênh mà bộ dò USB đã tìm thấy và quét lại để tìm các kênh mới.\n\nHãy xác minh rằng bộ dò USB đã được cắm và được kết nối với nguồn tín hiệu TV.\n\nNếu sử dụng ăng-ten không dây, có thể bạn cần phải điều chỉnh vị trí hoặc hướng của ăng-ten đó để thu được nhiều kênh nhất. Để có kết quả tốt nhất, hãy đặt ăng-ten lên cao và gần cửa sổ."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"Tiếp tục"</item>
+    <item msgid="4432431398374089710">"Hủy"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"Chọn loại kết nối"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"Chọn Ăng-ten nếu có ăng-ten bên ngoài được kết nối với bộ dò. Chọn Cáp nếu kênh của bạn đến từ nhà cung cấp dịch vụ cáp. Nếu bạn không chắc chắn thì cả hai loại sẽ đều được quét. Tuy nhiên, quá trình này có thể mất nhiều thời gian hơn."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"Ăng-ten"</item>
+    <item msgid="2445879869338877559">"Cáp"</item>
+    <item msgid="597328838068074806">"Không chắc chắn"</item>
+    <item msgid="3613410733017077040">"Chỉ phát triển"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"Thiết lập bộ dò kênh USB"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"Quá trình này có thể mất vài phút"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="other">Đã tìm thấy %1$d kênh</item>
+      <item quantity="one">Đã tìm thấy %1$d kênh</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"NGỪNG QUÉT KÊNH"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="other">Đã tìm thấy %1$d kênh</item>
+      <item quantity="one">Đã tìm thấy %1$d kênh</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="other">Tuyệt! Đã tìm thấy %1$d kênh trong quá trình quét kênh. Nếu điều này có vẻ không ổn, hãy thử điều chỉnh vị trí ăng-ten và quét lại.</item>
+      <item quantity="one">Tuyệt! Đã tìm thấy %1$d kênh trong quá trình quét kênh. Nếu điều này có vẻ không ổn, hãy thử điều chỉnh vị trí ăng-ten và quét lại.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"Xong"</item>
+    <item msgid="496688122303154468">"Quét lại"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"Không tìm thấy kênh nào"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"Quá trình quét không tìm thấy bất kỳ kênh nào. Hãy xác minh rằng bộ dò USB đã được cắm và kết nối với nguồn tín hiệu TV.\n\nNếu sử dụng ăng-ten không dây, hãy điều chỉnh vị trí hoặc hướng của ăng-ten đó. Để có kết quả tốt nhất, hãy đặt ăng-ten lên cao và gần cửa sổ rồi quét lại."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"Quét lại"</item>
+    <item msgid="6784975565864102291">"Xong"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"Quét tìm các kênh TV"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"Thiết lập bộ dò kênh USB"</string>
+</resources>

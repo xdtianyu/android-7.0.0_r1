@@ -1,0 +1,18 @@
+########################################################
+#  BLUETOOTH CONFIGURATION - BROADCOM SPECIFIC
+########################################################
+
+on fs
+    mkdir /config/bt 0770 system bluetooth
+    setprop ro.bt.bdaddr_path /config/bt/bd_addr.conf
+
+on early-boot
+    chmod 0644 /config/bt/bd_addr.conf
+
+on post-fs-data
+    # Bluetooth
+    write /sys/class/rfkill/rfkill0/state 1
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
+

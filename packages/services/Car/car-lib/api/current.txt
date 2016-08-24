@@ -1,0 +1,327 @@
+package android.car {
+
+  public class Car {
+    method public void connect() throws java.lang.IllegalStateException;
+    method public static android.car.Car createCar(android.content.Context, android.content.ServiceConnection, android.os.Looper);
+    method public static android.car.Car createCar(android.content.Context, android.content.ServiceConnection);
+    method public void disconnect();
+    method public int getCarConnectionType();
+    method public java.lang.Object getCarManager(java.lang.String) throws android.car.CarNotConnectedException;
+    method public boolean isConnected();
+    method public boolean isConnecting();
+    field public static final java.lang.String APP_CONTEXT_SERVICE = "app_context";
+    field public static final java.lang.String AUDIO_SERVICE = "audio";
+    field public static final int CONNECTION_TYPE_EMBEDDED = 5; // 0x5
+    field public static final java.lang.String INFO_SERVICE = "info";
+    field public static final java.lang.String PACKAGE_SERVICE = "package";
+    field public static final java.lang.String PERMISSION_FUEL = "android.car.permission.CAR_FUEL";
+    field public static final java.lang.String PERMISSION_MILEAGE = "android.car.permission.CAR_MILEAGE";
+    field public static final java.lang.String PERMISSION_SPEED = "android.car.permission.CAR_SPEED";
+    field public static final java.lang.String SENSOR_SERVICE = "sensor";
+  }
+
+  public class CarInfoManager {
+    method public java.lang.Float getFloat(java.lang.String) throws android.car.CarNotConnectedException, java.lang.IllegalArgumentException;
+    method public java.lang.Integer getInt(java.lang.String) throws android.car.CarNotConnectedException, java.lang.IllegalArgumentException;
+    method public java.lang.Long getLong(java.lang.String) throws android.car.CarNotConnectedException, java.lang.IllegalArgumentException;
+    method public java.lang.String getString(java.lang.String) throws android.car.CarNotConnectedException, java.lang.IllegalArgumentException;
+    field public static final java.lang.String KEY_MANUFACTURER = "manufacturer";
+    field public static final java.lang.String KEY_MODEL = "model";
+    field public static final java.lang.String KEY_MODEL_YEAR = "model-year";
+    field public static final java.lang.String KEY_VEHICLE_ID = "vehicle-id";
+  }
+
+  public class CarNotConnectedException extends java.lang.Exception {
+    ctor public CarNotConnectedException();
+    ctor public CarNotConnectedException(java.lang.String);
+    ctor public CarNotConnectedException(java.lang.String, java.lang.Throwable);
+    ctor public CarNotConnectedException(java.lang.Exception);
+  }
+
+  public class CarNotSupportedException extends java.lang.Exception {
+    ctor public CarNotSupportedException();
+    ctor public CarNotSupportedException(java.lang.String);
+    ctor public CarNotSupportedException(java.lang.String, java.lang.Throwable);
+    ctor public CarNotSupportedException(java.lang.Exception);
+  }
+
+}
+
+package android.car.annotation {
+
+  public abstract class ValueTypeDef implements java.lang.annotation.Annotation {
+  }
+
+}
+
+package android.car.app.menu {
+
+  public abstract class CarMenuCallbacks {
+    ctor public CarMenuCallbacks();
+    method public abstract android.car.app.menu.RootMenu getRootMenu(android.os.Bundle);
+    method public abstract void onCarMenuClosed();
+    method public abstract void onCarMenuClosing();
+    method public abstract void onCarMenuOpened();
+    method public abstract void onCarMenuOpening();
+    method public abstract void onItemClicked(java.lang.String);
+    method public abstract boolean onItemLongClicked(java.lang.String);
+    method public abstract boolean onMenuClicked();
+    method public abstract void subscribe(java.lang.String, android.car.app.menu.SubscriptionCallbacks);
+    method public abstract void unsubscribe(java.lang.String, android.car.app.menu.SubscriptionCallbacks);
+  }
+
+  public class CarMenuConstants {
+    ctor public CarMenuConstants();
+  }
+
+  public static class CarMenuConstants.MenuItemConstants {
+    ctor public CarMenuConstants.MenuItemConstants();
+    field public static final int FLAG_BROWSABLE = 1; // 0x1
+    field public static final int FLAG_FIRSTITEM = 2; // 0x2
+    field public static final java.lang.String KEY_EMPTY_PLACEHOLDER = "android.car.app.menu.empty_placeholder";
+    field public static final java.lang.String KEY_FLAGS = "android.car.app.menu.flags";
+    field public static final java.lang.String KEY_ID = "android.car.app.menu.id";
+    field public static final java.lang.String KEY_LEFTICON = "android.car.app.menu.leftIcon";
+    field public static final java.lang.String KEY_REMOTEVIEWS = "android.car.app.menu.remoteViews";
+    field public static final java.lang.String KEY_RIGHTICON = "android.car.app.menu.rightIcon";
+    field public static final java.lang.String KEY_RIGHTTEXT = "android.car.app.menu.rightText";
+    field public static final java.lang.String KEY_TEXT = "android.car.app.menu.text";
+    field public static final java.lang.String KEY_TITLE = "android.car.app.menu.title";
+    field public static final java.lang.String KEY_WIDGET = "android.car.app.menu.widget";
+    field public static final java.lang.String KEY_WIDGET_STATE = "android.car.app.menu.widget_state";
+    field public static final int WIDGET_CHECKBOX = 1; // 0x1
+    field public static final int WIDGET_TEXT_VIEW = 2; // 0x2
+  }
+
+  public static abstract class CarMenuConstants.MenuItemConstants.MenuItemFlags implements java.lang.annotation.Annotation {
+  }
+
+  public static abstract class CarMenuConstants.MenuItemConstants.WidgetTypes implements java.lang.annotation.Annotation {
+  }
+
+  public abstract class CarUiEntry {
+    ctor public CarUiEntry(android.content.Context, android.content.Context);
+    method public abstract void closeDrawer();
+    method public abstract android.view.View getContentView();
+    method public abstract int getFragmentContainerId();
+    method public abstract java.lang.CharSequence getSearchBoxText();
+    method public abstract void hideMenuButton();
+    method public abstract void hideTitle();
+    method public abstract void onPause();
+    method public abstract void onRestoreInstanceState(android.os.Bundle);
+    method public abstract void onResume();
+    method public abstract void onSaveInstanceState(android.os.Bundle);
+    method public abstract void onStart();
+    method public abstract void onStop();
+    method public abstract void openDrawer();
+    method public abstract void restoreMenuDrawable();
+    method public abstract void setAutoLightDarkMode();
+    method public abstract void setBackground(android.graphics.Bitmap);
+    method public abstract void setCarMenuCallbacks(android.car.app.menu.CarMenuCallbacks);
+    method public abstract void setDarkMode();
+    method public abstract void setLightMode();
+    method public abstract void setMenuButtonBitmap(android.graphics.Bitmap);
+    method public abstract void setMenuButtonColor(int);
+    method public abstract void setScrimColor(int);
+    method public abstract void setSearchBoxColors(int, int, int, int);
+    method public abstract void setSearchBoxEditListener(android.car.app.menu.SearchBoxEditListener);
+    method public abstract void setSearchBoxEndView(android.view.View);
+    method public abstract void setTitle(java.lang.CharSequence);
+    method public abstract void showMenu(java.lang.String, java.lang.String);
+    method public abstract void showSearchBox(android.view.View.OnClickListener);
+    method public abstract void showTitle();
+    method public abstract void showToast(java.lang.String, long);
+    method public abstract android.widget.EditText startInput(java.lang.String, android.view.View.OnClickListener);
+    method public abstract void stopInput();
+    field protected final android.content.Context mAppContext;
+    field protected final android.content.Context mUiLibContext;
+  }
+
+  public class RootMenu {
+    ctor public RootMenu(java.lang.String);
+    ctor public RootMenu(java.lang.String, android.os.Bundle);
+    method public android.os.Bundle getBundle();
+    method public java.lang.String getId();
+  }
+
+  public abstract class SearchBoxEditListener {
+    ctor public SearchBoxEditListener();
+    method public abstract void onEdit(java.lang.String);
+    method public abstract void onSearch(java.lang.String);
+  }
+
+  public abstract class SubscriptionCallbacks {
+    ctor public SubscriptionCallbacks();
+    method public abstract void onChildChanged(java.lang.String, android.os.Bundle);
+    method public abstract void onChildrenLoaded(java.lang.String, java.util.List<android.os.Bundle>);
+    method public abstract void onError(java.lang.String);
+  }
+
+}
+
+package android.car.content.pm {
+
+  public class CarPackageManager {
+    method public boolean isActivityAllowedWhileDriving(java.lang.String, java.lang.String) throws android.car.CarNotConnectedException;
+    method public boolean isServiceAllowedWhileDriving(java.lang.String, java.lang.String) throws android.car.CarNotConnectedException;
+  }
+
+}
+
+package android.car.hardware {
+
+  public class CarSensorEvent implements android.os.Parcelable {
+    ctor public CarSensorEvent(android.os.Parcel);
+    ctor public CarSensorEvent(int, long, int, int);
+    method public int describeContents();
+    method public android.car.hardware.CarSensorEvent.CarSpeedData getCarSpeedData(android.car.hardware.CarSensorEvent.CarSpeedData);
+    method public android.car.hardware.CarSensorEvent.DrivingStatusData getDrivingStatusData(android.car.hardware.CarSensorEvent.DrivingStatusData);
+    method public android.car.hardware.CarSensorEvent.EnvironmentData getEnvironmentData(android.car.hardware.CarSensorEvent.EnvironmentData);
+    method public android.car.hardware.CarSensorEvent.FuelLevelData getFuelLevelData(android.car.hardware.CarSensorEvent.FuelLevelData);
+    method public android.car.hardware.CarSensorEvent.GearData getGearData(android.car.hardware.CarSensorEvent.GearData);
+    method public android.car.hardware.CarSensorEvent.NightData getNightData(android.car.hardware.CarSensorEvent.NightData);
+    method public android.car.hardware.CarSensorEvent.OdometerData getOdometerData(android.car.hardware.CarSensorEvent.OdometerData);
+    method public android.car.hardware.CarSensorEvent.ParkingBrakeData getParkingBrakeData(android.car.hardware.CarSensorEvent.ParkingBrakeData);
+    method public android.car.hardware.CarSensorEvent.RpmData getRpmData(android.car.hardware.CarSensorEvent.RpmData);
+    method public void writeToParcel(android.os.Parcel, int);
+    field public static final android.os.Parcelable.Creator<android.car.hardware.CarSensorEvent> CREATOR;
+    field public static final int DRIVE_STATUS_FULLY_RESTRICTED = 31; // 0x1f
+    field public static final int DRIVE_STATUS_LIMIT_MESSAGE_LEN = 16; // 0x10
+    field public static final int DRIVE_STATUS_NO_CONFIG = 8; // 0x8
+    field public static final int DRIVE_STATUS_NO_KEYBOARD_INPUT = 2; // 0x2
+    field public static final int DRIVE_STATUS_NO_VIDEO = 1; // 0x1
+    field public static final int DRIVE_STATUS_NO_VOICE_INPUT = 4; // 0x4
+    field public static final int DRIVE_STATUS_UNRESTRICTED = 0; // 0x0
+    field public static final int GEAR_DRIVE = 100; // 0x64
+    field public static final int GEAR_EIGHTH = 8; // 0x8
+    field public static final int GEAR_FIFTH = 5; // 0x5
+    field public static final int GEAR_FIRST = 1; // 0x1
+    field public static final int GEAR_FOURTH = 4; // 0x4
+    field public static final int GEAR_NEUTRAL = 0; // 0x0
+    field public static final int GEAR_NINTH = 9; // 0x9
+    field public static final int GEAR_PARK = 101; // 0x65
+    field public static final int GEAR_REVERSE = 102; // 0x66
+    field public static final int GEAR_SECOND = 2; // 0x2
+    field public static final int GEAR_SEVENTH = 7; // 0x7
+    field public static final int GEAR_SIXTH = 6; // 0x6
+    field public static final int GEAR_TENTH = 10; // 0xa
+    field public static final int GEAR_THIRD = 3; // 0x3
+    field public static final int INDEX_ENVIRONMENT_PRESSURE = 1; // 0x1
+    field public static final int INDEX_ENVIRONMENT_TEMPERATURE = 0; // 0x0
+    field public static final int INDEX_FUEL_LEVEL_IN_DISTANCE = 1; // 0x1
+    field public static final int INDEX_FUEL_LEVEL_IN_PERCENTILE = 0; // 0x0
+    field public static final int INDEX_FUEL_LOW_WARNING = 0; // 0x0
+    field public final float[] floatValues;
+    field public final int[] intValues;
+    field public int sensorType;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.CarSpeedData {
+    ctor public CarSensorEvent.CarSpeedData();
+    field public float carSpeed;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.DrivingStatusData {
+    ctor public CarSensorEvent.DrivingStatusData();
+    field public int status;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.EnvironmentData {
+    ctor public CarSensorEvent.EnvironmentData();
+    field public float pressure;
+    field public float temperature;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.FuelLevelData {
+    ctor public CarSensorEvent.FuelLevelData();
+    field public int level;
+    field public boolean lowFuelWarning;
+    field public float range;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.GearData {
+    ctor public CarSensorEvent.GearData();
+    field public int gear;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.NightData {
+    ctor public CarSensorEvent.NightData();
+    field public boolean isNightMode;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.OdometerData {
+    ctor public CarSensorEvent.OdometerData();
+    field public float kms;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.ParkingBrakeData {
+    ctor public CarSensorEvent.ParkingBrakeData();
+    field public boolean isEngaged;
+    field public long timeStampNs;
+  }
+
+  public static class CarSensorEvent.RpmData {
+    ctor public CarSensorEvent.RpmData();
+    field public float rpm;
+    field public long timeStampNs;
+  }
+
+  public class CarSensorManager {
+    method public android.car.hardware.CarSensorEvent getLatestSensorEvent(int) throws android.car.CarNotConnectedException;
+    method public int[] getSupportedSensors() throws android.car.CarNotConnectedException;
+    method public boolean isSensorSupported(int) throws android.car.CarNotConnectedException;
+    method public static boolean isSensorSupported(int[], int);
+    method public boolean registerListener(android.car.hardware.CarSensorManager.CarSensorEventListener, int, int) throws android.car.CarNotConnectedException, java.lang.IllegalArgumentException;
+    method public void unregisterListener(android.car.hardware.CarSensorManager.CarSensorEventListener) throws android.car.CarNotConnectedException;
+    method public void unregisterListener(android.car.hardware.CarSensorManager.CarSensorEventListener, int) throws android.car.CarNotConnectedException;
+    field public static final int SENSOR_RATE_FAST = 1; // 0x1
+    field public static final int SENSOR_RATE_FASTEST = 0; // 0x0
+    field public static final int SENSOR_RATE_NORMAL = 3; // 0x3
+    field public static final int SENSOR_RATE_UI = 2; // 0x2
+    field public static final int SENSOR_TYPE_CAR_SPEED = 2; // 0x2
+    field public static final int SENSOR_TYPE_DRIVING_STATUS = 11; // 0xb
+    field public static final int SENSOR_TYPE_ENVIRONMENT = 12; // 0xc
+    field public static final int SENSOR_TYPE_FUEL_LEVEL = 5; // 0x5
+    field public static final int SENSOR_TYPE_GEAR = 7; // 0x7
+    field public static final int SENSOR_TYPE_NIGHT = 9; // 0x9
+    field public static final int SENSOR_TYPE_ODOMETER = 4; // 0x4
+    field public static final int SENSOR_TYPE_PARKING_BRAKE = 6; // 0x6
+    field public static final int SENSOR_TYPE_RPM = 3; // 0x3
+    field public static final int SENSOR_TYPE_VENDOR_EXTENSION_END = 1879048191; // 0x6fffffff
+  }
+
+  public static abstract interface CarSensorManager.CarSensorEventListener {
+    method public abstract void onSensorChanged(android.car.hardware.CarSensorEvent);
+  }
+
+}
+
+package android.car.media {
+
+  public class CarAudioManager {
+    method public int abandonAudioFocus(android.media.AudioManager.OnAudioFocusChangeListener, android.media.AudioAttributes);
+    method public android.media.AudioAttributes getAudioAttributesForCarUsage(int);
+    method public void onCarDisconnected();
+    method public int requestAudioFocus(android.media.AudioManager.OnAudioFocusChangeListener, android.media.AudioAttributes, int, int) throws java.lang.IllegalArgumentException;
+    field public static final int CAR_AUDIO_USAGE_ALARM = 6; // 0x6
+    field public static final int CAR_AUDIO_USAGE_DEFAULT = 0; // 0x0
+    field public static final int CAR_AUDIO_USAGE_MUSIC = 1; // 0x1
+    field public static final int CAR_AUDIO_USAGE_NAVIGATION_GUIDANCE = 3; // 0x3
+    field public static final int CAR_AUDIO_USAGE_NOTIFICATION = 7; // 0x7
+    field public static final int CAR_AUDIO_USAGE_RADIO = 2; // 0x2
+    field public static final int CAR_AUDIO_USAGE_SYSTEM_SAFETY_ALERT = 9; // 0x9
+    field public static final int CAR_AUDIO_USAGE_SYSTEM_SOUND = 8; // 0x8
+    field public static final int CAR_AUDIO_USAGE_VOICE_CALL = 4; // 0x4
+    field public static final int CAR_AUDIO_USAGE_VOICE_COMMAND = 5; // 0x5
+  }
+
+}
+

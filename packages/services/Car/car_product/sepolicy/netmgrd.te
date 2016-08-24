@@ -1,0 +1,28 @@
+type netmgrd, domain;
+type netmgrd_exec, exec_type, file_type;
+
+init_daemon_domain(netmgrd)
+net_domain(netmgrd)
+
+# Creates/Talks to qmuxd via the qmux_radio socket.
+qmux_socket(netmgrd)
+
+# Allow writing of ipv6 network properties
+allow netmgrd proc_net:file w_file_perms;
+
+# Allow netmgrd operations
+allow netmgrd self:capability { net_admin net_raw fsetid };
+
+# Allow execution of /system/bin/sh.
+allow netmgrd shell_exec:file rx_file_perms;
+
+# Allow execution of /system/bin/*.
+allow netmgrd system_file:file rx_file_perms;
+
+allow netmgrd toolbox_exec:file rx_file_perms;
+
+userdebug_or_eng(`
+    allow netmgrd diag_device:chr_file rw_file_perms;
+')
+
+dontaudit netmgrd self:capability sys_module;

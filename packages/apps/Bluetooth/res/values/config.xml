@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2009-2012 Broadcom Corporation
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<resources>
+    <bool name="profile_supported_a2dp">true</bool>
+    <bool name="profile_supported_a2dp_sink">false</bool>
+    <bool name="profile_supported_hdp">true</bool>
+    <bool name="profile_supported_hs_hfp">true</bool>
+    <bool name="profile_supported_hfpclient">false</bool>
+    <bool name="profile_supported_hid">true</bool>
+    <bool name="profile_supported_opp">true</bool>
+    <bool name="profile_supported_pan">true</bool>
+    <bool name="profile_supported_pbap">true</bool>
+    <bool name="profile_supported_gatt">true</bool>
+    <bool name="pbap_include_photos_in_vcard">true</bool>
+    <bool name="pbap_use_profile_for_owner_vcard">true</bool>
+    <bool name="profile_supported_map">true</bool>
+    <bool name="profile_supported_avrcp_controller">false</bool>
+    <bool name="profile_supported_sap">false</bool>
+    <bool name="profile_supported_pbapclient">false</bool>
+
+    <!-- If true, we will require location to be enabled on the device to
+         fire Bluetooth LE scan result callbacks in addition to having one
+         of the location permissions. -->
+    <bool name="strict_location_check">true</bool>
+
+    <!-- Specifies the min/max connection interval parameters for high priority
+         and low power GATT configurations. These values are in multiples of
+         1.25ms. -->
+    <integer name="gatt_high_priority_min_interval">9</integer>
+    <integer name="gatt_high_priority_max_interval">12</integer>
+    <integer name="gatt_low_power_min_interval">80</integer>
+    <integer name="gatt_low_power_max_interval">100</integer>
+
+    <bool name="headset_client_initial_audio_route_allowed">true</bool>
+
+    <!-- For AVRCP absolute volume feature. If the threshold is non-zero,
+         restrict the initial volume to the threshold.
+         Valid value is 1-14, and recommended value is 8 -->
+    <integer name="a2dp_absolute_volume_initial_threshold">8</integer>
+
+    <!-- For A2DP sink ducking volume feature. -->
+    <integer name="a2dp_sink_duck_percent">25</integer>
+
+    <!-- For enabling the hfp client connection service -->
+    <bool name="hfp_client_connection_service_enabled">false</bool>
+</resources>

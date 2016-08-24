@@ -1,0 +1,17 @@
+include(':setup-wizard-lib')
+project(':setup-wizard-lib').projectDir = new File(rootDir, 'frameworks/opt/setupwizard/library')
+project(':setup-wizard-lib').buildFileName = 'self.gradle'
+
+File supportLibsRoot = new File(rootDir, "prebuilts/fullsdk/linux/platforms/android-22/support")
+if (!supportLibsRoot.exists()) {
+    supportLibsRoot = new File(rootDir, "prebuilts/fullsdk/darwin/platforms/android-22/support")
+}
+
+include(':support-v4')
+project(':support-v4').projectDir = new File(supportLibsRoot, 'v4')
+
+include(':support-appcompat-v7')
+project(':support-appcompat-v7').projectDir = new File(supportLibsRoot, 'appcompat')
+
+include(':support-recyclerview-v7')
+project(':support-recyclerview-v7').projectDir = new File(supportLibsRoot, 'recyclerview')

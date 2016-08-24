@@ -1,0 +1,58 @@
+apply plugin: 'android-library'
+archivesBaseName = 'multidex-instrumentation'
+
+android {
+    compileSdkVersion 4
+
+    sourceSets {
+        main {
+            java.srcDirs         = ['src']
+            resources.srcDirs    = ['res']
+            res.srcDirs          = ['src']
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
+
+    lintOptions {
+        // TODO: fix errors and reenable.
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile project(':library')
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri(rootProject.ext.supportRepoOut)) {
+            }
+
+            pom.project {
+                name 'Android Multi-Dex Instrumentation Library'
+                description "Library for legacy multi-dex support"
+                url ''
+                inceptionYear '2013'
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+
+                scm {
+                    url "http://source.android.com"
+                    connection "scm:git:https://android.googlesource.com/platform/frameworks/multidex"
+                }
+                developers {
+                    developer {
+                        name 'The Android Open Source Project'
+                    }
+                }
+            }
+        }
+    }
+}

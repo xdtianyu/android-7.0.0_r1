@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"USB 諧調器電視輸入裝置"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"開啟"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"關閉"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"請等待處理程序完成"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"選取您的頻道來源"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"無訊號"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"無法轉到「<xliff:g id="CHANNEL_NAME">%s</xliff:g>」"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"無法轉台"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"USB 諧調器軟體最近已更新。請重新掃描頻道。"</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"無法使用 AC3 音訊"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"頻道調諧器設定"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"USB 頻道調諧器設定"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"請確認 USB 調諧器已插入並連接到電視訊號來源。\n\n如果您使用無線電視天線，可能需要調整天線的位置和方向，以便接收最多頻道。為達最佳效果，請將天線放在靠近窗戶的較高位置。"</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"繼續"</item>
+    <item msgid="7745727658174773453">"暫時不要"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"要重新執行頻道設定嗎？"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"這項動作將移除 USB 調諧器找到的頻道，並再次掃描新的頻道。\n\n請確認 USB 調諧器已插入並連接到電視訊號來源。\n\n如果您使用無線電視天線，可能需要調整天線的位置和方向，以便接收最多頻道。為達最佳效果，請將天線放在靠近窗戶的較高位置。"</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"繼續"</item>
+    <item msgid="4432431398374089710">"取消"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"選取連接類型"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"如果調諧器連接外部天線，請選擇 [天線]。如果您的頻道來自有線電視服務供應商，請選擇 [有線電視]。如果您不確定，系統會掃描這兩種類型，但是可能需要較長的時間。"</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"天線"</item>
+    <item msgid="2445879869338877559">"有線電視"</item>
+    <item msgid="597328838068074806">"不確定"</item>
+    <item msgid="3613410733017077040">"僅供開發之用"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"USB 頻道調諧器設定"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"這可能需要幾分鐘的時間"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="other">找到 %1$d 個頻道</item>
+      <item quantity="one">找到 %1$d 個頻道</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"停止頻道掃描"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="other">找到 %1$d 個頻道</item>
+      <item quantity="one">找到 %1$d 個頻道</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="other">太好了！頻道掃描作業結束後找到 %1$d 個頻道。如果數量不太正確，請嘗試調整天線的位置，然後再掃描一次。</item>
+      <item quantity="one">太好了！頻道掃描作業結束後找到 %1$d 個頻道。如果數量不太正確，請嘗試調整天線的位置，然後再掃描一次。</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"完成"</item>
+    <item msgid="496688122303154468">"重新掃描"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"找不到任何頻道"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"掃描後並未發現任何頻道。請確認 USB 調諧器已插入並連接到電視訊號來源。\n\n如果您使用無線電視天線，請調整天線的位置和方向。為達最佳效果，請將天線放在靠近窗戶的較高位置，然後再掃描一次。"</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"重新掃描"</item>
+    <item msgid="6784975565864102291">"完成"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"掃描電視頻道"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"USB 頻道調諧器設定"</string>
+</resources>

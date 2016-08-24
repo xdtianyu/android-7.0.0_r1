@@ -1,0 +1,4 @@
+# Allow legacy sdcard for creating directory symlinks
+allow init tmpfs:lnk_file create_file_perms;
+
+r_dir_file(init, sysfs_usb);

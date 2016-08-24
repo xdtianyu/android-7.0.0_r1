@@ -1,0 +1,22 @@
+# config_bluetooth service
+type config_bluetooth, domain;
+type config_bluetooth_exec, exec_type, file_type;
+
+# Started by init
+init_daemon_domain(config_bluetooth)
+
+# Set bluetooth.* and qualcomm.bluetooth.* properties.
+set_prop(config_bluetooth, bluetooth_prop);
+
+# Allow execution of /system/bin/btnvtool.
+allow config_bluetooth btnvtool_exec:file rx_file_perms;
+
+# Allow access to /persist/.bt_nv.bin.
+allow config_bluetooth persist_file:dir w_dir_perms;
+allow config_bluetooth persist_file:file create_file_perms;
+
+allow config_bluetooth shell_exec:file r_file_perms;
+
+allow config_bluetooth toolbox_exec:file rx_file_perms;
+
+allow config_bluetooth sysfs:file r_file_perms;

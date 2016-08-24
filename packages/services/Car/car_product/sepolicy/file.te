@@ -1,0 +1,21 @@
+type btnvtool_exec, exec_type, file_type;
+
+# Bluetooth firmware file types
+type bt_firmware_file, contextmount_type, fs_type;
+
+# Default type for anything under /firmware.
+type firmware_file, contextmount_type, fs_type;
+
+type mpdecision_socket, file_type;
+type perfd_data_file, file_type, data_file_type;
+type persist_file, file_type;
+type pps_socket, file_type;
+type sysfs_bt_power, sysfs_type, fs_type;
+type sysfs_dcvs, sysfs_type, fs_type;
+type sysfs_hsic_modem_wait, sysfs_type, fs_type;
+type sysfs_mpdecision, sysfs_type, fs_type;
+type sysfs_rpm_resources, sysfs_type, fs_type;
+type sysfs_smd_open_timeout, sysfs_type, fs_type;
+type sysfs_usb, sysfs_type, fs_type;
+type thermal_socket, file_type;
+type time_data_file, file_type, data_file_type;

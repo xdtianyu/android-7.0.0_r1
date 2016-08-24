@@ -1,0 +1,8 @@
+# usf-post-boot service
+type usf-post-boot, domain;
+type usf-post-boot_exec, exec_type, file_type;
+
+# Started by init
+init_daemon_domain(usf-post-boot)
+
+allow usf-post-boot shell_exec:file r_file_perms;

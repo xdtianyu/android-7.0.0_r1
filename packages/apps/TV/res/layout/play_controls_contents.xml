@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/play_controls"
+    style="@style/menu_row_contents_view"
+    android:layoutDirection="ltr">
+
+    <TextView
+        android:id="@+id/time_text"
+        android:layout_width="@dimen/play_controls_time_width"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/body"
+        android:layout_marginBottom="@dimen/play_controls_time_bottom_margin"
+        android:gravity="center"
+        android:singleLine="true"
+        android:textColor="@color/play_controls_time_text_color"
+        android:textSize="@dimen/play_controls_time_text_size"
+        android:fontFamily="@string/font" />
+
+    <LinearLayout
+        android:id="@id/body"
+        android:orientation="vertical"
+        android:layout_width="@dimen/play_controls_width"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/time_text"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/play_controls_body_shape">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/play_controls_progress_height">
+
+            <ImageView
+                android:id="@+id/timeline_bg_start"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:src="@color/play_controls_progress_bar_background" />
+            <ImageView
+                android:id="@+id/watched"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/timeline_bg_start"
+                android:src="@color/play_controls_progress_bar_watched" />
+            <ImageView
+                android:id="@+id/buffered"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/watched"
+                android:src="@color/play_controls_progress_bar_buffered" />
+            <ImageView
+                android:id="@+id/timeline_bg_end"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@id/buffered"
+                android:src="@color/play_controls_progress_bar_background" />
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/play_controls_body_background">
+
+            <TextView
+                android:id="@+id/program_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/play_controls_program_time_margin_start"
+                android:layout_marginTop="@dimen/play_controls_program_time_margin_top"
+                android:singleLine="true"
+                android:textColor="@color/play_controls_rec_time_text_color"
+                android:textSize="@dimen/play_controls_rec_time_text_size"
+                android:fontFamily="@string/font" />
+            <TextView
+                android:id="@+id/program_end_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/play_controls_program_time_margin_end"
+                android:layout_marginTop="@dimen/play_controls_program_time_margin_top"
+                android:layout_gravity="end"
+                android:singleLine="true"
+                android:textColor="@color/play_controls_rec_time_text_color"
+                android:textSize="@dimen/play_controls_rec_time_text_size"
+                android:fontFamily="@string/font" />
+
+            <LinearLayout
+                android:id="@+id/play_control_bar"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/play_controls_button_height"
+                android:layout_gravity="center">
+
+                <com.android.tv.menu.PlayControlsButton
+                    android:id="@+id/jump_previous"
+                    android:layout_width="@dimen/play_controls_button_width"
+                    android:layout_height="match_parent" />
+                <com.android.tv.menu.PlayControlsButton
+                    android:id="@+id/rewind"
+                    android:layout_width="@dimen/play_controls_button_width"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/play_controls_button_start_margin" />
+                <com.android.tv.menu.PlayControlsButton
+                    android:id="@+id/play_pause"
+                    android:layout_width="@dimen/play_controls_button_width"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/play_controls_button_start_margin" />
+                <com.android.tv.menu.PlayControlsButton
+                    android:id="@+id/fast_forward"
+                    android:layout_width="@dimen/play_controls_button_width"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/play_controls_button_start_margin" />
+                <com.android.tv.menu.PlayControlsButton
+                    android:id="@+id/jump_next"
+                    android:layout_width="@dimen/play_controls_button_width"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/play_controls_button_start_margin" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/unavailable_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:singleLine="true"
+                android:textColor="@color/play_controls_unavailable_message_text_color"
+                android:textSize="@dimen/play_controls_unavailable_message_text_size"
+                android:fontFamily="@string/font"
+                android:visibility="gone"
+                android:text="@string/play_controls_unavailable" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/time_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/play_controls_time_indicator_top_margin"
+        android:layout_alignTop="@id/body"
+        android:layout_alignStart="@id/body"
+        android:background="@drawable/play_controls_time_indicator"
+        android:visibility="invisible"
+        android:elevation="1dp" />
+</RelativeLayout>

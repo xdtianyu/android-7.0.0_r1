@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The amount by which to scale up the status bar icons. -->
+    <item name="status_bar_icon_scale_factor" format="float" type="dimen">2.3</item>
+
+    <!-- The font size for the clock in the status bar. -->
+    <dimen name="status_bar_clock_size">44sp</dimen>
+
+    <!-- The starting padding for the clock in the status bar. -->
+    <dimen name="status_bar_clock_starting_padding">24dp</dimen>
+
+    <!-- The end padding for the clock in the status bar. -->
+    <dimen name="status_bar_clock_end_padding">@dimen/status_bar_clock_starting_padding</dimen>
+
+    <!-- size at which Notification icons will be drawn in the status bar -->
+    <dimen name="status_bar_icon_drawing_size">32dp</dimen>
+
+    <!-- Starting margin before the signal cluster -->
+    <dimen name="signal_cluster_margin_start">8dp</dimen>
+
+    <!-- Padding between signal cluster and battery icon -->
+    <dimen name="signal_cluster_battery_padding">@dimen/status_bar_clock_starting_padding</dimen>
+
+    <!-- Spacing after the wifi signals that is present if there are any icons following it. -->
+    <dimen name="status_bar_wifi_signal_spacer_width">@dimen/status_bar_clock_starting_padding</dimen>
+
+    <!-- Spacing before the airplane mode icon if there are any icons preceding it. -->
+    <dimen name="status_bar_airplane_spacer_width">@dimen/status_bar_clock_starting_padding</dimen>
+
+    <!-- Padding at the end of the view that displays the mobile signal icons. This value should
+         be double the signal_cluster_margin_start. -->
+    <dimen name="mobile_signal_group_end_padding">16dp</dimen>
+
+    <!-- Padding between the mobile data type and the strength indicator. -->
+    <dimen name="mobile_data_icon_start_padding">@dimen/mobile_signal_group_end_padding</dimen>
+
+    <!-- gap on either side of status bar notification icons -->
+    <dimen name="status_bar_icon_padding">8dp</dimen>
+
+    <!-- Standard image button size for volume dialog buttons -->
+    <dimen name="volume_button_size">84dp</dimen>
+
+    <!-- The maximum width allowed for the volume dialog. For auto, we allow this to span a good
+         deal of the screen. This value accounts for the side margins. -->
+    <dimen name="volume_dialog_panel_width">1920dp</dimen>
+</resources>

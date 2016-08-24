@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+** Copyright 2009, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+
+<!-- These resources are around just to allow their values to be customized
+     for different hardware and product builds. -->
+<resources>
+    <!-- Whether recents should use hardware layers for its taskviews. This flag can be enabled
+    for devices where the java drawing of round rects may be slow -->
+    <bool name="config_recents_use_hardware_layers">false</bool>
+
+    <!-- The number of app thumbnails we keep in memory -->
+    <integer name="config_recents_max_thumbnail_count">10</integer>
+
+    <!-- The number of app icons we keep in memory -->
+    <integer name="config_recents_max_icon_count">20</integer>
+
+    <!-- Whether to use cheap, less good looking shadows for recents -->
+    <bool name="config_recents_fake_shadows">false</bool>
+
+    <!-- Whether to clip notification contents with a rounded rectangle. Might be expensive on
+         certain GPU's and thus can be turned off with only minimal visual impact. -->
+    <bool name="config_notifications_round_rect_clipping">true</bool>
+
+    <!-- Control whether status bar should distinguish HSPA data icon form UMTS
+    data icon on devices -->
+    <bool name="config_hspa_data_distinguishable">false</bool>
+
+    <!-- Component to be used as the status bar service.  Must implement the IStatusBar
+     interface.  This name is in the ComponentName flattened format (package/class)  -->
+    <string name="config_statusBarComponent" translatable="false">com.android.systemui.statusbar.phone.PhoneStatusBar</string>
+
+    <!-- Whether or not we show the number in the bar. -->
+    <bool name="config_statusBarShowNumber">false</bool>
+
+    <!-- How many icons may be shown at once in the system bar. Includes any
+         slots that may be reused for things like IME control. -->
+    <integer name="config_maxNotificationIcons">5</integer>
+
+    <!-- Show phone (voice) signal strength instead of data in mobile RSSI. -->
+    <bool name="config_showPhoneRSSIForData">false</bool>
+
+    <!-- When true, show 1/2G networks as 3G. -->
+    <bool name="config_showMin3G">false</bool>
+
+    <!-- Show rotation lock toggle in System UI-->
+    <bool name="config_showRotationLock">true</bool>
+
+    <!-- Vibration duration for GlowPadView used in SearchPanelView -->
+    <integer translatable="false" name="config_vibration_duration">0</integer>
+
+    <!-- Vibration duration for GlowPadView used in SearchPanelView -->
+    <integer translatable="false" name="config_search_panel_view_vibration_duration">20</integer>
+
+    <!-- Show camera affordance on Keyguard -->
+    <bool name="config_keyguardShowCameraAffordance">true</bool>
+
+    <!-- Whether we should use SRC drawing mode when drawing the scrim behind. If this flag is set,
+         we change the canvas opacity so libhwui doesn't call glClear on our surface, and then we
+         draw the scrim with SRC to overwrite the whole buffer, which saves us a layer of overdraw.
+         However, SRC performs poorly on some devices, where it is more efficient to
+         glClear + SRC_OVER, in which case this flag should be disabled. -->
+    <bool name="config_status_bar_scrim_behind_use_src">true</bool>
+
+    <!-- The length of the vibration when the notification pops open. -->
+    <integer name="one_finger_pop_duration_ms">10</integer>
+
+    <!-- decay duration (from size_max -> size), in ms -->
+    <integer name="navigation_bar_deadzone_hold">333</integer>
+    <integer name="navigation_bar_deadzone_decay">333</integer>
+
+    <bool name="config_dead_zone_flash">false</bool>
+
+    <!-- Whether QuickSettings is in a phone landscape -->
+    <bool name="quick_settings_wide">false</bool>
+
+    <!-- The number of columns in the QuickSettings -->
+    <integer name="quick_settings_num_columns">3</integer>
+
+    <!-- The number of rows in the QuickSettings -->
+    <integer name="quick_settings_num_rows">1</integer>
+
+    <!-- The number of columns that the top level tiles span in the QuickSettings -->
+    <integer name="quick_settings_user_time_settings_tile_span">1</integer>
+
+    <!-- The default tiles to display in QuickSettings -->
+    <string name="quick_settings_tiles_default" translatable="false">
+        wifi,cell,battery,dnd,flashlight,rotation,bt,airplane,location
+    </string>
+
+    <!-- The tiles to display in QuickSettings -->
+    <string name="quick_settings_tiles" translatable="false">default</string>
+
+    <!-- Whether or not the RSSI tile is capitalized or not. -->
+    <bool name="quick_settings_rssi_tile_capitalization">true</bool>
+
+    <!-- Timeouts for brightness dialog to disappear -->
+    <integer name="quick_settings_brightness_dialog_short_timeout">2000</integer>
+    <integer name="quick_settings_brightness_dialog_long_timeout">4000</integer>
+
+    <!-- Should "4G" be shown instead of "LTE" when the network is NETWORK_TYPE_LTE? -->
+    <bool name="config_show4GForLTE">true</bool>
+
+    <!-- milliseconds before the heads up notification auto-dismisses. -->
+    <integer name="heads_up_notification_decay">5000</integer>
+
+    <!-- milliseconds after a heads up notification is pushed back
+     before the app can interrupt again. -->
+    <integer name="heads_up_default_snooze_length_ms">60000</integer>
+
+    <!-- Minimum display time for a heads up notification, in milliseconds. -->
+    <integer name="heads_up_notification_minimum_time">2000</integer>
+
+    <!-- milliseconds before the heads up notification accepts touches. -->
+    <integer name="touch_acceptance_delay">700</integer>
+
+    <!-- The duration in seconds to wait before the dismiss buttons are shown. -->
+    <integer name="recents_task_bar_dismiss_delay_seconds">1000</integer>
+
+    <!-- The duration for animating the task decorations in after transitioning from an app. -->
+    <integer name="recents_task_enter_from_app_duration">200</integer>
+
+    <!-- The duration for animating the task decorations in after transitioning from an app. -->
+    <integer name="recents_task_enter_from_affiliated_app_duration">125</integer>
+
+    <!-- The duration for animating the task decorations out before transitioning to an app. -->
+    <integer name="recents_task_exit_to_app_duration">125</integer>
+
+    <!-- The min animation duration for animating the nav bar scrim in. -->
+    <integer name="recents_nav_bar_scrim_enter_duration">400</integer>
+
+    <!-- The animation duration for scrolling the stack to a particular item. -->
+    <integer name="recents_animate_task_stack_scroll_duration">200</integer>
+
+    <!-- The animation duration for scrolling the stack to a particular item. -->
+    <integer name="recents_auto_advance_duration">750</integer>
+
+    <!-- The animation duration for subsequent scrolling the stack to a particular item. -->
+    <integer name="recents_subsequent_auto_advance_duration">1000</integer>
+
+    <!-- The delay to enforce between each alt-tab key press. -->
+    <integer name="recents_alt_tab_key_delay">200</integer>
+
+    <!-- Svelte specific logic, see RecentsConfiguration.SVELTE_* constants. -->
+    <integer name="recents_svelte_level">0</integer>
+
+    <!-- In multi-window, determines whether the stack where recents lives should grow from
+         the smallest position when being launched. -->
+    <bool name="recents_grow_in_multiwindow">true</bool>
+
+    <!-- Animation duration when using long press on recents to dock -->
+    <integer name="long_press_dock_anim_duration">250</integer>
+
+    <!-- Recents: The relative range of visible tasks from the current scroll position
+         while the stack is focused. -->
+    <item name="recents_layout_focused_range_min" format="float" type="integer">-3</item>
+    <item name="recents_layout_focused_range_max" format="float" type="integer">2</item>
+
+    <!-- Recents: The relative range of visible tasks from the current scroll position
+         while the stack is not focused. -->
+    <item name="recents_layout_unfocused_range_min" format="float" type="integer">-2</item>
+    <item name="recents_layout_unfocused_range_max" format="float" type="integer">2.5</item>
+
+    <!-- Whether to enable KeyguardService or not -->
+    <bool name="config_enableKeyguardService">true</bool>
+
+    <!-- The maximum count of notifications on Keyguard. The rest will be collapsed in an overflow
+     card. -->
+    <integer name="keyguard_max_notification_count">3</integer>
+
+    <!-- Defines the implementation of the velocity tracker to be used for the panel expansion. Can
+         be 'platform' or 'noisy' (i.e. for noisy touch screens). -->
+    <string name="velocity_tracker_impl" translatable="false">platform</string>
+
+    <!-- Set to true to enable the user switcher on the keyguard. -->
+    <bool name="config_keyguardUserSwitcher">false</bool>
+
+    <!-- Doze: does this device support STATE_DOZE and STATE_DOZE_SUSPEND?  -->
+    <bool name="doze_display_state_supported">false</bool>
+
+    <!-- Doze: should the significant motion sensor be used as a pulse signal? -->
+    <bool name="doze_pulse_on_significant_motion">false</bool>
+
+    <!-- Doze: should the pickup sensor be used as a pulse signal? -->
+    <bool name="doze_pulse_on_pick_up">false</bool>
+
+    <!-- Doze: check proximity sensor before pulsing? -->
+    <bool name="doze_proximity_check_before_pulse">true</bool>
+
+    <!-- Doze: should notifications be used as a pulse signal? -->
+    <bool name="doze_pulse_on_notifications">true</bool>
+
+    <!-- Doze: when to pulse after a buzzworthy notification arrives -->
+    <string name="doze_pulse_schedule" translatable="false">10s,30s,60s</string>
+
+    <!-- Doze: maximum number of times the notification pulse schedule can be reset -->
+    <integer name="doze_pulse_schedule_resets">2</integer>
+
+    <!-- Doze: duration to avoid false pickup gestures triggered by notification vibrations -->
+    <integer name="doze_pickup_vibration_threshold">2000</integer>
+
+    <!-- Doze: can we assume the pickup sensor includes a proximity check? -->
+    <bool name="doze_pickup_performs_proximity_check">false</bool>
+
+    <!-- Doze: pulse parameter - how long does it take to fade in? -->
+    <integer name="doze_pulse_duration_in">900</integer>
+
+    <!-- Doze: pulse parameter - how long does it take to fade in after a pickup? -->
+    <integer name="doze_pulse_duration_in_pickup">300</integer>
+
+    <!-- Doze: pulse parameter - once faded in, how long does it stay visible? -->
+    <integer name="doze_pulse_duration_visible">3000</integer>
+
+    <!-- Doze: pulse parameter - how long does it take to fade out? -->
+    <integer name="doze_pulse_duration_out">600</integer>
+
+    <!-- Doze: alpha to apply to small icons when dozing -->
+    <integer name="doze_small_icon_alpha">222</integer><!-- 87% of 0xff -->
+
+    <!-- Hotspot tile: number of days to show after feature is used. -->
+    <integer name="days_to_show_hotspot_tile">30</integer>
+
+    <!-- Color inversion tile: number of days to show after feature is used. -->
+    <integer name="days_to_show_color_inversion_tile">7</integer>
+
+    <!-- Number of times to show the strong alarm warning text in the volume dialog -->
+    <integer name="zen_mode_alarm_warning_threshold">5</integer>
+
+    <!-- Maximum number of total conditions to display in the zen mode selection panel -->
+    <integer name="zen_mode_max_conditions">5</integer>
+
+    <!-- Enable the default volume dialog -->
+    <bool name="enable_volume_ui">true</bool>
+
+    <!-- Duration of the full carrier network change icon animation. -->
+    <integer name="carrier_network_change_anim_time">3000</integer>
+
+    <!-- Duration of the expansion animation in the volume dialog -->
+    <item name="volume_expand_animation_duration" type="integer">300</item>
+
+    <!-- Whether to show the full screen user switcher. -->
+    <bool name="config_enableFullscreenUserSwitcher">false</bool>
+
+    <!-- SystemUIFactory component -->
+    <string name="config_systemUIFactoryComponent" translatable="false">com.android.systemui.SystemUIFactory</string>
+
+    <!-- Nav bar button default ordering/layout -->
+    <string name="config_navBarLayout" translatable="false">space,back;home;recent,menu_ime</string>
+
+    <bool name="quick_settings_show_full_alarm">false</bool>
+
+</resources>
+

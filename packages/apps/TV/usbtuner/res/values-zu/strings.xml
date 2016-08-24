@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"Okokufaka kwe-TV kwe-USB Tuner"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"Vuliwe"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"Valiwe"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"Sicela ulinde ukuze uqede ukucubungula"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"Khetha umthombo wakho wesiteshi"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"Ayikho isignali"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"Yehlulekile ukushunela ku-<xliff:g id="CHANNEL_NAME">%s</xliff:g>"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"Yehlulekile ukushuna"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"Isofthiwe ye-USB tuner isanda kubuyekezwa. Sicela uskene kabusha iziteshi."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"Umsindo we-AC3 awutholakali"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"Ukusethwa kweshuna yesiteshi"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"Ukusethwa kweshuna yesiteshi se-USB"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"Qinisekisa ukuthi ishuna ye-USB ixhunyiwe futhi ixhumeke kumthombo wesignali ye-TV.\n\nUma usebenzisa i-antenna esemoyeni, kuzomele ulungise ukubekwa kwayo noma ukubheka kwayo ukuze uthole iziteshi eziningi. Ukuze uthole imiphumela ehamba phambili, yibeke phezulu eduze kwewindi."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"Qhubeka"</item>
+    <item msgid="7745727658174773453">"Hhayi manje"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"Phinda uqalise ukusethwa kwesiteshi?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"Lokhu kuzosusa iziteshi ezitholakele kusukela kushuna ye-USB kuphinde kuskenele iziteshi ezintsha futhi.\n\nQinisekisa ukuthi ishuna ye-USB ixhunyiwe futhi ixhumeke kumthombo wesignali ye-TV.\n\nUma usebenzisa i-antenna esemoyeni, kuzomele ulungise ukubekwa kwayo noma ukubheka kwayo ukuze uthole iziteshi eziningi. Ukuze uthole imiphumela ehamba phambili, yibeke ngaphezulu naseduze kwewindi."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"Qhubeka"</item>
+    <item msgid="4432431398374089710">"Khansela"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"Khetha uhlobo lokuxhumeka"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"Khetha i-Antenna uma ngabe kukhona i-antenna yangaphandle exhunywe kusishuni. Khetha ikhebuli uma ngabe iziteshi zakho ziza kusukela kumhlinzeki wesevisi yekhebuli. Uma ungaqinisekanga, zombili izinhlobo zizoskenwa, kodwa lokhu kungathatha isikhathi eside."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"I-Antenna"</item>
+    <item msgid="2445879869338877559">"Ikhebuli"</item>
+    <item msgid="597328838068074806">"Angiqinisekile"</item>
+    <item msgid="3613410733017077040">"Ukuthuthukiswa kuphela"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"Ukusetha kweshuna yesiteshi se-USB"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"Lokhu kungathatha amaminithi athile"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="one">%1$d iziteshi ezitholakele</item>
+      <item quantity="other">%1$d iziteshi ezitholakele</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"MISA UKUSKENA KWESITESHI"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="one">%1$d iziteshi ezitholakele</item>
+      <item quantity="other">%1$d iziteshi ezitholakele</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="one">Kuhle! %1$d iziteshi ezitholakele ngesikhathi sokuskena kwesiteshi. Uma lokhu kungabonakali kulungile, zama ukulungisa ukuma kwe-antenna uphinde uskene futhi.</item>
+      <item quantity="other">Kuhle! %1$d iziteshi ezitholakele ngesikhathi sokuskena kwesiteshi. Uma lokhu kungabonakali kulungile, zama ukulungisa ukuma kwe-antenna uphinde uskene futhi.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"Kwenziwe"</item>
+    <item msgid="496688122303154468">"Skena futhi"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"Azikho iziteshi ezitholiwe"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"Iskena asizange sithole noma yiziphi iziteshi. Qinisekisa ukuthi ishuna ye-USB ixhunyiwe futhi ixhumeke kumthombo wesignali ye-TV.\n\nUma usebenzisa i-antenna esemoyeni, lungisa ukubekwa kwayo noma ukuma kwayo. Ukuze uthole imiphumela ehamba phambili, yibeke phezulu naseduze kwewindi uphinde uskene."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"Skena futhi"</item>
+    <item msgid="6784975565864102291">"Kwenziwe"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"Skenela iziteshi ze-TV"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"Ukusetha kweshuna yesiteshi se-USB"</string>
+</resources>

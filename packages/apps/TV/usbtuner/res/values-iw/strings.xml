@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"‏קלט טלוויזיה של טיונר USB"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"מופעל"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"כבוי"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"המתן לסיום העיבוד"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"בחר את מקור הערוצים"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"אין אות"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"לא ניתן היה לכוון לערוץ <xliff:g id="CHANNEL_NAME">%s</xliff:g>"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"הכוונון נכשל"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"‏התוכנה של טיונר ה-USB עודכנה לאחרונה. סרוק מחדש את הערוצים."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"‏אודיו מסוג AC3 אינו זמין"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"הגדרת טיונר ערוצים"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"‏הגדרת טיונר ערוצים בחיבור USB"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"‏ודא שטיונר USB מחובר להתקן ולמקור אות טלוויזיה.\n\nאם אתה משתמש באנטנה אלחוטית, ייתכן שעליך לכוונן את מיקומה או את כיוונה כדי לקלוט כמה שיותר ערוצים. לקבלת התוצאות הטובות ביותר, הצב אותה במקום גבוה וקרוב לחלון."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"המשך"</item>
+    <item msgid="7745727658174773453">"לא עכשיו"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"האם להפעיל מחדש את הגדרת הערוצים?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"‏פעולה זו תסיר מטיונר ה-USB את הערוצים שנמצאו, ותבצע סריקה נוספת לאיתור ערוצים חדשים.\n\nודא שטיונר ה-USB מחובר להתקן ולמקור אות טלוויזיה.\n\nאם אתה משתמש באנטנה אלחוטית, ייתכן שיהיה עליך לכוונן את מיקומה או את כיוונה כדי לקלוט כמה שיותר ערוצים. לקבלת התוצאות הטובות ביותר, הצב אותה במקום גבוה וקרוב לחלון."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"המשך"</item>
+    <item msgid="4432431398374089710">"ביטול"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"בחירת סוג החיבור"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"בחר \'אנטנה\' אם ישנה אנטנה חיצונית שמחוברת לטיונר. בחר \'כבלים\' אם הערוצים מגיעים מספק שירותי כבלים. אם אינך בטוח, שני הסוגים ייסרקו, אך הפעולה עשויה להימשך זמן רב יותר."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"אנטנה"</item>
+    <item msgid="2445879869338877559">"כבלים"</item>
+    <item msgid="597328838068074806">"לא בטוח"</item>
+    <item msgid="3613410733017077040">"פיתוח בלבד"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"‏הגדרת טיונר ערוצים בחיבור USB"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"פעולה זו עשויה להימשך מספר דקות"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="two">‏נמצאו %1$d ערוצים</item>
+      <item quantity="many">‏נמצאו %1$d ערוצים</item>
+      <item quantity="other">‏נמצאו %1$d ערוצים</item>
+      <item quantity="one">נמצא ערוץ אחד</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"הפסק סריקת ערוצים"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="two">‏נמצאו %1$d ערוצים</item>
+      <item quantity="many">‏נמצאו %1$d ערוצים</item>
+      <item quantity="other">‏נמצאו %1$d ערוצים</item>
+      <item quantity="one">נמצא ערוץ אחד</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="two">‏לא רע! במהלך סריקה הערוצים, נמצאו %1$d ערוצים. אם הקליטה לא תקינה, נסה לכוונן את מיקום האנטנה ובצע סריקה נוספת.</item>
+      <item quantity="many">‏לא רע! במהלך סריקה הערוצים, נמצאו %1$d ערוצים. אם הקליטה לא תקינה, נסה לכוונן את מיקום האנטנה ובצע סריקה נוספת.</item>
+      <item quantity="other">‏לא רע! במהלך סריקה הערוצים, נמצאו %1$d ערוצים. אם הקליטה לא תקינה, נסה לכוונן את מיקום האנטנה ובצע סריקה נוספת.</item>
+      <item quantity="one">לא רע! במהלך סריקת הערוצים נמצא ערוץ אחד. אם הקליטה לא תקינה, נסה לכוונן את מיקום האנטנה ובצע סריקה נוספת.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"בוצע"</item>
+    <item msgid="496688122303154468">"סרוק שוב"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"לא נמצאו ערוצים"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"‏לא נמצאו ערוצים בסריקה. ודא שטיונר ה-USB מחובר להתקן ולמקור אות טלוויזיה.\n\nאם אתה משתמש באנטנה אלחוטית, כוונן את מיקומה או את כיוונה. לקבלת התוצאות הטובות ביותר, הצב אותה במקום גבוה וקרוב לחלון וסרוק שוב."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"סרוק שוב"</item>
+    <item msgid="6784975565864102291">"בוצע"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"סריקה לאיתור ערוצי טלוויזיה"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"‏הגדרת טיונר ערוצים בחיבור USB"</string>
+</resources>

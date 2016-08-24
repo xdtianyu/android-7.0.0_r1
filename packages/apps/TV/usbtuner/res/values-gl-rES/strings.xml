@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"Entrada do televisor con sintonizador USB"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"Activar"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"Desactivar"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"Espere a que finalice o procesamento"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"Selecciona a fonte da túa canle"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"Sen sinal"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"Produciuse un erro ao sintonizar <xliff:g id="CHANNEL_NAME">%s</xliff:g>"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"Produciuse un erro ao sintonizar"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"O software do sintonizador USB actualizouse recentemente. Volve buscar canles."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"Non está dispoñible o audio AC3"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"Configuración do sintonizador de canles"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"Configuración do sintonizador de canles USB"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"Comproba se o sintonizador USB está enchufado e conéctao a unha fonte de sinal de televisión.\n\nSe usas unha antena sen fíos, é posible que teñas que axustar a súa posición ou dirección para recibir a maioría das canles. Para conseguir os mellores resultados, colócaa nun lugar alto e preto dunha ventá."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"Continuar"</item>
+    <item msgid="7745727658174773453">"Agora non"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"Queres volver executar a configuración da canle?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"Esta acción eliminará as canles que atopaches co sintonizador USB e busca outras novas.\n\nComproba se o sintonizador USB está enchufado e conéctao a unha fonte de sinal de televisión.\n\nSe usas unha antena sen fíos, é posible que teñas que axustar a súa posición ou dirección para recibir a maioría das canles. Para conseguir os mellores resultados, colócaa nun lugar alto e preto dunha ventá."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"Continuar"</item>
+    <item msgid="4432431398374089710">"Cancelar"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"Seleccionar tipo de conexión"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"Selecciona Antena se hai unha antena externa conectada ao sintonizador. Selecciona Cable se as túas canles proceden dun fornecedor de servizo de cable. Se non o sabes con seguridade, realizarase a busca usando os dous tipos de conexión, pero este proceso pode tardar máis tempo."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"Antena"</item>
+    <item msgid="2445879869338877559">"Cable"</item>
+    <item msgid="597328838068074806">"Non estou seguro"</item>
+    <item msgid="3613410733017077040">"Só desenvolvemento"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"Configuración do sintonizador de canles USB"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"Esta acción pode tardar varios minutos"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="other">Atopáronse %1$d canles</item>
+      <item quantity="one">Atopouse %1$d canle</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"DETER BUSCA DE CANLES"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="other">Atopáronse %1$d canles</item>
+      <item quantity="one">Atopouse %1$d canle</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="other">Estupendo! Atopáronse %1$d canles durante a busca de canles. Se non che parece correcto, tenta axustar a posición da antena e realiza a busca de novo.</item>
+      <item quantity="one">Estupendo! Atopouse %1$d canle durante a busca de canles. Se non che parece correcto, tenta axustar a posición da antena e realiza a busca de novo.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"Feito"</item>
+    <item msgid="496688122303154468">"Buscar de novo"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"Non se atopou ningunha canle"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"A busca non atopou ningunha canle. Comproba se o sintonizador USB está enchufado e conéctao a unha fonte de sinal de televisión.\n\nSe usas unha antena sen fíos, axusta a súa posición ou dirección. Para conseguir os mellores resultados, colócaa nun lugar alto e preto dunha ventá e volve realizar a busca."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"Buscar de novo"</item>
+    <item msgid="6784975565864102291">"Feito"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"Buscar canles de televisión"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"Configuración do sintonizador de canles USB"</string>
+</resources>

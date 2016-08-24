@@ -1,0 +1,6 @@
+service surfaceflinger /system/bin/surfaceflinger
+    class core
+    user system
+    group graphics drmrpc readproc
+    onrestart restart zygote
+    writepid /sys/fs/cgroup/stune/foreground/tasks

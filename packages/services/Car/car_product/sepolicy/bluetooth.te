@@ -1,0 +1,18 @@
+# Allow access to wc_transport.* properties.
+set_prop(bluetooth, wc_transport_prop)
+
+# Allow access to /dev/ttyHS0
+allow bluetooth serial_device:chr_file rw_file_perms;
+
+# Connect to start_hci_filter service.
+allow bluetooth start_hci_filter:unix_stream_socket connectto;
+
+# Allow access to /persist/.bt_nv.bin.
+allow bluetooth persist_file:file rw_file_perms;
+
+# Allow access to /bt_firmware files.
+allow bluetooth bt_firmware_file:file r_file_perms;
+
+# Allow access to bt_power sysfs nodes.
+r_dir_file(bluetooth, sysfs_bt_power);
+allow bluetooth sysfs_bt_power:file w_file_perms;

@@ -1,0 +1,11 @@
+# Allow read access to firmware related files.
+r_dir_file(ueventd, firmware_file);
+
+# Write access to thermal related sysfs nodes.
+allow ueventd sysfs_thermal:file w_file_perms;
+
+# Allow write access to usb related sysfs nodes.
+allow ueventd sysfs_usb:file w_file_perms;
+
+# Allow write access to bt_power sysfs nodes.
+allow ueventd sysfs_bt_power:file w_file_perms;

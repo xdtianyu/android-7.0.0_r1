@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- The style for the volume icons in the volume dialog. This style makes the icon scale to
+         fit its container since auto wants the icon to be larger. The padding is added to make it
+         so the icon does not press along the edges of the dialog. -->
+    <style name="VolumeButtons" parent="@android:style/Widget.Material.Button.Borderless">
+        <item name="android:background">@drawable/btn_borderless_rect</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:padding">22dp</item>
+    </style>
+
+</resources>

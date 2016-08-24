@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"Δέκτης USB εισόδου τηλεόρασης"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"Ενεργό"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"Ανενεργό"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"Παρακαλώ περιμένετε να ολοκληρωθεί η επεξεργασία"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"Επιλέξτε την πηγή του καναλιού σας"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"Χωρίς σήμα"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"Αποτυχία συντονισμού <xliff:g id="CHANNEL_NAME">%s</xliff:g>"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"Αποτυχία συντονισμού"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"Το λογισμικό δέκτη USB ενημερώθηκε πρόσφατα. Επαναλάβετε τη σάρωση καναλιών."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"Δεν υπάρχει διαθέσιμος ήχος AC3"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"Ρύθμιση του δέκτη καναλιών"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"Ρύθμιση δέκτη καναλιών USB"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"Βεβαιωθείτε ότι ο δέκτης USB είναι συνδεδεμένος στην πρίζα και σε μια πηγή τηλεοπτικού σήματος.\n\nΕάν χρησιμοποιείτε ασύρματη κεραία, ίσως χρειαστεί να προσαρμόσετε την τοποθέτηση ή την κατεύθυνσή της για να λάβετε περισσότερα κανάλια. Για καλύτερα αποτελέσματα, τοποθετήστε την ψηλά και κοντά σε ένα παράθυρο."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"Συνέχεια"</item>
+    <item msgid="7745727658174773453">"Όχι τώρα"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"Επανάληψη ρύθμισης καναλιών;"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"Με αυτόν τον τρόπο θα καταργηθούν τα κανάλια που εντοπίστηκαν από το δέκτη USB και θα γίνει ξανά σάρωση για νέα κανάλια.\n\nΒεβαιωθείτε ότι ο δέκτης USB είναι συνδεδεμένος στην πρίζα και σε μια πηγή τηλεοπτικού σήματος.\n\nΕάν χρησιμοποιείτε ασύρματη κεραία, ίσως χρειαστεί να προσαρμόσετε την τοποθέτηση ή την κατεύθυνσή της για να λάβετε περισσότερα κανάλια. Για καλύτερα αποτελέσματα, τοποθετήστε την ψηλά και κοντά σε ένα παράθυρο."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"Συνέχεια"</item>
+    <item msgid="4432431398374089710">"Ακύρωση"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"Επιλέξτε τον τύπο σύνδεσης"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"Επιλέξτε \"Κεραία\" εάν έχει συνδεθεί μια εξωτερική κεραία στο δέκτη. Επιλέξτε \"Καλωδιακή\" εάν τα κανάλια σας προέρχονται από έναν πάροχο υπηρεσιών καλωδιακής τηλεόρασης. Εάν δεν είστε βέβαιοι, θα γίνει σάρωση και για τους δύο τύπους, αλλά αυτό ενδέχεται να διαρκέσει περισσότερο."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"Κεραία"</item>
+    <item msgid="2445879869338877559">"Καλωδιακή"</item>
+    <item msgid="597328838068074806">"Ίσως"</item>
+    <item msgid="3613410733017077040">"Μόνο ανάπτυξη"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"Ρύθμιση δέκτη καναλιών USB"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"Αυτό μπορεί να διαρκέσει αρκετά λεπτά"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="other">Βρέθηκαν %1$d κανάλια</item>
+      <item quantity="one">Βρέθηκε %1$d κανάλι</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"ΔΙΑΚΟΠΗ ΣΑΡΩΣΗΣ ΚΑΝΑΛΙΩΝ"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="other">Βρέθηκαν %1$d κανάλια</item>
+      <item quantity="one">Βρέθηκε %1$d κανάλι</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="other">Ωραία! Βρέθηκαν %1$d κανάλια κατά τη σάρωση καναλιών. Εάν αυτό δεν φαίνεται σωστό, δοκιμάστε να ρυθμίσετε τη θέση της κεραίας και επαναλάβετε τη σάρωση.</item>
+      <item quantity="one">Ωραία! Βρέθηκε %1$d κανάλι κατά τη σάρωση καναλιών. Εάν αυτό δεν φαίνεται σωστό, δοκιμάστε να ρυθμίσετε τη θέση της κεραίας και επαναλάβετε τη σάρωση.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"Τέλος"</item>
+    <item msgid="496688122303154468">"Εκ νέου σάρωση"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"Δεν βρέθηκαν κανάλια"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"Δεν βρέθηκαν κανάλια κατά τη σάρωση. Βεβαιωθείτε ότι ο δέκτης USB είναι συνδεδεμένος στην πρίζα και σε μια πηγή τηλεοπτικού σήματος.\n\nΕάν χρησιμοποιείτε ασύρματη κεραία, ίσως χρειαστεί να προσαρμόσετε την τοποθέτηση ή την κατεύθυνσή της για να λάβετε περισσότερα κανάλια. Για καλύτερα αποτελέσματα, τοποθετήστε την ψηλά και κοντά σε ένα παράθυρο."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"Εκ νέου σάρωση"</item>
+    <item msgid="6784975565864102291">"Τέλος"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"Σάρωση για τηλεοπτικά κανάλια"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"Ρύθμιση δέκτη καναλιών USB"</string>
+</resources>

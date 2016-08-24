@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="font" translatable="false">sans-serif</string>
+    <string name="light_font" translatable="false">sans-serif-light</string>
+    <string name="thin_font" translatable="false">sans-serif-thin</string>
+    <string name="condensed_font" translatable="false">sans-serif-condensed</string>
+
+    <string name="option_item_text_font" translatable="false">@string/condensed_font</string>
+    <string name="option_item_secondary_text_font" translatable="false">@string/condensed_font</string>
+
+    <string name="option_item_divider_font" translatable="false">@string/condensed_font</string>
+
+    <!-- Name of application [CHAR LIMIT=NONE] -->
+    <string name="app_name">Live TV</string>
+
+    <!-- Title of an application permission, listed so the user can choose
+        whether they want to allow the application to do this. -->
+    <string name="permlab_receiveInputEvent" translatable="false">receive input events from Live TV app</string>
+    <!-- Description of an application permission, listed so the user can choose
+        whether they want to allow the application to do this. -->
+    <string name="permdesc_receiveInputEvent" translatable="false">Allows the app to receive input events from Live TV app</string>
+
+    <!-- Program information, mainly used for channel banner and program guide. -->
+    <eat-comment />
+    <!-- Mark for closed caption when a program has closed caption tracks -->
+    <string name="closed_caption" translatable="false">CC</string>
+    <!-- Mark indicating that the current program has ultra-high-definition video. -->
+    <string name="video_definition_level_ultra_hd" translatable="false">Ultra HD</string>
+    <!-- Mark indicating that the current program has full-high-definition video. -->
+    <string name="video_definition_level_full_hd" translatable="false">Full HD</string>
+    <!-- Mark indicating that the current program has high-definition video. -->
+    <string name="video_definition_level_hd" translatable="false">HD</string>
+    <!-- Mark indicating that the current program has standard-definition video.  -->
+    <string name="video_definition_level_sd" translatable="false">SD</string>
+    <!-- Mark indicating that the current program has only one audio channel (mono).
+         [CHAR LIMIT=8] -->
+    <string name="audio_channel_mono">mono</string>
+    <!-- Mark indicating that the current program has two audio channels (stereo).
+         [CHAR LIMIT=8] -->
+    <string name="audio_channel_stereo">stereo</string>
+    <!-- Mark indicating that the current program has 5.1 surround audio channels. -->
+    <string name="audio_channel_5_1" translatable="false">5.1</string>
+    <!-- Mark indicating that the current program has 7.1 surround audio channels. -->
+    <string name="audio_channel_7_1" translatable="false">7.1</string>
+
+    <!-- Title of the play controls row in the main menu.
+         The play means a playback of video and audio. [CHAR LIMIT=NONE] -->
+    <string name="menu_title_play_controls">Play controls</string>
+    <!-- Title of the channels row in the main menu. [CHAR LIMIT=NONE] -->
+    <string name="menu_title_channels">Recent channels</string>
+    <!-- Title of the TV option row in the main menu. [CHAR LIMIT=NONE] -->
+    <string name="menu_title_options">TV options</string>
+    <!-- Title of the PIP option row in the main menu. [CHAR LIMIT=NONE] -->
+    <string name="menu_title_pip_options">PIP options</string>
+
+    <!-- Play speed of 2X, 3X, 4X, 5X -->
+    <string name="play_controls_speed" translatable="false">%1$dX</string>
+    <!-- Message when the trick play is not available [CHAR LIMIT=NONE] -->
+    <string name="play_controls_unavailable">Play controls unavailable for this channel</string>
+    <!-- Description of the Play Pause button on the play controls. -->
+    <string name="play_controls_description_play_pause">Play or pause</string>
+    <!-- Description of the Fast Forward button on the play controls. -->
+    <string name="play_controls_description_fast_forward">Fast forward</string>
+    <!-- Description of the Rewind button on the play controls. -->
+    <string name="play_controls_description_fast_rewind">Rewind</string>
+    <!-- Description of the Next button on the play controls. -->
+    <string name="play_controls_description_skip_next">Next</string>
+    <!-- Description of the Previous button on the play controls. -->
+    <string name="play_controls_description_skip_previous">Previous</string>
+
+    <!-- Label of Program guide item in the channel list row. [CHAR LIMIT=23] -->
+    <string name="channels_item_program_guide">Program guide</string>
+    <!-- Label of setup item in the channel list row. The item is shown only
+         when new inputs are installed. [CHAR LIMIT=23] -->
+    <string name="channels_item_setup">New channels available</string>
+    <!-- Label of the app link card used for Google analytics. -->
+    <string name="channels_item_app_link" translatable="false">App link</string>
+    <!-- Default label of the app link card indicating there is no app link available for
+         the current channel. [CHAR LIMIT=23] -->
+    <string name="channels_item_app_link_no_app_link">No link available</string>
+    <!-- Label of app link card for launching app in the channel list row. [CHAR LIMIT=NONE] -->
+    <string name="channels_item_app_link_app_launcher">Open <xliff:g id="app_name" example="YouTube">%1$s</xliff:g></string>
+
+    <!-- Label of "Closed captions" item in the TV option row. [CHAR LIMIT=17] -->
+    <string name="options_item_closed_caption">Closed captions</string>
+    <!-- Label of "Display mode" item in the TV option row. Inside display mode,
+         there are three items: Full, Normal, Zoom. [CHAR LIMIT=17] -->
+    <string name="options_item_display_mode">Display mode</string>
+    <!-- Label of "PIP (Picture in picture)" item in the TV option row. [CHAR LIMIT=17] -->
+    <string name="options_item_pip">PIP</string>
+    <!-- Description of the "PIP" item in the TV option row indicating that the currently the PIP
+         is turned on. [CHAR LIMIT=17] -->
+    <string name="options_item_pip_on">On</string>
+    <!-- Description of the "PIP" item in the TV option row indicating that the currently the PIP
+         is turned off. [CHAR LIMIT=20] -->
+    <string name="options_item_pip_off">Off</string>
+    <!-- Label of "Multi audio" item in the TV option row. [CHAR LIMIT=17] -->
+    <string name="options_item_multi_audio">Multi-audio</string>
+    <!-- Label of "Get more channels" item in the TV option row. [CHAR LIMIT=17] -->
+    <string name="options_item_more_channels">Get more channels</string>
+    <!-- Label of "Settings" item in the TV option row. [CHAR LIMIT=17] -->
+    <string name="options_item_settings">Settings</string>
+
+    <!-- Label of "Source" item in the PIP option row. The item enables the user to select
+         a specific input (e.g. HDMI 1) for the PIP window. [CHAR LIMIT=17] -->
+    <string name="pip_options_item_source">Source</string>
+    <!-- Label of "Swap" item in the PIP option row.
+         After swapping, the main window and PIP window will show the channels of each other. [CHAR LIMIT=17] -->
+    <string name="pip_options_item_swap">Swap</string>
+    <!-- Description of the "Swap" item in the PIP option row indicating that the currently the
+         windows are swapped. [CHAR LIMIT=20] -->
+    <string name="pip_options_item_swap_on">On</string>
+    <!-- Description of the "Swap" item in the PIP option row indicating that the currently the
+         windows are not swapped. [CHAR LIMIT=20] -->
+    <string name="pip_options_item_swap_off">Off</string>
+    <!-- Label of "Sound" item in the PIP option row. [CHAR LIMIT=17] -->
+    <string name="pip_options_item_sound">Sound</string>
+    <!-- Description of the "Sound" item in the PIP option row indicating that the current sound
+         source is main window. [CHAR LIMIT=20] -->
+    <string name="pip_options_item_sound_main">Main</string>
+    <!-- Description of the "Sound" item in the PIP option row indicating that the current sound
+         source is PIP window. [CHAR LIMIT=20] -->
+    <string name="pip_options_item_sound_pip_window">PIP window</string>
+    <!-- Label of "Layout" item in the PIP option row. [CHAR LIMIT=17] -->
+    <string name="pip_options_item_layout">Layout</string>
+    <!-- Description of the "Layout" item in the PIP option row indicating that the current PIP
+         window is at the bottom right corner of the screen. [CHAR LIMIT=20] -->
+    <string name="pip_options_item_layout_bottom_right">Bottom right</string>
+    <!-- Description of the "Layout" item in the PIP option row indicating that the current PIP
+         window is at the top right corner of the screen. [CHAR LIMIT=20] -->
+    <string name="pip_options_item_layout_top_right">Top right</string>
+    <!-- Description of the "Layout" item in the PIP option row indicating that the current PIP
+         window is at the top left corner of the screen. [CHAR LIMIT=20] -->
+    <string name="pip_options_item_layout_top_left">Top left</string>
+    <!-- Description of the "Layout" item in the PIP option row indicating that the current PIP
+         window is at the bottom left corner of the screen. [CHAR LIMIT=20] -->
+    <string name="pip_options_item_layout_bottom_left">Bottom left</string>
+    <!-- Description of the "Layout" item in the PIP option row indicating that the current PIP
+         layout is side-by-side (i.e. Picture and Picture). [CHAR LIMIT=20] -->
+    <string name="pip_options_item_layout_side_by_side">Side by side</string>
+    <!-- Label of "Size" item in the PIP option row. [CHAR LIMIT=17] -->
+    <string name="pip_options_item_size">Size</string>
+    <!-- Description of the "Size" item in the PIP option row indicating that the current PIP size
+         is big.  [CHAR LIMIT=20] -->
+    <string name="pip_options_item_size_big">Big</string>
+    <!-- Description of the "Size" item in the PIP option row indicating that the current PIP size
+         is small.  [CHAR LIMIT=20] -->
+    <string name="pip_options_item_size_small">Small</string>
+
+    <!-- Title of "Input source" option to select an input for PIP. [CHAR LIMIT=30] -->
+    <string name="side_panel_title_pip_input_source">Input source</string>
+    <!-- Label of a unified input for tuner type inputs. [CHAR LIMIT=30] -->
+    <string name="input_long_label_for_tuner">TV (antenna/cable)</string>
+
+    <!-- Default program name when there is no program title. [CHAR LIMIT=30] -->
+    <string name="no_program_information">No program information</string>
+
+    <!-- Program title for no information. [CHAR LIMIT=23] -->
+    <string name="program_title_for_no_information">No information</string>
+    <!-- Program title for blocked channel [CHAR LIMIT=23] -->
+    <string name="program_title_for_blocked_channel">Blocked channel</string>
+
+    <!-- Default string for unknown language used in "Closed Caption" and "Multi Audio" options. [CHAR LIMIT=30] -->
+    <string name="default_language">Unknown language</string>
+
+    <!-- Inside "Closed captions" option side panel -->
+    <eat-comment />
+    <!-- Title of "Closed captions" option. [CHAR LIMIT=30] -->
+    <string name="side_panel_title_closed_caption">Closed captions</string>
+    <!-- Label of an option item for Closed Caption "off" [CHAR LIMIT=30] -->
+    <string name="closed_caption_option_item_off">Off</string>
+    <!-- Label of an option item to launch system closed caption settings [CHAR LIMIT=30] -->
+    <string name="closed_caption_system_settings">Customize formatting</string>
+    <!-- Description for "System Caption Settings" option [CHAR LIMIT=NONE] -->
+    <string name="closed_caption_system_settings_description">Set system-wide preferences for closed captions</string>
+
+    <!-- Inside "Display Mode" option side panel -->
+    <eat-comment />
+    <!-- Title of "Display Mode" option. It has three items: Normal, Full, Zoom. [CHAR LIMIT=30]-->
+    <string name="side_panel_title_display_mode">Display mode</string>
+
+    <!-- Inside "Multi Audio" option side panel -->
+    <eat-comment />
+    <!-- Title of "Multi-Audio" option. [CHAR LIMIT=30] -->
+    <string name="side_panel_title_multi_audio">Multi-audio</string>
+    <!-- Format of "Multi-Audio" item. E.g.) English (stereo) -->
+    <string name="multi_audio_display_string_with_channel" translatable="false">%1$s (%2$s)</string>
+    <!-- Label of audio track with one audio channel [CHAR LIMIT=30] -->
+    <string name="multi_audio_channel_mono">mono</string>
+    <!-- Label of audio track with two audio channels [CHAR LIMIT=30] -->
+    <string name="multi_audio_channel_stereo">stereo</string>
+    <!-- Label of audio track with six audio channels [CHAR LIMIT=30] -->
+    <string name="multi_audio_channel_surround_6">5.1 surround</string>
+    <!-- Label of audio track with eight audio channels [CHAR LIMIT=30] -->
+    <string name="multi_audio_channel_surround_8">7.1 surround</string>
+    <!-- Label of audio track with other audio channels than 1, 2, 6, and 8 [CHAR LIMIT=30] -->
+    <string name="multi_audio_channel_suffix">%d channels</string>
+
+    <!-- Inside "Edit Channels for a specific input" option side panel -->
+    <eat-comment />
+    <!-- Title of "Edit channels" option. [CHAR LIMIT=30] -->
+    <string name="side_panel_title_edit_channels_for_an_input">Customize channel list</string>
+    <!-- Label of "Select group" item to make all channels of a group enabled. The group can
+         be a channel source or video quality like HD or SD. [CHAR LIMIT=30] -->
+    <string name="edit_channels_item_select_group">Select group</string>
+    <!-- Label of "Deselect group" item to make all channels of a group disabled. The group can
+         be a channel source or video quality like HD or SD. [CHAR LIMIT=30] -->
+    <string name="edit_channels_item_deselect_group">Deselect group</string>
+    <!-- Label of "Group by" item to regroup channels [CHAR LIMIT=30] -->
+    <string name="edit_channels_item_group_by">Group by</string>
+    <!-- Type of grouping by channel source [CHAR LIMIT=30] -->
+    <string name="edit_channels_group_by_sources">Channel source</string>
+    <!-- Type of grouping by video quality [CHAR LIMIT=30] -->
+    <string name="edit_channels_group_by_hd_sd">HD/SD</string>
+    <!-- Subheader of HD channel group [CHAR LIMIT=30] -->
+    <string name="edit_channels_group_divider_for_hd">HD</string>
+    <!-- Subheader of SD channel group [CHAR LIMIT=40] -->
+    <string name="edit_channels_group_divider_for_sd">SD</string>
+    <!-- Title of "Group by" side panel to set grouping type [CHAR LIMIT=30] -->
+    <string name="side_panel_title_group_by">Group by</string>
+
+    <!-- Inside full EPG -->
+    <eat-comment />
+    <!-- Description in the TV guide when the rating of the current content is restricted by parental control. [CHAR LIMIT=NONE] -->
+    <string name="program_guide_content_locked">This program is blocked</string>
+    <!-- Description in the TV guide with the rating when the rating of the current content is restricted by parental control. [CHAR LIMIT=NONE] -->
+    <string name="program_guide_content_locked_format">This program is rated <xliff:g id="rating" example="TV_MA">%1$s</xliff:g></string>
+
+    <!-- Message when a channel item is clicked for channel auto-scan, but the input doesn't
+         have auto-scan function. [CHAR LIMIT=NONE] -->
+    <string name="msg_no_setup_activity">The input doesn\'t support auto-scan</string>
+    <!-- Error message when Live TV app cannnot launch auto-scan activity due to the wrong information
+         from the input. [CHAR LIMIT=NONE] -->
+    <string name="msg_unable_to_start_setup_activity">Unable to start auto-scan for \'<xliff:g id="tv_input" example="Built-in Tuner">%s</xliff:g>\'</string>
+    <!-- Error message when Live TV app cannnot launch the system-wide preferences for closed captions. [CHAR LIMIT=NONE] -->
+    <string name="msg_unable_to_start_system_captioning_settings">Unable to start the system-wide preferences for closed captions.</string>
+    <!-- Message after some channels are added. [CHAR LIMIT=NONE] -->
+    <plurals name="msg_channel_added">
+        <item quantity="one">%1$d channel added</item>
+        <item quantity="other">%1$d channels added</item>
+    </plurals>
+    <!-- Message after no channel is added after setting up an input. [CHAR LIMIT=NONE] -->
+    <string name="msg_no_channel_added">No channels added</string>
+
+    <!-- Inside "Input Selector" option side panel -->
+    <eat-comment />
+    <!-- Label of a tuner input in "Input Selector" option. [CHAR LIMIT=30] -->
+    <string name="input_selector_tuner_label">Tuner</string>
+
+    <!-- Parental control -->
+    <eat-comment />
+    <!-- Title of "Parental Contrals" option. [CHAR LIMIT=30] -->
+    <string name="menu_parental_controls">Parental controls</string>
+    <!-- Label in On state of On/Off switch for "Parental Contrals" option. [CHAR LIMIT=30] -->
+    <string name="option_toggle_parental_controls_on">On</string>
+    <!-- Label in Off state of On/Off switch for "Parental Contrals" option. [CHAR LIMIT=30] -->
+    <string name="option_toggle_parental_controls_off">Off</string>
+    <!-- Item and title of "Channels blocked" option. This option provides an interface for parents
+         to block/unblock channels that are not suitable for their children. [CHAR LIMIT=30] -->
+    <string name="option_channels_locked">Channels blocked</string>
+    <!-- Label of an item to lock all channels. [CHAR LIMIT=30] -->
+    <string name="option_channels_lock_all">Block all</string>
+    <!-- Label of an item to unlock all channels. [CHAR LIMIT=30] -->
+    <string name="option_channels_unlock_all">Unblock all</string>
+    <!-- Subheader below a divider to separate hidden channels from visible channels. Visible
+         channels appear first in the list and this divider comes, followed by hidden channels.
+         [CHAR LIMIT=30] -->
+    <string name="option_channels_subheader_hidden">Hidden channels</string>
+    <!-- Item and title of "Program restrictions" option. It has two items: Rating Systems
+         and Ratings [CHAR LIMIT=30] -->
+    <string name="option_program_restrictions">Program restrictions</string>
+    <string name="option_change_pin">Change PIN</string>
+    <!-- Item and title of "Rating Systems" option. In this option, a user can choose the rating
+         system per country listed [CHAR LIMIT=30] -->
+    <string name="option_country_rating_systems">Rating systems</string>
+    <!-- Item and title of "Rating Systems" option. In this option, after choosing a rating system,
+         a user selects the actual rating to be restricted. [CHAR LIMIT=30] -->
+    <string name="option_ratings">Ratings</string>
+    <!-- Label of an item to show all rating systems in the system. [CHAR LIMIT=30] -->
+    <string name="option_see_all_rating_systems">See all rating systems</string>
+    <!-- Display country name for rating systems used in multiple countries.
+         [CHAR LIMIT=30] -->
+    <string name="other_countries">Other countries</string>
+
+    <!-- Description below "Channel Locked" item when there is no locked channel.
+         [CHAR LIMIT=NONE] -->
+    <string name="option_no_locked_channel">None</string>
+    <!-- Description below "Program Restrictions" item when there is no locked channel.
+         [CHAR LIMIT=NONE] -->
+    <string name="option_no_enabled_rating_system">None</string>
+
+    <!-- Label of an item not to select any restriction. [CHAR LIMIT=30] -->
+    <string name="option_rating_none">None</string>
+    <!-- Label of an item to select high restriction. [CHAR LIMIT=30] -->
+    <string name="option_rating_high">High restrictions</string>
+    <!-- Label of an item to select medium restriction. [CHAR LIMIT=30] -->
+    <string name="option_rating_medium">Medium restrictions</string>
+    <!-- Label of an item to select low restriction. [CHAR LIMIT=30] -->
+    <string name="option_rating_low">Low restrictions</string>
+    <!-- Label of an item to select custom restriction. In the restriction, a user
+         can finely tune the restriction with rating details. [CHAR LIMIT=30] -->
+    <string name="option_rating_custom">Custom</string>
+
+    <!-- The description used for high restrictions. [CHAR LIMIT=NONE] -->
+    <string name="option_rating_high_description">Content suitable for children</string>
+    <!-- The description used for medium restrictions. [CHAR LIMIT=NONE] -->
+    <string name="option_rating_medium_description">Content suitable for older children</string>
+    <!-- The description used for low restrictions. [CHAR LIMIT=NONE] -->
+    <string name="option_rating_low_description">Content suitable for teens</string>
+    <!-- The description used for custom restrictions. [CHAR LIMIT=NONE] -->
+    <string name="option_rating_custom_description">Manual restrictions</string>
+
+    <!-- Attribution text shown at the end of the 'Ratings' menu. It indicates where those rating
+         descriptions come from. [CHAR LIMIT=NONE] -->
+    <string name="option_attribution">Sources for rating descriptions</string>
+
+    <!-- Title of the menu where the user can select sub-ratings settings. Sub-ratings can be added
+         to the basic rating to let parents know additional information about the TV program such as
+         drug, violence, nudity, sex and coarse language. [CHAR LIMIT=30] -->
+    <string name="option_subrating_title">%1$s and sub-ratings</string>
+    <!-- Header of the divider in the sub-ratings menu. Sub-ratings can be added to the basic rating
+         to let parents know additional information about the TV program such as drug, violence,
+         nudity, sex and coarse language. [CHAR LIMIT=30] -->
+    <string name="option_subrating_header">Sub-ratings</string>
+
+    <!-- PIN UX -->
+    <eat-comment />
+    <!-- Title of PIN dialog when an user is asked to enter PIN to unlock channel.
+         [CHAR LIMIT=NONE] -->
+    <string name="pin_enter_unlock_channel">Enter your PIN to watch this channel</string>
+    <!-- Title of PIN dialog when an user is asked to enter PIN to unlock program.
+         [CHAR LIMIT=NONE] -->
+    <string name="pin_enter_unlock_program">Enter your PIN to watch this program</string>
+    <!-- Title of PIN dialog when an user tries to change Parental control setting.
+         [CHAR LIMIT=NONE] -->
+    <string name="pin_enter_pin">Enter your PIN</string>
+    <!-- Title of PIN dialog when an user is asked to set a PIN for the first time.
+         [CHAR LIMIT=NONE] -->
+    <string name="pin_enter_create_pin">To set parental controls, create a PIN</string>
+    <!-- Title of PIN dialog when an user is asked to change PIN [CHAR LIMIT=NONE] -->
+    <string name="pin_enter_new_pin">Enter new PIN</string>
+    <!-- Title of PIN dialog when an user is asked to set a PIN. [CHAR LIMIT=NONE] -->
+    <string name="pin_enter_again">Confirm your PIN</string>
+    <!-- Title of PIN dialog when an user is about to change older PIN. [CHAR LIMIT=NONE] -->
+    <string name="pin_enter_old_pin">Enter your current PIN</string>
+    <!-- Message shown in the dialog when the user entered the wrong. [CHAR LIMIT=NONE] -->
+    <plurals name="pin_enter_countdown">
+        <item quantity="one">You entered the wrong PIN 5 times.\nTry again in <xliff:g id="remaining_seconds" example="1">%1$d</xliff:g> second.</item>
+        <item quantity="other">You entered the wrong PIN 5 times.\nTry again in <xliff:g id="remaining_seconds" example="60">%1$d</xliff:g> seconds.</item>
+    </plurals>
+    <!-- Toast message when an user entered wrong PIN. [CHAR LIMIT=NONE] -->
+    <string name="pin_toast_wrong">That PIN was wrong. Try again.</string>
+    <!-- Toast message when an user couldn't pass the PIN confirmation. [CHAR LIMIT=NONE] -->
+    <string name="pin_toast_not_match">Try again, PIN doesn\'t match</string>
+
+    <!-- menu for "Settings" option -->
+    <eat-comment />
+    <!--  Title of "Settings" option. [CHAR LIMIT=30] -->
+    <string name="side_panel_title_settings">Settings</string>
+    <!-- Label of "Customize channels list" item to select and deselect channels.
+         [CHAR LIMIT=30] -->
+    <string name="settings_channel_source_item_customize_channels">Customize channel list</string>
+    <!-- Description of "Customize channels list" item. [CHAR LIMIT=NONE] -->
+    <string name="settings_channel_source_item_customize_channels_description">Choose channels for your program guide</string>
+    <!-- Label of "Channel sources" item to setup channels. [CHAR LIMIT=30] -->
+    <string name="settings_channel_source_item_setup">Channel sources</string>
+    <!-- Description of "Channel sources" item only when new inputs are available.
+         [CHAR LIMIT=NONE] -->
+    <string name="settings_channel_source_item_setup_new_inputs">New channels available</string>
+    <!-- Label of "Parental controls" item. [CHAR LIMIT=30] -->
+    <string name="settings_parental_controls">Parental controls</string>
+    <!-- Menu item to show licenses for open source code used in the app [CHAR LIMIT=35] -->
+    <string name="settings_menu_licenses">Open source licenses</string>
+    <!--Title for a dialog box that shows licenses for open source code used in the app [CHAR LIMIT=35] -->
+    <string name="dialog_title_licenses">Open source licenses</string>
+    <!-- Menu item that shows the application version(eg 1.2.03-final) as a second line below this title [CHAR LIMIT=35] -->
+    <string name="settings_menu_version">Version</string>
+
+    <!-- opt out preferences -->
+    <eat-comment />
+
+    <!--Title of option set to improve the Live TV app.
+       "Live TV" should match app_name -->
+    <string name="about_menu_improve">Help improve Live TV</string>
+    <!--Summary of option to improve the Live TV app. -->
+    <string name="about_menu_improve_summary">Share anonymous usage and diagnostics data with Google so we can make Live TV better and prevent issues like crashing and freezing.</string>
+
+    <!-- TunableTvView -->
+    <eat-comment />
+    <!-- Description on the locked screen when current channel is locked by parental control. [CHAR LIMIT=NONE] -->
+    <string name="tvview_channel_locked">To watch this channel, press Right and enter your PIN</string>
+    <!-- Description on the locked screen when the rating of the current content is restricted by parental control. [CHAR LIMIT=NONE] -->
+    <string name="tvview_content_locked">To watch this program, press Right and enter your PIN</string>
+    <!-- Description on the locked screen with the rating when the rating of the current content is restricted by parental control. [CHAR LIMIT=NONE] -->
+    <string name="tvview_content_locked_format">This program is rated <xliff:g id="rating" example="TV_MA">%1$s</xliff:g>.\nTo watch this program, press Right and enter your PIN.</string>
+    <!-- Description on the locked screen when current channel is locked by parental control. [CHAR LIMIT=NONE] -->
+    <string name="tvview_channel_locked_no_permission">To watch this channel, use the default Live TV app.</string>
+    <!-- Description on the locked screen when the rating of the current content is restricted by parental control. [CHAR LIMIT=NONE] -->
+    <string name="tvview_content_locked_no_permission">To watch this program, use the default Live TV app.</string>
+    <!-- Description on the locked screen with the rating when the rating of the current content is restricted by parental control. [CHAR LIMIT=NONE] -->
+    <string name="tvview_content_locked_format_no_permission">This program is rated <xliff:g id="rating" example="TV_MA">%1$s</xliff:g>.\nTo watch this program, use the default Live TV app.</string>
+
+    <!-- Description on the locked screen when the rating of the current content is restricted by parental control. [CHAR LIMIT=NONE] -->
+    <string name="shrunken_tvview_content_locked">Program is blocked</string>
+    <!-- Description on the locked screen with the rating when the rating of the current content is restricted by parental control. [CHAR LIMIT=NONE] -->
+    <string name="shrunken_tvview_content_locked_format">This program is rated <xliff:g id="rating" example="TV_MA">%1$s</xliff:g></string>
+
+    <!-- The text message which is shown when the current program is audio only one.
+         i.e. The program doesn't have a video. [CHAR LIMIT=NONE] -->
+    <string name="tvview_msg_audio_only">Audio only</string>
+    <!-- Message displayed when current channel's signal is too weak to use. [CHAR LIMIT=NONE] -->
+    <string name="tvview_msg_weak_signal">Weak signal</string>
+    <!-- The text message which is shown when the internet connection fails.
+         This message is shown at the center of the screen. [CHAR LIMIT=NONE] -->
+    <string name="tvview_msg_no_internet_connection">No internet connection</string>
+
+    <!-- Channel Banner -->
+    <eat-comment />
+    <!-- The text used when there is no program title. [CHAR LIMIT=NONE] -->
+    <string name="channel_banner_no_title">No title</string>
+    <!-- The text used when a channel is locked and program title needs to be hidden. [CHAR LIMIT=NONE] -->
+    <string name="channel_banner_locked_channel_title">Channel blocked</string>
+
+    <!-- Setup Sources Fragment -->
+    <eat-comment />
+    <!-- Category name for the newly installed channel sources(inputs).-->
+    <string name="setup_category_new">New</string>
+    <!-- Category name for the installed channel sources(inputs). -->
+    <string name="setup_category_done">Sources</string>
+    <!-- Description of an input to describe its channel count. [CHAR LIMIT=40] -->
+    <plurals name="setup_input_channels">
+        <item quantity="one">%1$d channel</item>
+        <item quantity="other">%1$d channels</item>
+    </plurals>
+    <!-- Description of an input with 0 channels. [CHAR LIMIT=40] -->
+    <string name="setup_input_no_channels">No channels available</string>
+    <!-- Description of newly installed inputs. [CHAR LIMIT=40] -->
+    <string name="setup_input_new">New</string>
+    <!-- Description of an input which was installed but not setup yet. [CHAR LIMIT=40] -->
+    <string name="setup_input_setup_now">Not set up</string>
+    <!-- Title for the link to the play store to get more channel sources. -->
+    <string name="setup_play_store_action_title">Get more sources</string>
+    <!-- Description for the link to the play store to get more channel sources. -->
+    <string name="setup_play_store_action_description">Browse apps that offer live channels</string>
+
+    <!-- New Sources Fragment -->
+    <eat-comment />
+    <!-- Title for the new sources fragment -->
+    <string name="new_sources_title">New channel sources available</string>
+    <!-- Description for the new sources fragment -->
+    <string name="new_sources_description">New channel sources have channels to offer.\nSet them up now, or do this later in the channel sources setting.</string>
+    <!-- String for the "Set up now" action -->
+    <string name="new_sources_action_setup">Set up now</string>
+    <!-- String for the "skip" action -->
+    <string name="new_sources_action_skip">Ok, got it</string>
+
+    <!-- Intro dialog -->
+    <eat-comment />
+    <string name="intro_title">@string/app_name</string>
+    <!-- Description of Intro Dialog [CHAR LIMIT=NONE] -->
+    <string name="intro_description"><b>Press SELECT</b> to access the TV menu.</string>
+
+    <!-- Toast messages -->
+    <eat-comment />
+    <!-- Error message when there is no TV input. [CHAR LIMIT=NONE] -->
+    <string name="msg_no_input">No TV input found</string>
+    <!-- Error message when a specific TV input isn't installed. [CHAR LIMIT=NONE] -->
+    <string name="msg_no_specific_input">Cannot find the TV input</string>
+    <!-- Error message when PIP is not supported. [CHAR LIMIT=NONE] -->
+    <string name="msg_no_pip_support">PIP is not supported</string>
+    <!-- Error message when there is no available input. [CHAR LIMIT=NONE] -->
+    <string name="msg_no_available_input_by_pip">There is no available input which can be shown with PIP</string>
+    <!-- Error message when the selected TV input is a tuner type TV input, not a pass-through type
+         input. Tuner type inputs such as built-in tuner, external usb tuner, network tuner or
+         virtual IPTV tuner provide live channels to tune to. As opposed to tuner type input,
+         pass-through type inputs such as HDMI, component, S-video, DVI or display port merely pass
+         the source video through to the display and don't provide ability to tune to a specific
+         channel unless the user directly controls the external source device (e.g. game console,
+         DVD player, settop box, etc) that is connected to the TV. [CHAR LIMIT=NONE] -->
+    <string name="msg_not_passthrough_input">Tuner type not suitable. Please launch Live TV app for tuner type TV input.</string>
+    <!-- Error message when tune is failed. [CHAR LIMIT=NONE] -->
+    <string name="msg_tune_failed">Tune failed</string>
+    <!-- Error message when the user attempts an action (select TIS setup-activity, app-link,
+         custom options, etc.) and no application was found that could perform the action.
+         [CHAR LIMIT=NONE] -->
+    <string name="msg_missing_app">No app was found to handle this action.</string>
+    <!-- Message when all channels are hidden. [CHAR LIMIT=NONE] -->
+    <string name="msg_all_channels_hidden">All source channels are hidden.\nSelect at least one channel to watch.</string>
+    <!-- Message displayed when availability is changed by unknown reason. [CHAR LIMIT=NONE] -->
+    <string name="msg_channel_unavailable_unknown">The video is unexpectedly unavailable</string>
+    <!-- Message to notify the different use of Back Button: Home Button(To exit) Back button
+         (commands for external device)  [CHAR LIMIT=NONE] -->
+    <string name="msg_back_key_guide">BACK key is for connected device. Press HOME button to exit.</string>
+    <!-- Error message when Live channels has been launched in Lollipop devices without system
+         permission. [CHAR LIMIT=NONE] -->
+    <string name="msg_not_supported_device">Live TV is not supported on this device with Android Lollipop.</string>
+    <!-- Error message when a user denied to grant READ_TV_LISTING permission. [CHAR LIMIT=NONE] -->
+    <string name="msg_read_tv_listing_permission_denied">Live TV needs permission to read the TV listings.</string>
+
+    <!-- Strings for debug or not to be shown to users -->
+    <eat-comment />
+    <!-- Debug Options -->
+    <string name="menu_debug_options" translatable="false">Debug options</string>
+    <string name="item_watch_history" translatable="false">Watch history</string>
+
+    <!-- Title of Recently watched dialog. It is used for debug purpose. -->
+    <string name="recently_watched" translatable="false">Recently watched</string>
+
+    <!-- EPG Search strings. -->
+    <!-- Remove translatable="false" once UI is finalized -->
+    <string name="search_result_no_result" translatable="false">No result</string>
+    <string name="search_result_title" translatable="false">Search results</string>
+
+    <!-- Onboarding experience.
+         TODO: Change translatable to true.-->
+    <eat-comment />
+    <!-- Text for the channel sources screen in onboarding. -->
+    <string name="setup_sources_text">Set up your sources</string>
+    <!-- Description for channel sources screen in onboarding. -->
+    <string name="setup_sources_description">Live channels combines the experience of traditional TV channels with streaming channels provided by apps.
+\n\nGet started by setting up the channel sources already installed. Or browse Google Play Store for more apps that offer live channels.</string>
+
+    <!-- DVR TODO(DVR): make translatable true. -->
+    <eat-comment />
+    <!-- Dialog message to ask to remove the selected recording schedule. -->
+    <string name="epg_dvr_dialog_message_remove_recording_schedule" translatable="false">Remove the scheduled recording?</string>
+    <!-- Dialog message to ask to stop the current recording. -->
+    <string name="epg_dvr_dialog_message_stop_recording" translatable="false">Stop the recording?</string>
+    <!-- Dialog message to ask to schedule the recording of the selected program. -->
+    <string name="epg_dvr_dialog_message_schedule_recording" translatable="false">Schedule the program recording?</string>
+    <!-- Dialog message to ask to delecte the recorded program. -->
+    <string name="epg_dvr_dialog_message_delete_schedule" translatable="false">Delete the recording schedule?</string>
+    <!-- Item label to schedule program recording. -->
+    <string name="epg_dvr_record_program" translatable="false">Record program</string>
+    <!-- Item label to schedule whole season recording of a TV show. -->
+    <string name="epg_dvr_record_season" translatable="false">Record season</string>
+    <!-- Item label to delete a recording schedule when a recording scheduled program is
+         clicked in EPG. -->
+    <string name="epg_dvr_delete_program" translatable="false">Delete schedule</string>
+
+    <!-- Menu item label to start DVR manager UI. -->
+    <string name="channels_item_dvr" translatable="false">Recorded programs</string>
+    <!-- Menu item label to start recording of the current channel. -->
+    <string name="channels_item_record_start" translatable="false">Start recording</string>
+    <!-- Menu item label to start recording of the current channel. -->
+    <string name="channels_item_record_stop" translatable="false">Stop recording</string>
+
+    <!-- Item of record start dialog item for 10 min recording. -->
+    <string name="recording_start_dialog_10_min_duration" translatable="false">10 min.</string>
+    <!-- Item of record start dialog item for 30 min recording. -->
+    <string name="recording_start_dialog_30_min_duration" translatable="false">30 min.</string>
+    <!-- Item of record start dialog item for 1 hour recording. -->
+    <string name="recording_start_dialog_1_hour_duration" translatable="false">1 hour</string>
+    <!-- Item of record start dialog item for 3 min recording. -->
+    <string name="recording_start_dialog_3_hours_duration" translatable="false">3 hours</string>
+    <!-- Item of record start dialog item until the end of the current program. -->
+    <string name="recording_start_dialog_till_end_of_program" translatable="false">End of program</string>
+
+    <!--TODO(DVR): decide if translation needed Name of DVR service [CHAR LIMIT=NONE]  -->
+    <string name="dvr_service_name" translatable="false">DVR Service</string>
+
+    <!-- DVR Menu strings. -->
+    <eat-comment />
+    <string name="dvr_main_current_recordings" translatable="false">Current Recordings</string>
+    <string name="dvr_main_scheduled_recordings" translatable="false">Scheduled Recordings</string>
+    <string name="dvr_main_recorded_programs" translatable="false">Recorded Programs</string>
+    <string name="dvr_main_settings" translatable="false">Settings</string>
+    <string name="dvr_msg_no_recording_on_the_row" translatable="false">None</string>
+    <string name="dvr_msg_program_title_unknown" translatable="false">Unknown</string>
+    <string name="dvr_msg_channel_unknown" translatable="false">Channel unknown</string>
+
+    <!-- DVR detailed page -->
+    <eat-comment />
+    <string name="dvr_detail_cancel" translatable="false">Cancel recording</string>
+    <string name="dvr_detail_stop_keep" translatable="false">Stop and keep recording</string>
+    <string name="dvr_detail_stop_delete" translatable="false">Stop and delete recording</string>
+    <string name="dvr_detail_play" translatable="false">Play recording</string>
+    <string name="dvr_detail_delete" translatable="false">Delete recording</string>
+
+    <!-- DVR epg strings -->
+    <eat-comment />
+    <string name="dvr_epg_record" translatable="false">Record</string>
+    <string name="dvr_epg_do_not_record" translatable="false">Do not record</string>
+    <string name="dvr_epg_conflict_dialog_title" translatable="false">Recording this program will
+        prevent the recording of the following programs:</string>
+
+</resources>

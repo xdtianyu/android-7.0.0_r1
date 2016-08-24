@@ -1,0 +1,17 @@
+# Set wlan.driver.* properties.
+set_prop(system_server, wlan_driver_prop)
+
+# Creates/Talks to qmuxd via the qmux_radio socket.
+qmux_socket(system_server)
+
+# For gss
+allow system_server gss_device:chr_file rw_file_perms;
+
+userdebug_or_eng(`
+    allow system_server diag_device:chr_file rw_file_perms;
+')
+
+r_dir_file(system_server, sysfs_usb)
+allow system_server sysfs_usb:file w_file_perms;
+
+dontaudit system_server self:capability sys_module;

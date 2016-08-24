@@ -1,0 +1,9 @@
+
+service vns /system/bin/vehicle_network_service
+   class core
+   user system
+   group system
+   critical
+
+on boot
+    start vns

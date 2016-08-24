@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2016 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" android:id="@+id/instrument_cluster_layout"
+              android:theme="@android:style/Theme.Material" android:weightSum="1"
+              android:background="@android:color/background_dark">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="214dp"
+            android:layout_height="match_parent">
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+        <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/speed" android:textSize="120dp"
+                android:textAlignment="center" android:gravity="center"
+                android:layout_marginTop="100dp"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:textAppearance="?android:attr/textAppearanceMedium"
+                  android:text="@string/fuel_level" android:id="@+id/textView"
+                  android:layout_gravity="left"/>
+        <ProgressBar style="?android:attr/progressBarStyleHorizontal" android:layout_width="226dp"
+                     android:layout_height="wrap_content" android:id="@+id/fuel_level_progress"
+                     android:max="100" android:progress="30"
+        />
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:layout_marginTop="40dp"
+                android:id="@+id/nav_layout">
+            <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/nav_event_title"
+            />
+            <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/nav_distance" android:gravity="center"
+            />
+        </LinearLayout>
+    </LinearLayout>
+    <FrameLayout android:orientation="vertical" android:layout_width="wrap_content"
+                  android:layout_height="match_parent" android:layout_weight="0.63"
+                  android:layout_gravity="center_vertical" android:weightSum="1"
+                  android:layout_marginTop="0dp">
+        <LinearLayout android:orientation="vertical" android:layout_width="match_parent"
+                      android:layout_height="wrap_content" android:layout_weight="0.63"
+                      android:layout_gravity="center_horizontal" android:weightSum="1"
+                      android:layout_marginTop="100dp"
+                      android:background="@android:color/background_dark"
+                      android:id="@+id/media_layout"
+                      android:visibility="gone">
+            <ImageView android:layout_width="200dp" android:layout_height="200dp"
+                       android:id="@+id/media_image" android:layout_gravity="center_horizontal"
+                       android:background="@android:color/holo_blue_light"
+                       android:scaleType="center"/>
+            <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
+                      android:textAppearance="?android:attr/textAppearanceMedium"
+                      android:id="@+id/media_album" android:gravity="center"
+                      android:layout_gravity="center_horizontal" android:visibility="gone"/>
+            <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
+                      android:textAppearance="?android:attr/textAppearanceMedium"
+                      android:id="@+id/media_track" android:gravity="center"
+                      android:layout_gravity="center_horizontal" android:textSize="28sp"/>
+            <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
+                      android:textAppearance="?android:attr/textAppearanceMedium"
+                      android:id="@+id/media_artist" android:gravity="center"
+                      android:textIsSelectable="false"
+            />
+        </LinearLayout>
+        <LinearLayout android:orientation="vertical" android:layout_width="match_parent"
+                      android:layout_height="wrap_content" android:layout_weight="0.63"
+                      android:layout_gravity="center_horizontal" android:weightSum="1"
+                      android:layout_marginTop="100dp"
+                      android:background="@android:color/background_dark"
+                      android:id="@+id/phone_layout"
+                      android:visibility="gone">
+            <ImageView android:layout_width="200dp" android:layout_height="200dp"
+                       android:id="@+id/phone_contact_photo" android:layout_gravity="center"
+                       android:background="#16161e"
+                       android:scaleType="fitCenter"/>
+            <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
+                      android:textAppearance="?android:attr/textAppearanceMedium"
+                      android:id="@+id/phone_title" android:gravity="center"
+                      android:layout_gravity="center_horizontal" android:textSize="28sp"/>
+            <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
+                      android:textAppearance="?android:attr/textAppearanceMedium"
+                      android:id="@+id/phone_subtitle" android:gravity="center"
+                      android:textIsSelectable="false"
+            />
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"Tv-ingang van USB-tuner"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"Aan"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"Uit"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"Wacht tot het proces is voltooid"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"Selecteer je kanaalbron"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"Geen signaal"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"Kan niet afstemmen op <xliff:g id="CHANNEL_NAME">%s</xliff:g>"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"Kan niet afstemmen"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"De software van de USB-tuner is recent geüpdatet. Scan de zenders opnieuw."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"AC3-audio niet beschikbaar"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"Configuratie van kanaaltuner"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"Configuratie van USB-kanaaltuner"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"Controleer of de USB-tuner is ingeschakeld en aangesloten op een tv-signaalbron.\n\nAls je een over-the-air-antenne gebruikt, moet je de positie of richting daarvan mogelijk aanpassen om zo veel mogelijk kanalen te ontvangen. Voor de beste resultaten plaats je de antenne op een hoge plek in de buurt van een raam."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"Doorgaan"</item>
+    <item msgid="7745727658174773453">"Niet nu"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"Kanaalconfiguratie opnieuw uitvoeren?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"Hiermee worden de gevonden kanalen verwijderd van de USB-tuner en wordt opnieuw gescand naar nieuwe kanalen.\n\nControleer of de USB-tuner is ingeschakeld en aangesloten op een tv-signaalbron.\n\nAls je een over-the-air-antenne gebruikt, moet je de positie of richting daarvan mogelijk aanpassen om zo veel mogelijk kanalen te ontvangen. Voor de beste resultaten plaats je de antenne op een hoge plek in de buurt van een raam."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"Doorgaan"</item>
+    <item msgid="4432431398374089710">"Annuleren"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"Het verbindingstype selecteren"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"Kies Antenne als er een externe antenne is aangesloten op de tuner. Kies Kabel als je kanalen afkomstig zijn van een kabelprovider. Als je het niet zeker weet, worden beide typen gescand. Dit kan echter langer duren."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"Antenne"</item>
+    <item msgid="2445879869338877559">"Kabel"</item>
+    <item msgid="597328838068074806">"Niet zeker"</item>
+    <item msgid="3613410733017077040">"Alleen ontwikkeling"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"Zenderconfiguratie van USB-tuner"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"Dit kan enkele minuten duren"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="other">%1$d kanalen gevonden</item>
+      <item quantity="one">%1$d kanaal gevonden</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"KANAALSCAN STOPPEN"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="other">%1$d kanalen gevonden</item>
+      <item quantity="one">%1$d kanaal gevonden</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="other">Er zijn %1$d kanalen gevonden tijdens de kanaalscan. Als je denkt dat dit niet klopt, pas je de antennepositie aan en voer je de scan opnieuw uit.</item>
+      <item quantity="one">Er is %1$d kanaal gevonden tijdens de kanaalscan. Als je denkt dat dit niet klopt, pas je de antennepositie aan en voer je de scan opnieuw uit.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"Gereed"</item>
+    <item msgid="496688122303154468">"Opnieuw scannen"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"Geen kanalen gevonden"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"De scan heeft geen kanalen gevonden. Controleer of de USB-tuner is ingeschakeld en aangesloten op een tv-signaalbron.\n\nAls je een over-the-air-antenne gebruikt, pas je de positie of richting daarvan aan. Voor de beste resultaten plaats je de antenne op een hoge plek in de buurt van een raam en voer je de scan opnieuw uit."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"Opnieuw scannen"</item>
+    <item msgid="6784975565864102291">"Gereed"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"Scannen naar tv-zenders"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"Zenderconfiguratie van USB-tuner"</string>
+</resources>

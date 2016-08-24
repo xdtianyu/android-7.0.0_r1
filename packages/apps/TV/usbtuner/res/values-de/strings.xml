@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"USB-Tuner – TV-Eingabe"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"An"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"Aus"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"Bitte warten Sie, bis die Verarbeitung abgeschlossen ist."</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"Kanalquelle auswählen"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"Kein Signal"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"<xliff:g id="CHANNEL_NAME">%s</xliff:g> konnte nicht eingestellt werden."</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"Fehler beim Einstellen"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"Die USB-Tunersoftware wurde kürzlich aktualisiert. Bitte führen Sie die Kanalsuche erneut durch."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"AC-3-Audio nicht verfügbar"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"Kanaleinrichtung über den Tuner"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"Kanaleinrichtung über den USB-Tuner"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"Vergewissern Sie sich, dass der USB-Tuner angeschlossen und mit einer TV-Signalquelle verbunden ist.\n\nWenn Sie eine terrestrische Antenne verwenden, ändern Sie die Position oder Ausrichtung, um mehr Kanäle zu finden. Die besten Ergebnisse erhalten Sie, wenn Sie sie an eine erhöhte Position in Fensternähe stellen."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"Weiter"</item>
+    <item msgid="7745727658174773453">"Jetzt nicht"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"Kanaleinrichtung erneut durchführen?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"Durch diese Aktion werden die gefundenen Kanäle vom USB-Tuner entfernt und die Kanalsuche wird erneut gestartet.\n\nVergewissern Sie sich, dass der USB-Tuner angeschlossen und mit einer TV-Signalquelle verbunden ist.\n\nWenn Sie eine terrestrische Antenne verwenden, ändern Sie die Position oder Ausrichtung, um mehr Kanäle zu finden. Die besten Ergebnisse erhalten Sie, wenn Sie sie an eine erhöhte Position in Fensternähe stellen."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"Weiter"</item>
+    <item msgid="4432431398374089710">"Abbrechen"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"Verbindungstyp auswählen"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"Wählen Sie \"Antenne\" aus, wenn eine externe Antenne mit dem Tuner verbunden ist. Wählen Sie \"Kabel\" aus, wenn Sie Ihre Kanäle bei einem Kabel-TV-Anbieter abrufen. Wenn Sie \"Nicht sicher\" auswählen, wird nach beiden Typen gesucht. Der Vorgang dauert dann unter Umständen länger."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"Antenne"</item>
+    <item msgid="2445879869338877559">"Kabel"</item>
+    <item msgid="597328838068074806">"Nicht sicher"</item>
+    <item msgid="3613410733017077040">"Nur Entwicklung"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"Kanaleinrichtung über den USB-Tuner"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"Dies kann einige Minuten dauern."</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="other">%1$d Kanäle gefunden</item>
+      <item quantity="one">%1$d Kanal gefunden</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"KANALSUCHE STOPPEN"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="other">%1$d Kanäle gefunden</item>
+      <item quantity="one">%1$d Kanal gefunden</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="other">Bei der Kanalsuche wurden %1$d Kanäle gefunden. Wenn Sie vermuten, dass dies nicht korrekt ist, ändern Sie die Antennenposition und versuchen Sie es noch einmal.</item>
+      <item quantity="one">Bei der Kanalsuche wurde %1$d Kanal gefunden. Wenn Sie vermuten, dass dies nicht korrekt ist, ändern Sie die Antennenposition und versuchen Sie es noch einmal.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"Fertig"</item>
+    <item msgid="496688122303154468">"Erneut suchen"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"Keine Kanäle gefunden"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"Bei der Suche wurden keine Kanäle gefunden. Vergewissern Sie sich, dass der USB-Tuner angeschlossen und mit einer TV-Signalquelle verbunden ist.\n\nWenn Sie eine terrestrische Antenne verwenden, ändern Sie die Position oder Ausrichtung. Die besten Ergebnisse erhalten Sie, wenn Sie sie an eine erhöhte Position in Fensternähe stellen. Suchen Sie dann erneut."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"Erneut suchen"</item>
+    <item msgid="6784975565864102291">"Fertig"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"Nach TV-Kanälen suchen"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"Kanaleinrichtung über den USB-Tuner"</string>
+</resources>

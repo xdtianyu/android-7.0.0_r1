@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"USB டியூனர் டிவி இன்புட்"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"இயக்கு"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"முடக்கு"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"செயலாக்கம் முடியும் வரை காத்திருக்கவும்"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"சேனல் மூலத்தைத் தேர்ந்தெடுக்கவும்"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"சிக்னல் இல்லை"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"<xliff:g id="CHANNEL_NAME">%s</xliff:g>க்கு டியூன் செய்ய முடியவில்லை"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"மாற்ற முடியவில்லை"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"USB டியூனர் மென்பொருள் சமீபத்தில் புதுப்பிக்கப்பட்டது. சேனல்களை மீண்டும் ஸ்கேன் செய்யவும்."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"AC3 ஆடியோ கிடைக்கவில்லை"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"சேனல் டியூனர் அமைவு"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"USB சேனல் டியூனர் அமைவு"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"USB டியூனர் செருகப்பட்டுள்ளதையும் டிவி சிக்னல் மூலத்துடன் இணைக்கப்பட்டுள்ளதையும் சரிபார்க்கவும்.\n\nஆன்டெனாவைப் பயன்படுத்தினால், அதிகமான சேனல்களைப் பெறுவதற்காக, அதன் இடம் அல்லது திசையைச் சரிசெய்ய வேண்டியிருக்கலாம். சிறந்த பலன்களுக்காக, உயரமான இடத்தில், ஜன்னலுக்கு அருகில் வைக்கவும்."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"தொடர்க"</item>
+    <item msgid="7745727658174773453">"இப்போது வேண்டாம்"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"சேனல் அமைவை மீண்டும் இயக்கவா?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"இது USB டியூனரிலிருந்து கண்டறிந்த சேனல்களை அகற்றி, மீண்டும் புதிய சேனல்களை ஸ்கேன் செய்யும்.\n\nUSB டியூனர் செருகப்பட்டுள்ளதையும் டிவி சிக்னல் மூலத்துடன் இணைக்கப்பட்டுள்ளதையும் சரிபார்க்கவும்.\n\nஆன்டெனாவைப் பயன்படுத்தினால், அதிகமான சேனல்களைப் பெறுவதற்காக, அதன் இடம் அல்லது திசையைச் சரிசெய்ய வேண்டியிருக்கலாம். சிறந்த பலன்களுக்காக, உயரமான இடத்தில், ஜன்னலுக்கு அருகில் வைக்கவும்."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"தொடர்க"</item>
+    <item msgid="4432431398374089710">"ரத்துசெய்"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"இணைப்பு வகையைத் தேர்ந்தெடுக்கவும்"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"டியூனருடன் வெளிப்புற ஆன்டெனா இணைக்கப்பட்டிருந்தால், ஆன்டெனாவைத் தேர்வுசெய்யவும். கேபிள் சேவை வழங்குநரிடமிருந்து சேனல்கள் கிடைக்கின்றன என்றால், கேபிளைத் தேர்வுசெய்யவும். எதையும் தேர்வுசெய்யவில்லை என்றால், இரு வகைகளிலும் ஸ்கேன் செய்யப்படும். ஆனால் இதற்கு அதிக நேரம் எடுக்கலாம்."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"ஆன்டெனா"</item>
+    <item msgid="2445879869338877559">"கேபிள்"</item>
+    <item msgid="597328838068074806">"நிச்சயமாகத் தெரியவில்லை"</item>
+    <item msgid="3613410733017077040">"டெவலப்பர்களுக்கு மட்டும்"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"USB சேனல் டியூனர் அமைவு"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"இதற்குச் சில நிமிடங்கள் ஆகலாம்"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="other">%1$d சேனல்கள் கண்டறியப்பட்டன</item>
+      <item quantity="one">%1$d சேனல் கண்டறியப்பட்டது</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"சேனலை ஸ்கேன் செய்வதை நிறுத்து"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="other">%1$d சேனல்கள் கண்டறியப்பட்டன</item>
+      <item quantity="one">%1$d சேனல் கண்டறியப்பட்டது</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="other">அருமை! சேனலை ஸ்கேன் செய்யும் போது, %1$d சேனல்கள் கண்டறியப்பட்டன. இவை சரியாகத் தெரியவில்லை என்றால், ஆன்டெனா நிலையை மாற்றி, மீண்டும் ஸ்கேன் செய்யவும்.</item>
+      <item quantity="one">அருமை! சேனலை ஸ்கேன் செய்யும் போது, %1$d சேனல் கண்டறியப்பட்டது. இது சரியாகத் தெரியவில்லை என்றால், ஆன்டெனா நிலையை மாற்றி, மீண்டும் ஸ்கேன் செய்யவும்.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"முடிந்தது"</item>
+    <item msgid="496688122303154468">"மீண்டும் ஸ்கேன் செய்"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"சேனல்கள் இல்லை"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"ஸ்கேனில் எந்தச் சேனல்களும் கண்டறியப்படவில்லை. USB டியூனர் செருகப்பட்டுள்ளதையும் டிவி சிக்னல் மூலத்துடன் இணைக்கப்பட்டுள்ளதையும் சரிபார்க்கவும்.\n\nஆன்டெனாவைப் பயன்படுத்தினால், அதன் இடம் அல்லது திசையைச் சரிசெய்யவும். சிறந்த பலன்களுக்காக, உயரமான இடத்தில், ஜன்னலுக்கு அருகில் வைத்து, மீண்டும் ஸ்கேன் செய்யவும்."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"மீண்டும் ஸ்கேன் செய்"</item>
+    <item msgid="6784975565864102291">"முடிந்தது"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"டிவி சேனல்களை ஸ்கேன் செய்"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"USB சேனல் டியூனர் அமைவு"</string>
+</resources>

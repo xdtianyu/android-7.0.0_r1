@@ -1,0 +1,13 @@
+type mm-pp-daemon, domain;
+type mm-pp-daemon_exec, exec_type, file_type;
+
+init_daemon_domain(mm-pp-daemon)
+
+# Need to use fb ioctls to communicate with kernel
+allow mm-pp-daemon graphics_device:chr_file rw_file_perms;
+
+# Allow socket calls in mm-pp-daemon
+allow mm-pp-daemon pps_socket:sock_file rw_file_perms;
+
+# Set hw.cabl.* properties.
+set_prop(mm-pp-daemon, hw_cabl_prop)

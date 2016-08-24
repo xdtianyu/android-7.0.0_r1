@@ -1,0 +1,50 @@
+# qcom-post-boot service
+type qcom-post-boot, domain;
+type qcom-post-boot_exec, exec_type, file_type;
+
+# Started by init
+init_daemon_domain(qcom-post-boot)
+
+# Set ctl.thermal-engine property.
+set_prop(qcom-post-boot, ctl_thermal-engine_prop);
+
+# Set ctl.mpdecision property.
+set_prop(qcom-post-boot, ctl_mpdecision_prop);
+
+# Allow access to /dev/ttyHS0.
+allow qcom-post-boot serial_device:chr_file { getattr setattr };
+
+allow qcom-post-boot shell_exec:file r_file_perms;
+
+# Write access to thermal related sysfs nodes.
+allow qcom-post-boot sysfs_thermal:dir search;
+allow qcom-post-boot sysfs_thermal:file w_file_perms;
+
+# Access to /sys/module/rpm_resources/*.
+allow qcom-post-boot sysfs_rpm_resources:dir search;
+allow qcom-post-boot sysfs_rpm_resources:file w_file_perms;
+
+# Write access to mpdecision related sysfs nodes.
+allow qcom-post-boot sysfs_mpdecision:dir search;
+allow qcom-post-boot sysfs_mpdecision:file { rw_file_perms setattr };
+
+# Access to /sys/module/msm_dcvs/*.
+allow qcom-post-boot sysfs_dcvs:dir search;
+allow qcom-post-boot sysfs_dcvs:file { rw_file_perms setattr };
+
+# Chown /sys/devices/platform/bt_power/*.
+allow qcom-post-boot sysfs_bt_power:dir search;
+allow qcom-post-boot sysfs_bt_power:file { getattr setattr };
+
+# Write access to /sys/devices/system/cpu/*.
+allow qcom-post-boot sysfs_devices_system_cpu:file { w_file_perms setattr };
+
+# Write access to dynamically generated files under /sys/devices/system/cpufreq/ondemand/*.
+allow qcom-post-boot sysfs:file { w_file_perms setattr };
+
+# Allow changing the owner of the above sysfs nodes.
+allow qcom-post-boot self:capability { fowner chown fsetid };
+
+allow qcom-post-boot sysfs:file r_file_perms;
+
+allow qcom-post-boot toolbox_exec:file rx_file_perms;

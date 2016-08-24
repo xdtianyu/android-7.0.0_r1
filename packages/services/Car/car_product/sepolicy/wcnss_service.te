@@ -1,0 +1,17 @@
+# WCNSS service
+type wcnss_service, domain;
+type wcnss_service_exec, exec_type, file_type;
+
+init_daemon_domain(wcnss_service)
+net_domain(wcnss_service)
+
+unix_socket_connect(wcnss_service, property, init)
+
+# Allow creation and modification of wifi data files.
+allow wcnss_service wifi_data_file:file create_file_perms;
+
+# Allow modifications of /dev/wcnss_* devices.
+allow wcnss_service wcnss_device:chr_file rw_file_perms;
+
+# Set wlan.driver.* properties.
+set_prop(wcnss_service, wlan_driver_prop)

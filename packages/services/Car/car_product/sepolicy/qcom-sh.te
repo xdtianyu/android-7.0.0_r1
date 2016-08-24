@@ -1,0 +1,21 @@
+# qcom-sh service
+type qcom-sh, domain;
+type qcom-sh_exec, exec_type, file_type;
+
+# Started by init
+init_daemon_domain(qcom-sh)
+
+# Set ctl.quipc_* property.
+set_prop(qcom-sh, ctl_quipc_igsn_prop)
+set_prop(qcom-sh, ctl_quipc_main_prop)
+
+allow qcom-sh self:capability net_admin;
+
+# Allow writing of ipv6 network properties
+allow qcom-sh proc_net:file w_file_perms;
+
+allow qcom-sh shell_exec:file r_file_perms;
+
+allow qcom-sh toolbox_exec:file rx_file_perms;
+
+allow qcom-sh sysfs:file r_file_perms;

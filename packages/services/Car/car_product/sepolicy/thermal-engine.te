@@ -1,0 +1,38 @@
+# Thermal-engine daemon
+type thermal-engine, domain;
+type thermal-engine_exec, exec_type, file_type;
+
+init_daemon_domain(thermal-engine)
+
+userdebug_or_eng(`
+    allow thermal-engine diag_device:chr_file rw_file_perms;
+')
+
+allow thermal-engine self:capability { net_admin fsetid };
+
+allow thermal-engine self:netlink_kobject_uevent_socket create_socket_perms;
+
+# Allow access to /dev/smem_log.
+allow thermal-engine smem_log_device:chr_file rw_file_perms;
+
+# Access to /dev/socket/thermal-.*
+allow thermal-engine thermal_socket:sock_file rw_file_perms;
+
+# Access to /dev/socket/mpdecision.
+unix_socket_connect(thermal-engine, mpdecision, mpdecision);
+
+# Allow access to /dev/uio0.
+#allow rmt_storage uio_device:chr_file rw_file_perms;
+
+# Write access to thermal related sysfs nodes.
+r_dir_file(thermal-engine, sysfs_thermal)
+allow thermal-engine sysfs_thermal:file w_file_perms;
+
+# Creates/Talks to qmuxd via the qmux_radio socket.
+qmux_socket(thermal-engine);
+
+allow thermal-engine self:socket create_socket_perms;
+
+allow thermal-engine sysfs_thermal:file r_file_perms;
+
+allow thermal-engine sysfs_thermal:dir r_dir_perms;

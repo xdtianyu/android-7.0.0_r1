@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"USB Tuner TV इनपुट"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"अन गर्नुहोस्"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"अफ गर्नुहोस्"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"कृपया प्रक्रिया पूर्ण हुन प्रतीक्षा गर्नुहोस्"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"तपाईँको च्यानल स्रोत छान्‍नुहोस्"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"कुनै सिग्‍नल छैन"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"<xliff:g id="CHANNEL_NAME">%s</xliff:g> लाई ट्युन गर्न असफल"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"ट्युन गर्न विफल"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"USB tuner सफ्टवेयर हालै अद्यावधिक गरिएको छ। च्यानलहरू पुन:खोजी गर्नुहोस्।"</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"AC3 अडियो उपलब्ध छैन"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"च्यानल ट्युनर सेटअप"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"USB च्यानल ट्युनर सेटअप"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"USB ट्युनर प्लगइन रहेको र एक TV सिग्नल स्रोतमा जडान गरिएको प्रमाणिकरण गर्नुहोस्\n\nयदि एक हावाबाट एन्टेनाको प्रयोग भइरहेको छ भने, तपाईँलाई धेरै च्यानलहरू प्राप्त गर्न यसको स्थान वा दिशा समायोजन गर्न आवश्यक हुन सक्छ। सबैभन्दा राम्रो परिणामहरूको लागि, यसलाई उच्च स्थानमा र एक झ्यालको नजिक राख्नुहोस्।"</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"जारी राख्नुहोस्"</item>
+    <item msgid="7745727658174773453">"अहिले होइन"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"च्यानल सेटअप पुनः सञ्चालन गर्ने हो?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"यसले USB ट्युनरबाट फेला परेका च्यानलहरू हटाउनेछ र नयाँ च्यानलहरूको लागि फेरि स्क्यान गर्नेछ। \n\nUSB ट्युनर प्लगइन रहेको र एक TV सिग्नल स्रोतमा जडान गरिएको प्रमाणिकरण गर्नुहोस्।\n\nयदि एक हावाबाट एन्टेनाको प्रयोग भइरहेको छ भने, तपाईँलाई धेरै च्यानलहरू प्राप्त गर्न यसको स्थान वा दिशा समायोजन गर्न आवश्यक हुन सक्छ। सबैभन्दा राम्रो परिणामहरूको लागि, यसलाई उच्च स्थानमा र एक झ्यालको नजिक राख्नुहोस्।"</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"जारी राख्नुहोस्"</item>
+    <item msgid="4432431398374089710">"रद्द गर्नुहोस्"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"जडान प्रकार चयन गर्नुहोस्"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"यदि ट्युनरमा त्यहाँ बाह्य एन्टेना जडान गरिएको छ भने एन्टेना छनौट गर्नुहोस्। यदि तपाईँको च्यानलहरू केबल सेवा प्रदायकबाट आउँछ भने केबल छनौट गर्नुहोस्। यदि तपाईँ निश्चित हुनुहुन्न भने, दुवै प्रकारहरू स्क्यान गरिने छन्, तर यसले लामो समय लिन सक्छ।"</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"एन्टेना"</item>
+    <item msgid="2445879869338877559">"केबल"</item>
+    <item msgid="597328838068074806">"निश्चित छैन"</item>
+    <item msgid="3613410733017077040">"विकास मात्र"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"USB च्यानल ट्युनर सेटअप"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"यसले धेरै मिनेट लिन सक्छ"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="other">%1$d च्यानलहरू फेला पर्यो</item>
+      <item quantity="one">%1$d च्यानल फेला पर्यो</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"च्यानल स्क्यान गर्न रोक्नुहोस्"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="other">%1$d च्यानलहरू फेला पर्यो</item>
+      <item quantity="one">%1$d च्यानल फेला पर्यो</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="other">राम्रो! च्यानल स्क्यान गर्दा %1$d च्यानलहरू फेला पर्यो। यदि त्यो सही जस्तो देखिन्न भने, एन्टेनाको स्थान समायोजन गर्ने प्रयास गर्नुहोस् र फेरि स्क्यान गर्नुहोस्।</item>
+      <item quantity="one">राम्रो! च्यानल स्क्यान गर्दा %1$d च्यानल फेला पर्यो। यदि त्यो सही जस्तो देखिन्न भने, एन्टेनाको स्थान समायोजन गर्ने प्रयास गर्नुहोस् र फेरि स्क्यान गर्नुहोस्।</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"सम्पन्न भयो"</item>
+    <item msgid="496688122303154468">"फेरि स्क्यान गर्नुहोस्"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"कुनै च्यानलहरू फेला परेनन्।"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"स्क्यानले कुनै पनि च्यानलहरू फेला पारेनन्। USB ट्युनर प्लगइन रहेको र एक TV सिग्नल स्रोतमा जडान गरिएको प्रमाणिकरण गर्नुहोस्। \n\nयदि एक हावाबाट एन्टेनाको प्रयोग भइरहेको छ भने, यसको स्थान वा दिशा समायोजन गर्नुहोस्। सबै भन्दा राम्रो परिणामको लागि, यसलाई उच्च स्थानमा र एक झ्यालको नजिक राख्नुहोस् र फेरि स्क्यान गर्नुहोस्।"</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"फेरि स्क्यान गर्नुहोस्"</item>
+    <item msgid="6784975565864102291">"सम्पन्न भयो"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"TV च्यानलहरूका लागि स्क्यान गर्नुहोस्"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"USB च्यानल ट्युनर सेटअप"</string>
+</resources>

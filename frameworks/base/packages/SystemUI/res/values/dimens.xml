@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (c) 2006, The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+-->
+<resources>
+    <!-- Amount to offset bottom of notification peek window from top of status bar. -->
+    <dimen name="peek_window_y_offset">-12dp</dimen>
+
+    <!-- thickness (height) of the navigation bar on phones that require it -->
+    <dimen name="navigation_bar_size">@*android:dimen/navigation_bar_height</dimen>
+    <!-- Minimum swipe distance to catch the swipe gestures to invoke assist or switch tasks. -->
+    <dimen name="navigation_bar_min_swipe_distance">48dp</dimen>
+
+    <!-- thickness (height) of the dead zone at the top of the navigation bar,
+         reducing false presses on navbar buttons; approx 2mm -->
+    <dimen name="navigation_bar_deadzone_size">12dp</dimen>
+    <!-- size of the dead zone when touches have recently occurred elsewhere on screen -->
+    <dimen name="navigation_bar_deadzone_size_max">32dp</dimen>
+
+    <!-- Height of notification icons in the status bar -->
+    <dimen name="status_bar_icon_size">@*android:dimen/status_bar_icon_size</dimen>
+
+    <!-- Height of the battery icon in the status bar. -->
+    <dimen name="status_bar_battery_icon_height">14.5dp</dimen>
+
+    <!-- Width of the battery icon in the status bar. -->
+    <dimen name="status_bar_battery_icon_width">9.5dp</dimen>
+
+    <!-- The font size for the clock in the status bar. -->
+    <dimen name="status_bar_clock_size">14sp</dimen>
+
+    <!-- The starting padding for the clock in the status bar. -->
+    <dimen name="status_bar_clock_starting_padding">7dp</dimen>
+
+    <!-- The end padding for the clock in the status bar. -->
+    <dimen name="status_bar_clock_end_padding">0dp</dimen>
+
+    <!-- Spacing after the wifi signals that is present if there are any icons following it. -->
+    <dimen name="status_bar_wifi_signal_spacer_width">4dp</dimen>
+
+    <!-- Spacing before the airplane mode icon if there are any icons preceding it. -->
+    <dimen name="status_bar_airplane_spacer_width">4dp</dimen>
+
+    <!-- The amount to scale each of the status bar icons by. A value of 1 means no scaling. -->
+    <item name="status_bar_icon_scale_factor" format="float" type="dimen">1.0</item>
+
+    <!-- Height of a small notification in the status bar-->
+    <dimen name="notification_min_height">92dp</dimen>
+
+    <!-- Height of a small notification in the status bar which was used before android N -->
+    <dimen name="notification_min_height_legacy">64dp</dimen>
+
+    <!-- Height of a large notification in the status bar -->
+    <dimen name="notification_max_height">284dp</dimen>
+
+    <!-- Height of a heads up notification in the status bar for legacy custom views -->
+    <dimen name="notification_max_heads_up_height_legacy">128dp</dimen>
+
+    <!-- Height of a heads up notification in the status bar -->
+    <dimen name="notification_max_heads_up_height">148dp</dimen>
+
+    <!-- Height of a the summary ("more card") notification on keyguard. -->
+    <dimen name="notification_summary_height">44dp</dimen>
+
+    <!-- Minimum layouted height of a notification in the statusbar-->
+    <dimen name="min_notification_layout_height">48dp</dimen>
+
+    <!-- Width of the space containing the gear icon behind a notification -->
+    <dimen name="notification_gear_width">64dp</dimen>
+
+    <!-- The space around the gear icon displayed behind a notification  -->
+    <dimen name="notification_gear_padding">20dp</dimen>
+
+    <!-- size at which Notification icons will be drawn in the status bar -->
+    <dimen name="status_bar_icon_drawing_size">17dip</dimen>
+
+    <!-- opacity at which Notification icons will be drawn in the status bar -->
+    <item type="dimen" name="status_bar_icon_drawing_alpha">90%</item>
+
+    <!-- gap on either side of status bar notification icons -->
+    <dimen name="status_bar_icon_padding">0dp</dimen>
+
+    <!-- The padding on the global screenshot background image -->
+    <dimen name="global_screenshot_bg_padding">20dp</dimen>
+
+    <!-- The width of the view containing navigation buttons -->
+    <dimen name="navigation_key_width">70dp</dimen>
+
+    <dimen name="navigation_key_padding">0dp</dimen>
+
+    <dimen name="navigation_key_width_sw600dp_land">162dp</dimen>
+    <dimen name="navigation_key_padding_sw600dp_land">42dp</dimen>
+
+    <!-- The width of the view containing the menu/ime navigation bar icons -->
+    <dimen name="navigation_extra_key_width">36dp</dimen>
+
+    <!-- The padding on the side of the navigation bar. Must be greater than or equal to
+         navigation_extra_key_width -->
+    <dimen name="navigation_side_padding">36dp</dimen>
+
+    <!-- Default distance beyond which snaps to the matching target -->
+    <dimen name="navbar_search_snap_margin">40dip</dimen>
+
+    <!-- Diameter of outer shape drawable shown in navbar search-->
+    <dimen name="navbar_search_outerring_diameter">340dp</dimen>
+
+    <!-- Diameter of outer shape drawable shown in navbar search. Should be 1/2 of above value -->
+    <dimen name="navbar_search_outerring_radius">170dp</dimen>
+
+    <!-- Height of search panel including navigation bar height -->
+    <dimen name="navbar_search_panel_height">230dip</dimen>
+
+    <!-- Height of the draggable handle at the bottom of the phone notification panel -->
+    <dimen name="close_handle_height">36dp</dimen>
+
+    <!-- Amount of close_handle that will NOT overlap the notification list -->
+    <dimen name="close_handle_underlap">32dp</dimen>
+
+    <!-- Height of the status bar header bar -->
+    <dimen name="status_bar_header_height">80dp</dimen>
+
+    <!-- Height of the status bar header bar when expanded -->
+    <dimen name="status_bar_header_height_expanded">116dp</dimen>
+
+    <!-- Height of the status bar header bar when on Keyguard -->
+    <dimen name="status_bar_header_height_keyguard">40dp</dimen>
+
+    <!-- Margin start of the system icons super container -->
+    <dimen name="system_icons_super_container_margin_start">16dp</dimen>
+
+    <!-- Width for the notification panel and related windows -->
+    <dimen name="match_parent">-1px</dimen>
+    <dimen name="standard_notification_panel_width">416dp</dimen>
+    <dimen name="notification_panel_width">@dimen/match_parent</dimen>
+
+    <dimen name="volume_dialog_panel_width">@dimen/standard_notification_panel_width</dimen>
+
+    <!-- Gravity for the notification panel -->
+    <integer name="standard_notification_panel_layout_gravity">0x31</integer><!-- top|center_horizontal -->
+    <integer name="notification_panel_layout_gravity">0x37</integer><!-- fill_horizontal|top -->
+
+    <!-- Height of the carrier/wifi name label -->
+    <dimen name="carrier_label_height">24dp</dimen>
+
+    <!-- The distance you can pull a notification before it pops open -->
+    <dimen name="one_finger_pop_limit">0dp</dimen>
+
+    <!-- Minimum fraction of the screen that should be taken up by the notification panel.
+         Not used at this screen size. -->
+    <item type="dimen" name="notification_panel_min_height_frac">0%</item>
+
+    <dimen name="blinds_pop_threshold">0dp</dimen>
+
+    <!-- The size of the gesture span needed to activate the "pull" notification expansion -->
+    <dimen name="pull_span_min">25dp</dimen>
+
+    <dimen name="qs_tile_height">88dp</dimen>
+    <dimen name="qs_tile_margin">16dp</dimen>
+    <dimen name="qs_tile_margin_top">16dp</dimen>
+    <dimen name="qs_quick_tile_size">48dp</dimen>
+    <dimen name="qs_quick_tile_padding">12dp</dimen>
+    <dimen name="qs_date_anim_translation">32dp</dimen>
+    <dimen name="qs_date_alarm_anim_translation">22dp</dimen>
+    <dimen name="qs_date_collapsed_text_size">14sp</dimen>
+    <dimen name="qs_date_text_size">16sp</dimen>
+    <dimen name="qs_header_gear_translation">16dp</dimen>
+    <dimen name="qs_page_indicator_width">16dp</dimen>
+    <dimen name="qs_page_indicator_height">8dp</dimen>
+    <dimen name="qs_tile_icon_size">24dp</dimen>
+    <dimen name="qs_tile_text_size">12sp</dimen>
+    <dimen name="qs_tile_divider_height">1dp</dimen>
+    <dimen name="qs_panel_padding">16dp</dimen>
+    <dimen name="qs_dual_tile_height">112dp</dimen>
+    <dimen name="qs_dual_tile_padding_vertical">8dp</dimen>
+    <dimen name="qs_dual_tile_padding_horizontal">6dp</dimen>
+    <dimen name="qs_tile_padding_top">14dp</dimen>
+    <dimen name="qs_tile_padding_top_large_text">4dp</dimen>
+    <dimen name="qs_tile_padding_below_icon">12dp</dimen>
+    <dimen name="qs_tile_padding_bottom">16dp</dimen>
+    <dimen name="qs_tile_spacing">4dp</dimen>
+    <dimen name="qs_panel_padding_bottom">8dp</dimen>
+    <dimen name="qs_detail_item_height">48dp</dimen>
+    <dimen name="qs_brightness_padding_top">6dp</dimen>
+    <dimen name="qs_detail_header_text_size">20sp</dimen>
+    <dimen name="qs_detail_button_text_size">14sp</dimen>
+    <dimen name="qs_detail_item_primary_text_size">16sp</dimen>
+    <dimen name="qs_detail_item_secondary_text_size">14sp</dimen>
+    <dimen name="qs_detail_empty_text_size">14sp</dimen>
+    <dimen name="qs_detail_margin_top">28dp</dimen>
+    <dimen name="qs_data_usage_text_size">14sp</dimen>
+    <dimen name="qs_data_usage_usage_text_size">36sp</dimen>
+    <dimen name="qs_expand_margin">0dp</dimen>
+    <dimen name="qs_battery_padding">2dp</dimen>
+    <dimen name="qs_detail_items_padding_top">4dp</dimen>
+
+    <dimen name="segmented_button_spacing">0dp</dimen>
+    <dimen name="borderless_button_radius">2dp</dimen>
+
+    <dimen name="restricted_padlock_pading">4dp</dimen>
+
+    <!-- How far the expanded QS panel peeks from the header in collapsed state. -->
+    <dimen name="qs_peek_height">0dp</dimen>
+
+    <!-- Zen mode panel: condition item button padding -->
+    <dimen name="zen_mode_condition_detail_button_padding">8dp</dimen>
+
+    <!-- Zen mode panel: spacing between condition items -->
+    <dimen name="zen_mode_condition_detail_item_spacing">12dp</dimen>
+
+    <!-- Zen mode panel: spacing between two-line condition upper and lower lines -->
+    <dimen name="zen_mode_condition_detail_item_interline_spacing">4dp</dimen>
+
+    <!-- Zen mode panel: bottom padding, a bit less than qs_panel_padding -->
+    <dimen name="zen_mode_condition_detail_bottom_padding">4dp</dimen>
+
+    <!-- used by DessertCase -->
+    <dimen name="dessert_case_cell_size">192dp</dimen>
+
+    <!-- Default glow radius for GlowPadView -->
+    <dimen name="glowpadview_glow_radius">75dip</dimen>
+
+    <!-- Default distance from each snap target that GlowPadView considers a "hit" -->
+    <dimen name="glowpadview_inner_radius">15dip</dimen>
+
+    <!-- Space reserved for the cards behind the top card in the bottom stack -->
+    <dimen name="bottom_stack_peek_amount">12dp</dimen>
+
+    <!-- bottom_stack_peek_amount + notification_min_height
+         + notification_collapse_second_card_padding -->
+    <dimen name="min_stack_height">104dp</dimen>
+
+    <!-- The height of the area before the bottom stack in which the notifications slow down -->
+    <dimen name="bottom_stack_slow_down_length">12dp</dimen>
+
+    <!-- Z distance between notifications if they are in the stack -->
+    <dimen name="z_distance_between_notifications">0.5dp</dimen>
+
+    <!-- The height of the divider between the individual notifications. -->
+    <dimen name="notification_divider_height">0.5dp</dimen>
+
+    <!-- The height of a notification header -->
+    <dimen name="notification_header_height">53dp</dimen>
+
+    <!-- The height of the divider between the individual notifications when the notification wants it to be increased. This is currently the case for notification groups -->
+    <dimen name="notification_divider_height_increased">6dp</dimen>
+
+    <!-- The minimum amount of top overscroll to go to the quick settings. -->
+    <dimen name="min_top_overscroll_to_qs">36dp</dimen>
+
+    <!-- The height of the speed bump view. -->
+    <dimen name="speed_bump_height">16dp</dimen>
+
+    <!-- Lockscreen unlocking falsing threshold. -->
+    <dimen name="unlock_falsing_threshold">80dp</dimen>
+
+    <!-- Lockscreen falsing threshold for quick settings. -->
+    <dimen name="qs_falsing_threshold">60dp</dimen>
+
+    <!-- Falsing threshold used when dismissing notifications from the lockscreen. -->
+    <dimen name="swipe_helper_falsing_threshold">70dp</dimen>
+
+    <!-- Minimum distance the user has to drag down to go to the full shade. -->
+    <dimen name="keyguard_drag_down_min_distance">100dp</dimen>
+
+    <!-- The fraction of the screen height where the clock on the Keyguard has its center. The
+         max value is used when no notifications are displaying, and the min value is when the
+         highest possible number of notifications are showing. -->
+    <fraction name="keyguard_clock_y_fraction_max">32.5%</fraction>
+    <fraction name="keyguard_clock_y_fraction_min">19.8%</fraction>
+
+    <!-- The margin between the clock and the notifications on Keyguard. See
+         keyguard_clock_height_fraction_* for the difference between min and max.-->
+    <dimen name="keyguard_clock_notifications_margin_min">30dp</dimen>
+    <dimen name="keyguard_clock_notifications_margin_max">42dp</dimen>
+    <dimen name="heads_up_scrim_height">250dp</dimen>
+
+    <!-- The minimum amount the user needs to swipe to go to the camera / phone. -->
+    <dimen name="keyguard_min_swipe_amount">110dp</dimen>
+
+    <!-- The minimum background radius when swiping to a side for the camera / phone affordances. -->
+    <dimen name="keyguard_affordance_min_background_radius">30dp</dimen>
+
+    <!-- The size of the touch targets on the keyguard for the affordances. -->
+    <dimen name="keyguard_affordance_touch_target_size">120dp</dimen>
+
+    <!-- The grow amount for the camera and phone circles when hinting -->
+    <dimen name="hint_grow_amount_sideways">60dp</dimen>
+
+    <!-- Distance between notifications and header when they are considered to be colliding. -->
+    <dimen name="header_notifications_collide_distance">48dp</dimen>
+
+    <!-- Distance the user needs to drag vertically such that a swipe is accepted to unlock the
+         device. -->
+    <dimen name="unlock_move_distance">75dp</dimen>
+
+    <!-- Distance after which the scrim starts fading in when dragging down the quick settings -->
+    <dimen name="notification_scrim_wait_distance">100dp</dimen>
+
+    <!-- Move distance for the unlock hint animation on the lockscreen -->
+    <dimen name="hint_move_distance">75dp</dimen>
+
+    <!-- The width of the region on the left/right edge of the screen for performing the camera/
+         phone hints. -->
+    <dimen name="edge_tap_area_width">48dp</dimen>
+
+    <!-- The padding between notification children when collapsed -->
+    <dimen name="notification_children_padding">4dp</dimen>
+
+    <!-- The padding on top of the first notification to the children container -->
+    <dimen name="notification_children_container_top_padding">8dp</dimen>
+
+    <!-- end margin for multi user switch in expanded quick settings -->
+    <dimen name="multi_user_switch_expanded_margin">8dp</dimen>
+
+    <!-- end margin for multi user switch in collapsed quick settings -->
+    <dimen name="multi_user_switch_collapsed_margin">13dp</dimen>
+
+    <!-- end margin for multi user switch in collapsed quick settings -->
+    <dimen name="multi_user_switch_keyguard_margin">3dp</dimen>
+
+    <!-- end margin for system icons if multi user switch is hidden -->
+    <dimen name="system_icons_switcher_hidden_expanded_margin">16dp</dimen>
+
+    <!-- The thickness of the colored border around the current user. -->
+    <dimen name="keyguard_user_switcher_border_thickness">2dp</dimen>
+
+    <dimen name="data_usage_graph_marker_width">4dp</dimen>
+
+    <!-- The padding bottom of the clock group when QS is expanded. -->
+    <dimen name="clock_expanded_bottom_margin">20dp</dimen>
+
+    <!-- The padding bottom of the clock group when QS is collapsed. -->
+    <dimen name="clock_collapsed_bottom_margin">10dp</dimen>
+
+    <!-- The padding bottom of the clock group when QS is collapsed for large text -->
+    <dimen name="clock_collapsed_bottom_margin_large_text">6dp</dimen>
+
+    <!-- The width of the multi user switch on keyguard and collapsed QS header. -->
+    <dimen name="multi_user_switch_width_collapsed">34dp</dimen>
+
+    <!-- The width of the multi user switch in expanded QS header. -->
+    <dimen name="multi_user_switch_width_expanded">48dp</dimen>
+
+    <!-- The width of user avatar when on Keyguard -->
+    <dimen name="multi_user_switch_width_keyguard">34dp</dimen>
+
+    <!-- The width of user avatar when collapsed -->
+    <dimen name="multi_user_avatar_collapsed_size">22dp</dimen>
+
+    <!-- The width of user avatar when on Keyguard -->
+    <dimen name="multi_user_avatar_keyguard_size">22dp</dimen>
+
+    <!-- The width of user avatar when expanded -->
+    <dimen name="multi_user_avatar_expanded_size">24dp</dimen>
+
+    <!-- The font size of the time when collapsed in QS -->
+    <dimen name="qs_time_collapsed_size">14sp</dimen>
+
+    <!-- The font size of the time when expanded in QS -->
+    <dimen name="qs_time_expanded_size">20sp</dimen>
+
+    <!-- The font size of the "emergency calls only" label in QS -->
+    <dimen name="qs_emergency_calls_only_text_size">12sp</dimen>
+
+    <!-- The font size of the date in QS -->
+    <dimen name="qs_date_collapsed_size">14sp</dimen>
+
+    <!-- Battery level text padding end when in expanded QS and on Keyguard -->
+    <dimen name="battery_level_padding_end">2dp</dimen>
+
+    <!-- The top padding of the clear all button -->
+    <dimen name="clear_all_padding_top">12dp</dimen>
+
+    <!-- Largest size an avatar might need to be drawn in the user picker, status bar, or
+         quick settings header -->
+    <dimen name="max_avatar_size">48dp</dimen>
+
+    <!-- Size of user icon + frame in the qs/keyguard user picker (incl. frame) -->
+    <dimen name="framed_avatar_size">54dp</dimen>
+
+    <!-- Margin on the left side of the carrier text on Keyguard -->
+    <dimen name="keyguard_carrier_text_margin">16dp</dimen>
+
+    <!-- Margin on the left side of the battery % in the header. -->
+    <dimen name="header_battery_margin_expanded">6dp</dimen>
+
+    <!-- Margin on the left side of the battery % when on Keyguard. -->
+    <dimen name="header_battery_margin_keyguard">6dp</dimen>
+
+    <!-- Margin on the right side of the system icon group on Keyguard. -->
+    <dimen name="system_icons_keyguard_padding_end">4dp</dimen>
+
+    <!-- Additional translation (downwards) for appearing notifications when going to the full shade
+         from Keyguard. -->
+    <dimen name="go_to_full_shade_appearing_translation">200dp</dimen>
+
+    <!-- The diameter of the search panel circle. -->
+    <dimen name="assist_orb_size">144dp</dimen>
+
+    <!-- The margin to the edge of the screen from where the orb starts to appear -->
+    <dimen name="assist_orb_base_margin">22dp</dimen>
+
+    <!-- The amount the orb translates when appearing -->
+    <dimen name="assist_orb_travel_distance">26dp</dimen>
+
+    <!-- The elevation of the orb -->
+    <dimen name="assist_orb_elevation">12dp</dimen>
+
+    <!-- The height of the scrim behind the orb. -->
+    <dimen name="assist_orb_scrim_height">250dp</dimen>
+
+    <!-- The height of the scrim behind the search panel circle. Should be navigation_bar_height
+         + 8dp. -->
+    <dimen name="assist_orb_navbar_scrim_height">56dp</dimen>
+
+    <!-- The width/height of the phone/camera/unlock icon view on keyguard. -->
+    <dimen name="keyguard_affordance_height">56dp</dimen>
+    <dimen name="keyguard_affordance_width">56dp</dimen>
+
+    <!-- The width/height of the phone/camera/unlock icon drawable on keyguard. -->
+    <dimen name="keyguard_affordance_icon_height">24dp</dimen>
+    <dimen name="keyguard_affordance_icon_width">24dp</dimen>
+
+    <dimen name="keyguard_indication_margin_bottom">65dp</dimen>
+
+    <!-- The text size for battery level -->
+    <dimen name="battery_level_text_size">12sp</dimen>
+
+    <!-- TrustDrawable: Minimum inner radius of the breathing animation -->
+    <dimen name="trust_circle_inner_radius_visible_min">22dp</dimen>
+    <!-- TrustDrawable: Maximum inner radius of the breathing animation -->
+    <dimen name="trust_circle_inner_radius_visible_max">24dp</dimen>
+    <!-- TrustDrawable: Inner radius at the end of the exit animation -->
+    <dimen name="trust_circle_inner_radius_exit">38dp</dimen>
+    <!-- TrustDrawable: Inner radius at the beginning of the enter animation -->
+    <dimen name="trust_circle_inner_radius_enter">18dp</dimen>
+    <!-- TrustDrawable: Thickness of the circle -->
+    <dimen name="trust_circle_thickness">2dp</dimen>
+
+    <!-- Margin on the right side of the system icon group on Keyguard. -->
+    <fraction name="battery_button_height_fraction">10.5%</fraction>
+
+    <!-- Fraction value to smooth the edges of the battery icon. The path will be inset by this
+         fraction of a pixel.-->
+    <fraction name="battery_subpixel_smoothing_left">0%</fraction>
+    <fraction name="battery_subpixel_smoothing_right">0%</fraction>
+
+    <dimen name="battery_margin_bottom">0dp</dimen>
+
+    <!-- Padding at the end of the view that displays the mobile signal icons. If the view is
+         empty, then this padding will not be added to that view. -->
+    <dimen name="mobile_signal_group_end_padding">0dp</dimen>
+
+    <!-- Padding between the mobile data type and the strength indicator. -->
+    <dimen name="mobile_data_icon_start_padding">0dp</dimen>
+
+    <!-- Extra padding between the mobile data type icon and the strength indicator when the data
+         type icon is wide. -->
+    <dimen name="wide_type_icon_start_padding">2dp</dimen>
+
+    <!-- Extra padding between multiple phone signal icons. -->
+    <dimen name="secondary_telephony_padding">2dp</dimen>
+
+    <!-- Extra padding between the mobile data type icon and the strength indicator when the data
+         type icon is wide for the tile in quick settings. -->
+    <dimen name="wide_type_icon_start_padding_qs">3dp</dimen>
+
+    <!-- The maximum width of the navigation bar ripples. -->
+    <dimen name="key_button_ripple_max_width">95dp</dimen>
+
+    <!-- Inset shadow for FakeShadowDrawable. It is used to avoid gaps between the card
+         and the shadow. -->
+    <dimen name="fake_shadow_inset">1dp</dimen>
+
+    <dimen name="fake_shadow_size">8dp</dimen>
+
+    <!-- Starting margin before the signal cluster -->
+    <dimen name="signal_cluster_margin_start">2.5dp</dimen>
+
+    <!-- Padding between signal cluster and battery icon -->
+    <dimen name="signal_cluster_battery_padding">7dp</dimen>
+
+    <!-- Padding for signal cluster and battery icon when there are not icons in signal cluster -->
+    <dimen name="no_signal_cluster_battery_padding">3dp</dimen>
+
+    <!-- Screen pinning request width -->
+    <dimen name="screen_pinning_request_width">@dimen/match_parent</dimen>
+    <!-- Screen pinning request nav button circle heights -->
+    <dimen name="screen_pinning_request_button_height">66dp</dimen>
+    <!-- Screen pinning request nav button circle widths -->
+    <dimen name="screen_pinning_request_button_width">84dp</dimen>
+    <!-- Screen pinning request padding on top of inner circle -->
+    <dimen name="screen_pinning_request_inner_padding">14dp</dimen>
+    <!-- Screen pinning request padding on top of icons -->
+    <dimen name="screen_pinning_request_nav_icon_padding">18dp</dimen>
+    <!-- Screen pinning request padding on side of icons
+         (makes the width match the nav bar)-->
+    <dimen name="screen_pinning_request_nav_side_padding">7dp</dimen>
+    <!-- Screen pinning request side views to match nav bar
+         navigation_side_padding - 3 / 2 * (screen_pinning_request_button_width
+                                                - navigation_key_width) -->
+    <dimen name="screen_pinning_request_side_width">34dp</dimen>
+    <!-- Screen pinning request controls padding on bigger screens -->
+    <dimen name="screen_pinning_request_frame_padding">0dp</dimen>
+    <!-- Screen pinning inner nav bar circle size -->
+    <dimen name="screen_pinning_nav_highlight_size">56dp</dimen>
+    <!-- Screen pinning inner nav bar outer circle size -->
+    <dimen name="screen_pinning_nav_highlight_outer_size">84dp</dimen>
+
+    <!-- Padding to be used on the bottom of the fingerprint icon on Keyguard so it better aligns
+         with the other icons. -->
+    <dimen name="fingerprint_icon_additional_padding">4dp</dimen>
+
+    <!-- Minimum margin of the notification panel on the side, when being positioned dynamically -->
+    <dimen name="notification_panel_min_side_margin">48dp</dimen>
+
+    <!-- Vertical spacing between multiple volume slider rows -->
+    <dimen name="volume_slider_interspacing">8dp</dimen>
+
+    <!-- Volume dialog vertical offset from the top of the screen -->
+    <dimen name="volume_offset_top">0dp</dimen>
+
+    <!-- Standard image button size for volume dialog buttons -->
+    <dimen name="volume_button_size">48dp</dimen>
+
+    <!-- Volume dialog root view bottom margin, at rest -->
+    <dimen name="volume_dialog_margin_bottom">4dp</dimen>
+
+    <!-- Padding between icon and text for managed profile toast -->
+    <dimen name="managed_profile_toast_padding">4dp</dimen>
+
+    <!-- Thickness of the assist disclosure beams -->
+    <dimen name="assist_disclosure_thickness">2.5dp</dimen>
+
+    <!-- Thickness of the shadows of the assist disclosure beams -->
+    <dimen name="assist_disclosure_shadow_thickness">1.5dp</dimen>
+
+    <dimen name="fab_size">56dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_elevation">12dp</dimen>
+    <dimen name="fab_press_translation_z">9dp</dimen>
+
+    <!-- How high we lift the divider when touching -->
+    <dimen name="docked_stack_divider_lift_elevation">4dp</dimen>
+
+    <dimen name="docked_divider_handle_width">16dp</dimen>
+    <dimen name="docked_divider_handle_height">2dp</dimen>
+
+    <dimen name="battery_height">14.5dp</dimen>
+    <dimen name="battery_width">9.5dp</dimen>
+
+    <dimen name="battery_detail_graph_space_top">27dp</dimen>
+    <dimen name="battery_detail_graph_space_bottom">27dp</dimen>
+
+    <!-- Keyboard shortcuts helper -->
+    <dimen name="ksh_layout_width">@dimen/match_parent</dimen>
+    <dimen name="ksh_item_text_size">14sp</dimen>
+    <dimen name="ksh_item_padding">4dp</dimen>
+    <dimen name="ksh_item_margin_start">4dp</dimen>
+
+<!-- Recents Layout -->
+
+    <!-- The amount to inset the stack, specifically at the top and the other sides.  We also
+         don't want this to change across configurations that Recents can be opened in, so we
+         define them statically for all display sizes. -->
+    <dimen name="recents_layout_min_margin">16dp</dimen>
+    <dimen name="recents_layout_top_margin_phone">16dp</dimen>
+    <dimen name="recents_layout_top_margin_tablet">32dp</dimen>
+    <dimen name="recents_layout_top_margin_tablet_xlarge">40dp</dimen>
+    <dimen name="recents_layout_bottom_margin">16dp</dimen>
+    <dimen name="recents_layout_side_margin_phone">16dp</dimen>
+    <dimen name="recents_layout_side_margin_tablet">48dp</dimen>
+    <dimen name="recents_layout_side_margin_tablet_docked">16dp</dimen>
+    <dimen name="recents_layout_side_margin_tablet_xlarge">64dp</dimen>
+    <dimen name="recents_layout_side_margin_tablet_xlarge_docked">16dp</dimen>
+
+    <!-- The height between the top margin and the top of the focused task. -->
+    <dimen name="recents_layout_top_peek_size">48dp</dimen>
+    <!-- The height between the bottom margin and the top of task in front of the focused task. -->
+    <dimen name="recents_layout_bottom_peek_size">56dp</dimen>
+
+    <!-- The offset from the top and bottom of the stack of the focused task.  The bottom offset
+         will be additionally offset by the bottom system insets since it goes under the nav bar
+         in certain orientations. -->
+    <dimen name="recents_layout_initial_top_offset_phone_port">128dp</dimen>
+    <dimen name="recents_layout_initial_bottom_offset_phone_port">80dp</dimen>
+    <dimen name="recents_layout_initial_top_offset_phone_land">72dp</dimen>
+    <dimen name="recents_layout_initial_bottom_offset_phone_land">72dp</dimen>
+    <dimen name="recents_layout_initial_top_offset_tablet">160dp</dimen>
+    <dimen name="recents_layout_initial_bottom_offset_tablet">112dp</dimen>
+
+    <!-- The min/max translationZ for the tasks in the stack. -->
+    <dimen name="recents_layout_z_min">3dp</dimen>
+    <dimen name="recents_layout_z_max">24dp</dimen>
+
+    <!-- The margin between the freeform and stack.  We also don't want this to change across
+         configurations that Recents can be opened in, so we define them statically for all
+         display sizes. -->
+    <dimen name="recents_freeform_layout_bottom_margin">16dp</dimen>
+
+    <!-- The padding between each freeform task. -->
+    <dimen name="recents_freeform_layout_task_padding">8dp</dimen>
+
+<!-- Recents Views -->
+
+    <!-- The height of a task view bar.  This has to be large enough to cover the action bar
+         height in either orientation at this smallest width. -->
+    <dimen name="recents_task_view_header_height">56dp</dimen>
+    <dimen name="recents_task_view_header_height_tablet_land">64dp</dimen>
+
+    <!-- The padding of a button in the recents task view header. -->
+    <dimen name="recents_task_view_header_button_padding">16dp</dimen>
+    <dimen name="recents_task_view_header_button_padding_tablet_land">20dp</dimen>
+
+    <!-- The radius of the rounded corners on a task view and its shadow (which can be larger
+         to create a softer corner effect. -->
+    <dimen name="recents_task_view_rounded_corners_radius">2dp</dimen>
+    <dimen name="recents_task_view_shadow_rounded_corners_radius">6dp</dimen>
+
+    <!-- The amount of highlight to make on each task view. -->
+    <dimen name="recents_task_view_highlight">1dp</dimen>
+
+    <!-- The size of the lock-to-app button and its icon. -->
+    <dimen name="recents_lock_to_app_size">56dp</dimen>
+    <dimen name="recents_lock_to_app_icon_size">28dp</dimen>
+
+    <!-- The amount of overscroll allowed when flinging to the end of the stack. -->
+    <dimen name="recents_fling_overscroll_distance">24dp</dimen>
+
+    <!-- The size of the drag hint text. -->
+    <dimen name="recents_drag_hint_text_size">14sp</dimen>
+
+    <!-- The min alpha to apply to a task affiliation group color. -->
+    <item name="recents_task_affiliation_color_min_alpha_percentage" format="float" type="dimen">0.6</item>
+
+    <!-- The amount to offset when animating into an affiliate group. -->
+    <dimen name="recents_task_stack_animation_affiliate_enter_offset">32dp</dimen>
+
+    <!-- The offsets the tasks animate from when recents is launched while docking -->
+    <dimen name="recents_task_stack_animation_launched_while_docking_offset">144dp</dimen>
+
+    <!-- The amount to translate when animating the removal of a task. -->
+    <dimen name="recents_task_view_remove_anim_translation_x">100dp</dimen>
+
+    <!-- The alpha to apply to the recents row when it doesn't have focus -->
+    <item name="recents_recents_row_dim_alpha" format="float" type="dimen">0.5</item>
+</resources>

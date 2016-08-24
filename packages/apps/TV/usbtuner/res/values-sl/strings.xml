@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+   -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ut_app_name" msgid="1442714127635348166">"TV-vhod za sprejemnik USB"</string>
+    <string name="ut_setup_on" msgid="4957025496015647961">"Vklop"</string>
+    <string name="ut_setup_off" msgid="806521579574068484">"Izklop"</string>
+    <string name="ut_setup_cancel" msgid="6173771946434222551">"Počakajte, da se dokonča obdelava"</string>
+    <string name="ut_select_channel_map" msgid="5007263088526410938">"Izberite vir kanalov"</string>
+    <string name="ut_no_signal" msgid="6484545357071124354">"Ni signala"</string>
+    <string name="ut_fail_to_tune" msgid="3995508747351098234">"Iskanje kanala <xliff:g id="CHANNEL_NAME">%s</xliff:g> ni uspelo"</string>
+    <string name="ut_fail_to_tune_to_unknown_channel" msgid="5601031631838024181">"Nastavitev kanala ni uspela"</string>
+    <string name="ut_rescan_needed" msgid="6652963050118174284">"Programska oprema sprejemnika USB je bila nedavno posodobljena. Znova poiščite kanale."</string>
+    <string name="ut_ac3_passthrough_unavailable" msgid="1511045190687189559">"Zvok AC3 ni na voljo"</string>
+    <string name="ut_setup_breadcrumb" msgid="3057650688133018018">"Nastavitev sprejemnika kanalov"</string>
+    <string name="ut_setup_new_title" msgid="4919412630138697597">"Nastavitev sprejemnika kanalov USB"</string>
+    <string name="ut_setup_new_description" msgid="3950618124169419729">"Preverite, ali je sprejemnik USB priključen in povezan z virom TV-signala.\n\nČe uporabljate anteno za prizemno televizijo, morate morda prilagoditi njen položaj oziroma njeno usmerjenost, če želite prejemati največ kanalov. Če želite najboljši rezultat, jo postavite na visok položaj in blizu okna."</string>
+  <string-array name="ut_setup_new_choices">
+    <item msgid="4294610848989236664">"Naprej"</item>
+    <item msgid="7745727658174773453">"Ne zdaj"</item>
+  </string-array>
+    <string name="ut_setup_again_title" msgid="7493163856853246710">"Ali želite znova zagnati namestitev kanala?"</string>
+    <string name="ut_setup_again_description" msgid="6974243332718382952">"S tem bodo odstranjeni kanali, najdeni prek sprejemnika USB, in iskanje kanalov se bo začelo znova.\n\nPreverite, ali je sprejemnik USB priključen in povezan z virom TV-signala.\n\nČe uporabljate anteno za prizemno televizijo, morate morda prilagoditi njen položaj oziroma njeno usmerjenost, če želite prejemati največ kanalov. Če želite najboljši rezultat, jo postavite na visok položaj in blizu okna."</string>
+  <string-array name="ut_setup_again_choices">
+    <item msgid="8729290093918719208">"Naprej"</item>
+    <item msgid="4432431398374089710">"Prekliči"</item>
+  </string-array>
+    <string name="ut_connection_title" msgid="1689960211113015793">"Izbira vrste povezave"</string>
+    <string name="ut_connection_description" msgid="3218265227667113165">"Izberite »Antena«, če je v sprejemnik priključena zunanja antena. Izberite »Kabelska televizija«, če kanale zagotavlja ponudnik storitve kabelske televizije. Če niste prepričani, bo preiskano oboje, vendar lahko traja dlje."</string>
+  <string-array name="ut_connection_choices">
+    <item msgid="1633072563555330217">"Antena"</item>
+    <item msgid="2445879869338877559">"Kabelska televizija"</item>
+    <item msgid="597328838068074806">"Ne vem"</item>
+    <item msgid="3613410733017077040">"Samo za razvoj"</item>
+  </string-array>
+    <string name="ut_channel_scan" msgid="5275436876483779315">"Nastavitev sprejemnika kanalov USB"</string>
+    <string name="ut_channel_scan_time" msgid="5108578893396614867">"To lahko traja nekaj minut"</string>
+    <plurals name="ut_channel_scan_message" formatted="false" msgid="8883404542863956040">
+      <item quantity="one">Najden je bil %1$d kanal</item>
+      <item quantity="two">Najdena sta bila %1$d kanala</item>
+      <item quantity="few">Najdeni so bili %1$d kanali</item>
+      <item quantity="other">Najdenih je bilo %1$d kanalov</item>
+    </plurals>
+    <string name="ut_stop_channel_scan" msgid="8358794117343664624">"USTAVI ISKANJE KANALOV"</string>
+    <plurals name="ut_result_found_title" formatted="false" msgid="4621251784881527371">
+      <item quantity="one">Najden je bil %1$d kanal</item>
+      <item quantity="two">Najdena sta bila %1$d kanala</item>
+      <item quantity="few">Najdeni so bili %1$d kanali</item>
+      <item quantity="other">Najdenih je bilo %1$d kanalov</item>
+    </plurals>
+    <plurals name="ut_result_found_description" formatted="false" msgid="1946474144459881182">
+      <item quantity="one">Super. Med iskanjem kanalov je bil najden %1$d kanal. Če menite, da to ni pravilno, poskusite prilagoditi položaj antene in iščite znova.</item>
+      <item quantity="two">Super. Med iskanjem kanalov sta bila najdena %1$d kanala. Če menite, da to ni pravilno, poskusite prilagoditi položaj antene in iščite znova.</item>
+      <item quantity="few">Super. Med iskanjem kanalov so bili najdeni %1$d kanali. Če menite, da to ni pravilno, poskusite prilagoditi položaj antene in iščite znova.</item>
+      <item quantity="other">Super. Med iskanjem kanalov je bilo najdenih %1$d kanalov. Če menite, da to ni pravilno, poskusite prilagoditi položaj antene in iščite znova.</item>
+    </plurals>
+  <string-array name="ut_result_found_choices">
+    <item msgid="979481834388007277">"Končano"</item>
+    <item msgid="496688122303154468">"Znova išči"</item>
+  </string-array>
+    <string name="ut_result_not_found_title" msgid="3367485970267699896">"Ni najdenih kanalov"</string>
+    <string name="ut_result_not_found_description" msgid="2230088613315287072">"Pri iskanju kanali niso bili najdeni. Preverite, ali je sprejemnik USB priključen in povezan z virom TV-signala.\n\nČe uporabljate anteno za prizemno televizijo, prilagodite njen položaj oziroma njeno usmerjenost. Če želite najboljši rezultat, jo postavite na visok položaj in blizu okna ter iščite kanale znova."</string>
+  <string-array name="ut_result_not_found_choices">
+    <item msgid="6593834378620684951">"Znova išči"</item>
+    <item msgid="6784975565864102291">"Končano"</item>
+  </string-array>
+    <string name="ut_setup_recommendation_card_focused_title" msgid="1003442802579648042">"Iskanje TV-kanalov"</string>
+    <string name="ut_setup_recommendation_card_title" msgid="4192974818384769494">"Nastavitev sprejemnika kanalov USB"</string>
+</resources>

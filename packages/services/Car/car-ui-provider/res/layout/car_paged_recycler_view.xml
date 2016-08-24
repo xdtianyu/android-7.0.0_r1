@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2016 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<!-- Cloned from car ui lib for use in CarUiProvider. Must be kept in sync. -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <android.car.ui.provider.PagedScrollBarView
+        android:id="@+id/paged_scroll_view"
+        android:layout_width="@dimen/car_paged_list_view_pagination_width"
+        android:layout_height="match_parent"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:visibility="invisible" />
+
+    <android.car.ui.provider.MaxWidthLayout
+        android:id="@+id/max_width_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/car_card_margin"
+        android:clipChildren="false"
+        app:carMaxWidth="@dimen/car_card_max_width" >
+
+        <android.car.ui.provider.CarRecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:clipChildren="false" />
+    </android.car.ui.provider.MaxWidthLayout>
+
+</merge>

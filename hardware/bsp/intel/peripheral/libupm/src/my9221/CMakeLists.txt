@@ -1,0 +1,5 @@
+set (libname "my9221")
+set (libdescription "upm ledbar")
+set (module_src ${libname}.cxx)
+set (module_h ${libname}.h)
+upm_module_init()

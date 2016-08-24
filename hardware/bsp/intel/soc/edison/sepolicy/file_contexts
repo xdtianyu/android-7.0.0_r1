@@ -1,0 +1,9 @@
+# Serial console
+/dev/ttyMFD2        u:object_r:console_device:s0
+
+# Bluetooth UART device port
+/dev/ttyMFD0        u:object_r:bluetoothtbd_device:s0
+
+# Bluetooth ON/OFF functions
+/sys/devices/platform/bcm_bt_lpm.0/rfkill/rfkill0/state u:object_r:sysfs_bluetoothtbd_writable:s0
+/sys/devices/platform/bcm_bt_lpm.0/rfkill/rfkill0/type u:object_r:sysfs_bluetoothtbd_readable:s0

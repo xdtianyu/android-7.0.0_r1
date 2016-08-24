@@ -1,0 +1,173 @@
+<ALLOW>
+  <PROPERTY name="VEHICLE_PROPERTY_INVALID" value = "0x0">
+    <!--  Property 0 write is used to allow hal mocking -->
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+    <UID name="AID_AUDIOSERVER" access="r" value="1041"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_INFO_VIN" value = "0x00000100">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_INFO_MAKE" value = "0x00000101">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_INFO_MODEL" value = "0x00000102">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_INFO_MODEL_YEAR" value = "0x00000103">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_INFO_FUEL_CAPACITY" value = "0x00000104">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_PERF_ODOMETER" value = "0x00000204">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_PERF_VEHICLE_SPEED" value = "0x00000207">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_ENGINE_COOLANT_TEMP" value = "0x00000301">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_ENGINE_OIL_TEMP" value = "0x00000304">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_ENGINE_RPM" value = "0x00000305">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_GEAR_SELECTION" value = "0x00000400">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_CURRENT_GEAR" value = "0x00000401">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_PARKING_BRAKE_ON" value = "0x00000402">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_DRIVING_STATUS" value = "0x00000404">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_FUEL_LEVEL_LOW" value = "0x00000405">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_NIGHT_MODE" value = "0x00000407">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_HVAC_FAN_SPEED" value = "0x00000500">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_HVAC_FAN_DIRECTION" value = "0x00000501">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_HVAC_TEMPERATURE_CURRENT" value = "0x00000502">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_HVAC_TEMPERATURE_SET" value = "0x00000503">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_HVAC_DEFROSTER" value = "0x00000504">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_HVAC_AC_ON" value = "0x00000505">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_HVAC_MAX_AC_ON" value = "0x00000506">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_HVAC_MAX_DEFROST_ON" value = "0x00000507">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_HVAC_RECIRC_ON" value = "0x00000508">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_HVAC_DUAL_ON" value = "0x00000509">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_ENV_OUTSIDE_TEMPERATURE" value = "0x00000703">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_ENV_CABIN_TEMPERATURE" value = "0x00000704">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_RADIO_PRESET" value = "0x0000801">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_AUDIO_FOCUS" value = "0x00000900">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+    <UID name="AID_AUDIOSERVER" access="r" value="1041"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_AUDIO_VOLUME" value = "0x00000901">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_AUDIO_VOLUME_LIMIT" value = "0x00000902">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_AUDIO_ROUTING_POLICY" value = "0x00000903">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_AUDIO_HW_VARIANT" value = "0x00000904">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_AP_POWER_STATE" value = "0x00000A00">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_DISPLAY_BRIGHTNESS" value = "0x00000A01">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_AP_POWER_BOOTUP_REASON" value = "0x00000A02">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_HW_KEY_INPUT" value = "0x00000A10">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+  <PROPERTY name="VEHICLE_PROPERTY_INSTRUMENT_CLUSTER_INFO" value = "0x00000A20">
+    <UID name="AID_SYSTEM" access="r" value="1000"/>
+  </PROPERTY>
+
+<!-- Internal Vehicle Properties -->
+
+  <PROPERTY name="VEHICLE_PROPERTY_INTERNAL_AUDIO_STREAM_STATE" value="0x74000000">
+    <UID name="AID_SYSTEM" access="rw" value="1000"/>
+    <UID name="AID_AUDIOSERVER" access="w" value="1041"/>
+  </PROPERTY>
+
+</ALLOW>
+
