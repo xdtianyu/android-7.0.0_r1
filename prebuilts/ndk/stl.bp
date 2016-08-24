@@ -1,0 +1,64 @@
+stlport_includes = ["current/sources/cxx-stl/stlport/stlport"]
+
+ndk_prebuilt_static_stl {
+    name: "ndk_libstlport_static",
+    export_include_dirs: stlport_includes,
+}
+
+ndk_prebuilt_shared_stl {
+    name: "ndk_libstlport_shared",
+    export_include_dirs: stlport_includes,
+}
+
+libcxx_includes =  [
+    "current/sources/cxx-stl/llvm-libc++/libcxx/include",
+    "current/sources/cxx-stl/llvm-libc++/gabi++/include",
+    "current/sources/android/support/include",
+]
+
+ndk_prebuilt_static_stl {
+    name: "ndk_libc++_static",
+    export_include_dirs: libcxx_includes,
+}
+
+ndk_prebuilt_shared_stl {
+    name: "ndk_libc++_shared",
+    export_include_dirs: libcxx_includes,
+}
+
+ndk_prebuilt_static_stl {
+    name: "ndk_libgnustl_static",
+    export_include_dirs: ["current/sources/cxx-stl/gnu-libstdc++/4.9/include"],
+    arch: {
+        arm: {
+            export_include_dirs: [
+                "current/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include",
+            ],
+        },
+        arm64: {
+            export_include_dirs: [
+                "current/sources/cxx-stl/gnu-libstdc++/4.9/libs/arm64-v8a/include",
+            ],
+        },
+        mips: {
+            export_include_dirs: [
+                "current/sources/cxx-stl/gnu-libstdc++/4.9/libs/mips/include",
+            ],
+        },
+        mips64: {
+            export_include_dirs: [
+                "current/sources/cxx-stl/gnu-libstdc++/4.9/libs/mips64/include",
+            ],
+        },
+        x86: {
+            export_include_dirs: [
+                "current/sources/cxx-stl/gnu-libstdc++/4.9/libs/x86/include",
+            ],
+        },
+        x86_64: {
+            export_include_dirs: [
+                "current/sources/cxx-stl/gnu-libstdc++/4.9/libs/x86_64/include",
+            ],
+        },
+    }
+}
