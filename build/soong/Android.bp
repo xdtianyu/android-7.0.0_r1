@@ -1,0 +1,252 @@
+//
+// WARNING: Modifying this file will NOT automatically regenerate build.ninja.in!
+//
+// Before modifying this file make sure minibp is up to date:
+//    1) "repo sync build/soong" to make sure you have the latest build.ninja.in
+//    2) build minibp, which builds automicatically through the normal build steps. For example:
+//
+// After modifying this file regenerate build.ninja.in and build your changes:
+//    1) In your build directory, execute "../bootstrap.bash -r" to regenerate build.ninja.in
+//    2) Build again
+//
+
+bootstrap_go_binary {
+    name: "soong_build",
+    deps: [
+        "blueprint",
+        "blueprint-bootstrap",
+        "soong",
+        "soong-common",
+        "soong-env",
+    ],
+    srcs: [
+        "cmd/soong_build/main.go",
+    ],
+    primaryBuilder: true,
+}
+
+bootstrap_go_binary {
+    name: "soong_env",
+    deps: [
+        "soong-env",
+    ],
+    srcs: [
+        "cmd/soong_env/soong_env.go",
+    ],
+}
+
+bootstrap_go_package {
+    name: "soong-env",
+    pkgPath: "android/soong/env",
+    srcs: [
+        "env/env.go",
+    ],
+}
+
+
+bootstrap_go_binary {
+    name: "soong_glob",
+    deps: [
+        "soong-glob",
+    ],
+    srcs: [
+        "cmd/soong_glob/soong_glob.go",
+    ],
+}
+
+bootstrap_go_package {
+    name: "soong-glob",
+    pkgPath: "android/soong/glob",
+    deps: [
+        "blueprint-deptools",
+        "blueprint-pathtools",
+    ],
+    srcs: [
+        "glob/glob.go",
+    ],
+}
+
+bootstrap_go_package {
+    name: "soong",
+    pkgPath: "android/soong",
+    deps: [
+        "blueprint",
+    ],
+    srcs: [
+        "doc.go",
+        "register.go",
+    ],
+}
+
+bootstrap_go_package {
+    name: "soong-common",
+    pkgPath: "android/soong/common",
+    deps: [
+        "blueprint",
+        "blueprint-bootstrap",
+        "soong",
+        "soong-env",
+        "soong-glob",
+    ],
+    srcs: [
+        "common/androidmk.go",
+        "common/arch.go",
+        "common/config.go",
+        "common/defaults.go",
+        "common/defs.go",
+        "common/env.go",
+        "common/glob.go",
+        "common/module.go",
+        "common/mutator.go",
+        "common/package_ctx.go",
+        "common/paths.go",
+        "common/util.go",
+        "common/variable.go",
+    ],
+    testSrcs: [
+        "common/paths_test.go",
+    ],
+}
+
+bootstrap_go_package {
+    name: "soong-cc",
+    pkgPath: "android/soong/cc",
+    deps: [
+        "blueprint",
+        "blueprint-pathtools",
+        "soong",
+        "soong-common",
+        "soong-genrule",
+    ],
+    srcs: [
+        "cc/androidmk.go",
+        "cc/builder.go",
+        "cc/cc.go",
+        "cc/clang.go",
+        "cc/gen.go",
+        "cc/stl.go",
+        "cc/toolchain.go",
+        "cc/util.go",
+
+        "cc/arm_device.go",
+        "cc/arm64_device.go",
+        "cc/mips_device.go",
+        "cc/mips64_device.go",
+        "cc/x86_device.go",
+        "cc/x86_64_device.go",
+
+        "cc/x86_darwin_host.go",
+        "cc/x86_linux_host.go",
+        "cc/x86_windows_host.go",
+    ],
+    testSrcs: [
+        "cc/cc_test.go",
+    ],
+    pluginFor: ["soong_build"],
+}
+
+bootstrap_go_package {
+    name: "soong-genrule",
+    pkgPath: "android/soong/genrule",
+    deps: [
+        "blueprint",
+        "blueprint-pathtools",
+        "soong",
+        "soong-common",
+    ],
+    srcs: [
+        "genrule/genrule.go",
+    ],
+    pluginFor: ["soong_build"],
+}
+
+bootstrap_go_binary {
+    name: "soong_jar",
+    srcs: [
+        "cmd/soong_jar/soong_jar.go",
+    ],
+}
+
+bootstrap_go_package {
+    name: "soong-java",
+    pkgPath: "android/soong/java",
+    deps: [
+        "blueprint",
+        "blueprint-pathtools",
+        "soong",
+        "soong-common",
+        "soong-genrule",
+    ],
+    srcs: [
+        "java/androidmk.go",
+        "java/app_builder.go",
+        "java/app.go",
+        "java/builder.go",
+        "java/gen.go",
+        "java/java.go",
+        "java/resources.go",
+    ],
+    pluginFor: ["soong_build"],
+}
+
+//
+// androidmk Android.mk to Blueprints translator
+//
+
+bootstrap_go_binary {
+    name: "androidmk",
+    srcs: [
+        "androidmk/cmd/androidmk/android.go",
+        "androidmk/cmd/androidmk/androidmk.go",
+        "androidmk/cmd/androidmk/values.go",
+    ],
+    deps: [
+        "androidmk-parser",
+        "blueprint-parser",
+    ],
+}
+
+bootstrap_go_package {
+    name: "androidmk-parser",
+    pkgPath: "android/soong/androidmk/parser",
+    srcs: [
+        "androidmk/parser/make_strings.go",
+        "androidmk/parser/makething.go",
+        "androidmk/parser/parser.go",
+        "androidmk/parser/scope.go",
+    ],
+    testSrcs: [
+        "androidmk/parser/make_strings_test.go",
+    ],
+}
+
+//
+// C static libraries extracted from the gcc toolchain
+//
+
+toolchain_library {
+    name: "libatomic",
+    arch: {
+        arm: {
+            instruction_set: "arm",
+        },
+    },
+}
+
+toolchain_library {
+    name: "libgcc",
+    arch: {
+        arm: {
+            instruction_set: "arm",
+        },
+    },
+}
+
+toolchain_library {
+    name: "libgcov",
+    arch: {
+        arm: {
+            instruction_set: "arm",
+        },
+    },
+}
