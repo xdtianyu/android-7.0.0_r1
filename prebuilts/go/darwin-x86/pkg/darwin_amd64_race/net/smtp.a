@@ -1,0 +1,1146 @@
+!<arch>
+__.PKGDEF       0           0     0     644     57236     `
+go object darwin amd64 go1.5.1 X:none
+build id "6e51020baf55aa6e446f01b4d70bb50e6fd7cca2"
+
+$$
+package smtp
+	import runtime "runtime"
+	import hmac "crypto/hmac"
+	import io "io"
+	import md5 "crypto/md5"
+	import errors "errors"
+	import fmt "fmt"
+	import tls "crypto/tls"
+	import strings "strings"
+	import net "net"
+	import base64 "encoding/base64"
+	import textproto "net/textproto"
+	type @"".ServerInfo struct { Name string; TLS bool; Auth []string }
+	type @"".Auth interface { Next(@"".fromServer []byte, @"".more bool) (@"".toServer []byte, @"".err error); Start(@"".server *@"".ServerInfo) (@"".proto string, @"".toServer []byte, @"".err error) }
+	func @"".PlainAuth (@"".identityÂ·2 string, @"".usernameÂ·3 string, @"".passwordÂ·4 string, @"".hostÂ·5 string) (? @"".Auth) { return (&@"".plainAuth{ @"".identity:@"".identityÂ·2, @"".username:@"".usernameÂ·3, @"".password:@"".passwordÂ·4, @"".host:@"".hostÂ·5 }) }
+	func @"".CRAMMD5Auth (@"".usernameÂ·2 string, @"".secretÂ·3 string) (? @"".Auth) { return (&@"".cramMD5Auth{ @"".username:@"".usernameÂ·2, @"".secret:@"".secretÂ·3 }) }
+	import bufio "bufio" // indirect
+	type @"io".Reader interface { Read(@"io".p []byte) (@"io".n int, @"io".err error) }
+	type @"io".Writer interface { Write(@"io".p []byte) (@"io".n int, @"io".err error) }
+	type @"bufio".Reader struct { @"bufio".buf []byte; @"bufio".rd @"io".Reader; @"bufio".r int; @"bufio".w int; @"bufio".err error; @"bufio".lastByte int; @"bufio".lastRuneSize int }
+	func (@"bufio".bÂ·2 *@"bufio".Reader "esc:0x1") Buffered () (? int) { return @"bufio".bÂ·2.@"bufio".w - @"bufio".bÂ·2.@"bufio".r }
+	func (@"bufio".bÂ·3 *@"bufio".Reader "esc:0x10a") Discard (@"bufio".nÂ·4 int) (@"bufio".discardedÂ·1 int, @"bufio".errÂ·2 error)
+	func (@"bufio".bÂ·3 *@"bufio".Reader "esc:0x12a") Peek (@"bufio".nÂ·4 int) (? []byte, ? error)
+	func (@"bufio".bÂ·3 *@"bufio".Reader "esc:0x10a") Read (@"bufio".pÂ·4 []byte) (@"bufio".nÂ·1 int, @"bufio".errÂ·2 error)
+	func (@"bufio".bÂ·3 *@"bufio".Reader "esc:0x10a") ReadByte () (@"bufio".cÂ·1 byte, @"bufio".errÂ·2 error)
+	func (@"bufio".bÂ·3 *@"bufio".Reader "esc:0x10a") ReadBytes (@"bufio".delimÂ·4 byte) (@"bufio".lineÂ·1 []byte, @"bufio".errÂ·2 error)
+	func (@"bufio".bÂ·4 *@"bufio".Reader "esc:0x82a") ReadLine () (@"bufio".lineÂ·1 []byte, @"bufio".isPrefixÂ·2 bool, @"bufio".errÂ·3 error)
+	func (@"bufio".bÂ·4 *@"bufio".Reader "esc:0x80a") ReadRune () (@"bufio".rÂ·1 rune, @"bufio".sizeÂ·2 int, @"bufio".errÂ·3 error)
+	func (@"bufio".bÂ·3 *@"bufio".Reader "esc:0x12a") ReadSlice (@"bufio".delimÂ·4 byte) (@"bufio".lineÂ·1 []byte, @"bufio".errÂ·2 error)
+	func (@"bufio".bÂ·3 *@"bufio".Reader "esc:0x10a") ReadString (@"bufio".delimÂ·4 byte) (@"bufio".lineÂ·1 string, @"bufio".errÂ·2 error)
+	func (@"bufio".bÂ·1 *@"bufio".Reader "esc:0x9") Reset (@"bufio".rÂ·2 @"io".Reader) { @"bufio".bÂ·1.@"bufio".reset(@"bufio".bÂ·1.@"bufio".buf, @"bufio".rÂ·2) }
+	func (@"bufio".bÂ·2 *@"bufio".Reader "esc:0x1") UnreadByte () (? error) { if @"bufio".bÂ·2.@"bufio".lastByte < 0x0 || @"bufio".bÂ·2.@"bufio".r == 0x0 && @"bufio".bÂ·2.@"bufio".w > 0x0 { return @"bufio".ErrInvalidUnreadByte }; if @"bufio".bÂ·2.@"bufio".r > 0x0 { @"bufio".bÂ·2.@"bufio".r-- } else { @"bufio".bÂ·2.@"bufio".w = 0x1 }; @"bufio".bÂ·2.@"bufio".buf[@"bufio".bÂ·2.@"bufio".r] = byte(@"bufio".bÂ·2.@"bufio".lastByte); @"bufio".bÂ·2.@"bufio".lastByte = -0x1; @"bufio".bÂ·2.@"bufio".lastRuneSize = -0x1; return nil }
+	func (@"bufio".bÂ·2 *@"bufio".Reader "esc:0x1") UnreadRune () (? error) { if @"bufio".bÂ·2.@"bufio".lastRuneSize < 0x0 || @"bufio".bÂ·2.@"bufio".r < @"bufio".bÂ·2.@"bufio".lastRuneSize { return @"bufio".ErrInvalidUnreadRune }; @"bufio".bÂ·2.@"bufio".r -= @"bufio".bÂ·2.@"bufio".lastRuneSize; @"bufio".bÂ·2.@"bufio".lastByte = -0x1; @"bufio".bÂ·2.@"bufio".lastRuneSize = -0x1; return nil }
+	func (@"bufio".bÂ·3 *@"bufio".Reader "esc:0x10a") WriteTo (@"bufio".wÂ·4 @"io".Writer) (@"bufio".nÂ·1 int64, @"bufio".errÂ·2 error)
+	func (@"bufio".bÂ·1 *@"bufio".Reader "esc:0x9") @"bufio".fill ()
+	func (@"bufio".bÂ·2 *@"bufio".Reader "esc:0x22") @"bufio".readErr () (? error) { var @"bufio".errÂ·3 error; ; @"bufio".errÂ·3 = @"bufio".bÂ·2.@"bufio".err; @"bufio".bÂ·2.@"bufio".err = nil; return @"bufio".errÂ·3 }
+	func (@"bufio".bÂ·1 *@"bufio".Reader "esc:0x1") @"bufio".reset (@"bufio".bufÂ·2 []byte, @"bufio".rÂ·3 @"io".Reader) { *@"bufio".bÂ·1 = (@"bufio".Reader{ @"bufio".buf:@"bufio".bufÂ·2, @"bufio".rd:@"bufio".rÂ·3, @"bufio".lastByte:-0x1, @"bufio".lastRuneSize:-0x1 }) }
+	func (@"bufio".bÂ·3 *@"bufio".Reader "esc:0x9") @"bufio".writeBuf (@"bufio".wÂ·4 @"io".Writer) (? int64, ? error)
+	type @"net/textproto".dotReader struct { @"net/textproto".r *@"net/textproto".Reader; @"net/textproto".state int }
+	func (@"net/textproto".dÂ·3 *@"net/textproto".dotReader "esc:0x20a") Read (@"net/textproto".bÂ·4 []byte "esc:0x1") (@"net/textproto".nÂ·1 int, @"net/textproto".errÂ·2 error)
+	type @"net/textproto".MIMEHeader map[string][]string
+	func (@"net/textproto".hÂ·1 @"net/textproto".MIMEHeader "esc:0x9") Add (@"net/textproto".keyÂ·2 string, @"net/textproto".valueÂ·3 string)
+	func (@"net/textproto".hÂ·1 @"net/textproto".MIMEHeader "esc:0x1") Del (@"net/textproto".keyÂ·2 string "esc:0x1")
+	func (@"net/textproto".hÂ·2 @"net/textproto".MIMEHeader "esc:0x1") Get (@"net/textproto".keyÂ·3 string "esc:0x1") (? string)
+	func (@"net/textproto".hÂ·1 @"net/textproto".MIMEHeader "esc:0x1") Set (@"net/textproto".keyÂ·2 string, @"net/textproto".valueÂ·3 string)
+	type @"net/textproto".Reader struct { R *@"bufio".Reader; @"net/textproto".dot *@"net/textproto".dotReader; @"net/textproto".buf []byte }
+	func (@"net/textproto".rÂ·2 *@"net/textproto".Reader) DotReader () (? @"io".Reader)
+	func (@"net/textproto".rÂ·4 *@"net/textproto".Reader "esc:0xc0a") ReadCodeLine (@"net/textproto".expectCodeÂ·5 int) (@"net/textproto".codeÂ·1 int, @"net/textproto".messageÂ·2 string, @"net/textproto".errÂ·3 error)
+	func (@"net/textproto".rÂ·3 *@"net/textproto".Reader "esc:0x18a") ReadContinuedLine () (? string, ? error)
+	func (@"net/textproto".rÂ·3 *@"net/textproto".Reader "esc:0x1aa") ReadContinuedLineBytes () (? []byte, ? error)
+	func (@"net/textproto".rÂ·3 *@"net/textproto".Reader) ReadDotBytes () (? []byte, ? error)
+	func (@"net/textproto".rÂ·3 *@"net/textproto".Reader "esc:0x18a") ReadDotLines () (? []string, ? error)
+	func (@"net/textproto".rÂ·3 *@"net/textproto".Reader "esc:0x18a") ReadLine () (? string, ? error)
+	func (@"net/textproto".rÂ·3 *@"net/textproto".Reader "esc:0x1ba") ReadLineBytes () (? []byte, ? error)
+	func (@"net/textproto".rÂ·3 *@"net/textproto".Reader "esc:0x18a") ReadMIMEHeader () (? @"net/textproto".MIMEHeader, ? error)
+	func (@"net/textproto".rÂ·4 *@"net/textproto".Reader "esc:0xc0a") ReadResponse (@"net/textproto".expectCodeÂ·5 int) (@"net/textproto".codeÂ·1 int, @"net/textproto".messageÂ·2 string, @"net/textproto".errÂ·3 error)
+	func (@"net/textproto".rÂ·1 *@"net/textproto".Reader "esc:0x9") @"net/textproto".closeDot ()
+	func (@"net/textproto".rÂ·5 *@"net/textproto".Reader "esc:0x600a") @"net/textproto".readCodeLine (@"net/textproto".expectCodeÂ·6 int) (@"net/textproto".codeÂ·1 int, @"net/textproto".continuedÂ·2 bool, @"net/textproto".messageÂ·3 string, @"net/textproto".errÂ·4 error)
+	func (@"net/textproto".rÂ·3 *@"net/textproto".Reader "esc:0x1aa") @"net/textproto".readContinuedLineSlice () (? []byte, ? error)
+	func (@"net/textproto".rÂ·3 *@"net/textproto".Reader "esc:0x1ba") @"net/textproto".readLineSlice () (? []byte, ? error)
+	func (@"net/textproto".rÂ·2 *@"net/textproto".Reader "esc:0x9") @"net/textproto".skipSpace () (? int)
+	func (@"net/textproto".rÂ·2 *@"net/textproto".Reader "esc:0x9") @"net/textproto".upcomingHeaderNewlines () (@"net/textproto".nÂ·1 int)
+	type @"bufio".Writer struct { @"bufio".err error; @"bufio".buf []byte; @"bufio".n int; @"bufio".wr @"io".Writer }
+	func (@"bufio".bÂ·2 *@"bufio".Writer "esc:0x1") Available () (? int) { return len(@"bufio".bÂ·2.@"bufio".buf) - @"bufio".bÂ·2.@"bufio".n }
+	func (@"bufio".bÂ·2 *@"bufio".Writer "esc:0x1") Buffered () (? int) { return @"bufio".bÂ·2.@"bufio".n }
+	func (@"bufio".bÂ·2 *@"bufio".Writer "esc:0x2a") Flush () (? error)
+	func (@"bufio".bÂ·3 *@"bufio".Writer "esc:0x10a") ReadFrom (@"bufio".rÂ·4 @"io".Reader) (@"bufio".nÂ·1 int64, @"bufio".errÂ·2 error)
+	func (@"bufio".bÂ·1 *@"bufio".Writer "esc:0x1") Reset (@"bufio".wÂ·2 @"io".Writer) { @"bufio".bÂ·1.@"bufio".err = nil; @"bufio".bÂ·1.@"bufio".n = 0x0; @"bufio".bÂ·1.@"bufio".wr = @"bufio".wÂ·2 }
+	func (@"bufio".bÂ·3 *@"bufio".Writer "esc:0x10a") Write (@"bufio".pÂ·4 []byte) (@"bufio".nnÂ·1 int, @"bufio".errÂ·2 error)
+	func (@"bufio".bÂ·2 *@"bufio".Writer "esc:0x2a") WriteByte (@"bufio".cÂ·3 byte) (? error)
+	func (@"bufio".bÂ·3 *@"bufio".Writer "esc:0x10a") WriteRune (@"bufio".rÂ·4 rune) (@"bufio".sizeÂ·1 int, @"bufio".errÂ·2 error)
+	func (@"bufio".bÂ·3 *@"bufio".Writer "esc:0x10a") WriteString (@"bufio".sÂ·4 string "esc:0x9") (? int, ? error)
+	func (@"bufio".bÂ·2 *@"bufio".Writer "esc:0x2a") @"bufio".flush () (? error)
+	type @"net/textproto".dotWriter struct { @"net/textproto".w *@"net/textproto".Writer; @"net/textproto".state int }
+	func (@"net/textproto".dÂ·2 *@"net/textproto".dotWriter "esc:0x4a") Close () (? error)
+	func (@"net/textproto".dÂ·3 *@"net/textproto".dotWriter "esc:0x20a") Write (@"net/textproto".bÂ·4 []byte "esc:0x1") (@"net/textproto".nÂ·1 int, @"net/textproto".errÂ·2 error)
+	type @"io".WriteCloser interface { Close() (? error); Write(@"io".p []byte) (@"io".n int, @"io".err error) }
+	type @"net/textproto".Writer struct { W *@"bufio".Writer; @"net/textproto".dot *@"net/textproto".dotWriter }
+	func (@"net/textproto".wÂ·2 *@"net/textproto".Writer) DotWriter () (? @"io".WriteCloser)
+	func (@"net/textproto".wÂ·2 *@"net/textproto".Writer "esc:0x3a") PrintfLine (@"net/textproto".formatÂ·3 string "esc:0x9", @"net/textproto".argsÂ·4 ...interface {} "esc:0x9") (? error)
+	func (@"net/textproto".wÂ·1 *@"net/textproto".Writer "esc:0x9") @"net/textproto".closeDot ()
+	import sync "sync" // indirect
+	type @"sync".Mutex struct { @"sync".state int32; @"sync".sema uint32 }
+	func (@"sync".mÂ·1 *@"sync".Mutex) Lock ()
+	func (@"sync".mÂ·1 *@"sync".Mutex) Unlock ()
+	type @"net/textproto".sequencer struct { @"net/textproto".mu @"sync".Mutex; @"net/textproto".id uint; @"net/textproto".wait map[uint]chan uint }
+	func (@"net/textproto".sÂ·1 *@"net/textproto".sequencer) End (@"net/textproto".idÂ·2 uint)
+	func (@"net/textproto".sÂ·1 *@"net/textproto".sequencer) Start (@"net/textproto".idÂ·2 uint)
+	type @"net/textproto".Pipeline struct { @"net/textproto".mu @"sync".Mutex; @"net/textproto".id uint; @"net/textproto".request @"net/textproto".sequencer; @"net/textproto".response @"net/textproto".sequencer }
+	func (@"net/textproto".pÂ·1 *@"net/textproto".Pipeline) EndRequest (@"net/textproto".idÂ·2 uint)
+	func (@"net/textproto".pÂ·1 *@"net/textproto".Pipeline) EndResponse (@"net/textproto".idÂ·2 uint)
+	func (@"net/textproto".pÂ·2 *@"net/textproto".Pipeline) Next () (? uint)
+	func (@"net/textproto".pÂ·1 *@"net/textproto".Pipeline) StartRequest (@"net/textproto".idÂ·2 uint)
+	func (@"net/textproto".pÂ·1 *@"net/textproto".Pipeline) StartResponse (@"net/textproto".idÂ·2 uint)
+	type @"io".ReadWriteCloser interface { Close() (? error); Read(@"io".p []byte) (@"io".n int, @"io".err error); Write(@"io".p []byte) (@"io".n int, @"io".err error) }
+	type @"net/textproto".Conn struct { ? @"net/textproto".Reader; ? @"net/textproto".Writer; ? @"net/textproto".Pipeline; @"net/textproto".conn @"io".ReadWriteCloser }
+	func (@"net/textproto".cÂ·2 *@"net/textproto".Conn "esc:0x9") Close () (? error)
+	func (@"net/textproto".cÂ·3 *@"net/textproto".Conn) Cmd (@"net/textproto".formatÂ·4 string "esc:0x9", @"net/textproto".argsÂ·5 ...interface {} "esc:0x9") (@"net/textproto".idÂ·1 uint, @"net/textproto".errÂ·2 error)
+	type @"net".Addr interface { Network() (? string); String() (? string) }
+	import time "time" // indirect
+	type @"time".zone struct { @"time".name string; @"time".offset int; @"time".isDST bool }
+	type @"time".zoneTrans struct { @"time".when int64; @"time".index uint8; @"time".isstd bool; @"time".isutc bool }
+	type @"time".Location struct { @"time".name string; @"time".zone []@"time".zone; @"time".tx []@"time".zoneTrans; @"time".cacheStart int64; @"time".cacheEnd int64; @"time".cacheZone *@"time".zone }
+	func (@"time".lÂ·2 *@"time".Location "esc:0x22") String () (? string)
+	func (@"time".lÂ·2 *@"time".Location "esc:0x1") @"time".firstZoneUsed () (? bool)
+	func (@"time".lÂ·2 *@"time".Location "esc:0x12") @"time".get () (? *@"time".Location)
+	func (@"time".lÂ·6 *@"time".Location "esc:0x32") @"time".lookup (@"time".secÂ·7 int64) (@"time".nameÂ·1 string, @"time".offsetÂ·2 int, @"time".isDSTÂ·3 bool, @"time".startÂ·4 int64, @"time".endÂ·5 int64)
+	func (@"time".lÂ·2 *@"time".Location "esc:0x1") @"time".lookupFirstZone () (? int)
+	func (@"time".lÂ·4 *@"time".Location "esc:0x1") @"time".lookupName (@"time".nameÂ·5 string "esc:0x1", @"time".unixÂ·6 int64) (@"time".offsetÂ·1 int, @"time".isDSTÂ·2 bool, @"time".okÂ·3 bool)
+	type @"time".Duration int64
+	func (@"time".dÂ·2 @"time".Duration) Hours () (? float64) { var @"time".hourÂ·3 @"time".Duration; ; @"time".hourÂ·3 = @"time".dÂ·2 / @"time".Duration(0x34630b8a000); var @"time".nsecÂ·4 @"time".Duration; ; @"time".nsecÂ·4 = @"time".dÂ·2 % @"time".Duration(0x34630b8a000); return float64(@"time".hourÂ·3) + float64(@"time".nsecÂ·4) * 8190022623310637111963488201822504381538623676021880892417778544696899264837610290203272971060556344039023584360473938041055625214280336402169897364226048p-553 }
+	func (@"time".dÂ·2 @"time".Duration) Minutes () (? float64) { var @"time".minÂ·3 @"time".Duration; ; @"time".minÂ·3 = @"time".dÂ·2 / @"time".Duration(0xdf8475800); var @"time".nsecÂ·4 @"time".Duration; ; @"time".nsecÂ·4 = @"time".dÂ·2 % @"time".Duration(0xdf8475800); return float64(@"time".minÂ·3) + float64(@"time".nsecÂ·4) * 7678146209353722106395056769533233877065564876941352542109479049699919628723768656821910653339403201031675627614471533358284117434246264392176261853609984p-547 }
+	func (@"time".dÂ·2 @"time".Duration) Nanoseconds () (? int64) { return int64(@"time".dÂ·2) }
+	func (@"time".dÂ·2 @"time".Duration) Seconds () (? float64) { var @"time".secÂ·3 @"time".Duration; ; @"time".secÂ·3 = @"time".dÂ·2 / @"time".Duration(0x3b9aca00); var @"time".nsecÂ·4 @"time".Duration; ; @"time".nsecÂ·4 = @"time".dÂ·2 % @"time".Duration(0x3b9aca00); return float64(@"time".secÂ·3) + float64(@"time".nsecÂ·4) * 7198262071269114660816079141112770740375861891461678802759824945047098083990024106014198994535558872472104883612039846078596891298747423852523262413111296p-541 }
+	func (@"time".dÂ·2 @"time".Duration) String () (? string)
+	type @"time".Month int
+	func (@"time".mÂ·2 @"time".Month) String () (? string) { return @"time".months[@"time".mÂ·2 - @"time".Month(0x1)] }
+	type @"time".Weekday int
+	func (@"time".dÂ·2 @"time".Weekday) String () (? string) { return @"time".days[@"time".dÂ·2] }
+	type @"time".Time struct { @"time".sec int64; @"time".nsec int32; @"time".loc *@"time".Location }
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") Add (@"time".dÂ·3 @"time".Duration) (? @"time".Time) { @"time".tÂ·2.@"time".sec += int64(@"time".dÂ·3 / @"time".Duration(0x3b9aca00)); var @"time".nsecÂ·4 int32; ; @"time".nsecÂ·4 = int32(@"time".tÂ·2.@"time".nsec) + int32(@"time".dÂ·3 % @"time".Duration(0x3b9aca00)); if @"time".nsecÂ·4 >= 0x3b9aca00 { @"time".tÂ·2.@"time".sec++; @"time".nsecÂ·4 -= 0x3b9aca00 } else { if @"time".nsecÂ·4 < 0x0 { @"time".tÂ·2.@"time".sec--; @"time".nsecÂ·4 += 0x3b9aca00 } }; @"time".tÂ·2.@"time".nsec = @"time".nsecÂ·4; return @"time".tÂ·2 }
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") AddDate (@"time".yearsÂ·3 int, @"time".monthsÂ·4 int, @"time".daysÂ·5 int) (? @"time".Time)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") After (@"time".uÂ·3 @"time".Time "esc:0x1") (? bool) { return @"time".tÂ·2.@"time".sec > @"time".uÂ·3.@"time".sec || @"time".tÂ·2.@"time".sec == @"time".uÂ·3.@"time".sec && @"time".tÂ·2.@"time".nsec > @"time".uÂ·3.@"time".nsec }
+	func (@"time".tÂ·2 @"time".Time "esc:0x9") AppendFormat (@"time".bÂ·3 []byte "esc:0x1a", @"time".layoutÂ·4 string "esc:0x9") (? []byte)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Before (@"time".uÂ·3 @"time".Time "esc:0x1") (? bool) { return @"time".tÂ·2.@"time".sec < @"time".uÂ·3.@"time".sec || @"time".tÂ·2.@"time".sec == @"time".uÂ·3.@"time".sec && @"time".tÂ·2.@"time".nsec < @"time".uÂ·3.@"time".nsec }
+	func (@"time".tÂ·4 @"time".Time "esc:0x1") Clock () (@"time".hourÂ·1 int, @"time".minÂ·2 int, @"time".secÂ·3 int)
+	func (@"time".tÂ·4 @"time".Time "esc:0x1") Date () (@"time".yearÂ·1 int, @"time".monthÂ·2 @"time".Month, @"time".dayÂ·3 int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Day () (? int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Equal (@"time".uÂ·3 @"time".Time "esc:0x1") (? bool) { return @"time".tÂ·2.@"time".sec == @"time".uÂ·3.@"time".sec && @"time".tÂ·2.@"time".nsec == @"time".uÂ·3.@"time".nsec }
+	func (@"time".tÂ·2 @"time".Time "esc:0x9") Format (@"time".layoutÂ·3 string "esc:0x9") (? string)
+	func (@"time".tÂ·2 *@"time".Time "esc:0x1") GobDecode (@"time".dataÂ·3 []byte "esc:0x1") (? error)
+	func (@"time".tÂ·3 @"time".Time "esc:0x1") GobEncode () (? []byte, ? error)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Hour () (? int)
+	func (@"time".tÂ·3 @"time".Time "esc:0x1") ISOWeek () (@"time".yearÂ·1 int, @"time".weekÂ·2 int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") In (@"time".locÂ·3 *@"time".Location "esc:0x12") (? @"time".Time)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") IsZero () (? bool) { return @"time".tÂ·2.@"time".sec == 0x0 && @"time".tÂ·2.@"time".nsec == 0x0 }
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") Local () (? @"time".Time) { @"time".tÂ·2.@"time".loc = @"time".Local; return @"time".tÂ·2 }
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") Location () (? *@"time".Location) { var @"time".lÂ·3 *@"time".Location; ; @"time".lÂ·3 = @"time".tÂ·2.@"time".loc; if @"time".lÂ·3 == nil { @"time".lÂ·3 = @"time".UTC }; return @"time".lÂ·3 }
+	func (@"time".tÂ·3 @"time".Time "esc:0x1") MarshalBinary () (? []byte, ? error)
+	func (@"time".tÂ·3 @"time".Time "esc:0x9") MarshalJSON () (? []byte, ? error)
+	func (@"time".tÂ·3 @"time".Time "esc:0x9") MarshalText () (? []byte, ? error)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Minute () (? int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Month () (? @"time".Month)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Nanosecond () (? int) { return int(@"time".tÂ·2.@"time".nsec) }
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") Round (@"time".dÂ·3 @"time".Duration) (? @"time".Time)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Second () (? int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x9") String () (? string)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Sub (@"time".uÂ·3 @"time".Time "esc:0x1") (? @"time".Duration)
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") Truncate (@"time".dÂ·3 @"time".Duration) (? @"time".Time)
+	func (@"time".tÂ·2 @"time".Time "esc:0x12") UTC () (? @"time".Time) { @"time".tÂ·2.@"time".loc = @"time".UTC; return @"time".tÂ·2 }
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Unix () (? int64) { return @"time".tÂ·2.@"time".sec + -0xe7791f700 }
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") UnixNano () (? int64) { return (@"time".tÂ·2.@"time".sec + -0xe7791f700) * 0x3b9aca00 + int64(@"time".tÂ·2.@"time".nsec) }
+	func (@"time".tÂ·2 *@"time".Time "esc:0x1") UnmarshalBinary (@"time".dataÂ·3 []byte "esc:0x1") (? error)
+	func (@"time".tÂ·2 *@"time".Time "esc:0x1") UnmarshalJSON (@"time".dataÂ·3 []byte "esc:0x1") (@"time".errÂ·1 error)
+	func (@"time".tÂ·2 *@"time".Time "esc:0x1") UnmarshalText (@"time".dataÂ·3 []byte "esc:0x1") (@"time".errÂ·1 error)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Weekday () (? @"time".Weekday)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") Year () (? int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") YearDay () (? int)
+	func (@"time".tÂ·3 @"time".Time "esc:0x32") Zone () (@"time".nameÂ·1 string, @"time".offsetÂ·2 int)
+	func (@"time".tÂ·2 @"time".Time "esc:0x1") @"time".abs () (? uint64)
+	func (@"time".tÂ·5 @"time".Time "esc:0x1") @"time".date (@"time".fullÂ·6 bool) (@"time".yearÂ·1 int, @"time".monthÂ·2 @"time".Month, @"time".dayÂ·3 int, @"time".ydayÂ·4 int)
+	func (@"time".tÂ·4 @"time".Time "esc:0x32") @"time".locabs () (@"time".nameÂ·1 string, @"time".offsetÂ·2 int, @"time".absÂ·3 uint64)
+	type @"net".Conn interface { Close() (? error); LocalAddr() (? @"net".Addr); Read(@"net".b []byte) (@"net".n int, @"net".err error); RemoteAddr() (? @"net".Addr); SetDeadline(@"net".t @"time".Time) (? error); SetReadDeadline(@"net".t @"time".Time) (? error); SetWriteDeadline(@"net".t @"time".Time) (? error); Write(@"net".b []byte) (@"net".n int, @"net".err error) }
+	import crypto "crypto" // indirect
+	type @"crypto".PrivateKey interface {}
+	import x509 "crypto/x509" // indirect
+	type @"crypto/x509".SignatureAlgorithm int
+	type @"crypto/x509".PublicKeyAlgorithm int
+	import big "math/big" // indirect
+	type @"math/big".Word uintptr
+	type @"math/big".divisor struct { @"math/big".bbb @"math/big".nat; @"math/big".nbits int; @"math/big".ndigits int }
+	import rand "math/rand" // indirect
+	type @"math/rand".Source interface { Int63() (? int64); Seed(@"math/rand".seed int64) }
+	type @"math/rand".Rand struct { @"math/rand".src @"math/rand".Source }
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") ExpFloat64 () (? float64)
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") Float32 () (? float32)
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") Float64 () (? float64)
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") Int () (? int)
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") Int31 () (? int32)
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") Int31n (@"math/rand".nÂ·3 int32) (? int32)
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") Int63 () (? int64)
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") Int63n (@"math/rand".nÂ·3 int64) (? int64)
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") Intn (@"math/rand".nÂ·3 int) (? int)
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") NormFloat64 () (? float64)
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") Perm (@"math/rand".nÂ·3 int) (? []int)
+	func (@"math/rand".rÂ·1 *@"math/rand".Rand "esc:0x9") Seed (@"math/rand".seedÂ·2 int64)
+	func (@"math/rand".rÂ·2 *@"math/rand".Rand "esc:0x9") Uint32 () (? uint32)
+	type @"io".ByteScanner interface { ReadByte() (@"io".c byte, @"io".err error); UnreadByte() (? error) }
+	type @"math/big".nat []@"math/big".Word
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".add (@"math/big".xÂ·3 @"math/big".nat, @"math/big".yÂ·4 @"math/big".nat) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".and (@"math/big".xÂ·3 @"math/big".nat "esc:0x1", @"math/big".yÂ·4 @"math/big".nat "esc:0x1") (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".andNot (@"math/big".xÂ·3 @"math/big".nat "esc:0x9", @"math/big".yÂ·4 @"math/big".nat "esc:0x1") (? @"math/big".nat)
+	func (@"math/big".xÂ·2 @"math/big".nat "esc:0x1") @"math/big".bit (@"math/big".iÂ·3 uint) (? uint) { var @"math/big".jÂ·4 uint; ; @"math/big".jÂ·4 = @"math/big".iÂ·3 / 0x40; if @"math/big".jÂ·4 >= uint(len(@"math/big".xÂ·2)) { return 0x0 }; return uint(@"math/big".xÂ·2[@"math/big".jÂ·4] >> (@"math/big".iÂ·3 % 0x40) & @"math/big".Word(0x1)) }
+	func (@"math/big".xÂ·2 @"math/big".nat "esc:0x1") @"math/big".bitLen () (? int)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x1") @"math/big".bytes (@"math/big".bufÂ·3 []byte "esc:0x1") (@"math/big".iÂ·1 int)
+	func (@"math/big".zÂ·1 @"math/big".nat "esc:0x1") @"math/big".clear ()
+	func (@"math/big".xÂ·2 @"math/big".nat "esc:0x1") @"math/big".cmp (@"math/big".yÂ·3 @"math/big".nat "esc:0x1") (@"math/big".rÂ·1 int)
+	func (@"math/big".qÂ·1 @"math/big".nat) @"math/big".convertWords (@"math/big".sÂ·2 []byte "esc:0x1", @"math/big".charsetÂ·3 string "esc:0x1", @"math/big".bÂ·4 @"math/big".Word, @"math/big".ndigitsÂ·5 int, @"math/big".bbÂ·6 @"math/big".Word, @"math/big".tableÂ·7 []@"math/big".divisor "esc:0x9")
+	func (@"math/big".xÂ·2 @"math/big".nat "esc:0x9") @"math/big".decimalString () (? string)
+	func (@"math/big".zÂ·3 @"math/big".nat) @"math/big".div (@"math/big".z2Â·4 @"math/big".nat, @"math/big".uÂ·5 @"math/big".nat, @"math/big".vÂ·6 @"math/big".nat) (@"math/big".qÂ·1 @"math/big".nat, @"math/big".rÂ·2 @"math/big".nat)
+	func (@"math/big".zÂ·3 @"math/big".nat "esc:0x12") @"math/big".divLarge (@"math/big".uÂ·4 @"math/big".nat, @"math/big".uInÂ·5 @"math/big".nat, @"math/big".vÂ·6 @"math/big".nat) (@"math/big".qÂ·1 @"math/big".nat, @"math/big".rÂ·2 @"math/big".nat)
+	func (@"math/big".zÂ·3 @"math/big".nat) @"math/big".divW (@"math/big".xÂ·4 @"math/big".nat, @"math/big".yÂ·5 @"math/big".Word) (@"math/big".qÂ·1 @"math/big".nat, @"math/big".rÂ·2 @"math/big".Word)
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".expNN (@"math/big".xÂ·3 @"math/big".nat, @"math/big".yÂ·4 @"math/big".nat "esc:0x1", @"math/big".mÂ·5 @"math/big".nat) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".expNNMontgomery (@"math/big".xÂ·3 @"math/big".nat, @"math/big".yÂ·4 @"math/big".nat "esc:0x1", @"math/big".mÂ·5 @"math/big".nat) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".expNNWindowed (@"math/big".xÂ·3 @"math/big".nat, @"math/big".yÂ·4 @"math/big".nat "esc:0x1", @"math/big".mÂ·5 @"math/big".nat) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".expWW (@"math/big".xÂ·3 @"math/big".Word, @"math/big".yÂ·4 @"math/big".Word) (? @"math/big".nat)
+	func (@"math/big".xÂ·2 @"math/big".nat "esc:0x9") @"math/big".hexString () (? string)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".make (@"math/big".nÂ·3 int) (? @"math/big".nat)
+	func (@"math/big".xÂ·2 @"math/big".nat) @"math/big".modW (@"math/big".dÂ·3 @"math/big".Word) (@"math/big".rÂ·1 @"math/big".Word)
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".montgomery (@"math/big".xÂ·3 @"math/big".nat, @"math/big".yÂ·4 @"math/big".nat "esc:0x1", @"math/big".mÂ·5 @"math/big".nat, @"math/big".kÂ·6 @"math/big".Word, @"math/big".nÂ·7 int) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".mul (@"math/big".xÂ·3 @"math/big".nat, @"math/big".yÂ·4 @"math/big".nat) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".mulAddWW (@"math/big".xÂ·3 @"math/big".nat, @"math/big".yÂ·4 @"math/big".Word, @"math/big".rÂ·5 @"math/big".Word) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".mulRange (@"math/big".aÂ·3 uint64, @"math/big".bÂ·4 uint64) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".norm () (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".or (@"math/big".xÂ·3 @"math/big".nat "esc:0x9", @"math/big".yÂ·4 @"math/big".nat "esc:0x9") (? @"math/big".nat)
+	func (@"math/big".nÂ·2 @"math/big".nat) @"math/big".probablyPrime (@"math/big".repsÂ·3 int) (? bool)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".random (@"math/big".randÂ·3 *@"math/rand".Rand "esc:0x9", @"math/big".limitÂ·4 @"math/big".nat "esc:0x1", @"math/big".nÂ·5 int) (? @"math/big".nat)
+	func (@"math/big".zÂ·5 @"math/big".nat) @"math/big".scan (@"math/big".rÂ·6 @"io".ByteScanner, @"math/big".baseÂ·7 int, @"math/big".fracOkÂ·8 bool) (@"math/big".resÂ·1 @"math/big".nat, @"math/big".bÂ·2 int, @"math/big".countÂ·3 int, @"math/big".errÂ·4 error)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".set (@"math/big".xÂ·3 @"math/big".nat "esc:0x9") (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".setBit (@"math/big".xÂ·3 @"math/big".nat "esc:0x9", @"math/big".iÂ·4 uint, @"math/big".bÂ·5 uint) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".setBytes (@"math/big".bufÂ·3 []byte "esc:0x1") (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".setUint64 (@"math/big".xÂ·3 uint64) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".setWord (@"math/big".xÂ·3 @"math/big".Word) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".shl (@"math/big".xÂ·3 @"math/big".nat, @"math/big".sÂ·4 uint) (? @"math/big".nat)
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".shr (@"math/big".xÂ·3 @"math/big".nat, @"math/big".sÂ·4 uint) (? @"math/big".nat)
+	func (@"math/big".xÂ·2 @"math/big".nat "esc:0x1") @"math/big".sticky (@"math/big".iÂ·3 uint) (? uint)
+	func (@"math/big".xÂ·2 @"math/big".nat "esc:0x9") @"math/big".string (@"math/big".charsetÂ·3 string "esc:0x1") (? string)
+	func (@"math/big".zÂ·2 @"math/big".nat) @"math/big".sub (@"math/big".xÂ·3 @"math/big".nat, @"math/big".yÂ·4 @"math/big".nat) (? @"math/big".nat)
+	func (@"math/big".xÂ·2 @"math/big".nat "esc:0x1") @"math/big".trailingZeroBits () (? uint)
+	func (@"math/big".zÂ·2 @"math/big".nat "esc:0x12") @"math/big".xor (@"math/big".xÂ·3 @"math/big".nat "esc:0x9", @"math/big".yÂ·4 @"math/big".nat "esc:0x9") (? @"math/big".nat)
+	type @"fmt".State interface { Flag(@"fmt".c int) (? bool); Precision() (@"fmt".prec int, @"fmt".ok bool); Width() (@"fmt".wid int, @"fmt".ok bool); Write(@"fmt".b []byte) (@"fmt".ret int, @"fmt".err error) }
+	type @"fmt".ScanState interface { Read(@"fmt".buf []byte) (@"fmt".n int, @"fmt".err error); ReadRune() (@"fmt".r rune, @"fmt".size int, @"fmt".err error); SkipSpace(); Token(@"fmt".skipSpace bool, @"fmt".f func(? rune) (? bool)) (@"fmt".token []byte, @"fmt".err error); UnreadRune() (? error); Width() (@"fmt".wid int, @"fmt".ok bool) }
+	type @"math/big".Int struct { @"math/big".neg bool; @"math/big".abs @"math/big".nat }
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Abs (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Add (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") And (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") AndNot (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Binomial (@"math/big".nÂ·3 int64, @"math/big".kÂ·4 int64) (? *@"math/big".Int)
+	func (@"math/big".xÂ·2 *@"math/big".Int "esc:0x9") Bit (@"math/big".iÂ·3 int) (? uint)
+	func (@"math/big".xÂ·2 *@"math/big".Int "esc:0x1") BitLen () (? int)
+	func (@"math/big".xÂ·2 *@"math/big".Int "esc:0x22") Bits () (? []@"math/big".Word) { return @"math/big".xÂ·2.@"math/big".abs }
+	func (@"math/big".xÂ·2 *@"math/big".Int "esc:0x1") Bytes () (? []byte)
+	func (@"math/big".xÂ·2 *@"math/big".Int "esc:0x1") Cmp (@"math/big".yÂ·3 *@"math/big".Int "esc:0x1") (@"math/big".rÂ·1 int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Div (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·3 *@"math/big".Int "esc:0x1a") DivMod (@"math/big".xÂ·4 *@"math/big".Int "esc:0x9", @"math/big".yÂ·5 *@"math/big".Int "esc:0x9", @"math/big".mÂ·6 *@"math/big".Int "esc:0x8a") (? *@"math/big".Int, ? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Exp (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x1", @"math/big".mÂ·5 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".xÂ·1 *@"math/big".Int "esc:0x9") Format (@"math/big".sÂ·2 @"fmt".State, @"math/big".chÂ·3 rune)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") GCD (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9", @"math/big".aÂ·5 *@"math/big".Int "esc:0x9", @"math/big".bÂ·6 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x9") GobDecode (@"math/big".bufÂ·3 []byte "esc:0x1") (? error)
+	func (@"math/big".xÂ·3 *@"math/big".Int "esc:0x1") GobEncode () (? []byte, ? error)
+	func (@"math/big".xÂ·2 *@"math/big".Int "esc:0x1") Int64 () (? int64) { var @"math/big".vÂ·3 int64; ; @"math/big".vÂ·3 = int64(@"math/big".low64(@"math/big".xÂ·2.@"math/big".abs)); if @"math/big".xÂ·2.@"math/big".neg { @"math/big".vÂ·3 = -@"math/big".vÂ·3 }; return @"math/big".vÂ·3 }
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Lsh (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".nÂ·4 uint) (? *@"math/big".Int)
+	func (@"math/big".zÂ·3 *@"math/big".Int "esc:0x9") MarshalJSON () (? []byte, ? error)
+	func (@"math/big".zÂ·3 *@"math/big".Int "esc:0x9") MarshalText () (@"math/big".textÂ·1 []byte, @"math/big".errÂ·2 error)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Mod (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") ModInverse (@"math/big".gÂ·3 *@"math/big".Int "esc:0x9", @"math/big".nÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") ModSqrt (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".pÂ·4 *@"math/big".Int) (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Mul (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") MulRange (@"math/big".aÂ·3 int64, @"math/big".bÂ·4 int64) (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Neg (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Not (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Or (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".xÂ·2 *@"math/big".Int "esc:0x9") ProbablyPrime (@"math/big".nÂ·3 int) (? bool)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Quo (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·3 *@"math/big".Int "esc:0x1a") QuoRem (@"math/big".xÂ·4 *@"math/big".Int "esc:0x9", @"math/big".yÂ·5 *@"math/big".Int "esc:0x9", @"math/big".rÂ·6 *@"math/big".Int "esc:0x8a") (? *@"math/big".Int, ? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Rand (@"math/big".rndÂ·3 *@"math/rand".Rand "esc:0x9", @"math/big".nÂ·4 *@"math/big".Int "esc:0x1") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Rem (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Rsh (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".nÂ·4 uint) (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x9") Scan (@"math/big".sÂ·3 @"fmt".ScanState, @"math/big".chÂ·4 rune) (? error)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Set (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") SetBit (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".iÂ·4 int, @"math/big".bÂ·5 uint) (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x12") SetBits (@"math/big".absÂ·3 []@"math/big".Word) (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") SetBytes (@"math/big".bufÂ·3 []byte "esc:0x1") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") SetInt64 (@"math/big".xÂ·3 int64) (? *@"math/big".Int)
+	func (@"math/big".zÂ·3 *@"math/big".Int "esc:0x1a") SetString (@"math/big".sÂ·4 string, @"math/big".baseÂ·5 int) (? *@"math/big".Int, ? bool)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") SetUint64 (@"math/big".xÂ·3 uint64) (? *@"math/big".Int)
+	func (@"math/big".xÂ·2 *@"math/big".Int "esc:0x1") Sign () (? int) { if len(@"math/big".xÂ·2.@"math/big".abs) == 0x0 { return 0x0 }; if @"math/big".xÂ·2.@"math/big".neg { return -0x1 }; return 0x1 }
+	func (@"math/big".xÂ·2 *@"math/big".Int "esc:0x9") String () (? string)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Sub (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".xÂ·2 *@"math/big".Int "esc:0x1") Uint64 () (? uint64) { return @"math/big".low64(@"math/big".xÂ·2.@"math/big".abs) }
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x9") UnmarshalJSON (@"math/big".textÂ·3 []byte) (? error)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x9") UnmarshalText (@"math/big".textÂ·3 []byte) (? error)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") Xor (@"math/big".xÂ·3 *@"math/big".Int "esc:0x9", @"math/big".yÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·2 *@"math/big".Int "esc:0x1a") @"math/big".binaryGCD (@"math/big".aÂ·3 *@"math/big".Int "esc:0x9", @"math/big".bÂ·4 *@"math/big".Int "esc:0x9") (? *@"math/big".Int)
+	func (@"math/big".zÂ·4 *@"math/big".Int "esc:0x1a") @"math/big".scan (@"math/big".rÂ·5 @"io".ByteScanner, @"math/big".baseÂ·6 int) (? *@"math/big".Int, ? int, ? error)
+	import pkix "crypto/x509/pkix" // indirect
+	import asn1 "encoding/asn1" // indirect
+	type @"encoding/asn1".ObjectIdentifier []int
+	func (@"encoding/asn1".oiÂ·2 @"encoding/asn1".ObjectIdentifier "esc:0x1") Equal (@"encoding/asn1".otherÂ·3 @"encoding/asn1".ObjectIdentifier "esc:0x1") (? bool)
+	func (@"encoding/asn1".oiÂ·2 @"encoding/asn1".ObjectIdentifier "esc:0x1") String () (? string)
+	type @"crypto/x509/pkix".AttributeTypeAndValue struct { Type @"encoding/asn1".ObjectIdentifier; Value interface {} }
+	type @"crypto/x509/pkix".RelativeDistinguishedNameSET []@"crypto/x509/pkix".AttributeTypeAndValue
+	type @"crypto/x509/pkix".RDNSequence []@"crypto/x509/pkix".RelativeDistinguishedNameSET
+	type @"crypto/x509/pkix".Name struct { Country []string; Organization []string; OrganizationalUnit []string; Locality []string; Province []string; StreetAddress []string; PostalCode []string; SerialNumber string; CommonName string; Names []@"crypto/x509/pkix".AttributeTypeAndValue; ExtraNames []@"crypto/x509/pkix".AttributeTypeAndValue }
+	func (@"crypto/x509/pkix".nÂ·1 *@"crypto/x509/pkix".Name "esc:0x9") FillFromRDNSequence (@"crypto/x509/pkix".rdnsÂ·2 *@"crypto/x509/pkix".RDNSequence "esc:0x9")
+	func (@"crypto/x509/pkix".nÂ·2 @"crypto/x509/pkix".Name) ToRDNSequence () (@"crypto/x509/pkix".retÂ·1 @"crypto/x509/pkix".RDNSequence)
+	func (@"crypto/x509/pkix".nÂ·2 @"crypto/x509/pkix".Name "esc:0x1") @"crypto/x509/pkix".appendRDNs (@"crypto/x509/pkix".inÂ·3 @"crypto/x509/pkix".RDNSequence "esc:0x1a", @"crypto/x509/pkix".valuesÂ·4 []string "esc:0x9", @"crypto/x509/pkix".oidÂ·5 @"encoding/asn1".ObjectIdentifier) (? @"crypto/x509/pkix".RDNSequence)
+	type @"crypto/x509".KeyUsage int
+	type @"crypto/x509/pkix".Extension struct { Id @"encoding/asn1".ObjectIdentifier; Critical bool "asn1:\"optional\""; Value []byte }
+	type @"crypto/x509".ExtKeyUsage int
+	type @"net".IPMask []byte
+	func (@"net".mÂ·3 @"net".IPMask "esc:0x1") Size () (@"net".onesÂ·1 int, @"net".bitsÂ·2 int)
+	func (@"net".mÂ·2 @"net".IPMask "esc:0x1") String () (? string)
+	type @"net".IP []byte
+	func (@"net".ipÂ·2 @"net".IP "esc:0x1") DefaultMask () (? @"net".IPMask)
+	func (@"net".ipÂ·2 @"net".IP "esc:0x1") Equal (@"net".xÂ·3 @"net".IP "esc:0x1") (? bool)
+	func (@"net".ipÂ·2 @"net".IP "esc:0x1") IsGlobalUnicast () (? bool)
+	func (@"net".ipÂ·2 @"net".IP "esc:0x1") IsInterfaceLocalMulticast () (? bool) { return len(@"net".ipÂ·2) == 0x10 && @"net".ipÂ·2[0x0] == byte(0xff) && @"net".ipÂ·2[0x1] & byte(0xf) == byte(0x1) }
+	func (@"net".ipÂ·2 @"net".IP "esc:0x1") IsLinkLocalMulticast () (? bool)
+	func (@"net".ipÂ·2 @"net".IP "esc:0x1") IsLinkLocalUnicast () (? bool)
+	func (@"net".ipÂ·2 @"net".IP "esc:0x1") IsLoopback () (? bool)
+	func (@"net".ipÂ·2 @"net".IP "esc:0x1") IsMulticast () (? bool)
+	func (@"net".ipÂ·2 @"net".IP "esc:0x1") IsUnspecified () (? bool)
+	func (@"net".ipÂ·3 @"net".IP "esc:0x1") MarshalText () (? []byte, ? error)
+	func (@"net".ipÂ·2 @"net".IP "esc:0x1") Mask (@"net".maskÂ·3 @"net".IPMask "esc:0x1") (? @"net".IP)
+	func (@"net".ipÂ·2 @"net".IP "esc:0x1") String () (? string)
+	func (@"net".ipÂ·2 @"net".IP "esc:0x12") To16 () (? @"net".IP) { if len(@"net".ipÂ·2) == 0x4 { return @"net".IPv4(@"net".ipÂ·2[0x0], @"net".ipÂ·2[0x1], @"net".ipÂ·2[0x2], @"net".ipÂ·2[0x3]) }; if len(@"net".ipÂ·2) == 0x10 { return @"net".ipÂ·2 }; return nil }
+	func (@"net".ipÂ·2 @"net".IP "esc:0x12") To4 () (? @"net".IP)
+	func (@"net".ipÂ·2 *@"net".IP "esc:0x1") UnmarshalText (@"net".textÂ·3 []byte "esc:0x1") (? error)
+	type @"encoding/asn1".RawContent []byte
+	type @"encoding/asn1".RawValue struct { Class int; Tag int; IsCompound bool; Bytes []byte; FullBytes []byte }
+	type @"crypto/x509/pkix".AlgorithmIdentifier struct { Algorithm @"encoding/asn1".ObjectIdentifier; Parameters @"encoding/asn1".RawValue "asn1:\"optional\"" }
+	type @"crypto/x509/pkix".RevokedCertificate struct { SerialNumber *@"math/big".Int; RevocationTime @"time".Time; Extensions []@"crypto/x509/pkix".Extension "asn1:\"optional\"" }
+	type @"crypto/x509/pkix".TBSCertificateList struct { Raw @"encoding/asn1".RawContent; Version int "asn1:\"optional,default:1\""; Signature @"crypto/x509/pkix".AlgorithmIdentifier; Issuer @"crypto/x509/pkix".RDNSequence; ThisUpdate @"time".Time; NextUpdate @"time".Time "asn1:\"optional\""; RevokedCertificates []@"crypto/x509/pkix".RevokedCertificate "asn1:\"optional\""; Extensions []@"crypto/x509/pkix".Extension "asn1:\"tag:0,optional,explicit\"" }
+	type @"encoding/asn1".BitString struct { Bytes []byte; BitLength int }
+	func (@"encoding/asn1".bÂ·2 @"encoding/asn1".BitString "esc:0x1") At (@"encoding/asn1".iÂ·3 int) (? int) { if @"encoding/asn1".iÂ·3 < 0x0 || @"encoding/asn1".iÂ·3 >= @"encoding/asn1".bÂ·2.BitLength { return 0x0 }; var @"encoding/asn1".xÂ·4 int; ; @"encoding/asn1".xÂ·4 = @"encoding/asn1".iÂ·3 / 0x8; var @"encoding/asn1".yÂ·5 uint; ; @"encoding/asn1".yÂ·5 = 0x7 - uint(@"encoding/asn1".iÂ·3 % 0x8); return int(@"encoding/asn1".bÂ·2.Bytes[@"encoding/asn1".xÂ·4] >> @"encoding/asn1".yÂ·5) & 0x1 }
+	func (@"encoding/asn1".bÂ·2 @"encoding/asn1".BitString "esc:0x12") RightAlign () (? []byte)
+	type @"crypto/x509/pkix".CertificateList struct { TBSCertList @"crypto/x509/pkix".TBSCertificateList; SignatureAlgorithm @"crypto/x509/pkix".AlgorithmIdentifier; SignatureValue @"encoding/asn1".BitString }
+	func (@"crypto/x509/pkix".certListÂ·2 *@"crypto/x509/pkix".CertificateList "esc:0x1") HasExpired (@"crypto/x509/pkix".nowÂ·3 @"time".Time "esc:0x1") (? bool) { return @"crypto/x509/pkix".nowÂ·3.After(@"crypto/x509/pkix".certListÂ·2.TBSCertList.NextUpdate) }
+	type @"crypto/x509".CertPool struct { @"crypto/x509".bySubjectKeyId map[string][]int; @"crypto/x509".byName map[string][]int; @"crypto/x509".certs []*@"crypto/x509".Certificate }
+	func (@"crypto/x509".sÂ·1 *@"crypto/x509".CertPool "esc:0x9") AddCert (@"crypto/x509".certÂ·2 *@"crypto/x509".Certificate)
+	func (@"crypto/x509".sÂ·2 *@"crypto/x509".CertPool "esc:0x9") AppendCertsFromPEM (@"crypto/x509".pemCertsÂ·3 []byte) (@"crypto/x509".okÂ·1 bool)
+	func (@"crypto/x509".sÂ·2 *@"crypto/x509".CertPool "esc:0x9") Subjects () (@"crypto/x509".resÂ·1 [][]byte)
+	func (@"crypto/x509".sÂ·4 *@"crypto/x509".CertPool "esc:0x18a") @"crypto/x509".findVerifiedParents (@"crypto/x509".certÂ·5 *@"crypto/x509".Certificate "esc:0x9") (@"crypto/x509".parentsÂ·1 []int, @"crypto/x509".errCertÂ·2 *@"crypto/x509".Certificate, @"crypto/x509".errÂ·3 error)
+	type @"crypto/x509".VerifyOptions struct { DNSName string; Intermediates *@"crypto/x509".CertPool; Roots *@"crypto/x509".CertPool; CurrentTime @"time".Time; KeyUsages []@"crypto/x509".ExtKeyUsage }
+	type @"crypto/x509".Certificate struct { Raw []byte; RawTBSCertificate []byte; RawSubjectPublicKeyInfo []byte; RawSubject []byte; RawIssuer []byte; Signature []byte; SignatureAlgorithm @"crypto/x509".SignatureAlgorithm; PublicKeyAlgorithm @"crypto/x509".PublicKeyAlgorithm; PublicKey interface {}; Version int; SerialNumber *@"math/big".Int; Issuer @"crypto/x509/pkix".Name; Subject @"crypto/x509/pkix".Name; NotBefore @"time".Time; NotAfter @"time".Time; KeyUsage @"crypto/x509".KeyUsage; Extensions []@"crypto/x509/pkix".Extension; ExtraExtensions []@"crypto/x509/pkix".Extension; UnhandledCriticalExtensions []@"encoding/asn1".ObjectIdentifier; ExtKeyUsage []@"crypto/x509".ExtKeyUsage; UnknownExtKeyUsage []@"encoding/asn1".ObjectIdentifier; BasicConstraintsValid bool; IsCA bool; MaxPathLen int; MaxPathLenZero bool; SubjectKeyId []byte; AuthorityKeyId []byte; OCSPServer []string; IssuingCertificateURL []string; DNSNames []string; EmailAddresses []string; IPAddresses []@"net".IP; PermittedDNSDomainsCritical bool; PermittedDNSDomains []string; CRLDistributionPoints []string; PolicyIdentifiers []@"encoding/asn1".ObjectIdentifier }
+	func (@"crypto/x509".cÂ·2 *@"crypto/x509".Certificate "esc:0x9") CheckCRLSignature (@"crypto/x509".crlÂ·3 *@"crypto/x509/pkix".CertificateList "esc:0x9") (@"crypto/x509".errÂ·1 error)
+	func (@"crypto/x509".cÂ·2 *@"crypto/x509".Certificate "esc:0x9") CheckSignature (@"crypto/x509".algoÂ·3 @"crypto/x509".SignatureAlgorithm, @"crypto/x509".signedÂ·4 []byte, @"crypto/x509".signatureÂ·5 []byte) (@"crypto/x509".errÂ·1 error)
+	func (@"crypto/x509".cÂ·2 *@"crypto/x509".Certificate "esc:0x9") CheckSignatureFrom (@"crypto/x509".parentÂ·3 *@"crypto/x509".Certificate "esc:0x9") (@"crypto/x509".errÂ·1 error)
+	func (@"crypto/x509".cÂ·3 *@"crypto/x509".Certificate "esc:0x9") CreateCRL (@"crypto/x509".randÂ·4 @"io".Reader, @"crypto/x509".privÂ·5 interface {}, @"crypto/x509".revokedCertsÂ·6 []@"crypto/x509/pkix".RevokedCertificate, @"crypto/x509".nowÂ·7 @"time".Time, @"crypto/x509".expiryÂ·8 @"time".Time) (@"crypto/x509".crlBytesÂ·1 []byte, @"crypto/x509".errÂ·2 error)
+	func (@"crypto/x509".cÂ·2 *@"crypto/x509".Certificate "esc:0x1") Equal (@"crypto/x509".otherÂ·3 *@"crypto/x509".Certificate "esc:0x1") (? bool)
+	func (@"crypto/x509".cÂ·3 *@"crypto/x509".Certificate) Verify (@"crypto/x509".optsÂ·4 @"crypto/x509".VerifyOptions) (@"crypto/x509".chainsÂ·1 [][]*@"crypto/x509".Certificate, @"crypto/x509".errÂ·2 error)
+	func (@"crypto/x509".cÂ·2 *@"crypto/x509".Certificate "esc:0x1a") VerifyHostname (@"crypto/x509".hÂ·3 string) (? error)
+	func (@"crypto/x509".cÂ·3 *@"crypto/x509".Certificate) @"crypto/x509".buildChains (@"crypto/x509".cacheÂ·4 map[int][][]*@"crypto/x509".Certificate "esc:0x1", @"crypto/x509".currentChainÂ·5 []*@"crypto/x509".Certificate "esc:0x9", @"crypto/x509".optsÂ·6 *@"crypto/x509".VerifyOptions "esc:0x20a") (@"crypto/x509".chainsÂ·1 [][]*@"crypto/x509".Certificate, @"crypto/x509".errÂ·2 error)
+	func (@"crypto/x509".cÂ·2 *@"crypto/x509".Certificate "esc:0x12") @"crypto/x509".isValid (@"crypto/x509".certTypeÂ·3 int, @"crypto/x509".currentChainÂ·4 []*@"crypto/x509".Certificate "esc:0x1", @"crypto/x509".optsÂ·5 *@"crypto/x509".VerifyOptions "esc:0x1") (? error)
+	func (@"crypto/x509".cÂ·3 *@"crypto/x509".Certificate "esc:0x1") @"crypto/x509".systemVerify (@"crypto/x509".optsÂ·4 *@"crypto/x509".VerifyOptions "esc:0x1") (@"crypto/x509".chainsÂ·1 [][]*@"crypto/x509".Certificate, @"crypto/x509".errÂ·2 error) { return nil, nil }
+	type @"crypto/tls".Certificate struct { Certificate [][]byte; PrivateKey @"crypto".PrivateKey; OCSPStaple []byte; SignedCertificateTimestamps [][]byte; Leaf *@"crypto/x509".Certificate }
+	type @"crypto/tls".CurveID uint16
+	type @"crypto/tls".ClientHelloInfo struct { CipherSuites []uint16; ServerName string; SupportedCurves []@"crypto/tls".CurveID; SupportedPoints []uint8 }
+	type @"crypto/tls".ClientAuthType int
+	type @"crypto/tls".ClientSessionState struct { @"crypto/tls".sessionTicket []uint8; @"crypto/tls".vers uint16; @"crypto/tls".cipherSuite uint16; @"crypto/tls".masterSecret []byte; @"crypto/tls".serverCertificates []*@"crypto/x509".Certificate; @"crypto/tls".verifiedChains [][]*@"crypto/x509".Certificate }
+	type @"crypto/tls".ClientSessionCache interface { Get(@"crypto/tls".sessionKey string) (@"crypto/tls".session *@"crypto/tls".ClientSessionState, @"crypto/tls".ok bool); Put(@"crypto/tls".sessionKey string, @"crypto/tls".cs *@"crypto/tls".ClientSessionState) }
+	type @"sync".Once struct { @"sync".m @"sync".Mutex; @"sync".done uint32 }
+	func (@"sync".oÂ·1 *@"sync".Once) Do (@"sync".fÂ·2 func() "esc:0x1")
+	type @"sync".Locker interface { Lock(); Unlock() }
+	type @"sync".RWMutex struct { @"sync".w @"sync".Mutex; @"sync".writerSem uint32; @"sync".readerSem uint32; @"sync".readerCount int32; @"sync".readerWait int32 }
+	func (@"sync".rwÂ·1 *@"sync".RWMutex) Lock ()
+	func (@"sync".rwÂ·1 *@"sync".RWMutex) RLock ()
+	func (@"sync".rwÂ·2 *@"sync".RWMutex "esc:0x12") RLocker () (? @"sync".Locker) { return (*@"sync".rlocker)(@"sync".rwÂ·2) }
+	func (@"sync".rwÂ·1 *@"sync".RWMutex) RUnlock ()
+	func (@"sync".rwÂ·1 *@"sync".RWMutex) Unlock ()
+	type @"crypto/tls".ticketKey struct { @"crypto/tls".keyName [16]byte; @"crypto/tls".aesKey [16]byte; @"crypto/tls".hmacKey [16]byte }
+	type @"crypto/tls".Config struct { Rand @"io".Reader; Time func() (? @"time".Time); Certificates []@"crypto/tls".Certificate; NameToCertificate map[string]*@"crypto/tls".Certificate; GetCertificate func(@"crypto/tls".clientHello *@"crypto/tls".ClientHelloInfo) (? *@"crypto/tls".Certificate, ? error); RootCAs *@"crypto/x509".CertPool; NextProtos []string; ServerName string; ClientAuth @"crypto/tls".ClientAuthType; ClientCAs *@"crypto/x509".CertPool; InsecureSkipVerify bool; CipherSuites []uint16; PreferServerCipherSuites bool; SessionTicketsDisabled bool; SessionTicketKey [32]byte; ClientSessionCache @"crypto/tls".ClientSessionCache; MinVersion uint16; MaxVersion uint16; CurvePreferences []@"crypto/tls".CurveID; @"crypto/tls".serverInitOnce @"sync".Once; @"crypto/tls".mutex @"sync".RWMutex; @"crypto/tls".sessionTicketKeys []@"crypto/tls".ticketKey }
+	func (@"crypto/tls".cÂ·1 *@"crypto/tls".Config "esc:0x9") BuildNameToCertificate ()
+	func (@"crypto/tls".cÂ·1 *@"crypto/tls".Config) SetSessionTicketKeys (@"crypto/tls".keysÂ·2 [][32]byte "esc:0x1")
+	func (@"crypto/tls".cÂ·2 *@"crypto/tls".Config "esc:0x22") @"crypto/tls".cipherSuites () (? []uint16)
+	func (@"crypto/tls".cÂ·2 *@"crypto/tls".Config "esc:0x22") @"crypto/tls".curvePreferences () (? []@"crypto/tls".CurveID) { if @"crypto/tls".cÂ·2 == nil || len(@"crypto/tls".cÂ·2.CurvePreferences) == 0x0 { return @"crypto/tls".defaultCurvePreferences }; return @"crypto/tls".cÂ·2.CurvePreferences }
+	func (@"crypto/tls".cÂ·3 *@"crypto/tls".Config "esc:0x22") @"crypto/tls".getCertificate (@"crypto/tls".clientHelloÂ·4 *@"crypto/tls".ClientHelloInfo) (? *@"crypto/tls".Certificate, ? error)
+	func (@"crypto/tls".cÂ·2 *@"crypto/tls".Config "esc:0x1") @"crypto/tls".maxVersion () (? uint16) { if @"crypto/tls".cÂ·2 == nil || @"crypto/tls".cÂ·2.MaxVersion == 0x0 { return 0x303 }; return @"crypto/tls".cÂ·2.MaxVersion }
+	func (@"crypto/tls".cÂ·2 *@"crypto/tls".Config "esc:0x1") @"crypto/tls".minVersion () (? uint16) { if @"crypto/tls".cÂ·2 == nil || @"crypto/tls".cÂ·2.MinVersion == 0x0 { return 0x301 }; return @"crypto/tls".cÂ·2.MinVersion }
+	func (@"crypto/tls".cÂ·3 *@"crypto/tls".Config "esc:0x1") @"crypto/tls".mutualVersion (@"crypto/tls".versÂ·4 uint16) (? uint16, ? bool) { var @"crypto/tls".minVersionÂ·5 uint16; ; @"crypto/tls".minVersionÂ·5 = @"crypto/tls".cÂ·3.@"crypto/tls".minVersion(); var @"crypto/tls".maxVersionÂ·6 uint16; ; @"crypto/tls".maxVersionÂ·6 = @"crypto/tls".cÂ·3.@"crypto/tls".maxVersion(); if @"crypto/tls".versÂ·4 < @"crypto/tls".minVersionÂ·5 { return 0x0, false }; if @"crypto/tls".versÂ·4 > @"crypto/tls".maxVersionÂ·6 { @"crypto/tls".versÂ·4 = @"crypto/tls".maxVersionÂ·6 }; return @"crypto/tls".versÂ·4, true }
+	func (@"crypto/tls".cÂ·2 *@"crypto/tls".Config "esc:0x22") @"crypto/tls".rand () (? @"io".Reader) { var @"crypto/tls".rÂ·3 @"io".Reader; ; @"crypto/tls".rÂ·3 = @"crypto/tls".cÂ·2.Rand; if @"crypto/tls".rÂ·3 == nil { return @"crypto/rand".Reader }; return @"crypto/tls".rÂ·3 }
+	func (@"crypto/tls".cÂ·1 *@"crypto/tls".Config) @"crypto/tls".serverInit ()
+	func (@"crypto/tls".cÂ·2 *@"crypto/tls".Config) @"crypto/tls".ticketKeys () (? []@"crypto/tls".ticketKey)
+	func (@"crypto/tls".cÂ·2 *@"crypto/tls".Config "esc:0x1") @"crypto/tls".time () (? @"time".Time)
+	type @"crypto/tls".ConnectionState struct { Version uint16; HandshakeComplete bool; DidResume bool; CipherSuite uint16; NegotiatedProtocol string; NegotiatedProtocolIsMutual bool; ServerName string; PeerCertificates []*@"crypto/x509".Certificate; VerifiedChains [][]*@"crypto/x509".Certificate; SignedCertificateTimestamps [][]byte; OCSPResponse []byte; TLSUnique []byte }
+	type @"".Client struct { Text *@"net/textproto".Conn; @"".conn @"net".Conn; @"".tls bool; @"".serverName string; @"".ext map[string]string; @"".auth []string; @"".localName string; @"".didHello bool; @"".helloError error }
+	func (@"".cÂ·2 *@"".Client "esc:0x2a") Auth (@"".aÂ·3 @"".Auth) (? error)
+	func (@"".cÂ·2 *@"".Client "esc:0x9") Close () (? error)
+	func (@"".cÂ·3 *@"".Client) Data () (? @"io".WriteCloser, ? error)
+	func (@"".cÂ·3 *@"".Client "esc:0x9") Extension (@"".extÂ·4 string "esc:0x9") (? bool, ? string)
+	func (@"".cÂ·2 *@"".Client "esc:0x2a") Hello (@"".localNameÂ·3 string) (? error)
+	func (@"".cÂ·2 *@"".Client "esc:0x2a") Mail (@"".fromÂ·3 string) (? error)
+	func (@"".cÂ·2 *@"".Client "esc:0x2a") Quit () (? error)
+	func (@"".cÂ·2 *@"".Client "esc:0x4a") Rcpt (@"".toÂ·3 string) (? error)
+	func (@"".cÂ·2 *@"".Client "esc:0x2a") Reset () (? error)
+	func (@"".cÂ·2 *@"".Client) StartTLS (@"".configÂ·3 *@"crypto/tls".Config) (? error)
+	func (@"".cÂ·3 *@"".Client "esc:0x9") TLSConnectionState () (@"".stateÂ·1 @"crypto/tls".ConnectionState, @"".okÂ·2 bool)
+	func (@"".cÂ·2 *@"".Client "esc:0x2a") Verify (@"".addrÂ·3 string) (? error)
+	func (@"".cÂ·4 *@"".Client "esc:0x100a") @"".cmd (@"".expectCodeÂ·5 int, @"".formatÂ·6 string "esc:0x9", @"".argsÂ·7 ...interface {} "esc:0x9") (? int, ? string, ? error)
+	func (@"".cÂ·2 *@"".Client "esc:0x4a") @"".ehlo () (? error)
+	func (@"".cÂ·2 *@"".Client "esc:0x2a") @"".hello () (? error)
+	func (@"".cÂ·2 *@"".Client "esc:0x4a") @"".helo () (? error)
+	func @"".Dial (@"".addrÂ·3 string) (? *@"".Client, ? error)
+	func @"".NewClient (@"".connÂ·3 @"net".Conn, @"".hostÂ·4 string) (? *@"".Client, ? error)
+	func @"".SendMail (@"".addrÂ·2 string, @"".aÂ·3 @"".Auth, @"".fromÂ·4 string, @"".toÂ·5 []string "esc:0x9", @"".msgÂ·6 []byte) (? error)
+	func @"".init ()
+	type @"".plainAuth struct { @"".identity string; @"".username string; @"".password string; @"".host string }
+	func (@"".aÂ·3 *@"".plainAuth "esc:0x1") Next (@"".fromServerÂ·4 []byte "esc:0x1", @"".moreÂ·5 bool) (? []byte, ? error) { if @"".moreÂ·5 { return nil, @"errors".New("unexpected server challenge") }; return nil, nil }
+	func (@"".aÂ·4 *@"".plainAuth "esc:0x1") Start (@"".serverÂ·5 *@"".ServerInfo "esc:0x1") (? string, ? []byte, ? error)
+	type @"".cramMD5Auth struct { @"".username string; @"".secret string }
+	func (@"".aÂ·3 *@"".cramMD5Auth "esc:0x9") Next (@"".fromServerÂ·4 []byte, @"".moreÂ·5 bool) (? []byte, ? error)
+	func (@"".aÂ·4 *@"".cramMD5Auth "esc:0x1") Start (@"".serverÂ·5 *@"".ServerInfo "esc:0x1") (? string, ? []byte, ? error) { return "CRAM-MD5", nil, nil }
+	var @"bufio".ErrInvalidUnreadByte error
+	var @"bufio".ErrInvalidUnreadRune error
+	var @"time".months [12]string
+	var @"time".days [7]string
+	var @"time".Local *@"time".Location
+	var @"time".UTC *@"time".Location
+	func @"math/big".low64 (@"math/big".zÂ·2 @"math/big".nat "esc:0x1") (? uint64) { if len(@"math/big".zÂ·2) == 0x0 { return 0x0 }; var @"math/big".vÂ·3 uint64; ; @"math/big".vÂ·3 = uint64(@"math/big".zÂ·2[0x0]); if false && len(@"math/big".zÂ·2) > 0x1 { @"math/big".vÂ·3 |= uint64(@"math/big".zÂ·2[0x1]) << 0x20 }; return @"math/big".vÂ·3 }
+	func @"net".IPv4 (@"net".aÂ·2 byte, @"net".bÂ·3 byte, @"net".cÂ·4 byte, @"net".dÂ·5 byte) (? @"net".IP) { var @"net".pÂ·6 @"net".IP; ; @"net".pÂ·6 = make(@"net".IP, 0x10); copy(@"net".pÂ·6, @"net".v4InV6Prefix); @"net".pÂ·6[0xc] = @"net".aÂ·2; @"net".pÂ·6[0xd] = @"net".bÂ·3; @"net".pÂ·6[0xe] = @"net".cÂ·4; @"net".pÂ·6[0xf] = @"net".dÂ·5; return @"net".pÂ·6 }
+	type @"sync".rlocker struct { @"sync".w @"sync".Mutex; @"sync".writerSem uint32; @"sync".readerSem uint32; @"sync".readerCount int32; @"sync".readerWait int32 }
+	func (@"sync".rÂ·1 *@"sync".rlocker) Lock ()
+	func (@"sync".rÂ·1 *@"sync".rlocker) Unlock ()
+	var @"crypto/tls".defaultCurvePreferences []@"crypto/tls".CurveID
+	import rand "crypto/rand" // indirect
+	var @"crypto/rand".Reader @"io".Reader
+	func @"errors".New (@"errors".textÂ·2 string) (? error) { return (&@"errors".errorString{ @"errors".s:@"errors".textÂ·2 }) }
+	var @"net".v4InV6Prefix []byte
+	type @"errors".errorString struct { @"errors".s string }
+	func (@"errors".eÂ·2 *@"errors".errorString "esc:0x22") Error () (? string) { return @"errors".eÂ·2.@"errors".s }
+
+$$
+_go_.o          0           0     0     644     148260    `
+go object darwin amd64 go1.5.1 X:none
+
+!
+  go13ldcrypto/hmac.acrypto/md5.aerrors.a
+fmt.acrypto/tls.a"encoding/base64.aio.a
+net.anet/textproto.astrings.a ş"".PlainAuth  À  ®eH‹%    H;a†º  Hƒì(H‹\$(H‰$è    1ÛH‰\$pH‰\$xH    H‰$è    H‹D$H‰D$ H‰$è    H‹\$ H‹l$8H‰kH‹l$0€=     …F  H‰+H‹\$ H‰$Hƒ$è    H‹\$ H‹l$HH‰kH‹l$@€=     …ù   H‰kH‹\$ H‰$Hƒ$ è    H‹\$ H‹l$XH‰k(H‹l$P€=     …«   H‰k H‹\$ H‰$Hƒ$0è    H‹\$ H‹l$hH‰k8H‹l$`€=     udH‰k0H‹\$ H‰\$ H‹    1íH9ètH‹\$ H‰\$xH‰D$pè    HƒÄ(ÃH    H‰$H    H‰\$H    H‰\$è    H‹D$ë¸LC0L‰$H‰l$è    ëŒLC L‰$H‰l$è    éBÿÿÿLCL‰$H‰l$è    éôşÿÿH‰$H‰l$è    éªşÿÿè    é)şÿÿ.
+      B
+  *runtime.racefuncenter   h  "type."".plainAuth   z
+  "runtime.newobject    
+  "runtime.racewrite   Ò 6runtime.writeBarrierEnabled   Œ
+  "runtime.racewrite   ¾ 6runtime.writeBarrierEnabled   ú
+  "runtime.racewrite   ¬ 6runtime.writeBarrierEnabled   è
+  "runtime.racewrite   š 6runtime.writeBarrierEnabled   Ê  :go.itab.*"".plainAuth."".Auth   €
+  (runtime.racefuncexit   ˜  $type.*"".plainAuth   ®  type."".Auth   Æ  :go.itab.*"".plainAuth."".Auth   Ú
+   runtime.typ2Itab   Œ
+  .runtime.writebarrierptr   ´
+  .runtime.writebarrierptr   â
+  .runtime.writebarrierptr   ˆ
+  .runtime.writebarrierptr   œ
+  0runtime.morestack_noctxt    P  "".autotmp_0001 $type.*"".plainAuth "".autotmp_0000  $type.*"".plainAuth "".~r4 €type."".Auth "".host `type.string "".password @type.string "".username  type.string "".identity  type.string P±OP— à h1‰   /ğ-t TgclocalsÂ·4c0745a853fa246552b338635d8102f6 TgclocalsÂ·f891aedf0f80c97cb1c7cc75a7fd6349   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş*"".(*plainAuth).Start  À  ¸eH‹%    H„$ ÿÿÿH;A†w  Hì`  H‹œ$`  H‰$è    1ÛH‰œ$x  H‰œ$€  1ÛH‰œ$ˆ  H‰œ$  H‰œ$˜  1ÛH‰œ$   H‰œ$¨  H‹œ$p  H‰$Hƒ$è    H‹¬$p  ¶]€û …V  ÆD$o H‹œ$p  H‰$Hƒ$è    H‹œ$p  Hƒû „Â  H‹SH‹C H‹k(H‰¬$X  1ÉH‰„$P  H‰D$pH‰”$H  H‰ĞH‰L$xH‹l$pH9éŠ   H‰„$¨   H‰$è    H‹œ$¨   Hƒû „W  H‹H‹CH‰Œ$   H‰Œ$ğ   H‰„$(  H‰„$ø   Hƒø…  H‰$H‰D$H-    H‰l$HÇD$   è    ¶\$ €û „Ü  ÆD$o€|$o …S  H    H‰œ$Ğ   HÇ„$Ø      1ÛH‰œ$°   H‰œ$¸   H    H‰$è    H‹D$H‰„$    H‰$è    H‹œ$    H‹¬$Ø   H‰kH‹¬$Ğ   €=     …Ä   H‰+H‹œ$    H‰œ$    H‹    1íH9ètqH‹Œ$    H‰„$  H‰Œ$  1ÛH‰œ$x  H‰œ$€  1ÛH‰œ$ˆ  H‰œ$  H‰œ$˜  H‰„$°   H‰„$   H‰Œ$¸   H‰Œ$¨  è    HÄ`  ÃH    H‰$H    H‰\$H    H‰\$è    H‹D$é]ÿÿÿH‰$H‰l$è    é,ÿÿÿH‹œ$p  H‰$è    H‹œ$p  Hƒû „O  H‹+H‰¬$   H‹kH‰¬$(  H‹œ$h  H‰$Hƒ$0è    H‹”$(  H‹œ$h  Hƒû „  H‹K0H‰Œ$   H‹C8H‰„$  H9Â…  H‹¬$   H‰,$H‰T$H‰L$H‰D$è    ¶\$ €û „_  H‹œ$h  H‰$è    H‹œ$h  H‰$Hƒ$è    H‹œ$h  H‰$Hƒ$ è    H‹„$h  Hœ$€   H‰$H|$H‹H‰H‹HH‰OH    H‰\$HÇD$    HXH|$(H‹H‰H‹KH‰OH    H‰\$8HÇD$@   HX H|$HH‹H‰H‹KH‰Oè    H\$XH|$H‹H‰H‹KH‰OHÇ$    è    H‹T$H‹L$ H‹D$(H    H‰œ$x  HÇ„$€     H‰”$0  H‰”$ˆ  H‰Œ$8  H‰Œ$  H‰„$@  H‰„$˜  1ÛH‰œ$   H‰œ$¨  è    HÄ`  ÃH    H‰œ$à   HÇ„$è      1ÛH‰œ$À   H‰œ$È   H    H‰$è    H‹D$H‰„$    H‰$è    H‹œ$    H‹¬$è   H‰kH‹¬$à   €=     …Ä   H‰+H‹œ$    H‰œ$    H‹    1íH9ètqH‹”$    H‰„$  H‰”$  1ÛH‰œ$x  H‰œ$€  1ÛH‰œ$ˆ  H‰œ$  H‰œ$˜  H‰„$À   H‰„$   H‰”$È   H‰”$¨  è    HÄ`  ÃH    H‰$H    H‰\$H    H‰\$è    H‹D$é]ÿÿÿH‰$H‰l$è    é,ÿÿÿ‰éøüÿÿ‰éªüÿÿH‹„$¨   H‹L$xHƒÀHÿÁésúÿÿ‰é¢úÿÿ‰é7úÿÿè    édùÿÿX
+      ^
+  *runtime.racefuncenter   †
+   runtime.raceread   æ
+   runtime.raceread   ®
+   runtime.raceread   Ô  "go.string."PLAIN"   ú
+   runtime.eqstring   Ä  Dgo.string."unencrypted connection"     .type.errors.errorString   °
+  "runtime.newobject   Ü
+  "runtime.racewrite     6runtime.writeBarrierEnabled   â  Bgo.itab.*errors.errorString.error   Â
+
+  (runtime.racefuncexit   à
+  0type.*errors.errorString   ö
+  type.error     Bgo.itab.*errors.errorString.error   ¢
+   runtime.typ2Itab   Ò
+  .runtime.writebarrierptr   ş
+   runtime.raceread   ü
+   runtime.raceread   ²
+   runtime.eqstring   ğ
+   runtime.raceread   œ
+   runtime.raceread   È
+   runtime.raceread   ¤   go.string."\x00"   ü   go.string."\x00"   Ğ
+  *runtime.concatstring5   š
+  2runtime.stringtoslicebyte   Æ  "go.string."PLAIN"   ü
+  (runtime.racefuncexit   š  6go.string."wrong host name"   ô  .type.errors.errorString   †
+  "runtime.newobject   ²
+  "runtime.racewrite   ö 6runtime.writeBarrierEnabled   ¸  Bgo.itab.*errors.errorString.error   ˜
+  (runtime.racefuncexit   ¶  0type.*errors.errorString   Ì  type.error   ä  Bgo.itab.*errors.errorString.error   ø
+   runtime.typ2Itab   ¨
+  .runtime.writebarrierptr   ¦
+  0runtime.morestack_noctxt   À  6"".autotmp_0019 ¿type.[32]uint8 "".autotmp_0018  type.*uint8 "".autotmp_0017  type.error "".autotmp_0016  0type.*errors.errorString "".autotmp_0015 ¿type.string "".autotmp_0014  type.string "".autotmp_0012 Ÿtype.error "".autotmp_0011 ÿ0type.*errors.errorString "".autotmp_0010 type.string "".autotmp_0009 ïtype.*string "".autotmp_0008 ßtype.int "".autotmp_0007 Ïtype.int "".autotmp_0006  0type.*errors.errorString "".autotmp_0005  0type.*errors.errorString "".autotmp_0004 /type.[]string "".~r0 ¿type.error errors.textÂ·2 ÿtype.string "".~r0 ßtype.error errors.textÂ·2 Ÿtype.string "".resp _type.[]uint8 "".mechanism ßtype.string "".advertised átype.bool "".~r3 ptype.error "".~r2 @type.[]uint8 "".~r1  type.string "".server &type.*"".ServerInfo "".a  $type.*"".plainAuth 8"ÀŠ¿ÀÜ¿À¿Àˆ   `p""!>+«CM¹õjM' H .èÁ³0.?[å
+E³0e TgclocalsÂ·6d8f4c99066cb29941e26fce393123fb TgclocalsÂ·c08b4dad45a598d7b21a47679efd8a2b   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş("".(*plainAuth).Next  à  ÚeH‹%    H;a†  HƒìXH‹\$XH‰$è    1ÛH‰œ$ˆ   H‰œ$   H‰œ$˜   1ÛH‰œ$    H‰œ$¨   €¼$€    „  H    H‰\$8HÇD$@   1ÛH‰\$(H‰\$0H    H‰$è    H‹D$H‰D$ H‰$è    H‹\$ H‹l$@H‰kH‹l$8€=     …—   H‰+H‹\$ H‰\$ H‹    1íH9ètMH‹L$ H‰D$HH‰L$P1ÛH‰œ$ˆ   H‰œ$   H‰œ$˜   H‰D$(H‰„$    H‰L$0H‰Œ$¨   è    HƒÄXÃH    H‰$H    H‰\$H    H‰\$è    H‹D$ë„H‰$H‰l$è    éYÿÿÿ1ÛH‰œ$ˆ   H‰œ$   H‰œ$˜   1ÛH‰œ$    H‰œ$¨   è    HƒÄXÃè    éSşÿÿ 
+      B
+  *runtime.racefuncenter   Ä  Ngo.string."unexpected server challenge"   †  .type.errors.errorString   ˜
+  "runtime.newobject   ¾
+  "runtime.racewrite   ğ 6runtime.writeBarrierEnabled   ¦  Bgo.itab.*errors.errorString.error   Ä
+  (runtime.racefuncexit   Ü  0type.*errors.errorString   ò  type.error   Š  Bgo.itab.*errors.errorString.error   
+   runtime.typ2Itab   È
+  .runtime.writebarrierptr   ´
+  (runtime.racefuncexit   È
+  0runtime.morestack_noctxt    °  "".autotmp_0024 type.error "".autotmp_0023 o0type.*errors.errorString "".autotmp_0022  0type.*errors.errorString "".~r0 _type.error errors.textÂ·2 ?type.string "".~r3 €type.error "".~r2 Ptype.[]uint8 "".more @type.bool "".fromServer type.[]uint8 "".a  $type.*"".plainAuth &°“¯°w¯° ° *˜
+	,ÂG6	    kƒ-K TgclocalsÂ·78223188cd91e11320a490f226da2f1b TgclocalsÂ·fee82150d9d5ef113526d0c8f7a29801   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş"".CRAMMD5Auth  €  öeH‹%    H;a†  Hƒì(H‹\$(H‰$è    1ÛH‰\$PH‰\$XH    H‰$è    H‹D$H‰D$ H‰$è    H‹\$ H‹l$8H‰kH‹l$0€=     …ª   H‰+H‹\$ H‰$Hƒ$è    H‹\$ H‹l$HH‰kH‹l$@€=     udH‰kH‹\$ H‰\$ H‹    1íH9ètH‹\$ H‰\$XH‰D$Pè    HƒÄ(ÃH    H‰$H    H‰\$H    H‰\$è    H‹D$ë¸LCL‰$H‰l$è    ëŒH‰$H‰l$è    éFÿÿÿè    éÅşÿÿ"
+      B
+  *runtime.racefuncenter   h  &type."".cramMD5Auth   z
+  "runtime.newobject    
+  "runtime.racewrite   Ò 6runtime.writeBarrierEnabled   Œ
+  "runtime.racewrite   ¾ 6runtime.writeBarrierEnabled   î  >go.itab.*"".cramMD5Auth."".Auth   ¤
+  (runtime.racefuncexit   ¼  (type.*"".cramMD5Auth   Ò  type."".Auth   ê  >go.itab.*"".cramMD5Auth."".Auth   ş
+   runtime.typ2Itab   °
+  .runtime.writebarrierptr   Ğ
+  .runtime.writebarrierptr   ä
+  0runtime.morestack_noctxt   `P  
+"".autotmp_0028 (type.*"".cramMD5Auth "".autotmp_0027  (type.*"".cramMD5Auth "".~r2 @type."".Auth "".secret  type.string "".username  type.string PÃOPe À ¸1 [   /‚-B TgclocalsÂ·2ae929f6365b6ea7e86865a8a8b4d95c TgclocalsÂ·f891aedf0f80c97cb1c7cc75a7fd6349   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş."".(*cramMD5Auth).Start  à  ÔeH‹%    H;avTHƒìH‹\$H‰$è    1Û1Û1ÛH    H‰\$ HÇD$(   1ÛH‰\$0H‰\$8H‰\$@1ÛH‰\$HH‰\$Pè    HƒÄÃè    ë–
+
+      :
+  *runtime.racefuncenter   T  (go.string."CRAM-MD5"   ´
+  (runtime.racefuncexit   È
+  0runtime.morestack_noctxt     
+"".~r3 ptype.error "".~r2 @type.[]uint8 "".~r1  type.string "".server &type.*"".ServerInfo "".a  (type.*"".cramMD5Auth O p À<  = TgclocalsÂ·004ad3f582a63c59db210b51824f773f TgclocalsÂ·69c1753bd5f81501d95132d08af04464   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş,"".(*cramMD5Auth).Next      eH‹%    HD$°H;A†.  HìĞ   H‹œ$Ğ   H‰$è    1ÛH‰œ$   H‰œ$  H‰œ$  1ÛH‰œ$  H‰œ$   €¼$ø    „£  H‹œ$Ø   H‰$Hƒ$è    HÇ$    H‹´$Ø   Hƒş „l  H^H|$H‹H‰H‹KH‰Oè    H\$H|$H‹H‰H‹KH‰OH‹KH‰OH    H‰$è    H‹L$ H‹D$(H‹œ$à   H‰\$H‹œ$è   H‰\$H‹œ$ğ   H‰\$H‰D$@H‰$H‰L$8H‹Y@ÿÓH‹\$@H‰$H‹\$8H‹[0ÿÓH‹D$H    H‰$HÇD$    H‰D$è    H‹T$H‹L$ H‹D$(H‰T$hH‰T$H‰L$pH‰L$H‰D$xH‰D$H‹\$@H‰$H‹\$8H‹[8ÿÓH‹\$ H‰œ$˜   H‹\$(H‰œ$    H‹\$0H‰œ$¨   1ÛH‰œ$°   H‰œ$¸   H‰œ$À   H‰œ$È   Hœ$°   Hƒû „  HÇ„$ˆ      HÇ„$      H‰œ$€   H    H‰$H‹œ$Ø   H‰\$Hƒ|$ „±  HÇD$    è    H‹\$H‰\$HH‹\$ H‰\$PH‹œ$€   H‰$è    H‹œ$€   H‹l$HH‰+H‹l$P€=     …E  H‰kH    H‰$Hœ$˜   H‰\$HÇD$    è    H‹\$H‰\$HH‹\$ H‰\$PH‹œ$€   HƒÃH‰$è    H‹œ$€   H‹l$HHƒÃH‰+H‹l$P€=     …µ   H‰kH    H‰$HÇD$   H‹œ$€   H‰\$H‹œ$ˆ   H‰\$H‹œ$   H‰\$ è    H‹L$(H‹D$0HÇ$    H‰L$XH‰L$H‰D$`H‰D$è    H‹\$H‰œ$   H‹\$ H‰œ$  H‹\$(H‰œ$  1ÛH‰œ$  H‰œ$   è    HÄĞ   ÃLCL‰$H‰l$è    é8ÿÿÿLCL‰$H‰l$è    é¨şÿÿ‰%    éCşÿÿ‰éøıÿÿ‰éüÿÿ1ÛH‰œ$   H‰œ$  H‰œ$  1ÛH‰œ$  H‰œ$   è    HÄĞ   Ãè    é°ûÿÿ6
+      X
+  *runtime.racefuncenter   ø
+   runtime.raceread   ä
+  2runtime.stringtoslicebyte   ²  "crypto/md5.NewÂ·f   Ä
+  crypto/hmac.New   Ò       ú         type.[]uint8   ¼
+  "runtime.makeslice   Â       Â  type.string   ˜	
+  runtime.convT2E   â	
+  "runtime.racewrite   ˜
+ 6runtime.writeBarrierEnabled   ¼
+  type.[]uint8   ú
+
+  runtime.convT2E   Ì
+  "runtime.racewrite   Š 6runtime.writeBarrierEnabled   ®  "go.string."%s %x"    
+  fmt.Sprintf   ö
+  2runtime.stringtoslicebyte   ò
+  (runtime.racefuncexit   ¦
+  .runtime.writebarrierptr   Ô
+  .runtime.writebarrierptr   ô
+  (runtime.racefuncexit   
+  0runtime.morestack_noctxt       "".autotmp_0041  "type.interface {} "".autotmp_0040 "type.interface {} "".autotmp_0039 ?(type.[2]interface {} "".autotmp_0036 Ÿ&type.[]interface {} "".autotmp_0035 ïtype.string "".autotmp_0034 otype.[]uint8 "".s Ïtype.[]uint8 "".d ¯type.hash.Hash "".~r3 €type.error "".~r2 Ptype.[]uint8 "".more @type.bool "".fromServer type.[]uint8 "".a  (type.*"".cramMD5Auth ( ¥Ÿ €Ÿ 
+ Ğ <È,†;FÇI
+9
+ 6 +şxª%L)jig TgclocalsÂ·ab424e3cb0b2a1053a85dc4219fd0d77 TgclocalsÂ·ab6846e1bef3a146c8f25a4cca7cfca0   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş"".Dial  à  ÆeH‹%    H;a†F  Hì€   H‹œ$€   H‰$è    1ÛH‰œ$    H‰œ$¨   H    H‰$HÇD$   H‹œ$ˆ   H‰\$H‹œ$   H‰\$è    H‹l$ H‹T$(H‹D$0H‹L$8H‰l$`H‰T$hH‰L$XH‰D$PHƒø t)HÇ„$˜       H‰„$    H‰Œ$¨   è    HÄ€   ÃH‹œ$ˆ   H‰$H‹œ$   H‰\$è    H‹L$H‹D$H‹\$`H‰$H‹\$hH‰\$H‰L$@H‰L$H‰D$HH‰D$è    H‹D$ H‹T$(H‹L$0H‰„$˜   H‰T$pH‰”$    H‰L$xH‰Œ$¨   è    HÄ€   Ãè    éşÿÿ
+      N
+  *runtime.racefuncenter   €  go.string."tcp"   Ø
+  net.Dial   ö
+  (runtime.racefuncexit   Â
+  "net.SplitHostPort   ®
+  "".NewClient   š
+  (runtime.racefuncexit   ´
+  0runtime.morestack_noctxt   P€  "".autotmp_0048  type.error "".autotmp_0046 type.error "".host type.string "".err _type.error "".conn ?type.net.Conn "".~r2 0type.error "".~r1  type.*"".Client "".addr  type.string (€¬ÿ€‘ÿ€ ğ .\V(j  &”&66$ TgclocalsÂ·720de6e36d51b0a4ef7111f47e9f67b1 TgclocalsÂ·d9070c3fc472691adc9eeade83dfbda6   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş"".NewClient  À"  ¸"eH‹%    H„$°şÿÿH;A†w  HìĞ  H‹œ$Ğ  H‰$è    1ÛH‰œ$   H‰œ$  H    H‰$H‹œ$Ø  H‰\$H‹œ$à  H‰\$è    H‹L$H‹D$ H‰Œ$8  H‰„$@  H    H‰$H‰Œ$  H‰L$H‰„$  H‰D$è    H‹L$H‹D$ H‰Œ$(  H‰„$0  H‰Œ$Ø   H‰„$à   HÇD$8   HÇ„$        H    H‰$H‰Œ$è   H‰L$H‰„$ğ   H‰D$Hœ$    H‰\$è    ¶\$ H‹Œ$    €û „  H‰L$hH‰$è    H‹L$hH‹YH‹l$8H9ëŒğ  H‰ÈH‰D$HH    H‰$H‹œ$  H‰\$H‹œ$  H‰\$è    H‹L$H‹D$ H‰Œ$  H‰„$   H‰Œ$¨   H‰„$°   HÇD$@   HÇ„$˜       H    H‰$H‰Œ$¸   H‰L$H‰„$À   H‰D$Hœ$˜   H‰\$è    H‹D$@¶\$ H‹”$˜   €û „Ğ  H‰T$pH‰$Hƒ$è    H‹T$pH‹D$@H‹ZH9ÃŒ¦  H‰ĞH‰D$PH    H‰$è    H‹D$H‰„$ˆ   H‰$HÇD$ˆ   è    H‹¼$ˆ   H‰ùHƒÿ „S  1ÀHƒÇèè    H‰$è    H‹œ$ˆ   Hƒû „&  H‹l$H€=     …  H‰+H‹œ$ˆ   H‰$Hƒ$(è    H‹œ$ˆ   Hƒû „Ï  H‹l$P€=     …¦  H‰k(H‹œ$ˆ   H‰$Hƒ$xè    H‹œ$ˆ   H‹¬$  H‰kxH‹¬$  €=     …I  H‰«€   H‹„$ˆ   H‰D$XH‰$Hƒ<$ „  HÇD$Ü   è    H‹L$(H‹D$0H‰„$   H‰Œ$ø   Hƒù tGH‹\$XH‰$è    HÇ„$ø      H‹œ$ø   H‰œ$   H‹œ$   H‰œ$  è    HÄĞ  ÃH    H‰$è    H‹D$H‰„$€   H‰$HÇD$x   è    H‹¼$€   H‰ùHƒÿ „Z  1ÀHƒÇøè    H‰$è    H‹œ$€   Hƒû „-  H‹l$X€=     …  H‰+H‹œ$€   H‰$Hƒ$è    H‹œ$€   H‹¬$Ø  H‰kH‹¬$à  €=     …¯   H‰kH‹œ$€   H‰$Hƒ$ è    H‹œ$€   H‹¬$ğ  H‰k(H‹¬$è  €=     u\H‰k H‹œ$€   H‰$Hƒ$Pè    H‹„$€   H-    H‰hPHÇ@X	   H‰„$ø  1ÛH‰œ$   H‰œ$  è    HÄĞ  ÃLC L‰$H‰l$è    ë”LCL‰$H‰l$è    é>ÿÿÿH‰$H‰l$è    éèşÿÿ‰éÌşÿÿ‰éŸşÿÿ‰%    éÚıÿÿLƒ€   L‰$H‰l$è    é¤ıÿÿLC(L‰$H‰l$è    éGıÿÿ‰é*ıÿÿH‰$H‰l$è    éïüÿÿ‰éÓüÿÿ‰é¦üÿÿHƒø HÇÀ   H    H‰$H‰D$H‰D$è    H‹\$H‰œ$`  H‹\$ H‰œ$h  H‹\$(H‰œ$p  H    H‰$è    H‹D$H‰„$   H‰$HÇD$@   è    H‹„$   1íH‰(H‰hH‰hH‰hH‰h H‰h(H‰h0H‰h8H‰$Hƒ$è    H‹œ$   H‹¬$h  H‰kH‹¬$p  H‰k H‹¬$`  €=     udH‰kH‹œ$   H‰$Hƒ$0è    H‹œ$   H‹¬$¸   H‰k0H‹¬$À   €=     uH‰k8H‹„$   é(ûÿÿLC8L‰$H‰l$è    ëßLCL‰$H‰l$è    ëŒH‹\$8Hƒû}	HÇD$8   H    H‰$è    H‹L$8H‹D$H‰D$`H‰D$xH    H‰$H‰L$H‰L$è    L‹D$H‹t$ H‹l$(H‹”$è   H‹Œ$ğ   H¼$x  1ÀHƒÇøè    L‰„$H  L‰„$x  H‰´$P  H‰´$€  H‰¬$X  H‰¬$ˆ  H‰”$È   H‰”$  H‰Œ$Ğ   H‰Œ$˜  HÇ„$À  ÿÿÿÿHÇ„$È  ÿÿÿÿH‹\$xH‰$HÇD$X   è    H‹\$xHƒû t,H¬$x  H‰\$H‰l$H-    H‰,$è    H‹D$`éÙøÿÿ‰ëĞè    éd÷ÿÿ„
+      ^
+  *runtime.racefuncenter     .type.io.ReadWriteCloser   Ö
+  runtime.convI2I   ˜  type.io.Reader   Ş
+  runtime.convI2I   ê  $type.*bufio.Reader   Ê
+  $runtime.assertI2T2   ’
+   runtime.raceread   Ş  type.io.Writer   ¤
+  runtime.convI2I   °  $type.*bufio.Writer   
+  $runtime.assertI2T2   ì
+   runtime.raceread   ¸	  .type.net/textproto.Conn   Ê	
+  "runtime.newobject   ˆ
+
+  ,runtime.racewriterange   È
+
+˜  runtime.duffzero   Ú
+
+  "runtime.racewrite   ” 6runtime.writeBarrierEnabled   Ô
+  "runtime.racewrite    6runtime.writeBarrierEnabled   Ğ
+  "runtime.racewrite   ” 6runtime.writeBarrierEnabled   „
+  Hnet/textproto.(*Reader).ReadResponse   à
+  6net/textproto.(*Conn).Close   Â
+  (runtime.racefuncexit   à  type."".Client   ò
+  "runtime.newobject   °
+  ,runtime.racewriterange   ğ
+®  runtime.duffzero   ‚
+  "runtime.racewrite   ¼ 6runtime.writeBarrierEnabled   ü
+  "runtime.racewrite   À 6runtime.writeBarrierEnabled   ‚
+  "runtime.racewrite   Æ 6runtime.writeBarrierEnabled   €
+  "runtime.racewrite     *go.string."localhost"   ô
+  (runtime.racefuncexit   ¨
+  .runtime.writebarrierptr   Ğ
+  .runtime.writebarrierptr   ö
+  .runtime.writebarrierptr   Ş
+  .runtime.writebarrierptr   Œ
+  .runtime.writebarrierptr   À
+  .runtime.writebarrierptr     type.[]uint8   ´
+  "runtime.makeslice     "type.bufio.Writer   ¢
+  "runtime.newobject   à
+  ,runtime.racewriterange   Î
+  "runtime.racewrite   ª 6runtime.writeBarrierEnabled   ä
+  "runtime.racewrite   ¨ 6runtime.writeBarrierEnabled   ô
+  .runtime.writebarrierptr   œ
+  .runtime.writebarrierptr   Ö  "type.bufio.Reader   è
+  "runtime.newobject     type.[]uint8   Ä
+  "runtime.makeslice   ¨
+Ô  runtime.duffzero   ¦!
+  ,runtime.racewriterange   î!  "type.bufio.Reader   €"
+  (runtime.typedmemmove   ¦"
+  0runtime.morestack_noctxt   p   J"".autotmp_0067 Ÿtype.*"".Client "".autotmp_0066 0type.*net/textproto.Conn "".autotmp_0065  0type.*net/textproto.Conn "".autotmp_0064  $type.*bufio.Writer "".autotmp_0063 ÿ$type.*bufio.Writer "".autotmp_0062  $type.*bufio.Writer "".autotmp_0061 ïtype.io.Writer "".autotmp_0060  $type.*bufio.Reader "".autotmp_0059 Ïtype.io.Reader "".autotmp_0058 ¯.type.io.ReadWriteCloser "".autotmp_0056  type.[]uint8 "".autotmp_0055  type.int "".autotmp_0054 ï$type.*bufio.Writer "".autotmp_0053 ¯"type.bufio.Reader "".autotmp_0052 ßtype.[]uint8 "".autotmp_0049 ß$type.*bufio.Reader bufio.bÂ·4 ¿$type.*bufio.Writer bufio.sizeÂ·3 Ÿtype.int bufio.wÂ·2 ¯type.io.Writer "".~r0 ÿ$type.*bufio.Writer bufio.wÂ·2 Ïtype.io.Writer bufio.rÂ·3 type.io.Reader bufio.bufÂ·2 type.[]uint8 bufio.bÂ·1 ¯$type.*bufio.Reader bufio.rÂ·6 ß$type.*bufio.Reader bufio.bÂ·4 Ï$type.*bufio.Reader bufio.sizeÂ·3 ¯type.int bufio.rdÂ·2 Ïtype.io.Reader "".~r0 $type.*bufio.Reader bufio.rdÂ·2 ïtype.io.Reader *net/textproto.connÂ·2 .type.io.ReadWriteCloser "".err ¯type.error "".text ï0type.*net/textproto.Conn "".~r3 Ptype.error "".~r2 @type.*"".Client "".host  type.string "".conn  type.net.Conn *" ÊŸ ØŸ Ú   Tr"Ÿ4,²'L	ŠÄÃR  .€v$I
+v./f>Z.1f¼[	:7‚H&.±-! TgclocalsÂ·1b9fcef861c02fd63db2140136499229 TgclocalsÂ·bd668153a048075a7eb26cafe2d0ade6   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş$"".(*Client).Close  €  öeH‹%    H;aveHƒì(H‹\$(H‰$è    1ÛH‰\$8H‰\$@H‹\$0H‰$è    H‹\$0H‹+H‰,$è    H‹L$H‹D$H‰L$H‰L$8H‰D$ H‰D$@è    HƒÄ(Ãè    ë…
+      :
+  *runtime.racefuncenter   n
+   runtime.raceread   
+  6net/textproto.(*Conn).Close   Ö
+  (runtime.racefuncexit   ê
+  0runtime.morestack_noctxt   0P  "".autotmp_0068 type.error "".~r0 type.error "".c  type.*"".Client P`OP € Š-=  N TgclocalsÂ·cad14e25fd48dddd762418d02c031d67 TgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş$"".(*Client).hello     eH‹%    H;a†+  Hƒì8H‹\$8H‰$è    1ÛH‰\$HH‰\$PH‹\$@H‰$Hƒ$`è    H‹T$@¶Z`€û …–   H‰$Hƒ$`è    H‹D$@HÇÅ   @ˆh`H‰$è    H‹T$@H‹L$H‹D$H‰D$ H‰L$Hƒù tPH‰$è    H‹\$H‰\$(H‹\$H‰\$0H‹\$@H‰$Hƒ$hè    H‹T$@H‹l$(H‰jhH‹l$0€=     u=H‰jpH‰$Hƒ$hè    H‹\$@Hƒû tH‹khH‰l$HH‹kpH‰l$Pè    HƒÄ8Ã‰ëàLBpL‰$H‰l$è    H‹T$@ë®è    é¸şÿÿ
+      B
+  *runtime.racefuncenter   €
+   runtime.raceread   À
+  "runtime.racewrite   ò
+  """.(*Client).ehlo   Â
+  """.(*Client).helo   
+  "runtime.racewrite   Â 6runtime.writeBarrierEnabled   ì
+   runtime.raceread   °
+  (runtime.racefuncexit   æ
+  .runtime.writebarrierptr   ş
+  0runtime.morestack_noctxt   0p  
+"".autotmp_0070  type.error "".autotmp_0069 type.error "".err ?type.error "".~r0 type.error "".c  type.*"".Client p‰op/ Ğ 4”%P9   §." TgclocalsÂ·27f94a2fe0ff5b305b2385471201b6d7 TgclocalsÂ·29b681dc44825b7b87dddcc3e9161f9e   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş$"".(*Client).Hello     –eH‹%    H;a†®  HƒìXH‹\$XH‰$è    1ÛH‰\$xH‰œ$€   H‹\$`H‰$Hƒ$`è    H‹D$`¶X`€û „í   H    H‰\$8HÇD$@&   1ÛH‰\$(H‰\$0H    H‰$è    H‹D$H‰D$ H‰$è    H‹\$ H‹l$@H‰kH‹l$8€=     uzH‰+H‹\$ H‰\$ H‹    1íH9èt0H‹L$ H‰D$HH‰L$PH‰D$(H‰D$xH‰L$0H‰Œ$€   è    HƒÄXÃH    H‰$H    H‰\$H    H‰\$è    H‹D$ë¡H‰$H‰l$è    évÿÿÿH‰$Hƒ$Pè    H‹\$`H‹l$pH‰kXH‹l$h€=     u=H‰kPH‹\$`H‰$è    H‹D$H‹L$H‰D$HH‰D$xH‰L$PH‰Œ$€   è    HƒÄXÃLCPL‰$H‰l$è    ë³è    é5şÿÿ*
+      B
+  *runtime.racefuncenter   †
+   runtime.raceread   ¸  dgo.string."smtp: Hello called after other methods"   ú  .type.errors.errorString   Œ
+  "runtime.newobject   ²
+  "runtime.racewrite   ä 6runtime.writeBarrierEnabled   ’  Bgo.itab.*errors.errorString.error   ö
+  (runtime.racefuncexit     0type.*errors.errorString   ¤  type.error   ¼  Bgo.itab.*errors.errorString.error   Ğ
+   runtime.typ2Itab   ú
+  .runtime.writebarrierptr    
+  "runtime.racewrite   Ò 6runtime.writeBarrierEnabled   ü
+  $"".(*Client).hello   È
+  (runtime.racefuncexit   ö
+  .runtime.writebarrierptr   „
+  0runtime.morestack_noctxt   P°  "".autotmp_0074 type.error "".autotmp_0073 o0type.*errors.errorString "".autotmp_0072  type.error "".autotmp_0071  0type.*errors.errorString "".~r0 _type.error errors.textÂ·2 ?type.string "".~r1 0type.error "".localName type.string "".c  type.*"".Client (°ì¯°¨¯°# Ğ 6´4%¡G./	
+	 &  eb-(T TgclocalsÂ·2ecdb75c02e39206f80e638f9cca0912 TgclocalsÂ·fee82150d9d5ef113526d0c8f7a29801   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş "".(*Client).cmd  €
+  ö	eH‹%    H;a†^  HƒìpH‹\$pH‰$è    HÇ„$°       1ÛH‰œ$¸   H‰œ$À   1ÛH‰œ$È   H‰œ$Ğ   H‹\$xH‰$è    H‹\$xH‹+H‰,$H‹œ$ˆ   H‰\$H‹œ$   H‰\$H‹œ$˜   H‰\$H‹œ$    H‰\$ H‹œ$¨   H‰\$(è    H‹l$0H‹L$8H‹T$@H‰l$HH‰T$hH‰L$`Hƒù t>HÇ„$°       1ÛH‰œ$¸   H‰œ$À   H‰Œ$È   H‰”$Ğ   è    è    HƒÄpÃH‹\$xH‰$è    H‹\$xH‹+H‰,$Hƒ<$ „)  Hƒ$8H‹\$HH‰\$è    H‹\$xH‰$è    H‹\$xH‹+H‰l$Hƒ|$ „â   HƒD$8H‹\$HH‰\$Ç$   H    H‰D$è    ƒø …¡   H‹\$xH‰$è    H‹\$xH‹+H‰,$Hƒ<$ twH‹œ$€   H‰\$è    H‹L$H‹l$H‹T$ H‹|$(H‹t$0H‰Œ$°   H‰l$PH‰¬$¸   H‰T$XH‰”$À   H‰|$`H‰¼$È   H‰t$hH‰´$Ğ   è    è    HƒÄpÃ‰%    ë€è    è    HƒÄpÃ‰%    éÿÿÿ‰%    éËşÿÿè    é…ıÿÿ$
+      B
+  *runtime.racefuncenter   ¾
+   runtime.raceread   â
+  2net/textproto.(*Conn).Cmd   ’
+  &runtime.deferreturn   œ
+  (runtime.racefuncexit   Â
+   runtime.raceread   ˜
+  Nnet/textproto.(*Pipeline).StartResponse   ´
+   runtime.raceread   ¢  Pnet/textproto.(*Pipeline).EndResponseÂ·f   ¶
+  "runtime.deferproc   ä
+   runtime.raceread   ®
+  Hnet/textproto.(*Reader).ReadResponse   ä
+  &runtime.deferreturn   î
+  (runtime.racefuncexit   –	
+  &runtime.deferreturn    	
+  (runtime.racefuncexit   ä	
+  0runtime.morestack_noctxt   Àà  "".autotmp_0081  type.error "".msg ?type.string "".err type.error 
+"".id Otype.uint "".~r5  type.error "".~r4 €type.string "".~r3 ptype.int "".args @&type.[]interface {} "".format  type.string "".expectCode type.int "".c  type.*"".Client 4àÿßà¨ßàßà' € LÆ0y4
+	9XLL		   >ÓP TgclocalsÂ·92a91a13672ee26bfa8c82cd54a70479 TgclocalsÂ·64ca935d1a2110a30e2d604686188539   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş""".(*Client).helo  À  ÀeH‹%    HD$ØH;A†¾  Hì¨   H‹œ$¨   H‰$è    1ÛH‰œ$¸   H‰œ$À   H‹œ$°   H‰$Hƒ$0è    H‹Œ$°   1íH‰i01ÛH‰œ$€   H‰œ$ˆ   Hœ$€   Hƒû „E  HÇ„$˜      HÇ„$       H‰œ$   H    H‰$H‰L$Hƒ|$ „ı   HƒD$PHÇD$    è    H‹\$H‰\$pH‹\$ H‰\$xH‹œ$   H‰$è    H‹œ$   H‹l$pH‰+H‹l$x€=     …‹   H‰kH‹œ$°   H‰$HÇD$ú   H    H‰\$HÇD$   H‹œ$   H‰\$ H‹œ$˜   H‰\$(H‹œ$    H‰\$0è    H‹L$PH‹D$XH‰L$`H‰Œ$¸   H‰D$hH‰„$À   è    HÄ¨   ÃLCL‰$H‰l$è    ébÿÿÿ‰%    é÷şÿÿ‰é´şÿÿè    é şÿÿ
+      X
+  *runtime.racefuncenter   ¨
+  "runtime.racewrite   Ú  type.string   ¬
+  runtime.convT2E   ö
+  "runtime.racewrite   ¬ 6runtime.writeBarrierEnabled   ú  &go.string."HELO %s"   î
+   "".(*Client).cmd   À
+  (runtime.racefuncexit   ô
+  .runtime.writebarrierptr   ®
+  0runtime.morestack_noctxt   0Ğ  "".autotmp_0087 o"type.interface {} "".autotmp_0086 O(type.[1]interface {} "".autotmp_0083 /&type.[]interface {} "".err type.error "".~r0 type.error "".c  type.*"".Client ĞŒÏĞ4 à &à$Ÿ'*
+   +ª%|)' TgclocalsÂ·22d483162ff03d8ae3f68d96ba585844 TgclocalsÂ·ce7bf521bc5372b92e147ae31a98e6c9   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş""".(*Client).ehlo     œeH‹%    H„$ÿÿÿH;A†)  Hìh  H‹œ$h  H‰$è    1ÛH‰œ$x  H‰œ$€  1ÛH‰œ$Ø   H‰œ$à   Hœ$Ø   Hƒû „Ô  HÇ„$(     HÇ„$0     H‰œ$   H    H‰$H‹œ$p  H‰\$Hƒ|$ „„  HƒD$PHÇD$    è    H‹\$H‰œ$È   H‹\$ H‰œ$Ğ   H‹œ$   H‰$è    H‹œ$   H‹¬$È   H‰+H‹¬$Ğ   €=     …  H‰kH‹œ$p  H‰$HÇD$ú   H    H‰\$HÇD$   H‹œ$   H‰\$ H‹œ$(  H‰\$(H‹œ$0  H‰\$0è    H‹l$@H‹T$HH‹D$PH‹L$XH‰¬$ˆ   H‰”$   H‰Œ$À   H‰„$¸   Hƒø tH‰„$x  H‰Œ$€  è    HÄh  ÃH    H‰$HÇD$    HÇD$    HÇD$    è    H‹\$ H‰\$xH‹œ$ˆ   H‰$H‹œ$   H‰\$H    H‰\$HÇD$   è    H‹t$ H‹L$(H‹T$0H‰´$  H‰”$  H‰Œ$  Hƒù·  H‰ËH‰ÕHƒù‚   HÿËHÿÍI‰ğHƒı tIƒÀL‰„$  H‰œ$  H‰¬$  H‰¬$H  1ÉH‰œ$@  H‰\$hL‰„$8  L‰ÀH‰L$pH‹l$hH9é  H‰„$€   H‰$è    H‹œ$€   Hƒû „  H‹H‹kH‰Œ$ø   H‰¬$   H‰Œ$¨   H‰$H‰¬$°   H‰l$H    H‰\$HÇD$   HÇD$    è    H‹l$xH‹T$(H‹D$0H‹L$8H‰Œ$`  HƒøB  H    H‰$H‰l$Hƒø †!  H‰T$H‰ÓH‰”$P  HƒøH‰„$X  †ø  HƒÃH‰\$è    H‹„$€   H‹L$pHƒÀHÿÁH‰L$pH‹l$hH9éŒóşÿÿH    HÇÀ   H    H‰$H‹\$xH‰\$H‰Œ$ø   H‰L$H‰„$   H‰D$è    H‹D$ ¶\$(ˆ\$gH‰„$€   H‰$è    H‹œ$€   Hƒû „I  H‹H‰Œ$˜   H‹kH‰¬$    €|$g „•   H‰$H‰l$H    H‰\$HÇD$   è    H‹\$ H‰œ$8  H‹\$(H‰œ$@  H‹\$0H‰œ$H  H‹œ$p  H‰$Hƒ$8è    H‹œ$p  H‹¬$@  H‰k@H‹¬$H  H‰kHH‹¬$8  €=     uH‰k8H‹œ$p  H‰$Hƒ$0è    H‹œ$p  Hƒû tSH‹l$x€=     u1H‰k0H‹œ$¸   H‰œ$x  H‹œ$À   H‰œ$€  è    HÄh  ÃLC0L‰$H‰l$è    ë¿‰ë©LC8L‰$H‰l$è    énÿÿÿ‰é°şÿÿè    è    1ÛH‰œ$è   H‰œ$ğ   H    H‰$H‰l$H‰”$P  Hƒø H‰„$X  vH‰T$Hœ$è   H‰\$è    é´ıÿÿè    ‰éãüÿÿè    éÁıÿÿLCL‰$H‰l$è    éçúÿÿ‰%    épúÿÿ‰é%úÿÿè    é²ùÿÿN
+      ^
+  *runtime.racefuncenter   ˜  type.string   ú
+  runtime.convT2E   Ğ
+  "runtime.racewrite   ’ 6runtime.writeBarrierEnabled   à  &go.string."EHLO %s"   Ô
+   "".(*Client).cmd   ò
+  (runtime.racefuncexit     ,type.map[string]string   Ø
+  runtime.makemap   ¬  go.string."\n"   Ò
+  strings.Split   ¶
+   runtime.raceread   È  go.string." "   €
+  strings.SplitN   Ú  ,type.map[string]string   à
+  $runtime.mapassign1   ¼   go.string."AUTH"   Ø  ,type.map[string]string   ²
+  4runtime.mapaccess2_faststr   ğ
+   runtime.raceread   ø  go.string." "   
+  strings.Split   ˜
+  "runtime.racewrite   ô 6runtime.writeBarrierEnabled   ®
+  "runtime.racewrite   à 6runtime.writeBarrierEnabled   ¸
+  (runtime.racefuncexit   ì
+  .runtime.writebarrierptr   œ
+  .runtime.writebarrierptr   ¾
+  $runtime.panicindex   Ì
+  $runtime.panicindex   ‚  ,type.map[string]string   î
+  $runtime.mapassign1   ‚
+  $runtime.panicindex   
+  $runtime.panicslice   Ğ
+  .runtime.writebarrierptr   Š
+  0runtime.morestack_noctxt   0Ğ  0"".autotmp_0108  type.*string "".autotmp_0107  type.string "".autotmp_0106 Ïtype.*string "".autotmp_0105 ÿtype.int "".autotmp_0104 ïtype.int "".autotmp_0103 ¿"type.interface {} "".autotmp_0102 Ÿ(type.[1]interface {} "".autotmp_0099 &type.[]interface {} "".autotmp_0098  type.[]string "".autotmp_0097  type.string "".autotmp_0096 ÿtype.string "".autotmp_0093  type.[]string "".autotmp_0091 _type.[]string "".autotmp_0088 ßtype.string 
+"".ok type.bool "".mechs Ÿtype.string "".args /type.[]string "".line ÿtype.string "".extList ¿type.[]string "".ext ß,type.map[string]string "".err ßtype.error "".msg ¿type.string "".~r0 type.error "".c  type.*"".Client *"Ğ¢ÏĞ¢ÏĞè Ğ œğ",+Õ&%5R#‡X
+J'••6-O	
+	!* b .+‚O3=²¾W=KE	X
+	) TgclocalsÂ·aa302353f66d6c29cb693f3e3f9d2a90 TgclocalsÂ·c01b78f0e9275f3c8c5658354b0fd907   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş*"".(*Client).StartTLS   *  –*eH‹%    H„$8şÿÿH;A†f
+  HìH  H‹œ$H  H‰$è    1ÛH‰œ$`  H‰œ$h  H‹œ$P  H‰$è    H‹D$H‹L$H‰Œ$8  H‰„$0  Hƒø tH‰„$`  H‰Œ$h  è    HÄH  ÃH‹œ$P  H‰$HÇD$Ü   H    H‰\$HÇD$   1ÛH‰\$ H‰\$(H‰\$0è    H‹D$PH‹L$XH‰Œ$H  H‰„$@  Hƒø tH‰„$`  H‰Œ$h  è    HÄH  ÃH‹œ$P  H‰$Hƒ$è    H‹œ$P  Hƒû „B	  H‹kH‰¬$P  H‹kH‰¬$X  H‹œ$X  H‰œ$   H    H‰$è    H‹D$H‰„$È   H‰$HÇD$°  è    H‹¼$È   H‰ùHƒÿ „Ï  1ÀHƒÇğè    H‰$è    H‹œ$È   H‹¬$P  H‰+H‹¬$X  €=     …|  H‰kH‹œ$È   H‰$Hƒ$8è    H‹œ$È   Hƒû „I  H‹¬$   €=     …  H‰k8H‹œ$È   H‰$Hƒ$è    H‹„$È   HÇÅ   @ˆhH‰„$È   H‹    H‰„$À   1íH9è„”  H‹œ$P  H‰$Hƒ$è    H‹Œ$È   H‹„$À   H‹œ$P  Hƒû „U  H‰„$p  H‰CH‰Œ$x  €=     …  H‰KH‹œ$P  H‰$Hƒ$è    H    H‰$H‹´$P  Hƒş „ß  H^H|$H‹H‰H‹KH‰Oè    H‹L$H‹D$ H‰Œ$   H‰„$¨  H    H‰$H‰Œ$`  H‰L$H‰„$h  H‰D$è    H‹L$H‹D$ H‰Œ$  H‰„$˜  H‰Œ$  H‰„$  HÇD$`   HÇ„$Ø       H    H‰$H‰Œ$   H‰L$H‰„$(  H‰D$Hœ$Ø   H‰\$è    ¶\$ H‹Œ$Ø   €û „¦  H‰Œ$˜   H‰$è    H‹Œ$˜   H‹YH‹l$`H9ëŒ{  H‰ÈH‰D$pH    H‰$H‹œ$`  H‰\$H‹œ$h  H‰\$è    H‹L$H‹D$ H‰Œ$€  H‰„$ˆ  H‰Œ$à   H‰„$è   HÇD$h   HÇ„$Ğ       H    H‰$H‰Œ$ğ   H‰L$H‰„$ø   H‰D$Hœ$Ğ   H‰\$è    H‹D$h¶\$ H‹”$Ğ   €û „[  H‰”$    H‰$Hƒ$è    H‹”$    H‹D$hH‹ZH9ÃŒ+  H‰ĞH‰„$€   H    H‰$è    H‹D$H‰„$°   H‰$HÇD$ˆ   è    H‹¼$°   H‰ùHƒÿ „Õ  1ÀHƒÇèè    H‰$è    H‹œ$°   Hƒû „¨  H‹l$p€=     …ƒ  H‰+H‹œ$°   H‰$Hƒ$(è    H‹œ$°   Hƒû „Q  H‹¬$€   €=     …%  H‰k(H‹œ$°   H‰$Hƒ$xè    H‹œ$°   H‹¬$`  H‰kxH‹¬$h  €=     …È   H‰«€   H‹œ$°   H‰\$xH‹œ$P  H‰$è    H‹œ$P  Hƒû „Š   H‹l$x€=     ulH‰+H‹œ$P  H‰$Hƒ$è    H‹„$P  HÇÅ   @ˆhH‰$è    H‹L$H‹D$H‰Œ$°  H‰Œ$`  H‰„$¸  H‰„$h  è    HÄH  ÃH‰$H‰l$è    ë‡‰éoÿÿÿLƒ€   L‰$H‰l$è    é%ÿÿÿLC(L‰$H‰l$è    éÈşÿÿ‰é¨şÿÿH‰$H‰l$è    émşÿÿ‰éQşÿÿ‰é$şÿÿHƒø HÇÀ   H    H‰$H‰D$H‰D$è    H‹\$H‰œ$Ø  H‹\$ H‰œ$à  H‹\$(H‰œ$è  H    H‰$è    H‹D$H‰„$¸   H‰$HÇD$@   è    H‹„$¸   1íH‰(H‰hH‰hH‰hH‰h H‰h(H‰h0H‰h8H‰$Hƒ$è    H‹œ$¸   H‹¬$à  H‰kH‹¬$è  H‰k H‹¬$Ø  €=     udH‰kH‹œ$¸   H‰$Hƒ$0è    H‹œ$¸   H‹¬$ğ   H‰k0H‹¬$ø   €=     uH‰k8H‹„$¸   é£üÿÿLC8L‰$H‰l$è    ëßLCL‰$H‰l$è    ëŒH‹\$`Hƒû}	HÇD$`   H    H‰$è    H‹L$`H‹D$H‰„$ˆ   H‰„$¨   H    H‰$H‰L$H‰L$è    L‹D$H‹t$ H‹l$(H‹”$   H‹Œ$(  H¼$ğ  1ÀHƒÇøè    L‰„$À  L‰„$ğ  H‰´$È  H‰´$ø  H‰¬$Ğ  H‰¬$   H‰”$   H‰”$  H‰Œ$  H‰Œ$  HÇ„$8  ÿÿÿÿHÇ„$@  ÿÿÿÿH‹œ$¨   H‰$HÇD$X   è    H‹œ$¨   Hƒû t/H¬$ğ  H‰\$H‰l$H-    H‰,$è    H‹„$ˆ   é?úÿÿ‰ëÍ‰éùÿÿLCL‰$H‰L$è    éĞøÿÿ‰é¤øÿÿH    H‰$H    H‰\$H    H‰\$è    H‹\$H‰œ$À   é2øÿÿLC8L‰$H‰l$è    éĞ÷ÿÿ‰é°÷ÿÿLCL‰$H‰l$è    éq÷ÿÿ‰é*÷ÿÿ‰é·öÿÿè    éuõÿÿ
+      ^
+  *runtime.racefuncenter   ¤
+  $"".(*Client).hello   
+  (runtime.racefuncexit   Ö  (go.string."STARTTLS"   
+   "".(*Client).cmd   ˆ
+  (runtime.racefuncexit   Ä
+   runtime.raceread   Æ  (type.crypto/tls.Conn   Ø
+  "runtime.newobject   –
+  ,runtime.racewriterange   Ö
+Š  runtime.duffzero   è
+  "runtime.racewrite   ª 6runtime.writeBarrierEnabled   ì
+  "runtime.racewrite   ¬ 6runtime.writeBarrierEnabled   î
+  "runtime.racewrite   ²	  Bgo.itab.*crypto/tls.Conn.net.Conn   „
+
+  "runtime.racewrite   ü
+ 6runtime.writeBarrierEnabled   ¾
+   runtime.raceread   Ì  .type.io.ReadWriteCloser   °
+  runtime.convI2I   ò  type.io.Reader   ¸
+  runtime.convI2I   Ä  $type.*bufio.Reader   ¤
+  $runtime.assertI2T2   ò
+   runtime.raceread   Ä  type.io.Writer   Š
+  runtime.convI2I   –  $type.*bufio.Writer   ö
+  $runtime.assertI2T2   Ø
+   runtime.raceread   °  .type.net/textproto.Conn   Â
+  "runtime.newobject   €
+  ,runtime.racewriterange   À
+˜  runtime.duffzero   Ò
+  "runtime.racewrite   Œ 6runtime.writeBarrierEnabled   Ì
+  "runtime.racewrite   Œ 6runtime.writeBarrierEnabled   Î
+  "runtime.racewrite   ’ 6runtime.writeBarrierEnabled   ê
+  "runtime.racewrite   ¤ 6runtime.writeBarrierEnabled   Ü
+  "runtime.racewrite   ”
+  """.(*Client).ehlo   ò
+  (runtime.racefuncexit   
+  .runtime.writebarrierptr   Ú
+  .runtime.writebarrierptr   ˆ
+  .runtime.writebarrierptr   ¼
+  .runtime.writebarrierptr   Š  type.[]uint8   °
+  "runtime.makeslice   Œ  "type.bufio.Writer   
+  "runtime.newobject   Ü
+  ,runtime.racewriterange   Ê
+  "runtime.racewrite   ¦  6runtime.writeBarrierEnabled   à 
+  "runtime.racewrite   ¤! 6runtime.writeBarrierEnabled   ğ!
+  .runtime.writebarrierptr   ˜"
+  .runtime.writebarrierptr   Ò"  "type.bufio.Reader   ä"
+  "runtime.newobject   ¦#  type.[]uint8   Ì#
+  "runtime.makeslice   °$
+Ô  runtime.duffzero   ´&
+  ,runtime.racewriterange   ‚'  "type.bufio.Reader   ”'
+  (runtime.typedmemmove   è'
+  .runtime.writebarrierptr   (  *type.*crypto/tls.Conn   ¤(  type.net.Conn   ¼(  Bgo.itab.*crypto/tls.Conn.net.Conn   Ğ(
+   runtime.typ2Itab   ˜)
+  .runtime.writebarrierptr   Ô)
+  .runtime.writebarrierptr   „*
+  0runtime.morestack_noctxt   @	  Z"".autotmp_0132 ¯0type.*net/textproto.Conn "".autotmp_0131  0type.*net/textproto.Conn "".autotmp_0130  $type.*bufio.Writer "".autotmp_0129 Ÿ$type.*bufio.Writer "".autotmp_0128  $type.*bufio.Writer "".autotmp_0127 type.io.Writer "".autotmp_0126  $type.*bufio.Reader "".autotmp_0125 ïtype.io.Reader "".autotmp_0124 Ï.type.io.ReadWriteCloser "".autotmp_0123 type.*uint8 "".autotmp_0122 ÿ*type.*crypto/tls.Conn "".autotmp_0121  *type.*crypto/tls.Conn "".autotmp_0120  type.error "".autotmp_0119  type.[]uint8 "".autotmp_0118  type.int "".autotmp_0117 ï$type.*bufio.Writer "".autotmp_0116 ¯"type.bufio.Reader "".autotmp_0115 ßtype.[]uint8 "".autotmp_0112 ß$type.*bufio.Reader "".autotmp_0111  *type.*crypto/tls.Conn "".autotmp_0110  type.error "".autotmp_0109 ¯type.error bufio.bÂ·4 Ï$type.*bufio.Writer bufio.sizeÂ·3 ¿type.int bufio.wÂ·2 ¯type.io.Writer "".~r0 $type.*bufio.Writer bufio.wÂ·2 Ïtype.io.Writer bufio.rÂ·3 type.io.Reader bufio.bufÂ·2 type.[]uint8 bufio.bÂ·1 ¿$type.*bufio.Reader bufio.rÂ·6 ÿ$type.*bufio.Reader bufio.bÂ·4 ß$type.*bufio.Reader bufio.sizeÂ·3 Ïtype.int bufio.rdÂ·2 Ïtype.io.Reader "".~r0 ¯$type.*bufio.Reader bufio.rdÂ·2 ïtype.io.Reader "".~r0 Ÿ0type.*net/textproto.Conn *net/textproto.connÂ·2 Ï.type.io.ReadWriteCloser (crypto/tls.configÂ·3 ï.type.*crypto/tls.Config $crypto/tls.connÂ·2 ïtype.net.Conn "".err type.error "".err ¯type.error "".~r1  type.error "".config .type.*crypto/tls.Config "".c  type.*"".Client 4"	p		|		´		Ë  h¦E1R½)3‘„ ® .XH5JkAK]}v'L
+v15fAN95K4:7‚H&4´0*4
+B' TgclocalsÂ·39cdf86049636314cea6eb3730b78c4c TgclocalsÂ·6365f385d81bcd1a2ead3855a4da9398   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş>"".(*Client).TLSConnectionState     †eH‹%    H„$ ÿÿÿH;A†  Hì`  H‹œ$`  H‰$è    H¼$p  1ÀHƒÇèè    H¼$p  1ÀHƒÇèè    HÇ„$°       H‹œ$h  H‰$Hƒ$è    H    H‰$H‹´$h  Hƒş „š   H^H|$H‹H‰H‹KH‰OHœ$°   H‰\$è    ¶\$ H‰ÙH‹œ$°   €ù ˆŒ$  uè    HÄ`  ÃH‰$è    H\$H¼$¸   H‰Şè    H´$¸   H¼$p  è    Æ„$  è    HÄ`  Ã‰é_ÿÿÿè    é½şÿÿ
+      ^
+  *runtime.racefuncenter   „
+ò  runtime.duffzero   ª
+ò  runtime.duffzero   î
+   runtime.raceread   ü  *type.*crypto/tls.Conn   ú
+  $runtime.assertI2T2   ¼
+  (runtime.racefuncexit   Ş
+  Dcrypto/tls.(*Conn).ConnectionState   ˆ
+´  runtime.duffcopy   ²
+´  runtime.duffcopy   Ì
+  (runtime.racefuncexit   ô
+  0runtime.morestack_noctxt   ğÀ  
+"".autotmp_0136 Ï>type.crypto/tls.ConnectionState "".autotmp_0135 ß*type.*crypto/tls.Conn 
+"".ok àtype.bool "".state >type.crypto/tls.ConnectionState "".c  type.*"".Client &"ÀÇ¿ÀG¿À Ğ ,ÈYx;	
+  .Hg7+ TgclocalsÂ·cf7836f3cb7191d4b6e1ed7433c208a5 TgclocalsÂ·e657630f2575c1078daf39fed632182e   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş&"".(*Client).Verify  À  ´eH‹%    HD$¸H;A†ø  HìÈ   H‹œ$È   H‰$è    1ÛH‰œ$è   H‰œ$ğ   H‹œ$Ğ   H‰$è    H‹D$H‹L$H‰L$hH‰D$`Hƒø tH‰„$è   H‰Œ$ğ   è    HÄÈ   ÃH‹œ$Ø   H‰œ$    H‹œ$à   H‰œ$¨   1ÛH‰œ$   H‰œ$˜   Hœ$   Hƒû „;  HÇ„$¸      HÇ„$À      H‰œ$°   H    H‰$Hœ$    H‰\$HÇD$    è    H‹\$H‰œ$€   H‹\$ H‰œ$ˆ   H‹œ$°   H‰$è    H‹œ$°   H‹¬$€   H‰+H‹¬$ˆ   €=     …‹   H‰kH‹œ$Ğ   H‰$HÇD$ú   H    H‰\$HÇD$   H‹œ$°   H‰\$ H‹œ$¸   H‰\$(H‹œ$À   H‰\$0è    H‹L$PH‹D$XH‰L$pH‰Œ$è   H‰D$xH‰„$ğ   è    HÄÈ   ÃLCL‰$H‰l$è    ébÿÿÿ‰é¾şÿÿè    éæıÿÿ
+      X
+  *runtime.racefuncenter   
+  $"".(*Client).hello   ü
+  (runtime.racefuncexit   â  type.string    
+  runtime.convT2E   ö
+  "runtime.racewrite   ¸ 6runtime.writeBarrierEnabled   †  &go.string."VRFY %s"   ú
+   "".(*Client).cmd   Ì
+  (runtime.racefuncexit   €
+  .runtime.writebarrierptr   ¢
+  0runtime.morestack_noctxt   P  "".autotmp_0144 "type.interface {} "".autotmp_0143 o(type.[1]interface {} "".autotmp_0140 /&type.[]interface {} "".autotmp_0139  type.error "".autotmp_0138 Otype.string "".err ¯type.error "".err Ïtype.error "".~r1 0type.error "".addr type.string "".c  type.*"".Client &jç.   2à
+	+Á' & +R’+‚)! TgclocalsÂ·a05005ba0672fdfe268b0f50e66a4290 TgclocalsÂ·fdf25da4508bc8da30b521544eba9f52   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş""".(*Client).Auth  à-  Ê-eH‹%    H„$ÈşÿÿH;A†@  Hì¸  H‹œ$¸  H‰$è    1ÛH‰œ$Ø  H‰œ$à  H‹œ$À  H‰$è    H‹D$H‹L$H‰Œ$ø   H‰„$ğ   Hƒø tH‰„$Ø  H‰Œ$à  è    HÄ¸  ÃH    H‰$è    H‹    H‰œ$¨   H    H‰$è    H‹D$H‰„$¸   H‰$è    H‹œ$À  H‰$Hƒ$ è    H‹œ$À  Hƒû „T
+  Hk H‹œ$¸   Hƒû „7
+  H‰\$H‰l$H-    H‰,$è    H‹œ$¸   H‰$Hƒ$è    H‹œ$À  H‰$Hƒ$è    H‹„$¸   Hƒø „Ø	  L‹„$À  A¶h@ˆhH‰$Hƒ$è    H‹œ$À  H‰$Hƒ$8è    H‹œ$À  Hƒû „Š	  Hk8H‹œ$¸   Hƒû „m	  LCL‰D$H‰l$H-    H‰,$è    H‹œ$¸   H‰\$H‹œ$Ğ  H‰$H‹œ$È  H‹[(ÿÓH‹t$H‹l$H‹T$ H‹L$(H‹D$0L‹D$8H‹|$@H‰´$Ğ   H‰¬$Ø   H‰”$8  H‰ÊH‰Œ$@  H‰„$H  H‰¼$è   L‰„$à   Iƒø t>H‹œ$À  H‰$è    H‹œ$à   H‰œ$Ø  H‹œ$è   H‰œ$à  è    HÄ¸  ÃH‹Œ$¨   H‰T$hH‰Œ$˜   H‰$H$@  è    H‹D$hH‹¬$˜   ‹@  ƒûÿ…  H‰ÃHÁãHƒÃHÁàHƒÀI¹«ªªªªªª*H‰ÅI÷éH‰ĞHÁø HÁı?H)èH    H‰$H‰D$H‰D$è    H‹T$H‹L$ H‹D$(H‹œ$¨   H‰$H‰”$   H‰T$H‰Œ$(  H‰L$H‰„$0  H‰D$H‹œ$8  H‰\$ H‹œ$@  H‰\$(H‹œ$H  H‰\$0è    H‹œ$Ğ   H‰œ$  H‹œ$Ø   H‰œ$  H‹œ$   H‰œ$€  H‹œ$(  H‰œ$ˆ  H‹œ$0  H‰œ$  1ÛH‰œ$˜  H‰œ$   H‰œ$¨  H‰œ$°  Hœ$˜  Hƒû „Ç  HÇ„$p     HÇ„$x     H‰œ$h  H    H‰$Hœ$  H‰\$HÇD$    è    H‹\$H‰œ$   H‹\$ H‰œ$  H‹œ$h  H‰$è    H‹œ$h  H‹¬$   H‰+H‹¬$  €=     …  H‰kH    H‰$Hœ$€  H‰\$HÇD$    è    H‹\$H‰œ$   H‹\$ H‰œ$  H‹œ$h  HƒÃH‰$è    H‹œ$h  H‹¬$   HƒÃH‰+H‹¬$  €=     …{  H‰kH‹œ$À  H‰$HÇD$    H    H‰\$HÇD$
+   H‹œ$h  H‰\$ H‹œ$p  H‰\$(H‹œ$x  H‰\$0è    H‹|$8H‹T$@H‹L$HH‹D$PH‹l$XH‰”$À   H‰Œ$È   H‰¬$è   H‰„$à   Hƒø …y  1ÛH‰œ$P  H‰œ$X  H‰œ$`  H‰|$pHÿë   …j  HÇ$    H‰T$H‰L$è    H‹„$à   H‹\$H‰œ$P  H‹\$ H‰œ$X  H‹\$(H‰œ$`  H‰„$à   Hƒø …   H‹œ$P  H‰\$H‹œ$X  H‰\$H‹œ$`  H‰\$H‹\$pHûN  ”D$ H‹œ$Ğ  H‰$H‹œ$È  H‹[ ÿÓH‹T$(H‹L$0H‹D$8H‹t$@H‹l$HH‰”$8  H‰Œ$@  H‰„$H  H‰ğH‰¬$è   H‰„$à   Hƒø t~H‹œ$À  H‰$HÇD$õ  H    H‰\$HÇD$   1ÛH‰\$ H‰\$(H‰\$0è    H‹œ$À  H‰$è    H‹„$à   H‰„$Ø  H‹œ$è   H‰œ$à  è    HÄ¸  ÃH‹œ$8  Hƒû tÍH‹Œ$¨   H‹œ$@  H‰\$`H‰Œ$    H‰$H$@  è    H‹D$`H‹¬$    ‹@  ƒûÿ…g  H‰ÃHÁãHƒÃHÁàHƒÀI¹«ªªªªªª*H‰ÅI÷éH‰ĞHÁø HÁı?H)èH    H‰$H‰D$H‰D$è    H‹T$H‹L$ H‹D$(H‹œ$¨   H‰$H‰”$   H‰T$H‰Œ$(  H‰L$H‰„$0  H‰D$H‹œ$8  H‰\$ H‹œ$@  H‰\$(H‹œ$H  H‰\$0è    H\$xH‰$H‹œ$   H‰\$H‹œ$(  H‰\$H‹œ$0  H‰\$è    H\$ H|$H‹H‰H‹KH‰OH‹œ$À  H‰$HÇD$    1ÛH‰\$ H‰\$(H‰\$0è    H‹|$8H‹T$@H‹L$HH‹D$PH‹l$XH‰”$À   H‰Œ$È   H‰¬$è   é‘üÿÿH‰ÃHƒÃH‰ÃHƒÃHƒÀI¹VUUUUUUUH‰ÅI÷éH‰ĞHÁø HÁı?H)èHÁàé‘şÿÿHÿN  u\H‹œ$¨   H‰$H‰T$H‰L$è    H‹T$H‹L$ H‹D$(H‹t$0H‹l$8H‰”$P  H‰Œ$X  H‰„$`  H‰ğH‰¬$è   éwüÿÿH    H‰$è    H‹D$H‰„$°   H‰$è    H‹„$°   H‹l$pH‰(H‰$Hƒ$è    H‹œ$°   H‹¬$È   H‰kH‹¬$À   €=     ufH‰kH‹œ$°   H‰œ$°   H‹    1íH9ètH‹œ$°   H‰œ$è   é×ûÿÿH    H‰$H    H‰\$H    H‰\$è    H‹D$ë¼LCL‰$H‰l$è    ëŠLCL‰$H‰l$è    érúÿÿLCL‰$H‰l$è    éÖùÿÿ‰é2ùÿÿH‰ÃHƒÃH‰ÃHƒÃHƒÀI¹VUUUUUUUH‰ÅI÷éH‰ĞHÁø HÁı?H)èHÁàéí÷ÿÿ‰éŒöÿÿ‰éoöÿÿ‰ é!öÿÿ‰éÂõÿÿ‰é¥õÿÿè    é›ôÿÿ~
+      ^
+  *runtime.racefuncenter   ¤
+  $"".(*Client).hello   
+  (runtime.racefuncexit   ¬  6encoding/base64.StdEncoding   ¾
+   runtime.raceread   Ì  6encoding/base64.StdEncoding   ê  $type."".ServerInfo   ü
+  "runtime.newobject   ¨
+  "runtime.racewrite   Ô
+   runtime.raceread   Æ  type.string   Ø
+  (runtime.typedmemmove   „
+  "runtime.racewrite   °
+   runtime.raceread   ’
+  "runtime.racewrite   ¾
+   runtime.raceread   ¸  type.[]string   Ê
+  (runtime.typedmemmove   œ       ‚
+
+  """.(*Client).Quit   Ì
+
+  (runtime.racefuncexit   ¨
+   runtime.raceread   Ğ  type.[]uint8   ö
+  "runtime.makeslice   Ò
+  Dencoding/base64.(*Encoding).Encode   ¨  type.string   æ
+  runtime.convT2E   ¼
+  "runtime.racewrite   ş 6runtime.writeBarrierEnabled   ¢  type.[]uint8   à
+  runtime.convT2E   ¾
+  "runtime.racewrite   ˆ 6runtime.writeBarrierEnabled   Ö  ,go.string."AUTH %s %s"   Ê
+   "".(*Client).cmd   Ö
+  2runtime.stringtoslicebyte   €       È  go.string."*"   
+   "".(*Client).cmd   ²
+  """.(*Client).Quit   ü
+  (runtime.racefuncexit   „
+   runtime.raceread   ¬   type.[]uint8   Ò 
+  "runtime.makeslice   ®"
+  Dencoding/base64.(*Encoding).Encode   ˜#
+  2runtime.slicebytetostring   $
+   "".(*Client).cmd   Ä&
+  Pencoding/base64.(*Encoding).DecodeString   Ô'  0type.net/textproto.Error   æ'
+  "runtime.newobject   ’(
+  "runtime.racewrite   Î(
+  "runtime.racewrite   ’) 6runtime.writeBarrierEnabled   Î)  Dgo.itab.*net/textproto.Error.error   ”*  2type.*net/textproto.Error   ª*  type.error   Â*  Dgo.itab.*net/textproto.Error.error   Ö*
+   runtime.typ2Itab   ˆ+
+  .runtime.writebarrierptr   °+
+  .runtime.writebarrierptr   Ş+
+  .runtime.writebarrierptr   ¸-
+  0runtime.morestack_noctxt   Pğ  n"".autotmp_0190 ÿtype.[32]uint8 "".autotmp_0189  type.int "".autotmp_0188  type.int "".autotmp_0187  type.int "".autotmp_0186  type.int "".autotmp_0185  type.int "".autotmp_0184  type.int "".autotmp_0183  type.int "".autotmp_0181 2type.*net/textproto.Error "".autotmp_0180  type.int "".autotmp_0179  "type.interface {} "".autotmp_0178 ï"type.interface {} "".autotmp_0177 ?(type.[2]interface {} "".autotmp_0174 Ÿ&type.[]interface {} "".autotmp_0173  type.int "".autotmp_0172  type.int "".autotmp_0171  type.int "".autotmp_0170  type.int "".autotmp_0169  type.int "".autotmp_0168  type.int "".autotmp_0167  type.int "".autotmp_0166 ÿ&type.*"".ServerInfo "".autotmp_0165  type.error "".autotmp_0164  type.string "".autotmp_0163  type.int "".autotmp_0162  type.[]uint8 "".autotmp_0161  type.int "".autotmp_0160  type.error "".autotmp_0159  type.[]uint8 "".autotmp_0158  2type.*net/textproto.Error "".autotmp_0157  type.error "".autotmp_0156  type.[]uint8 "".autotmp_0155  type.error "".autotmp_0154  type.string "".autotmp_0153  type.int "".autotmp_0152 otype.[]uint8 "".autotmp_0151 Ïtype.string "".autotmp_0150  type.[]uint8 "".autotmp_0148  type.error (encoding/base64.nÂ·3 ¯type.int ,encoding/base64.encÂ·2 ¯<type.*encoding/base64.Encoding (encoding/base64.nÂ·3 Ÿtype.int ,encoding/base64.encÂ·2 ¿<type.*encoding/base64.Encoding "".msg Ïtype.[]uint8 "".msg64 ïtype.string "".code type.int "".resp64 ¯type.[]uint8 "".err ¯type.error "".resp ÿtype.[]uint8 "".mech Ïtype.string "".encoding Ÿ<type.*encoding/base64.Encoding "".err type.error "".~r1 0type.error "".a type."".Auth "".c  type.*"".Client 6"ğpïğïğ×	ïğæ ğ Âö"PO1LK´ @?œ_­F@%¤_©1.9'	W›C59	#	 ˆ .X»r%.gnÊ+R/††–
+‡6Dgn5§¢-™ TgclocalsÂ·52015768c5b63ec24c9d37e6d16aeb9c TgclocalsÂ·5b5b1ed081522dc5ff30d5b040367764   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş""".(*Client).Mail  €  öeH‹%    HD$˜H;A†  Hìè   H‹œ$è   H‰$è    1ÛH‰œ$  H‰œ$  H‹œ$ğ   H‰$è    H‹D$H‹L$H‰L$xH‰D$pHƒø tH‰„$  H‰Œ$  è    HÄè   ÃH    H‰œ$€   HÇ„$ˆ      H‹œ$ğ   H‰$Hƒ$0è    H‹„$ğ   H‹X01íH9ë„Ô   H    H‰œ$À   HÇ„$È      H‰$Hƒ$0è    H    H‰$H‹œ$ğ   H‹k0H‰l$H‹œ$À   H‰\$H‹œ$È   H‰\$è    ¶\$(€û tfH‹Œ$€   H‹„$ˆ   HÇ$    H‰Œ$À   H‰L$H‰„$È   H‰D$H    H‰\$HÇD$    è    H‹\$(H‰œ$€   H‹\$0H‰œ$ˆ   H‹œ$ø   H‰œ$°   H‹œ$   H‰œ$¸   1ÛH‰œ$    H‰œ$¨   Hœ$    Hƒû „@  HÇ„$Ø      HÇ„$à      H‰œ$Ğ   H    H‰$Hœ$°   H‰\$HÇD$    è    H‹\$H‰œ$   H‹\$ H‰œ$˜   H‹œ$Ğ   H‰$è    H‹œ$Ğ   H‹¬$   H‰+H‹¬$˜   €=     …   H‰kH‹œ$ğ   H‰$HÇD$ú   H‹œ$€   H‰\$H‹œ$ˆ   H‰\$H‹œ$Ğ   H‰\$ H‹œ$Ø   H‰\$(H‹œ$à   H‰\$0è    H‹L$PH‹D$XH‰L$`H‰Œ$  H‰D$hH‰„$  è    HÄè   ÃLCL‰$H‰l$è    é]ÿÿÿ‰é¹şÿÿè    éÅüÿÿ(
+      X
+  *runtime.racefuncenter   
+  $"".(*Client).hello   ü
+  (runtime.racefuncexit   š  4go.string."MAIL FROM:<%s>"   î
+   runtime.raceread   ª  (go.string."8BITMIME"   î
+   runtime.raceread   ü  ,type.map[string]string   ä
+  4runtime.mapaccess2_faststr   ê  4go.string." BODY=8BITMIME"   
+  *runtime.concatstring2   š  type.string   Ø
+  runtime.convT2E   ®	
+  "runtime.racewrite   ğ	 6runtime.writeBarrierEnabled   ¼
+   "".(*Client).cmd   
+  (runtime.racefuncexit   Â
+  .runtime.writebarrierptr   ä
+  0runtime.morestack_noctxt   PĞ  "".autotmp_0201 ¯"type.interface {} "".autotmp_0200 (type.[1]interface {} "".autotmp_0197 /&type.[]interface {} "".autotmp_0196  type.error "".autotmp_0195 otype.string "".autotmp_0194  type.string "".autotmp_0193 Otype.string "".err type.error "".cmdStr Ïtype.string "".err ïtype.error "".~r1 0type.error "".from type.string "".c  type.*"".Client &ĞjÏĞˆÏĞ- À BÔ+-nfÆ' 6 +R9@;V¤+‡)  TgclocalsÂ·4dcfa99ec5c331c0deb21ac24bbb3f93 TgclocalsÂ·6b774c207d91ff75130679a4bf8c4477   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş""".(*Client).Rcpt     ŒeH‹%    HD$ÈH;A†¤  Hì¸   H‹œ$¸   H‰$è    1ÛH‰œ$Ø   H‰œ$à   H‹œ$È   H‰œ$   H‹œ$Ğ   H‰œ$˜   1ÛH‰œ$€   H‰œ$ˆ   Hœ$€   Hƒû „/  HÇ„$¨      HÇ„$°      H‰œ$    H    H‰$Hœ$   H‰\$HÇD$    è    H‹\$H‰\$pH‹\$ H‰\$xH‹œ$    H‰$è    H‹œ$    H‹l$pH‰+H‹l$x€=     …‹   H‰kH‹œ$À   H‰$HÇD$   H    H‰\$HÇD$   H‹œ$    H‰\$ H‹œ$¨   H‰\$(H‹œ$°   H‰\$0è    H‹L$PH‹D$XH‰L$`H‰Œ$Ø   H‰D$hH‰„$à   è    HÄ¸   ÃLCL‰$H‰l$è    ébÿÿÿ‰éÊşÿÿè    é:şÿÿ
+      X
+  *runtime.racefuncenter   Ò  type.string   
+  runtime.convT2E   Ú
+  "runtime.racewrite    6runtime.writeBarrierEnabled   Ş  0go.string."RCPT TO:<%s>"   Ò
+   "".(*Client).cmd   ¤
+  (runtime.racefuncexit   Ø
+  .runtime.writebarrierptr   ú
+  0runtime.morestack_noctxt   Pğ  "".autotmp_0208 "type.interface {} "".autotmp_0207 o(type.[1]interface {} "".autotmp_0204 /&type.[]interface {} "".autotmp_0202 Otype.string "".err ¯type.error "".~r1 0type.error 
+"".to type.string "".c  type.*"".Client ğşïğ2 Ğ "öµ'   +œ%|)% TgclocalsÂ·2ecdb75c02e39206f80e638f9cca0912 TgclocalsÂ·79c7082f239f52c454eada038cd91cae   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş,"".(*dataCloser).Close  €  èeH‹%    H;a†×   HƒìXH‹\$XH‰$è    1ÛH‰\$hH‰\$pH‹\$`H‰$Hƒ$è    H‹\$`Hƒû „   H‹KH‹kH‰l$PH‰,$H‰L$HH‹Y ÿÓH‹\$`H‰$è    H‹\$`H‹+H‰,$è    H‹\$`H‹H‹+H‰,$Hƒ<$ t6HÇD$ú   è    H‹L$(H‹D$0H‰L$8H‰L$hH‰D$@H‰D$pè    HƒÄXÃ‰%    ëÁ‰éiÿÿÿè    éÿÿÿ
+      B
+  *runtime.racefuncenter   €
+   runtime.raceread   Ú       ò
+   runtime.raceread   ”
+   runtime.raceread   Ü
+  Hnet/textproto.(*Reader).ReadResponse   ¢
+  (runtime.racefuncexit   Ö
+  0runtime.morestack_noctxt   0°  "".err ?type.error "".~r0 type.error "".d  &type.*"".dataCloser °Â¯°& € (Š>M	   °0 TgclocalsÂ·cad14e25fd48dddd762418d02c031d67 TgclocalsÂ·64ca935d1a2110a30e2d604686188539   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş""".(*Client).Data  à	  Ö	eH‹%    HD$øH;A†I  Hìˆ   H‹œ$ˆ   H‰$è    1ÛH‰œ$˜   H‰œ$    1ÛH‰œ$¨   H‰œ$°   H‹œ$   H‰$HÇD$b  H    H‰\$HÇD$   1ÛH‰\$ H‰\$(H‰\$0è    H‹D$PH‹L$XH‰L$pH‰D$hHƒø t/1ÛH‰œ$˜   H‰œ$    H‰„$¨   H‰Œ$°   è    HÄˆ   ÃH‹œ$   H‰$è    H‹œ$   H‹+H‰,$Hƒ<$ „M  Hƒ$(è    H‹\$H‰\$xH‹\$H‰œ$€   H    H‰$è    H‹D$H‰D$`H‰$è    H‹\$`Hƒû „ó   H‹¬$   €=     …Ë   H‰+H‹\$`H‰$Hƒ$è    H‹\$`H‹l$xH‰kH‹¬$€   €=     uH‰kH‹\$`H‰\$`H‹    1íH9èt4H‹\$`H‰œ$    H‰„$˜   1ÛH‰œ$¨   H‰œ$°   è    HÄˆ   ÃH    H‰$H    H‰\$H    H‰\$è    H‹D$ëLCL‰$H‰l$è    énÿÿÿH‰$H‰l$è    é%ÿÿÿ‰éÿÿÿ‰%    é§şÿÿè    é•ıÿÿ,
+      X
+  *runtime.racefuncenter   Ø   go.string."DATA"    
+   "".(*Client).cmd   ¢
+  (runtime.racefuncexit   Ô
+   runtime.raceread   œ
+  Bnet/textproto.(*Writer).DotWriter   Ø  $type."".dataCloser   ê
+  "runtime.newobject   
+  "runtime.racewrite   Ê 6runtime.writeBarrierEnabled   „
+  "runtime.racewrite   ¼ 6runtime.writeBarrierEnabled   ì  Jgo.itab.*"".dataCloser.io.WriteCloser   Ò
+  (runtime.racefuncexit   ğ  &type.*"".dataCloser   †  &type.io.WriteCloser     Jgo.itab.*"".dataCloser.io.WriteCloser   ²
+   runtime.typ2Itab   ä
+  .runtime.writebarrierptr   Š	
+  .runtime.writebarrierptr   Ä	
+  0runtime.morestack_noctxt   P  "".autotmp_0214 O&type.*"".dataCloser "".autotmp_0213  &type.*"".dataCloser "".autotmp_0212 &type.io.WriteCloser "".err ?type.error "".~r1 0type.error "".~r0 &type.io.WriteCloser "".c  type.*"".Client (½—{ ğ .TO"‹	
+t	 * +¥K¡0,, TgclocalsÂ·add662f9aa2f778eeef67ba6906146b8 TgclocalsÂ·4fcb4ce87b12c724766a25d800bb3f11   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş"".SendMail     eH‹%    HD$°H;A†­  HìĞ   H‹œ$Ğ   H‰$è    1ÛH‰œ$8  H‰œ$@  H‹œ$Ø   H‰$H‹œ$à   H‰\$è    H‹l$H‹L$H‹T$ H‰”$€   H‰L$xHƒù t#H‰Œ$8  H‰”$@  è    è    HÄĞ   ÃH‰l$PH‰l$Ç$   H    H‰D$è    ƒø …â  H‹\$PH‰$è    H‹L$H‹T$H‰”$€   H‰L$xHƒù t#H‰Œ$8  H‰”$@  è    è    HÄĞ   ÃH‹\$PH‰$H    H‰\$HÇD$   è    ¶\$€û „O  H    H‰$è    H‹D$H‰D$`H‰$HÇD$8  è    H‹L$`H‰ÏHƒù „  1ÀHƒÇøè    H‰$Hƒ$`è    H‹\$PH‰$Hƒ$ è    H‹\$PHƒû „Ü  Hk H‹\$`Hƒû „Â  LC`L‰D$H‰l$H-    H‰,$è    H‹\$`H‰\$HH    H‰$è    H‹    1íH9ët%H    H‰$è    H‹\$HH‰$H‹    H‹ÿÓH‹\$PH‰$H‹\$HH‰\$è    H‹L$H‹T$H‰”$€   H‰L$xHƒù t#H‰Œ$8  H‰”$@  è    è    HÄĞ   ÃH‹œ$è   Hƒû „ÿ   H‹\$PH‰$Hƒ$0è    H‹l$PH‹]01íH9ë„Ø   H    H‰œ$ˆ   HÇ„$      H‹\$PH‰$Hƒ$0è    H    H‰$H‹\$PH‹k0H‰l$H‹œ$ˆ   H‰\$H‹œ$   H‰\$è    ¶\$(€û thH‹\$PH‰$H‹œ$è   H‰\$H‹œ$ğ   H‰\$è    H‹L$H‹T$ H‰”$€   H‰L$xHƒù t#H‰Œ$8  H‰”$@  è    è    HÄĞ   ÃH‹\$PH‰$H‹œ$ø   H‰\$H‹œ$   H‰\$è    H‹L$H‹T$ H‰”$€   H‰L$xHƒù t#H‰Œ$8  H‰”$@  è    è    HÄĞ   ÃH‹”$  H‹„$  H‹œ$  H‰œ$È   1ÉH‰„$À   H‰D$8H‰”$¸   H‰ĞH‰L$@H‹l$8H9éÀ   H‰D$XH‰$è    H‹\$XHƒû „  H‹H‹kH‰Œ$ˆ   H‰¬$   H‹\$PH‰$H‰Œ$¨   H‰L$H‰¬$°   H‰l$è    H‹T$H‹L$ H‰Œ$€   H‰T$xHƒú t#H‰”$8  H‰Œ$@  è    è    HÄĞ   ÃH‹D$XH‹L$@HƒÀHÿÁH‰L$@H‹l$8H9éŒ@ÿÿÿH‹\$PH‰$è    H‹|$H‹T$H‹t$H‹l$ H‰|$hH‰T$pH‰¬$€   H‰t$xHƒş t#H‰´$8  H‰¬$@  è    è    HÄĞ   ÃH‹œ$   H‰\$H‹œ$(  H‰\$H‹œ$0  H‰\$H‰$H‹_(ÿÓH‹L$(H‹T$0H‰”$€   H‰L$xHƒù t#H‰Œ$8  H‰”$@  è    è    HÄĞ   ÃH‹\$pH‰$H‹\$hH‹[ ÿÓH‹L$H‹T$H‰”$€   H‰L$xHƒù t#H‰Œ$8  H‰”$@  è    è    HÄĞ   ÃH‹\$PH‰$è    H‹T$H‹L$H‰”$˜   H‰”$8  H‰Œ$    H‰Œ$@  è    è    HÄĞ   Ã‰éäıÿÿ‰é7ûÿÿ‰éûÿÿ‰éÛúÿÿè    è    HÄĞ   Ãè    é1ùÿÿx
+      X
+  *runtime.racefuncenter   ¸
+  "".Dial   ¨
+  &runtime.deferreturn   ²
+  (runtime.racefuncexit   ò  *"".(*Client).CloseÂ·f   †
+  "runtime.deferproc   ´
+  $"".(*Client).hello   š
+  &runtime.deferreturn   ¤
+  (runtime.racefuncexit   Ô  (go.string."STARTTLS"   ú
+  ,"".(*Client).Extension   ¤  ,type.crypto/tls.Config   ¶
+  "runtime.newobject   î
+  ,runtime.racewriterange   ¨
+Ê  runtime.duffzero   Ä
+  "runtime.racewrite   ê
+   runtime.raceread   Ø  type.string   ê
+  (runtime.typedmemmove   Œ  &"".testHookStartTLS   
+   runtime.raceread   ¬  &"".testHookStartTLS   È  &"".testHookStartTLS   Ú
+   runtime.raceread   ú  &"".testHookStartTLS   ˆ	       ´	
+  *"".(*Client).StartTLS   š
+
+  &runtime.deferreturn   ¤
+
+  (runtime.racefuncexit   ş
+
+   runtime.raceread   ´   go.string."AUTH"   ‚
+   runtime.raceread     ,type.map[string]string   ò
+  4runtime.mapaccess2_faststr   Ö
+  """.(*Client).Auth   ¼
+  &runtime.deferreturn   Æ
+  (runtime.racefuncexit   ¦
+  """.(*Client).Mail   Œ
+  &runtime.deferreturn   –
+  (runtime.racefuncexit   Ü
+   runtime.raceread   ø
+  """.(*Client).Rcpt   Ş
+  &runtime.deferreturn   è
+  (runtime.racefuncexit   Ü
+  """.(*Client).Data   ê
+  &runtime.deferreturn   ô
+  (runtime.racefuncexit   ê       Ì
+  &runtime.deferreturn   Ö
+  (runtime.racefuncexit   ’       ô
+  &runtime.deferreturn   ş
+  (runtime.racefuncexit   ª
+  """.(*Client).Quit   Š
+  &runtime.deferreturn   ”
+  (runtime.racefuncexit   è
+  &runtime.deferreturn   ò
+  (runtime.racefuncexit   Œ
+  0runtime.morestack_noctxt   à   8"".autotmp_0236  type.string "".autotmp_0235 ïtype.*string "".autotmp_0234 ¯type.int "".autotmp_0233 Ÿtype.int "".autotmp_0232 ß.type.*crypto/tls.Config "".autotmp_0231  type.error "".autotmp_0230  type.error "".autotmp_0229  type.error "".autotmp_0228  type.error "".autotmp_0226  type.error "".autotmp_0225 /type.[]string "".autotmp_0224  type.error "".autotmp_0223  type.error "".autotmp_0222 type.string "".autotmp_0221  type.error "".autotmp_0219  type.error "".autotmp_0218 otype.error "".w Ï&type.io.WriteCloser "".addr Otype.string "".config .type.*crypto/tls.Config "".err ¯type.error "".c ÿtype.*"".Client "".~r5 Àtype.error "".msg type.[]uint8 
+"".to `type.[]string "".from @type.string "".a  type."".Auth "".addr  type.string š …Ÿ xŸ ÿŸ Ÿ gŸ èŸ …Ÿ pŸ SŸ JŸ .Ÿ  Ğ ôÚB5++1´%59pE)*E34E;<$
+4EFCMN&UV>YZ!#		
+	 r +0g21:˜K23B8d62i€@FB/%//M TgclocalsÂ·db56136f95e5893708fbf09c1b31b1c3 TgclocalsÂ·887b5d68105e1a8bfcbd7e8e77a0e803   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş,"".(*Client).Extension  €  úeH‹%    H;a†   HƒìpH‹\$pH‰$è    1ÛH‰œ$˜   H‰œ$    H‹\$xH‰$è    H‹L$H‹D$H‰D$XH‰L$PHƒù t$Æ„$    1ÛH‰œ$˜   H‰œ$    è    HƒÄpÃH‹\$xH‰$Hƒ$0è    H‹l$xH‹]01íH9ëu$Æ„$    1ÛH‰œ$˜   H‰œ$    è    HƒÄpÃH‹œ$€   H‰$H‹œ$ˆ   H‰\$è    H‹L$H‹D$H‰Œ$€   H‰L$`H‰„$ˆ   H‰D$hH‹\$xH‰$Hƒ$0è    H    H‰$H‹\$xH‹k0H‰l$H‹\$`H‰\$H‹\$hH‰\$è    H‹D$ ¶\$(ˆ\$7H‰D$8H‰$è    H‹\$8Hƒû t7H‹H‹k¶\$7ˆœ$   H‰L$@H‰Œ$˜   H‰l$HH‰¬$    è    HƒÄpÃ‰ëÅè    éCşÿÿ
+      B
+  *runtime.racefuncenter   ‚
+  $"".(*Client).hello   ô
+  (runtime.racefuncexit   ¤
+   runtime.raceread   ‚
+  (runtime.racefuncexit   È
+  strings.ToUpper   ¶
+   runtime.raceread   Ä  ,type.map[string]string   š
+  4runtime.mapaccess2_faststr   Ò
+   runtime.raceread   Ì
+  (runtime.racefuncexit   è
+  0runtime.morestack_noctxt   `à  "".autotmp_0240 otype.*string "".autotmp_0239  type.string "".autotmp_0238 type.string 
+"".ok qtype.bool "".param _type.string "".err ?type.error "".~r2 @type.string "".~r1 0type.bool "".ext type.string "".c  type.*"".Client 2àkßàFßàäßà À FÂ(#(0 *  Y/#72= TgclocalsÂ·ab4c4a8294c949850b9db33c12db39ff TgclocalsÂ·2485130fb1456ae0ac71f486d2699930   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş$"".(*Client).Reset  €  €eH‹%    H;a†ã   Hì€   H‹œ$€   H‰$è    1ÛH‰œ$   H‰œ$˜   H‹œ$ˆ   H‰$è    H‹D$H‹L$H‰L$hH‰D$`Hƒø tH‰„$   H‰Œ$˜   è    HÄ€   ÃH‹œ$ˆ   H‰$HÇD$ú   H    H‰\$HÇD$   1ÛH‰\$ H‰\$(H‰\$0è    H‹L$PH‹D$XH‰L$pH‰Œ$   H‰D$xH‰„$˜   è    HÄ€   Ãè    é ÿÿÿ
+      N
+  *runtime.racefuncenter   ”
+  $"".(*Client).hello   ò
+  (runtime.racefuncexit   º   go.string."RSET"   ‚
+   "".(*Client).cmd   Ô
+  (runtime.racefuncexit   î
+  0runtime.morestack_noctxt   0€  
+"".autotmp_0242  type.error "".err type.error "".err ?type.error "".~r0 type.error "".c  type.*"".Client $€jÿ€pÿ€
+ € ,Ş
+	+J'	
+  &RH) TgclocalsÂ·cad14e25fd48dddd762418d02c031d67 TgclocalsÂ·64ca935d1a2110a30e2d604686188539   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş""".(*Client).Quit  à  ÎeH‹%    HD$ğH;A†E  Hì   H‹œ$   H‰$è    1ÛH‰œ$    H‰œ$¨   H‹œ$˜   H‰$è    H‹D$H‹L$H‰L$xH‰D$pHƒø tH‰„$    H‰Œ$¨   è    HÄ   ÃH‹œ$˜   H‰$HÇD$İ   H    H‰\$HÇD$   1ÛH‰\$ H‰\$(H‰\$0è    H‹D$PH‹L$XH‰L$hH‰D$`Hƒø tH‰„$    H‰Œ$¨   è    HÄ   ÃH‹œ$˜   H‰$è    H‹œ$˜   H‹+H‰,$è    H‹L$H‹D$H‰Œ$€   H‰Œ$    H‰„$ˆ   H‰„$¨   è    HÄ   Ãè    é™şÿÿ
+      X
+  *runtime.racefuncenter   
+  $"".(*Client).hello   ü
+  (runtime.racefuncexit   Ä   go.string."QUIT"   Œ
+   "".(*Client).cmd   ê
+  (runtime.racefuncexit   œ
+   runtime.raceread   Ä
+  6net/textproto.(*Conn).Close   ¢
+  (runtime.racefuncexit   ¼
+  0runtime.morestack_noctxt   0   "".autotmp_0245  type.error "".autotmp_0244  type.error "".autotmp_0243 type.error "".err _type.error "".err ?type.error "".~r0 type.error "".c  type.*"".Client 0 jŸ vŸ [Ÿ  ğ <ğB+OO  +RH/C  TgclocalsÂ·cad14e25fd48dddd762418d02c031d67 TgclocalsÂ·ae0a20890c9ac6bfbea3383f34532bab   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş"".init  À  ºeH‹%    H;a†À   HƒìH‹\$H‰$è    H    H‰$è    ¶    €û t-H    H‰$è    ¶    €ûu
+è    HƒÄÃè    H    H‰$è    Æ    è    è    è    è    è    è    è    è    è    H    H‰$è    Æ    è    HƒÄÃè    é#ÿÿÿ6
+      B
+  *runtime.racefuncenter   P  "".initdoneÂ·   b
+   runtime.raceread   p  "".initdoneÂ·   ˆ  "".initdoneÂ·   š
+   runtime.raceread   ¨  "".initdoneÂ·   ¼
+  (runtime.racefuncexit   Ğ
+  "runtime.throwinit   â  "".initdoneÂ·   ô
+  "runtime.racewrite   € "".initdoneÂ·   Œ
+   crypto/hmac.init   –
+  crypto/md5.init    
+  fmt.init   ª
+  crypto/tls.init   ´
+  (encoding/base64.init   ¾
+  io.init   È
+  net.init   Ò
+  $net/textproto.init   Ü
+  strings.init   ê  "".initdoneÂ·   ü
+  "runtime.racewrite   ˆ "".initdoneÂ·   ”
+  (runtime.racefuncexit   ¨
+  0runtime.morestack_noctxt       Ok à 
+‚à   À TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   Xprebuilts/go/darwin-x86/src/net/smtp/smtp.goş.type..hash."".plainAuth À  ¨eH‹%    H;a†÷   HƒìH‹\$H‰$è    H‹\$ H‰$Hƒ<$ „Å   H‹\$(H‰\$è    H‹D$H‹\$ H‰$Hƒ<$ „‘   Hƒ$H‰D$(H‰D$è    H‹D$H‹\$ H‰$Hƒ<$ t_Hƒ$ H‰D$(H‰D$è    H‹D$H‹\$ H‰$Hƒ<$ t-Hƒ$0H‰D$(H‰D$è    H‹D$H‰D$(H‰D$0è    HƒÄÃ‰%    ëÊ‰%    ë˜‰%    écÿÿÿ‰%    é/ÿÿÿè    éìşÿÿ
+      B
+  *runtime.racefuncenter   ˆ
+  runtime.strhash   â
+  runtime.strhash   ´
+  runtime.strhash   †
+  runtime.strhash   ®
+  (runtime.racefuncexit   –
+  0runtime.morestack_noctxt   00  "".autotmp_0249  type.uintptr "".autotmp_0248  type.uintptr "".autotmp_0247  type.uintptr "".~r2  type.uintptr "".h type.uintptr "".p  $type.*"".plainAuth 0È/0@       € TgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş*type..eq."".plainAuth À  ¶eH‹%    H;a†ş  HƒìHH‹\$HH‰$è    H‹\$PH‰$è    H‹\$PHƒû „È  H‹+H‰l$8H‹kH‰l$@H‹\$XH‰$è    H‹T$@H‹\$XHƒû „  H‹H‰L$(H‹CH‰D$0H9Â…e  H‹l$8H‰,$H‰T$H‰L$H‰D$è    ¶\$ €û „:  H‹\$PH‰$Hƒ$è    H‹\$PHƒû „  H‹kH‰l$(H‹kH‰l$0H‹\$XH‰$Hƒ$è    H‹L$0H‹\$XHƒû „Ñ  H‹SH‰T$8H‹CH‰D$@H9Á…§  H‹l$(H‰,$H‰L$H‰T$H‰D$è    ¶\$ €û „|  H‹\$PH‰$Hƒ$ è    H‹\$PHƒû „S  H‹k H‰l$8H‹k(H‰l$@H‹\$XH‰$Hƒ$ è    H‹T$@H‹\$XHƒû „  H‹K H‰L$(H‹C(H‰D$0H9Â…é   H‹l$8H‰,$H‰T$H‰L$H‰D$è    ¶\$ €û „¾   H‹\$PH‰$Hƒ$0è    H‹\$PHƒû „•   H‹k0H‰l$(H‹k8H‰l$0H‹\$XH‰$Hƒ$0è    H‹L$0H‹\$XHƒû t\H‹S0H‰T$8H‹C8H‰D$@H9Áu6H‹l$(H‰,$H‰L$H‰T$H‰D$è    ¶\$ €û tÆD$`è    HƒÄHÃÆD$` è    HƒÄHÃ‰ë ‰édÿÿÿÆD$` è    HƒÄHÃ‰éæşÿÿ‰é¦şÿÿÆD$` è    HƒÄHÃ‰é(şÿÿ‰éèıÿÿÆD$` è    HƒÄHÃ‰ékıÿÿ‰é1ıÿÿè    éåüÿÿ(
+      B
+  *runtime.racefuncenter   ^
+   runtime.raceread   º
+   runtime.raceread   Ğ
+   runtime.eqstring   ’
+   runtime.raceread   ú
+   runtime.raceread   ’
+   runtime.eqstring   Ô
+   runtime.raceread   ¼
+   runtime.raceread   Ô
+   runtime.eqstring   –
+   runtime.raceread   ş
+   runtime.raceread   †
+
+   runtime.eqstring   ®
+
+  (runtime.racefuncexit   Ì
+
+  (runtime.racefuncexit   €
+  (runtime.racefuncexit   º
+  (runtime.racefuncexit   ô
+  (runtime.racefuncexit   ¤
+  0runtime.morestack_noctxt   0  "".autotmp_0257  type.string "".autotmp_0256  type.string "".autotmp_0255  type.string "".autotmp_0254  type.string "".autotmp_0253  type.string "".autotmp_0252  type.string "".autotmp_0251 ?type.string "".autotmp_0250 type.string "".~r2  type.bool "".q $type.*"".plainAuth "".p  $type.*"".plainAuth Jˆ     ,  <KULULUD TgclocalsÂ·9c91d8a91ac42440a3d1507bc8d2e808 TgclocalsÂ·020fbb1d4892839a04e70deae280e24b   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş"".Auth.Next à  ÒeH‹%    H;a†  HƒìxH‹Y H…ÛtH¼$€   H9;uH‰#H‹\$xH‰$è    1Û1Û1ÛH‰œ$È   H‰œ$Ğ   1ÛH‰œ$°   H‰œ$¸   H‰œ$À   H‹œ$   H‰\$H‹œ$˜   H‰\$H‹œ$    H‰\$¶œ$¨   ˆ\$ H‹œ$ˆ   H‰$H‹œ$€   H‹[ ÿÓH‹t$(H‹l$0H‹T$8H‹L$@H‹D$HH‰t$`H‰´$°   H‰l$hH‰¬$¸   H‰T$pH‰”$À   H‰L$PH‰Œ$È   H‰D$XH‰„$Ğ   è    HƒÄxÃè    é×şÿÿ
+
+      t
+  *runtime.racefuncenter   ò       ¬
+  (runtime.racefuncexit   À
+  0runtime.morestack_noctxt   °ğ  "".autotmp_0259 Otype.error "".autotmp_0258 /type.[]uint8 "".err type.error "".toServer `type.[]uint8 "".more Ptype.bool "".fromServer  type.[]uint8 ""..this  type."".Auth ğ‡ïğ ° °  9Ü TgclocalsÂ·2c0b75ff70aad68c6504680d78eafbee TgclocalsÂ·98a935522f11e180b06d5a082b7d09c1   <autogenerated>ş"".Auth.Start    ˆeH‹%    H;a†'  Hì€   H‹Y H…ÛtH¼$ˆ   H9;uH‰#H‹œ$€   H‰$è    1Û1Û1Û1ÛH‰œ$È   H‰œ$Ğ   1ÛH‰œ$°   H‰œ$¸   H‰œ$À   1ÛH‰œ$    H‰œ$¨   H‹œ$˜   H‰\$H‹œ$   H‰$H‹œ$ˆ   H‹[(ÿÓL‹D$H‹|$H‹t$ H‹l$(H‹T$0H‹L$8H‹D$@L‰D$XL‰„$    H‰|$`H‰¼$¨   H‰t$hH‰´$°   H‰l$pH‰¬$¸   H‰T$xH‰”$À   H‰L$HH‰Œ$È   H‰D$PH‰„$Ğ   è    HÄ€   Ãè    é¼şÿÿ
+
+      €
+  *runtime.racefuncenter   Ú       Ü
+  (runtime.racefuncexit   ö
+  0runtime.morestack_noctxt    €  "".autotmp_0264 otype.error "".autotmp_0263 /type.[]uint8 "".autotmp_0262 Otype.string "".err €type.error "".toServer Ptype.[]uint8 "".proto 0type.string "".server  &type.*"".ServerInfo ""..this  type."".Auth €Ÿÿ€ Ğ Ğ  ?î# TgclocalsÂ·814c08df35213b27d46c6687a04ff049 TgclocalsÂ·2c837ca001512a37037efd3161e20199   <autogenerated>ş2type..hash."".cramMD5Auth à  ÄeH‹%    H;a†…   HƒìH‹\$H‰$è    H‹\$ H‰$Hƒ<$ tZH‹\$(H‰\$è    H‹D$H‹\$ H‰$Hƒ<$ t-Hƒ$H‰D$(H‰D$è    H‹D$H‰D$(H‰D$0è    HƒÄÃ‰%    ëÊ‰%    ëè    é^ÿÿÿ
+      B
+  *runtime.racefuncenter   €
+  runtime.strhash   Ò
+  runtime.strhash   ú
+  (runtime.racefuncexit   ²
+  0runtime.morestack_noctxt   00  "".autotmp_0269  type.uintptr "".~r2  type.uintptr "".h type.uintptr "".p  (type.*"".cramMD5Auth 0n/0* ° °    TgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş.type..eq."".cramMD5Auth À  ¾eH‹%    H;a†‚  HƒìHH‹\$HH‰$è    H‹\$PH‰$è    H‹\$PHƒû „L  H‹+H‰l$8H‹kH‰l$@H‹\$XH‰$è    H‹T$@H‹\$XHƒû „  H‹H‰L$(H‹CH‰D$0H9Â…é   H‹l$8H‰,$H‰T$H‰L$H‰D$è    ¶\$ €û „¾   H‹\$PH‰$Hƒ$è    H‹\$PHƒû „•   H‹kH‰l$(H‹kH‰l$0H‹\$XH‰$Hƒ$è    H‹L$0H‹\$XHƒû t\H‹SH‰T$8H‹CH‰D$@H9Áu6H‹l$(H‰,$H‰L$H‰T$H‰D$è    ¶\$ €û tÆD$`è    HƒÄHÃÆD$` è    HƒÄHÃ‰ë ‰édÿÿÿÆD$` è    HƒÄHÃ‰éçşÿÿ‰é­şÿÿè    éaşÿÿ
+      B
+  *runtime.racefuncenter   ^
+   runtime.raceread   º
+   runtime.raceread   Ğ
+   runtime.eqstring   ’
+   runtime.raceread   ú
+   runtime.raceread   ‚
+   runtime.eqstring   ª
+  (runtime.racefuncexit   È
+  (runtime.racefuncexit   ü
+  (runtime.racefuncexit   ¬
+  0runtime.morestack_noctxt   0  "".autotmp_0273  type.string "".autotmp_0272  type.string "".autotmp_0271 ?type.string "".autotmp_0270 type.string "".~r2  type.bool "".q (type.*"".cramMD5Auth "".p  (type.*"".cramMD5Auth 2Æ       <KUD` TgclocalsÂ·9c91d8a91ac42440a3d1507bc8d2e808 TgclocalsÂ·020fbb1d4892839a04e70deae280e24b   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş4type..hash.[2]interface {} €  úeH‹%    H;a†    Hƒì(H‹\$(H‰$è    H‹T$81ÀHÇD$   H‹l$H9è}\H‰D$ H‰ÅH‰ĞHÁÀH»¿c»kïR H¯ØH‰ØH‹\$0Hƒû tEHÁåHëH‰$H‰D$8H‰D$è    H‹T$H‹D$ HÿÀH‹l$H9è|¤H‰T$8H‰T$@è    HƒÄ(Ã‰ë·è    éCÿÿÿ
+
+      B
+  *runtime.racefuncenter   €
+  (runtime.nilinterhash   Ì
+  (runtime.racefuncexit   è
+  0runtime.morestack_noctxt   0P  
+"".autotmp_0276 type.int "".autotmp_0275 type.int "".~r2  type.uintptr "".h type.uintptr "".p  *type.*[2]interface {} P—OP À À     TgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş0type..eq.[2]interface {}    ˜eH‹%    H;a†/  Hƒì`H‹\$`H‰$è    1ÀHÇD$0   H‹l$0H9èØ   H‰D$8H‹\$pH‰ÅH‰D$(HÁåHëH‰$è    H‹D$(H‹\$pHƒû „Ç   H‰ÅHÁåHëH‹+H‰l$PH‹kH‰l$XH‹\$hH‰ÅHÁåHëH‰$è    H‹T$PH‹\$hHƒû t}H‹l$(HÁåHëH‹H‹KH‰L$HH‰D$@H9ĞuLH‰$H‰L$H‰T$H‹l$XH‰l$è    ¶\$ €û t%H‹D$8HÿÀH‹l$0H9èŒ(ÿÿÿÆD$xè    HƒÄ`ÃÆD$x è    HƒÄ`Ã‰é|ÿÿÿ‰é2ÿÿÿè    é´şÿÿ
+      B
+  *runtime.racefuncenter   ¸
+   runtime.raceread   Æ
+   runtime.raceread   ä
+  runtime.efaceeq   ¸
+  (runtime.racefuncexit   Ö
+  (runtime.racefuncexit   †
+  0runtime.morestack_noctxt   0À  "".autotmp_0280 ?"type.interface {} "".autotmp_0279 "type.interface {} "".autotmp_0278 _type.int "".autotmp_0277 Otype.int "".i otype.int "".~r2  type.bool "".q *type.*[2]interface {} "".p  *type.*[2]interface {} &À¿À¿À Ğ Ğ   ‚O_ TgclocalsÂ·51af24152615272c3d9efc8538f95767 TgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş(type..hash.[8]string €  úeH‹%    H;a†    Hƒì(H‹\$(H‰$è    H‹T$81ÀHÇD$   H‹l$H9è}\H‰D$ H‰ÅH‰ĞHÁÀH»¿c»kïR H¯ØH‰ØH‹\$0Hƒû tEHÁåHëH‰$H‰D$8H‰D$è    H‹T$H‹D$ HÿÀH‹l$H9è|¤H‰T$8H‰T$@è    HƒÄ(Ã‰ë·è    éCÿÿÿ
+
+      B
+  *runtime.racefuncenter   €
+  runtime.strhash   Ì
+  (runtime.racefuncexit   è
+  0runtime.morestack_noctxt   0P  
+"".autotmp_0283 type.int "".autotmp_0282 type.int "".~r2  type.uintptr "".h type.uintptr "".p  type.*[8]string P—OP À À     TgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş$type..eq.[8]string    ˜eH‹%    H;a†/  Hƒì`H‹\$`H‰$è    1ÀHÇD$0   H‹l$0H9èØ   H‰D$8H‹\$hH‰ÅH‰D$(HÁåHëH‰$è    H‹D$(H‹\$hHƒû „Ç   H‰ÅHÁåHëH‹+H‰l$PH‹kH‰l$XH‹\$pH‰ÅHÁåHëH‰$è    H‹T$XH‹\$pHƒû t}H‹l$(HÁåHëH‹H‰L$@H‹CH‰D$HH9ÂuLH‹l$PH‰,$H‰T$H‰L$H‰D$è    ¶\$ €û t%H‹D$8HÿÀH‹l$0H9èŒ(ÿÿÿÆD$xè    HƒÄ`ÃÆD$x è    HƒÄ`Ã‰é|ÿÿÿ‰é2ÿÿÿè    é´şÿÿ
+      B
+  *runtime.racefuncenter   ¸
+   runtime.raceread   Æ
+   runtime.raceread   ä
+   runtime.eqstring   ¸
+  (runtime.racefuncexit   Ö
+  (runtime.racefuncexit   †
+  0runtime.morestack_noctxt   0À  "".autotmp_0287 ?type.string "".autotmp_0286 type.string "".autotmp_0285 _type.int "".autotmp_0284 Otype.int "".i otype.int "".~r2  type.bool "".q type.*[8]string "".p  type.*[8]string &À¿À¿À Ğ Ğ   ‚O_ TgclocalsÂ·51af24152615272c3d9efc8538f95767 TgclocalsÂ·44750c784da4dd430afdd97fea5c405a   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş4type..hash.[1]interface {} €  úeH‹%    H;a†    Hƒì(H‹\$(H‰$è    H‹T$81ÀHÇD$   H‹l$H9è}\H‰D$ H‰ÅH‰ĞHÁÀH»¿c»kïR H¯ØH‰ØH‹\$0Hƒû tEHÁåHëH‰$H‰D$8H‰D$è    H‹T$H‹D$ HÿÀH‹l$H9è|¤H‰T$8H‰T$@è    HƒÄ(Ã‰ë·è    éCÿÿÿ
+
+      B
+  *runtime.racefuncenter   €
+  (runtime.nilinterhash   Ì
+  (runtime.racefuncexit   è
+  0runtime.morestack_noctxt   0P  
+"".autotmp_0290 type.int "".autotmp_0289 type.int "".~r2  type.uintptr "".h type.uintptr "".p  *type.*[1]interface {} P—OP À À     TgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş0type..eq.[1]interface {}    ˜eH‹%    H;a†/  Hƒì`H‹\$`H‰$è    1ÀHÇD$0   H‹l$0H9èØ   H‰D$8H‹\$pH‰ÅH‰D$(HÁåHëH‰$è    H‹D$(H‹\$pHƒû „Ç   H‰ÅHÁåHëH‹+H‰l$PH‹kH‰l$XH‹\$hH‰ÅHÁåHëH‰$è    H‹T$PH‹\$hHƒû t}H‹l$(HÁåHëH‹H‹KH‰L$HH‰D$@H9ĞuLH‰$H‰L$H‰T$H‹l$XH‰l$è    ¶\$ €û t%H‹D$8HÿÀH‹l$0H9èŒ(ÿÿÿÆD$xè    HƒÄ`ÃÆD$x è    HƒÄ`Ã‰é|ÿÿÿ‰é2ÿÿÿè    é´şÿÿ
+      B
+  *runtime.racefuncenter   ¸
+   runtime.raceread   Æ
+   runtime.raceread   ä
+  runtime.efaceeq   ¸
+  (runtime.racefuncexit   Ö
+  (runtime.racefuncexit   †
+  0runtime.morestack_noctxt   0À  "".autotmp_0294 ?"type.interface {} "".autotmp_0293 "type.interface {} "".autotmp_0292 _type.int "".autotmp_0291 Otype.int "".i otype.int "".~r2  type.bool "".q *type.*[1]interface {} "".p  *type.*[1]interface {} &À¿À¿À Ğ Ğ   ‚O_ TgclocalsÂ·51af24152615272c3d9efc8538f95767 TgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş0type..hash."".dataCloser à  ÖeH‹%    H;a†   Hƒì H‹\$ H‰$è    H‹\$(H‰$Hƒ<$ tcH‹\$0H‰\$HÇD$   è    H‹D$H‹\$(H‰$Hƒ<$ t-Hƒ$H‰D$0H‰D$è    H‹D$H‰D$0H‰D$8è    HƒÄ Ã‰%    ëÊ‰%    ë”è    éUÿÿÿ
+      B
+  *runtime.racefuncenter   ’
+  runtime.memhash   ä
+  "runtime.interhash   Œ
+  (runtime.racefuncexit   Ä
+  0runtime.morestack_noctxt   0@  "".autotmp_0296  type.uintptr "".~r2  type.uintptr "".h type.uintptr "".p  &type.*"".dataCloser @w?@! ° °    TgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş,type..eq."".dataCloser à  ÒeH‹%    H;a†  HƒìHH‹\$HH‰$è    H‹\$PH‰$è    H‹\$XH‰$è    H‹D$XH‹l$PH‹] H‹(H9ëtÆD$` è    HƒÄHÃH‰$Hƒ$è    H‹\$XHƒû „•   H‹kH‰l$8H‹kH‰l$@H‹\$PH‰$Hƒ$è    H‹T$8H‹\$PHƒû t\H‹CH‹KH‰L$0H‰D$(H9Ğu6H‰$H‰L$H‰T$H‹l$@H‰l$è    ¶\$ €û tÆD$`è    HƒÄHÃÆD$` è    HƒÄHÃ‰ë ‰édÿÿÿè    é×şÿÿ
+      B
+  *runtime.racefuncenter   ^
+   runtime.raceread   z
+   runtime.raceread   º
+  (runtime.racefuncexit   à
+   runtime.raceread   È
+   runtime.raceread   Ğ
+  runtime.ifaceeq   ø
+  (runtime.racefuncexit   –
+  (runtime.racefuncexit   À
+  0runtime.morestack_noctxt   0  
+"".autotmp_0298 ?&type.io.WriteCloser "".autotmp_0297 &type.io.WriteCloser "".~r2  type.bool "".q &type.*"".dataCloser "".p  &type.*"".dataCloser 2N ° °   ƒDI TgclocalsÂ·51af24152615272c3d9efc8538f95767 TgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787   Xprebuilts/go/darwin-x86/src/net/smtp/auth.goş,"".(*dataCloser).Write à  àeH‹%    H;a†Ó   HƒìXH‹Y H…ÛtH|$`H9;uH‰#H‹\$XH‰$è    1Û1ÛH‰œ$ˆ   H‰œ$   H‹\$`H‰$Hƒ$è    H‹\$`Hƒû tuH‹KH‹kH‹\$hH‰\$H‹\$pH‰\$H‹\$xH‰\$H‰l$@H‰,$H‰L$8H‹Y(ÿÓH‹D$ H‹T$(H‹L$0H‰„$€   H‰T$HH‰”$ˆ   H‰L$PH‰Œ$   è    HƒÄXÃ‰ë‡è    éÿÿÿ
+      n
+  *runtime.racefuncenter   ¼
+   runtime.raceread   Ê       ²
+  (runtime.racefuncexit   Î
+  0runtime.morestack_noctxt   p°  
+"".autotmp_0300 type.error io.err Ptype.error io.n @type.int io.p type.[]uint8 ""..this  &type.*"".dataCloser °Ê¯° ğ ğ  6¢ TgclocalsÂ·8cf14f50ac1bf7ae2848fda35f0590ec TgclocalsÂ·64ca935d1a2110a30e2d604686188539   <autogenerated>ş&"".dataCloser.Write À  ¬eH‹%    H;a†¹   HƒìXH‹Y H…ÛtH|$`H9;uH‰#H‹\$XH‰$è    1Û1ÛH‰œ$˜   H‰œ$    H‹L$hH‹D$pH‹\$xH‰\$H‹œ$€   H‰\$H‹œ$ˆ   H‰\$H‰D$@H‰$H‰L$8H‹Y(ÿÓH‹D$ H‹T$(H‹L$0H‰„$   H‰T$HH‰”$˜   H‰L$PH‰Œ$    è    HƒÄXÃè    é*ÿÿÿ
+
+      n
+  *runtime.racefuncenter          †
+  (runtime.racefuncexit   š
+  0runtime.morestack_noctxt   °  
+"".autotmp_0305 type.error io.err ptype.error io.n `type.int io.p 0type.[]uint8 ""..this  $type."".dataCloser °´¯° à 
+à  6Œ TgclocalsÂ·48652dbd6a30e32111535a45351a2d7a TgclocalsÂ·64ca935d1a2110a30e2d604686188539   <autogenerated>ş0:go.itab.*"".plainAuth."".Auth     şTgclocalsÂ·f891aedf0f80c97cb1c7cc75a7fd6349 (  (                  şTgclocalsÂ·4c0745a853fa246552b338635d8102f6 (  (   
+   U   U   U   ş0Bgo.itab.*errors.errorString.error     ş*go.string.hdr."PLAIN"                       "go.string."PLAIN"   ş"go.string."PLAIN"   PLAIN  şLgo.string.hdr."unencrypted connection"                       Dgo.string."unencrypted connection"   şDgo.string."unencrypted connection" 0  .unencrypted connection  ş>go.string.hdr."wrong host name"                       6go.string."wrong host name"   ş6go.string."wrong host name"     wrong host name  ş(go.string.hdr."\x00"                        go.string."\x00"   ş go.string."\x00"      şTgclocalsÂ·c08b4dad45a598d7b21a47679efd8a2b X  X	             @   A                   şTgclocalsÂ·6d8f4c99066cb29941e26fce393123fb X  X	   	                  —            şVgo.string.hdr."unexpected server challenge"                       Ngo.string."unexpected server challenge"   şNgo.string."unexpected server challenge" @  8unexpected server challenge  şTgclocalsÂ·fee82150d9d5ef113526d0c8f7a29801 8  8             	           şTgclocalsÂ·78223188cd91e11320a490f226da2f1b 8  8   
+               #   ş0>go.itab.*"".cramMD5Auth."".Auth     şTgclocalsÂ·f891aedf0f80c97cb1c7cc75a7fd6349 (  (                  şTgclocalsÂ·2ae929f6365b6ea7e86865a8a8b4d95c (  (            5    ş0go.string.hdr."CRAM-MD5"                       (go.string."CRAM-MD5"   ş(go.string."CRAM-MD5"    CRAM-MD5  şTgclocalsÂ·69c1753bd5f81501d95132d08af04464           şTgclocalsÂ·004ad3f582a63c59db210b51824f773f        	      —   ş*go.string.hdr."%s %x"                       "go.string."%s %x"   ş"go.string."%s %x"   %s %x  şTgclocalsÂ·ab6846e1bef3a146c8f25a4cca7cfca0 H  H              ’ ’          şTgclocalsÂ·ab424e3cb0b2a1053a85dc4219fd0d77 H  H   
+                  #  #   ş&go.string.hdr."tcp"                       go.string."tcp"   şgo.string."tcp"   tcp  şTgclocalsÂ·d9070c3fc472691adc9eeade83dfbda6 (  (              0    şTgclocalsÂ·720de6e36d51b0a4ef7111f47e9f67b1 (  (                ş2go.string.hdr."localhost"             	          *go.string."localhost"   ş*go.string."localhost"    localhost  şTgclocalsÂ·bd668153a048075a7eb26cafe2d0ade6 °  °   1                   0     0      0    H 0    H  @f              Ä     !À     À     À    Â    Â                                                À             „       €        şTgclocalsÂ·1b9fcef861c02fd63db2140136499229 à  à                                                                           w          şTgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45                    şTgclocalsÂ·cad14e25fd48dddd762418d02c031d67                  şTgclocalsÂ·29b681dc44825b7b87dddcc3e9161f9e (  (                  şTgclocalsÂ·27f94a2fe0ff5b305b2385471201b6d7 (  (                şlgo.string.hdr."smtp: Hello called after other methods"             &          dgo.string."smtp: Hello called after other methods"   şdgo.string."smtp: Hello called after other methods" P  Nsmtp: Hello called after other methods  şTgclocalsÂ·fee82150d9d5ef113526d0c8f7a29801 8  8             	           şTgclocalsÂ·2ecdb75c02e39206f80e638f9cca0912 8  8                      şTgclocalsÂ·64ca935d1a2110a30e2d604686188539                    şTgclocalsÂ·92a91a13672ee26bfa8c82cd54a70479                 ş.go.string.hdr."HELO %s"                       &go.string."HELO %s"   ş&go.string."HELO %s"   HELO %s  şTgclocalsÂ·ce7bf521bc5372b92e147ae31a98e6c9 8  8   	       p   |   0   0    şTgclocalsÂ·22d483162ff03d8ae3f68d96ba585844 8  8                      ş.go.string.hdr."EHLO %s"                       &go.string."EHLO %s"   ş&go.string."EHLO %s"   EHLO %s  ş$go.string.hdr."\n"                       go.string."\n"   şgo.string."\n"   
+  ş"go.string.hdr." "                       go.string." "   şgo.string." "      ş(go.string.hdr."AUTH"                        go.string."AUTH"   ş go.string."AUTH"   
+AUTH  şTgclocalsÂ·c01b78f0e9275f3c8c5658354b0fd907 p  p           0   <   0   0  3  3  3   p  s  3  3   şTgclocalsÂ·aa302353f66d6c29cb693f3e3f9d2a90 p  p                                           ş0Bgo.itab.*crypto/tls.Conn.net.Conn     ş0go.string.hdr."STARTTLS"                       (go.string."STARTTLS"   ş(go.string."STARTTLS"    STARTTLS  şTgclocalsÂ·6365f385d81bcd1a2ead3855a4da9398 Ğ  Ğ   ;                     0     0                           À      ÀÀ      ÀÀ      ÀÀ    ˆ ÀÀ    ˆ  À  ™  À      À    À    A À     À     À    À    À     À      À     À     À      À                   şTgclocalsÂ·39cdf86049636314cea6eb3730b78c4c ğ  ğ                                                                                           şTgclocalsÂ·e657630f2575c1078daf39fed632182e (  (                  şTgclocalsÂ·cf7836f3cb7191d4b6e1ed7433c208a5 (  (         ¥$	 ¥$	  ş.go.string.hdr."VRFY %s"                       &go.string."VRFY %s"   ş&go.string."VRFY %s"   VRFY %s  şTgclocalsÂ·fdf25da4508bc8da30b521544eba9f52 @  @              À  ğ  À  À    şTgclocalsÂ·a05005ba0672fdfe268b0f50e66a4290 @  @                         ş0Dgo.itab.*net/textproto.Error.error     ş4go.string.hdr."AUTH %s %s"             
+          ,go.string."AUTH %s %s"   ş,go.string."AUTH %s %s"    AUTH %s %s  ş"go.string.hdr."*"                       go.string."*"   şgo.string."*"   *  şTgclocalsÂ·5b5b1ed081522dc5ff30d5b040367764 à  à   $                                        …      „      „      €$   à$   €             $     ,                                        şTgclocalsÂ·52015768c5b63ec24c9d37e6d16aeb9c ¸  ¸                                                                      ş<go.string.hdr."MAIL FROM:<%s>"                       4go.string."MAIL FROM:<%s>"   ş4go.string."MAIL FROM:<%s>"    MAIL FROM:<%s>  ş0go.string.hdr."8BITMIME"                       (go.string."8BITMIME"   ş(go.string."8BITMIME"    8BITMIME  ş<go.string.hdr." BODY=8BITMIME"                       4go.string." BODY=8BITMIME"   ş4go.string." BODY=8BITMIME"     BODY=8BITMIME  şTgclocalsÂ·6b774c207d91ff75130679a4bf8c4477 P  P                   G  ĞG         şTgclocalsÂ·4dcfa99ec5c331c0deb21ac24bbb3f93 P  P                               ş8go.string.hdr."RCPT TO:<%s>"                       0go.string."RCPT TO:<%s>"   ş0go.string."RCPT TO:<%s>"    RCPT TO:<%s>  şTgclocalsÂ·79c7082f239f52c454eada038cd91cae 8  8          p  |  p   0    şTgclocalsÂ·2ecdb75c02e39206f80e638f9cca0912 8  8                      şTgclocalsÂ·64ca935d1a2110a30e2d604686188539                    şTgclocalsÂ·cad14e25fd48dddd762418d02c031d67                  ş0Jgo.itab.*"".dataCloser.io.WriteCloser     ş(go.string.hdr."DATA"                        go.string."DATA"   ş go.string."DATA"   
+DATA  şTgclocalsÂ·4fcb4ce87b12c724766a25d800bb3f11 8  8                        şTgclocalsÂ·add662f9aa2f778eeef67ba6906146b8 8  8                      şTgclocalsÂ·887b5d68105e1a8bfcbd7e8e77a0e803 X  X	                    
+           2    şTgclocalsÂ·db56136f95e5893708fbf09c1b31b1c3 X  X	      ]  ]2  ]2  ]  ]  ]  ]  ]  ]   şTgclocalsÂ·2485130fb1456ae0ac71f486d2699930 0  0                      şTgclocalsÂ·ab4c4a8294c949850b9db33c12db39ff 0  0                   ş(go.string.hdr."RSET"                        go.string."RSET"   ş go.string."RSET"   
+RSET  şTgclocalsÂ·64ca935d1a2110a30e2d604686188539                    şTgclocalsÂ·cad14e25fd48dddd762418d02c031d67                  ş(go.string.hdr."QUIT"                        go.string."QUIT"   ş go.string."QUIT"   
+QUIT  şTgclocalsÂ·ae0a20890c9ac6bfbea3383f34532bab                    şTgclocalsÂ·cad14e25fd48dddd762418d02c031d67                  şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           ş.&"".testHookStartTLS  :type.func(*crypto/tls.Config)   ş0"".initdoneÂ·  type.uint8   ş"".PlainAuthÂ·f              "".PlainAuth   ş0"".(*plainAuth).StartÂ·f              *"".(*plainAuth).Start   ş."".(*plainAuth).NextÂ·f              ("".(*plainAuth).Next   ş""".CRAMMD5AuthÂ·f              "".CRAMMD5Auth   ş4"".(*cramMD5Auth).StartÂ·f              ."".(*cramMD5Auth).Start   ş2"".(*cramMD5Auth).NextÂ·f              ,"".(*cramMD5Auth).Next   ş"".DialÂ·f              "".Dial   ş"".NewClientÂ·f              "".NewClient   ş*"".(*Client).CloseÂ·f              $"".(*Client).Close   ş*"".(*Client).helloÂ·f              $"".(*Client).hello   ş*"".(*Client).HelloÂ·f              $"".(*Client).Hello   ş&"".(*Client).cmdÂ·f               "".(*Client).cmd   ş("".(*Client).heloÂ·f              """.(*Client).helo   ş("".(*Client).ehloÂ·f              """.(*Client).ehlo   ş0"".(*Client).StartTLSÂ·f              *"".(*Client).StartTLS   şD"".(*Client).TLSConnectionStateÂ·f              >"".(*Client).TLSConnectionState   ş,"".(*Client).VerifyÂ·f              &"".(*Client).Verify   ş("".(*Client).AuthÂ·f              """.(*Client).Auth   ş("".(*Client).MailÂ·f              """.(*Client).Mail   ş("".(*Client).RcptÂ·f              """.(*Client).Rcpt   ş2"".(*dataCloser).CloseÂ·f              ,"".(*dataCloser).Close   ş("".(*Client).DataÂ·f              """.(*Client).Data   ş"".SendMailÂ·f              "".SendMail   ş2"".(*Client).ExtensionÂ·f              ,"".(*Client).Extension   ş*"".(*Client).ResetÂ·f              $"".(*Client).Reset   ş("".(*Client).QuitÂ·f              """.(*Client).Quit   ş"".initÂ·f              "".init   şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2             şTgclocalsÂ·020fbb1d4892839a04e70deae280e24b (  (                 şTgclocalsÂ·9c91d8a91ac42440a3d1507bc8d2e808 (  (                ş6type..hashfunc."".plainAuth              .type..hash."".plainAuth   ş2type..eqfunc."".plainAuth              *type..eq."".plainAuth   ş,type..alg."".plainAuth                        6type..hashfunc."".plainAuth     2type..eqfunc."".plainAuth   ş"runtime.gcbits.01    ş>go.string.hdr."*smtp.plainAuth"                       6go.string."*smtp.plainAuth"   ş6go.string."*smtp.plainAuth"     *smtp.plainAuth  ş.go.string.hdr."[]uint8"                       &go.string."[]uint8"   ş&go.string."[]uint8"   []uint8  ştype.[]uint8                   ß~.8                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  .go.string.hdr."[]uint8"   p  *go.weak.type.*[]uint8   €  "runtime.zerovalue     type.uint8   ş6go.typelink.[]uint8	[]uint8              type.[]uint8   şŠgo.string.hdr."func(*smtp.plainAuth, []uint8, bool) ([]uint8, error)"             5          ‚go.string."func(*smtp.plainAuth, []uint8, bool) ([]uint8, error)"   ş‚go.string."func(*smtp.plainAuth, []uint8, bool) ([]uint8, error)" p  lfunc(*smtp.plainAuth, []uint8, bool) ([]uint8, error)  şptype.func(*"".plainAuth, []uint8, bool) ([]uint8, error) Ğ  Ğ              †qKp 3                                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  Šgo.string.hdr."func(*smtp.plainAuth, []uint8, bool) ([]uint8, error)"   p  ‚go.weak.type.*func(*"".plainAuth, []uint8, bool) ([]uint8, error)   €  "runtime.zerovalue    € ptype.func(*"".plainAuth, []uint8, bool) ([]uint8, error)   Ğ° ptype.func(*"".plainAuth, []uint8, bool) ([]uint8, error)   €  $type.*"".plainAuth     type.[]uint8      type.bool   °  type.[]uint8   À  type.error   şêgo.typelink.func(*smtp.plainAuth, []uint8, bool) ([]uint8, error)	func(*"".plainAuth, []uint8, bool) ([]uint8, error)              ptype.func(*"".plainAuth, []uint8, bool) ([]uint8, error)   ş0go.string.hdr."[]string"                       (go.string."[]string"   ş(go.string."[]string"    []string  ştype.[]string                   Ó¨ó
+                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  0go.string.hdr."[]string"   p  ,go.weak.type.*[]string   €  "runtime.zerovalue     type.string   ş:go.typelink.[]string	[]string              type.[]string   ş"runtime.gcbits.09   	 ş>go.string.hdr."smtp.ServerInfo"                       6go.string."smtp.ServerInfo"   ş6go.string."smtp.ServerInfo"     smtp.ServerInfo  ş(go.string.hdr."Name"                        go.string."Name"   ş go.string."Name"   
+Name  ş&go.string.hdr."TLS"                       go.string."TLS"   şgo.string."TLS"   TLS  ş(go.string.hdr."Auth"                        go.string."Auth"   ş go.string."Auth"   
+Auth  ş4go.string.hdr."ServerInfo"             
+          ,go.string."ServerInfo"   ş,go.string."ServerInfo"    ServerInfo  ş0go.string.hdr."net/smtp"                       (go.string."net/smtp"   ş(go.string."net/smtp"    net/smtp  ş"go.importpath."".                       (go.string."net/smtp"   ş$type."".ServerInfo  €  €0               ?[B½                                                                                                                                                                                                                                      0à  runtime.algarray   @  "runtime.gcbits.09   P  >go.string.hdr."smtp.ServerInfo"   p  &type.*"".ServerInfo   €  "runtime.zerovalue   À $type."".ServerInfo   À  (go.string.hdr."Name"   à  type.string     &go.string.hdr."TLS"   °  type.bool   à  (go.string.hdr."Auth"   €  type.[]string   `° $type."".ServerInfo   °  4go.string.hdr."ServerInfo"   À  "go.importpath."".   Ğ€ $type."".ServerInfo   ş@go.string.hdr."*smtp.ServerInfo"                       8go.string."*smtp.ServerInfo"   ş8go.string."*smtp.ServerInfo" 0  "*smtp.ServerInfo  ş&type.*"".ServerInfo                    µm¢› 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  @go.string.hdr."*smtp.ServerInfo"   p  8go.weak.type.**"".ServerInfo   €  "runtime.zerovalue     $type."".ServerInfo   ş go.string.hdr."func(*smtp.plainAuth, *smtp.ServerInfo) (string, []uint8, error)"             @          ˜go.string."func(*smtp.plainAuth, *smtp.ServerInfo) (string, []uint8, error)"   ş˜go.string."func(*smtp.plainAuth, *smtp.ServerInfo) (string, []uint8, error)"   ‚func(*smtp.plainAuth, *smtp.ServerInfo) (string, []uint8, error)  ş‚type.func(*"".plainAuth, *"".ServerInfo) (string, []uint8, error) Ğ  Ğ              ¥häZ 3                                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P   go.string.hdr."func(*smtp.plainAuth, *smtp.ServerInfo) (string, []uint8, error)"   p  ”go.weak.type.*func(*"".plainAuth, *"".ServerInfo) (string, []uint8, error)   €  "runtime.zerovalue    € ‚type.func(*"".plainAuth, *"".ServerInfo) (string, []uint8, error)   Ğ  ‚type.func(*"".plainAuth, *"".ServerInfo) (string, []uint8, error)   €  $type.*"".plainAuth     &type.*"".ServerInfo      type.string   °  type.[]uint8   À  type.error   ş’go.typelink.func(*smtp.plainAuth, *smtp.ServerInfo) (string, []uint8, error)	func(*"".plainAuth, *"".ServerInfo) (string, []uint8, error)              ‚type.func(*"".plainAuth, *"".ServerInfo) (string, []uint8, error)   ş(go.string.hdr."Next"                        go.string."Next"   ş go.string."Next"   
+Next  şhgo.string.hdr."func([]uint8, bool) ([]uint8, error)"             $          `go.string."func([]uint8, bool) ([]uint8, error)"   ş`go.string."func([]uint8, bool) ([]uint8, error)" P  Jfunc([]uint8, bool) ([]uint8, error)  şRtype.func([]uint8, bool) ([]uint8, error) À  À              ¹À²Ğ 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  hgo.string.hdr."func([]uint8, bool) ([]uint8, error)"   p  dgo.weak.type.*func([]uint8, bool) ([]uint8, error)   €  "runtime.zerovalue    € Rtype.func([]uint8, bool) ([]uint8, error)   Ğ  Rtype.func([]uint8, bool) ([]uint8, error)   €  type.[]uint8     type.bool      type.[]uint8   °  type.error   şªgo.typelink.func([]uint8, bool) ([]uint8, error)	func([]uint8, bool) ([]uint8, error)              Rtype.func([]uint8, bool) ([]uint8, error)   ş*go.string.hdr."Start"                       "go.string."Start"   ş"go.string."Start"   Start  ş~go.string.hdr."func(*smtp.ServerInfo) (string, []uint8, error)"             /          vgo.string."func(*smtp.ServerInfo) (string, []uint8, error)"   şvgo.string."func(*smtp.ServerInfo) (string, []uint8, error)" `  `func(*smtp.ServerInfo) (string, []uint8, error)  şdtype.func(*"".ServerInfo) (string, []uint8, error) À  À              W°{ 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  ~go.string.hdr."func(*smtp.ServerInfo) (string, []uint8, error)"   p  vgo.weak.type.*func(*"".ServerInfo) (string, []uint8, error)   €  "runtime.zerovalue    € dtype.func(*"".ServerInfo) (string, []uint8, error)   Ğ dtype.func(*"".ServerInfo) (string, []uint8, error)   €  &type.*"".ServerInfo     type.string      type.[]uint8   °  type.error   şÒgo.typelink.func(*smtp.ServerInfo) (string, []uint8, error)	func(*"".ServerInfo) (string, []uint8, error)              dtype.func(*"".ServerInfo) (string, []uint8, error)   ş$type.*"".plainAuth  °  °              )}Co 6                                                                                                                                                                                              $0   runtime.algarray   @  "runtime.gcbits.01   P  >go.string.hdr."*smtp.plainAuth"   p  6go.weak.type.**"".plainAuth   €  "runtime.zerovalue     "type."".plainAuth   `  $type.*"".plainAuth   Àğ $type.*"".plainAuth   ğ  (go.string.hdr."Next"     Rtype.func([]uint8, bool) ([]uint8, error)      ptype.func(*"".plainAuth, []uint8, bool) ([]uint8, error)   °  ("".(*plainAuth).Next   À  ("".(*plainAuth).Next   Ğ  *go.string.hdr."Start"   ğ  dtype.func(*"".ServerInfo) (string, []uint8, error)   €  ‚type.func(*"".plainAuth, *"".ServerInfo) (string, []uint8, error)     *"".(*plainAuth).Start      *"".(*plainAuth).Start   ş"runtime.gcbits.55   U ş<go.string.hdr."smtp.plainAuth"                       4go.string."smtp.plainAuth"   ş4go.string."smtp.plainAuth"    smtp.plainAuth  ş0go.string.hdr."identity"                       (go.string."identity"   ş(go.string."identity"    identity  ş0go.string.hdr."username"                       (go.string."username"   ş(go.string."username"    username  ş0go.string.hdr."password"                       (go.string."password"   ş(go.string."password"    password  ş(go.string.hdr."host"                        go.string."host"   ş go.string."host"   
+host  ş2go.string.hdr."plainAuth"             	          *go.string."plainAuth"   ş*go.string."plainAuth"    plainAuth  ş"type."".plainAuth  Ğ  Ğ@       8       ùÜHJ                                                                                                                                                                                                                              0                                               ,0  ,type..alg."".plainAuth   @  "runtime.gcbits.55   P  <go.string.hdr."smtp.plainAuth"   p  $type.*"".plainAuth   €  "runtime.zerovalue   À "type."".plainAuth   À  0go.string.hdr."identity"   Ğ  "go.importpath."".   à  type.string     0go.string.hdr."username"      "go.importpath."".   °  type.string   à  0go.string.hdr."password"   ğ  "go.importpath."".   €  type.string   °  (go.string.hdr."host"   À  "go.importpath."".   Ğ  type.string   `€ "type."".plainAuth   €  2go.string.hdr."plainAuth"     "go.importpath."".    Ğ "type."".plainAuth   şTgclocalsÂ·98a935522f11e180b06d5a082b7d09c1                    şTgclocalsÂ·2c0b75ff70aad68c6504680d78eafbee              G   şTgclocalsÂ·2c837ca001512a37037efd3161e20199                    şTgclocalsÂ·814c08df35213b27d46c6687a04ff049        
+      /   ş4go.string.hdr."*smtp.Auth"             
+          ,go.string."*smtp.Auth"   ş,go.string."*smtp.Auth"    *smtp.Auth  ştype.*"".Auth                    MÂÀ 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  4go.string.hdr."*smtp.Auth"   p  ,go.weak.type.**"".Auth   €  "runtime.zerovalue     type."".Auth   ş"runtime.gcbits.03    ş2go.string.hdr."smtp.Auth"             	          *go.string."smtp.Auth"   ş*go.string."smtp.Auth"    smtp.Auth  ştype."".Auth  ğ  ğ              Sµ»                                                                                                                                                               0à  runtime.algarray   @  "runtime.gcbits.03   P  2go.string.hdr."smtp.Auth"   p  type.*"".Auth   €  "runtime.zerovalue   À type."".Auth   À  (go.string.hdr."Next"   à  Rtype.func([]uint8, bool) ([]uint8, error)   ğ  *go.string.hdr."Start"     dtype.func(*"".ServerInfo) (string, []uint8, error)   `  type."".Auth      (go.string.hdr."Auth"   °  "go.importpath."".   Àğ type."".Auth   ş type..hashfunc32                        ,runtime.memhash_varlen   ştype..eqfunc32                        .runtime.memequal_varlen   ştype..alg32                         type..hashfunc32     type..eqfunc32   şruntime.gcbits.      ş2go.string.hdr."[32]uint8"             	          *go.string."[32]uint8"   ş*go.string."[32]uint8"    [32]uint8  ştype.[32]uint8 À  À                œYÿ¨ ‘                                                                        0  type..alg32   @  runtime.gcbits.   P  2go.string.hdr."[32]uint8"   p  .go.weak.type.*[32]uint8   €  "runtime.zerovalue     type.uint8      type.[]uint8   ş>go.typelink.[32]uint8	[32]uint8              type.[32]uint8   şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2             şTgclocalsÂ·020fbb1d4892839a04e70deae280e24b (  (                 şTgclocalsÂ·9c91d8a91ac42440a3d1507bc8d2e808 (  (                ş:type..hashfunc."".cramMD5Auth              2type..hash."".cramMD5Auth   ş6type..eqfunc."".cramMD5Auth              .type..eq."".cramMD5Auth   ş0type..alg."".cramMD5Auth                        :type..hashfunc."".cramMD5Auth     6type..eqfunc."".cramMD5Auth   şBgo.string.hdr."*smtp.cramMD5Auth"                       :go.string."*smtp.cramMD5Auth"   ş:go.string."*smtp.cramMD5Auth" 0  $*smtp.cramMD5Auth  şgo.string.hdr."func(*smtp.cramMD5Auth, []uint8, bool) ([]uint8, error)"             7          †go.string."func(*smtp.cramMD5Auth, []uint8, bool) ([]uint8, error)"   ş†go.string."func(*smtp.cramMD5Auth, []uint8, bool) ([]uint8, error)" p  pfunc(*smtp.cramMD5Auth, []uint8, bool) ([]uint8, error)  şttype.func(*"".cramMD5Auth, []uint8, bool) ([]uint8, error) Ğ  Ğ              C, – 3                                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  go.string.hdr."func(*smtp.cramMD5Auth, []uint8, bool) ([]uint8, error)"   p  †go.weak.type.*func(*"".cramMD5Auth, []uint8, bool) ([]uint8, error)   €  "runtime.zerovalue    € ttype.func(*"".cramMD5Auth, []uint8, bool) ([]uint8, error)   Ğ° ttype.func(*"".cramMD5Auth, []uint8, bool) ([]uint8, error)   €  (type.*"".cramMD5Auth     type.[]uint8      type.bool   °  type.[]uint8   À  type.error   şògo.typelink.func(*smtp.cramMD5Auth, []uint8, bool) ([]uint8, error)	func(*"".cramMD5Auth, []uint8, bool) ([]uint8, error)              ttype.func(*"".cramMD5Auth, []uint8, bool) ([]uint8, error)   ş¤go.string.hdr."func(*smtp.cramMD5Auth, *smtp.ServerInfo) (string, []uint8, error)"             B          œgo.string."func(*smtp.cramMD5Auth, *smtp.ServerInfo) (string, []uint8, error)"   şœgo.string."func(*smtp.cramMD5Auth, *smtp.ServerInfo) (string, []uint8, error)"   †func(*smtp.cramMD5Auth, *smtp.ServerInfo) (string, []uint8, error)  ş†type.func(*"".cramMD5Auth, *"".ServerInfo) (string, []uint8, error) Ğ  Ğ              #ªW¬ 3                                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  ¤go.string.hdr."func(*smtp.cramMD5Auth, *smtp.ServerInfo) (string, []uint8, error)"   p  ˜go.weak.type.*func(*"".cramMD5Auth, *"".ServerInfo) (string, []uint8, error)   €  "runtime.zerovalue    € †type.func(*"".cramMD5Auth, *"".ServerInfo) (string, []uint8, error)   Ğ  †type.func(*"".cramMD5Auth, *"".ServerInfo) (string, []uint8, error)   €  (type.*"".cramMD5Auth     &type.*"".ServerInfo      type.string   °  type.[]uint8   À  type.error   şšgo.typelink.func(*smtp.cramMD5Auth, *smtp.ServerInfo) (string, []uint8, error)	func(*"".cramMD5Auth, *"".ServerInfo) (string, []uint8, error)              †type.func(*"".cramMD5Auth, *"".ServerInfo) (string, []uint8, error)   ş(type.*"".cramMD5Auth  °  °              œÕzò 6                                                                                                                                                                                              $0   runtime.algarray   @  "runtime.gcbits.01   P  Bgo.string.hdr."*smtp.cramMD5Auth"   p  :go.weak.type.**"".cramMD5Auth   €  "runtime.zerovalue     &type."".cramMD5Auth   `  (type.*"".cramMD5Auth   Àğ (type.*"".cramMD5Auth   ğ  (go.string.hdr."Next"     Rtype.func([]uint8, bool) ([]uint8, error)      ttype.func(*"".cramMD5Auth, []uint8, bool) ([]uint8, error)   °  ,"".(*cramMD5Auth).Next   À  ,"".(*cramMD5Auth).Next   Ğ  *go.string.hdr."Start"   ğ  dtype.func(*"".ServerInfo) (string, []uint8, error)   €  †type.func(*"".cramMD5Auth, *"".ServerInfo) (string, []uint8, error)     ."".(*cramMD5Auth).Start      ."".(*cramMD5Auth).Start   ş"runtime.gcbits.05    ş@go.string.hdr."smtp.cramMD5Auth"                       8go.string."smtp.cramMD5Auth"   ş8go.string."smtp.cramMD5Auth" 0  "smtp.cramMD5Auth  ş,go.string.hdr."secret"                       $go.string."secret"   ş$go.string."secret"   secret  ş6go.string.hdr."cramMD5Auth"                       .go.string."cramMD5Auth"   ş.go.string."cramMD5Auth"    cramMD5Auth  ş&type."".cramMD5Auth  °  °               ì/m                                                                                                                                                                                               0  0type..alg."".cramMD5Auth   @  "runtime.gcbits.05   P  @go.string.hdr."smtp.cramMD5Auth"   p  (type.*"".cramMD5Auth   €  "runtime.zerovalue   À &type."".cramMD5Auth   À  0go.string.hdr."username"   Ğ  "go.importpath."".   à  type.string     ,go.string.hdr."secret"      "go.importpath."".   °  type.string   `à &type."".cramMD5Auth   à  6go.string.hdr."cramMD5Auth"   ğ  "go.importpath."".   €° &type."".cramMD5Auth   ş8go.string.hdr."interface {}"                       0go.string."interface {}"   ş0go.string."interface {}"    interface {}  ş"type.interface {} À  À              çW                                                                          0€  runtime.algarray   @  "runtime.gcbits.03   P  8go.string.hdr."interface {}"   p  4go.weak.type.*interface {}   €  "runtime.zerovalue   À "type.interface {}   ş<go.string.hdr."[]interface {}"                       4go.string."[]interface {}"   ş4go.string."[]interface {}"    []interface {}  ş&type.[]interface {}                   p“ê/                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  <go.string.hdr."[]interface {}"   p  8go.weak.type.*[]interface {}   €  "runtime.zerovalue     "type.interface {}   şRgo.typelink.[]interface {}	[]interface {}              &type.[]interface {}   şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2             şTgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787                   şTgclocalsÂ·51af24152615272c3d9efc8538f95767                  ş<type..hashfunc.[2]interface {}              4type..hash.[2]interface {}   ş8type..eqfunc.[2]interface {}              0type..eq.[2]interface {}   ş2type..alg.[2]interface {}                        <type..hashfunc.[2]interface {}     8type..eqfunc.[2]interface {}   ş"runtime.gcbits.0f    ş>go.string.hdr."[2]interface {}"                       6go.string."[2]interface {}"   ş6go.string."[2]interface {}"     [2]interface {}  ş(type.[2]interface {} À  À                ,Y¤ñ                                                                        0  2type..alg.[2]interface {}   @  "runtime.gcbits.0f   P  >go.string.hdr."[2]interface {}"   p  :go.weak.type.*[2]interface {}   €  "runtime.zerovalue     "type.interface {}      &type.[]interface {}   şVgo.typelink.[2]interface {}	[2]interface {}              (type.[2]interface {}   ş@go.string.hdr."*[2]interface {}"                       8go.string."*[2]interface {}"   ş8go.string."*[2]interface {}" 0  "*[2]interface {}  ş*type.*[2]interface {}                   ¾s-q 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  @go.string.hdr."*[2]interface {}"   p  <go.weak.type.**[2]interface {}   €  "runtime.zerovalue     (type.[2]interface {}   ş0go.string.hdr."[8]uint8"                       (go.string."[8]uint8"   ş(go.string."[8]uint8"    [8]uint8  ştype.[8]uint8 À  À               >ù0´ ‘                                                                       0   runtime.algarray   @  runtime.gcbits.   P  0go.string.hdr."[8]uint8"   p  ,go.weak.type.*[8]uint8   €  "runtime.zerovalue     type.uint8      type.[]uint8   ş:go.typelink.[8]uint8	[8]uint8              type.[8]uint8   şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2             şTgclocalsÂ·44750c784da4dd430afdd97fea5c405a                   şTgclocalsÂ·51af24152615272c3d9efc8538f95767                  ş0type..hashfunc.[8]string              (type..hash.[8]string   ş,type..eqfunc.[8]string              $type..eq.[8]string   ş&type..alg.[8]string                        0type..hashfunc.[8]string     ,type..eqfunc.[8]string   ş&runtime.gcbits.5555   UU ş2go.string.hdr."[8]string"             	          *go.string."[8]string"   ş*go.string."[8]string"    [8]string  ştype.[8]string À  À€       x       USŒ>                                                                        0  &type..alg.[8]string   @  &runtime.gcbits.5555   P  2go.string.hdr."[8]string"   p  .go.weak.type.*[8]string   €  "runtime.zerovalue     type.string      type.[]string   ş>go.typelink.[8]string	[8]string              type.[8]string   şRgo.string.hdr."*map.bucket[string]string"                       Jgo.string."*map.bucket[string]string"   şJgo.string."*map.bucket[string]string" @  4*map.bucket[string]string  ş<type.*map.bucket[string]string                   ¦te 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  Rgo.string.hdr."*map.bucket[string]string"   p  Ngo.weak.type.**map.bucket[string]string   €  "runtime.zerovalue     :type.map.bucket[string]string   ş2runtime.gcbits.aaaaaaaa02 
+  
+ªªªª şPgo.string.hdr."map.bucket[string]string"                       Hgo.string."map.bucket[string]string"   şHgo.string."map.bucket[string]string" @  2map.bucket[string]string  ş.go.string.hdr."topbits"                       &go.string."topbits"   ş&go.string."topbits"   topbits  ş(go.string.hdr."keys"                        go.string."keys"   ş go.string."keys"   
+keys  ş,go.string.hdr."values"                       $go.string."values"   ş$go.string."values"   values  ş0go.string.hdr."overflow"                       (go.string."overflow"   ş(go.string."overflow"    overflow  ş:type.map.bucket[string]string €  €            Ş>                                                                                                                                                                                      ˆ                                             0à  runtime.algarray   @  2runtime.gcbits.aaaaaaaa02   P  Pgo.string.hdr."map.bucket[string]string"   p  Lgo.weak.type.*map.bucket[string]string   €  "runtime.zerovalue   À :type.map.bucket[string]string   À  .go.string.hdr."topbits"   à  type.[8]uint8     (go.string.hdr."keys"   °  type.[8]string   à  ,go.string.hdr."values"   €  type.[8]string   °  0go.string.hdr."overflow"   Ğ  <type.*map.bucket[string]string   ş"runtime.gcbits.2c   , şJgo.string.hdr."map.hdr[string]string"                       Bgo.string."map.hdr[string]string"   şBgo.string."map.hdr[string]string" 0  ,map.hdr[string]string  ş*go.string.hdr."count"                       "go.string."count"   ş"go.string."count"   count  ş*go.string.hdr."flags"                       "go.string."flags"   ş"go.string."flags"   flags  ş"go.string.hdr."B"                       go.string."B"   şgo.string."B"   B  ş*go.string.hdr."hash0"                       "go.string."hash0"   ş"go.string."hash0"   hash0  ş.go.string.hdr."buckets"                       &go.string."buckets"   ş&go.string."buckets"   buckets  ş4go.string.hdr."oldbuckets"             
+          ,go.string."oldbuckets"   ş,go.string."oldbuckets"    oldbuckets  ş2go.string.hdr."nevacuate"             	          *go.string."nevacuate"   ş*go.string."nevacuate"    nevacuate  ş4type.map.hdr[string]string À  À0       0       Ïmlh                                                                                                                                                                                      	                                                                                                                                                                                                    (       ,0à  runtime.algarray   @  "runtime.gcbits.2c   P  Jgo.string.hdr."map.hdr[string]string"   p  Fgo.weak.type.*map.hdr[string]string   €  "runtime.zerovalue   À 4type.map.hdr[string]string   À  *go.string.hdr."count"   à  type.int     *go.string.hdr."flags"   °  type.uint8   à  "go.string.hdr."B"   €  type.uint8   °  *go.string.hdr."hash0"   Ğ  type.uint32   €  .go.string.hdr."buckets"      <type.*map.bucket[string]string   Ğ  4go.string.hdr."oldbuckets"   ğ  <type.*map.bucket[string]string      2go.string.hdr."nevacuate"   À  type.uintptr   ğ  0go.string.hdr."overflow"     &type.unsafe.Pointer   şBgo.string.hdr."map[string]string"                       :go.string."map[string]string"   ş:go.string."map[string]string" 0  $map[string]string  ş,type.map[string]string Ş  Ş              Y¡ç) 5                                                                                  0€  runtime.algarray   @  "runtime.gcbits.01   P  Bgo.string.hdr."map[string]string"   p  >go.weak.type.*map[string]string   €  "runtime.zerovalue     type.string      type.string   °  :type.map.bucket[string]string   À  4type.map.hdr[string]string   ş^go.typelink.map[string]string	map[string]string              ,type.map[string]string   ş&runtime.gcbits.d764   ×d ş6go.string.hdr."smtp.Client"                       .go.string."smtp.Client"   ş.go.string."smtp.Client"    smtp.Client  ş(go.string.hdr."Text"                        go.string."Text"   ş go.string."Text"   
+Text  ş(go.string.hdr."conn"                        go.string."conn"   ş go.string."conn"   
+conn  ş&go.string.hdr."tls"                       go.string."tls"   şgo.string."tls"   tls  ş4go.string.hdr."serverName"             
+          ,go.string."serverName"   ş,go.string."serverName"    serverName  ş&go.string.hdr."ext"                       go.string."ext"   şgo.string."ext"   ext  ş(go.string.hdr."auth"                        go.string."auth"   ş go.string."auth"   
+auth  ş2go.string.hdr."localName"             	          *go.string."localName"   ş*go.string."localName"    localName  ş0go.string.hdr."didHello"                       (go.string."didHello"   ş(go.string."didHello"    didHello  ş4go.string.hdr."helloError"             
+          ,go.string."helloError"   ş,go.string."helloError"    helloError  ş,go.string.hdr."Client"                       $go.string."Client"   ş$go.string."Client"   Client  ştype."".Client  à  àx       x       •íš                                                         	       	                                                                                                                                                                                                     0                                       8                                       P                                       `                                       h                                               H0à  runtime.algarray   @  &runtime.gcbits.d764   P  6go.string.hdr."smtp.Client"   p  type.*"".Client   €  "runtime.zerovalue   À type."".Client   À  (go.string.hdr."Text"   à  0type.*net/textproto.Conn     (go.string.hdr."conn"      "go.importpath."".   °  type.net.Conn   à  &go.string.hdr."tls"   ğ  "go.importpath."".   €  type.bool   °  4go.string.hdr."serverName"   À  "go.importpath."".   Ğ  type.string   €  &go.string.hdr."ext"     "go.importpath."".      ,type.map[string]string   Ğ  (go.string.hdr."auth"   à  "go.importpath."".   ğ  type.[]string      2go.string.hdr."localName"   °  "go.importpath."".   À  type.string   ğ  0go.string.hdr."didHello"   €  "go.importpath."".     type.bool   À  4go.string.hdr."helloError"   Ğ  "go.importpath."".   à  type.error   ` type."".Client     ,go.string.hdr."Client"      "go.importpath."".   °à type."".Client   ş8go.string.hdr."*smtp.Client"                       0go.string."*smtp.Client"   ş0go.string."*smtp.Client"    *smtp.Client  şfgo.string.hdr."func(*smtp.Client, smtp.Auth) error"             #          ^go.string."func(*smtp.Client, smtp.Auth) error"   ş^go.string."func(*smtp.Client, smtp.Auth) error" P  Hfunc(*smtp.Client, smtp.Auth) error  şHtype.func(*"".Client, "".Auth) error °  °              C-6 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  fgo.string.hdr."func(*smtp.Client, smtp.Auth) error"   p  Zgo.weak.type.*func(*"".Client, "".Auth) error   €  "runtime.zerovalue    € Htype.func(*"".Client, "".Auth) error   Ğ  Htype.func(*"".Client, "".Auth) error   €  type.*"".Client     type."".Auth      type.error   şgo.typelink.func(*smtp.Client, smtp.Auth) error	func(*"".Client, "".Auth) error              Htype.func(*"".Client, "".Auth) error   şPgo.string.hdr."func(*smtp.Client) error"                       Hgo.string."func(*smtp.Client) error"   şHgo.string."func(*smtp.Client) error" @  2func(*smtp.Client) error  ş6type.func(*"".Client) error                   Î)-U 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Pgo.string.hdr."func(*smtp.Client) error"   p  Hgo.weak.type.*func(*"".Client) error   €  "runtime.zerovalue    € 6type.func(*"".Client) error   Ğ 6type.func(*"".Client) error   €  type.*"".Client     type.error   şvgo.typelink.func(*smtp.Client) error	func(*"".Client) error              6type.func(*"".Client) error   ştgo.string.hdr."func(*smtp.Client) (io.WriteCloser, error)"             *          lgo.string."func(*smtp.Client) (io.WriteCloser, error)"   şlgo.string."func(*smtp.Client) (io.WriteCloser, error)" `  Vfunc(*smtp.Client) (io.WriteCloser, error)  şZtype.func(*"".Client) (io.WriteCloser, error) °  °              z7: 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  tgo.string.hdr."func(*smtp.Client) (io.WriteCloser, error)"   p  lgo.weak.type.*func(*"".Client) (io.WriteCloser, error)   €  "runtime.zerovalue    € Ztype.func(*"".Client) (io.WriteCloser, error)   Ğ Ztype.func(*"".Client) (io.WriteCloser, error)   €  type.*"".Client     &type.io.WriteCloser      type.error   ş¾go.typelink.func(*smtp.Client) (io.WriteCloser, error)	func(*"".Client) (io.WriteCloser, error)              Ztype.func(*"".Client) (io.WriteCloser, error)   şrgo.string.hdr."func(*smtp.Client, string) (bool, string)"             )          jgo.string."func(*smtp.Client, string) (bool, string)"   şjgo.string."func(*smtp.Client, string) (bool, string)" `  Tfunc(*smtp.Client, string) (bool, string)  şXtype.func(*"".Client, string) (bool, string) À  À              §Á² 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  rgo.string.hdr."func(*smtp.Client, string) (bool, string)"   p  jgo.weak.type.*func(*"".Client, string) (bool, string)   €  "runtime.zerovalue    € Xtype.func(*"".Client, string) (bool, string)   Ğ  Xtype.func(*"".Client, string) (bool, string)   €  type.*"".Client     type.string      type.bool   °  type.string   şºgo.typelink.func(*smtp.Client, string) (bool, string)	func(*"".Client, string) (bool, string)              Xtype.func(*"".Client, string) (bool, string)   ş`go.string.hdr."func(*smtp.Client, string) error"                        Xgo.string."func(*smtp.Client, string) error"   şXgo.string."func(*smtp.Client, string) error" P  Bfunc(*smtp.Client, string) error  şFtype.func(*"".Client, string) error °  °              ºËl 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  `go.string.hdr."func(*smtp.Client, string) error"   p  Xgo.weak.type.*func(*"".Client, string) error   €  "runtime.zerovalue    € Ftype.func(*"".Client, string) error   Ğ  Ftype.func(*"".Client, string) error   €  type.*"".Client     type.string      type.error   ş–go.typelink.func(*smtp.Client, string) error	func(*"".Client, string) error              Ftype.func(*"".Client, string) error   şjgo.string.hdr."func(*smtp.Client, *tls.Config) error"             %          bgo.string."func(*smtp.Client, *tls.Config) error"   şbgo.string."func(*smtp.Client, *tls.Config) error" P  Lfunc(*smtp.Client, *tls.Config) error  ş^type.func(*"".Client, *crypto/tls.Config) error °  °              ”¬A 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  jgo.string.hdr."func(*smtp.Client, *tls.Config) error"   p  pgo.weak.type.*func(*"".Client, *crypto/tls.Config) error   €  "runtime.zerovalue    € ^type.func(*"".Client, *crypto/tls.Config) error   Ğ  ^type.func(*"".Client, *crypto/tls.Config) error   €  type.*"".Client     .type.*crypto/tls.Config      type.error   ş¸go.typelink.func(*smtp.Client, *tls.Config) error	func(*"".Client, *crypto/tls.Config) error              ^type.func(*"".Client, *crypto/tls.Config) error   ş|go.string.hdr."func(*smtp.Client) (tls.ConnectionState, bool)"             .          tgo.string."func(*smtp.Client) (tls.ConnectionState, bool)"   ştgo.string."func(*smtp.Client) (tls.ConnectionState, bool)" `  ^func(*smtp.Client) (tls.ConnectionState, bool)  şptype.func(*"".Client) (crypto/tls.ConnectionState, bool) °  °              û³]å 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  |go.string.hdr."func(*smtp.Client) (tls.ConnectionState, bool)"   p  ‚go.weak.type.*func(*"".Client) (crypto/tls.ConnectionState, bool)   €  "runtime.zerovalue    € ptype.func(*"".Client) (crypto/tls.ConnectionState, bool)   Ğ ptype.func(*"".Client) (crypto/tls.ConnectionState, bool)   €  type.*"".Client     >type.crypto/tls.ConnectionState      type.bool   şÜgo.typelink.func(*smtp.Client) (tls.ConnectionState, bool)	func(*"".Client) (crypto/tls.ConnectionState, bool)              ptype.func(*"".Client) (crypto/tls.ConnectionState, bool)   şªgo.string.hdr."func(*smtp.Client, int, string, ...interface {}) (int, string, error)"             E          ¢go.string."func(*smtp.Client, int, string, ...interface {}) (int, string, error)"   ş¢go.string."func(*smtp.Client, int, string, ...interface {}) (int, string, error)"   Œfunc(*smtp.Client, int, string, ...interface {}) (int, string, error)  ştype.func(*"".Client, int, string, ...interface {}) (int, string, error) ğ  ğ              Šèªa 3                                                                                                                                                           0€  runtime.algarray   @  "runtime.gcbits.01   P  ªgo.string.hdr."func(*smtp.Client, int, string, ...interface {}) (int, string, error)"   p  ¢go.weak.type.*func(*"".Client, int, string, ...interface {}) (int, string, error)   €  "runtime.zerovalue    € type.func(*"".Client, int, string, ...interface {}) (int, string, error)   ĞÀ type.func(*"".Client, int, string, ...interface {}) (int, string, error)   €  type.*"".Client     type.int      type.string   °  &type.[]interface {}   À  type.int   Ğ  type.string   à  type.error   şªgo.typelink.func(*smtp.Client, int, string, ...interface {}) (int, string, error)	func(*"".Client, int, string, ...interface {}) (int, string, error)              type.func(*"".Client, int, string, ...interface {}) (int, string, error)   şJgo.string.hdr."func(smtp.Auth) error"                       Bgo.string."func(smtp.Auth) error"   şBgo.string."func(smtp.Auth) error" 0  ,func(smtp.Auth) error  ş0type.func("".Auth) error                   äĞ(¥ 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Jgo.string.hdr."func(smtp.Auth) error"   p  Bgo.weak.type.*func("".Auth) error   €  "runtime.zerovalue    € 0type.func("".Auth) error   Ğ 0type.func("".Auth) error   €  type."".Auth     type.error   şjgo.typelink.func(smtp.Auth) error	func("".Auth) error              0type.func("".Auth) error   ş*go.string.hdr."Close"                       "go.string."Close"   ş"go.string."Close"   Close  ş8go.string.hdr."func() error"                       0go.string."func() error"   ş0go.string."func() error"    func() error  ş"type.func() error                 œ‚Öµ 3                                                                                                              0€  runtime.algarray   @  "runtime.gcbits.01   P  8go.string.hdr."func() error"   p  4go.weak.type.*func() error   €  "runtime.zerovalue    € "type.func() error   Ğ€ "type.func() error   €  type.error   şJgo.typelink.func() error	func() error              "type.func() error   ş(go.string.hdr."Data"                        go.string."Data"   ş go.string."Data"   
+Data  ş\go.string.hdr."func() (io.WriteCloser, error)"                       Tgo.string."func() (io.WriteCloser, error)"   şTgo.string."func() (io.WriteCloser, error)" @  >func() (io.WriteCloser, error)  şFtype.func() (io.WriteCloser, error)                   ­oÑ 3                                                                                                                      0€  runtime.algarray   @  "runtime.gcbits.01   P  \go.string.hdr."func() (io.WriteCloser, error)"   p  Xgo.weak.type.*func() (io.WriteCloser, error)   €  "runtime.zerovalue    € Ftype.func() (io.WriteCloser, error)   Ğ€ Ftype.func() (io.WriteCloser, error)   €  &type.io.WriteCloser     type.error   ş’go.typelink.func() (io.WriteCloser, error)	func() (io.WriteCloser, error)              Ftype.func() (io.WriteCloser, error)   ş2go.string.hdr."Extension"             	          *go.string."Extension"   ş*go.string."Extension"    Extension  şVgo.string.hdr."func(string) (bool, string)"                       Ngo.string."func(string) (bool, string)"   şNgo.string."func(string) (bool, string)" @  8func(string) (bool, string)  ş@type.func(string) (bool, string) °  °              Øöš 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  Vgo.string.hdr."func(string) (bool, string)"   p  Rgo.weak.type.*func(string) (bool, string)   €  "runtime.zerovalue    € @type.func(string) (bool, string)   Ğ @type.func(string) (bool, string)   €  type.string     type.bool      type.string   ş†go.typelink.func(string) (bool, string)	func(string) (bool, string)              @type.func(string) (bool, string)   ş*go.string.hdr."Hello"                       "go.string."Hello"   ş"go.string."Hello"   Hello  şDgo.string.hdr."func(string) error"                       <go.string."func(string) error"   ş<go.string."func(string) error" 0  &func(string) error  ş.type.func(string) error                   ŠB”h 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Dgo.string.hdr."func(string) error"   p  @go.weak.type.*func(string) error   €  "runtime.zerovalue    € .type.func(string) error   Ğ .type.func(string) error   €  type.string     type.error   şbgo.typelink.func(string) error	func(string) error              .type.func(string) error   ş(go.string.hdr."Mail"                        go.string."Mail"   ş go.string."Mail"   
+Mail  ş(go.string.hdr."Quit"                        go.string."Quit"   ş go.string."Quit"   
+Quit  ş(go.string.hdr."Rcpt"                        go.string."Rcpt"   ş go.string."Rcpt"   
+Rcpt  ş*go.string.hdr."Reset"                       "go.string."Reset"   ş"go.string."Reset"   Reset  ş0go.string.hdr."StartTLS"                       (go.string."StartTLS"   ş(go.string."StartTLS"    StartTLS  şNgo.string.hdr."func(*tls.Config) error"                       Fgo.string."func(*tls.Config) error"   şFgo.string."func(*tls.Config) error" 0  0func(*tls.Config) error  şFtype.func(*crypto/tls.Config) error                   :„ÃÎ 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Ngo.string.hdr."func(*tls.Config) error"   p  Xgo.weak.type.*func(*crypto/tls.Config) error   €  "runtime.zerovalue    € Ftype.func(*crypto/tls.Config) error   Ğ Ftype.func(*crypto/tls.Config) error   €  .type.*crypto/tls.Config     type.error   ş„go.typelink.func(*tls.Config) error	func(*crypto/tls.Config) error              Ftype.func(*crypto/tls.Config) error   şDgo.string.hdr."TLSConnectionState"                       <go.string."TLSConnectionState"   ş<go.string."TLSConnectionState" 0  &TLSConnectionState  şdgo.string.hdr."func() (tls.ConnectionState, bool)"             "          \go.string."func() (tls.ConnectionState, bool)"   ş\go.string."func() (tls.ConnectionState, bool)" P  Ffunc() (tls.ConnectionState, bool)  ş\type.func() (crypto/tls.ConnectionState, bool)                   ¶K1 3                                                                                                                      0€  runtime.algarray   @  "runtime.gcbits.01   P  dgo.string.hdr."func() (tls.ConnectionState, bool)"   p  ngo.weak.type.*func() (crypto/tls.ConnectionState, bool)   €  "runtime.zerovalue    € \type.func() (crypto/tls.ConnectionState, bool)   Ğ€ \type.func() (crypto/tls.ConnectionState, bool)   €  >type.crypto/tls.ConnectionState     type.bool   ş°go.typelink.func() (tls.ConnectionState, bool)	func() (crypto/tls.ConnectionState, bool)              \type.func() (crypto/tls.ConnectionState, bool)   ş,go.string.hdr."Verify"                       $go.string."Verify"   ş$go.string."Verify"   Verify  ş&go.string.hdr."cmd"                       go.string."cmd"   şgo.string."cmd"   cmd  şgo.string.hdr."func(int, string, ...interface {}) (int, string, error)"             7          †go.string."func(int, string, ...interface {}) (int, string, error)"   ş†go.string."func(int, string, ...interface {}) (int, string, error)" p  pfunc(int, string, ...interface {}) (int, string, error)  şxtype.func(int, string, ...interface {}) (int, string, error) à  à              ód»+ 3                                                                                                                                                   0€  runtime.algarray   @  "runtime.gcbits.01   P  go.string.hdr."func(int, string, ...interface {}) (int, string, error)"   p  Šgo.weak.type.*func(int, string, ...interface {}) (int, string, error)   €  "runtime.zerovalue    € xtype.func(int, string, ...interface {}) (int, string, error)   Ğ° xtype.func(int, string, ...interface {}) (int, string, error)   €  type.int     type.string      &type.[]interface {}   °  type.int   À  type.string   Ğ  type.error   şögo.typelink.func(int, string, ...interface {}) (int, string, error)	func(int, string, ...interface {}) (int, string, error)              xtype.func(int, string, ...interface {}) (int, string, error)   ş(go.string.hdr."ehlo"                        go.string."ehlo"   ş go.string."ehlo"   
+ehlo  ş*go.string.hdr."hello"                       "go.string."hello"   ş"go.string."hello"   hello  ş(go.string.hdr."helo"                        go.string."helo"   ş go.string."helo"   
+helo  ştype.*"".Client  ğ  ğ              MÙ¦ 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ¸0   runtime.algarray   @  "runtime.gcbits.01   P  8go.string.hdr."*smtp.Client"   p  0go.weak.type.**"".Client   €  "runtime.zerovalue     type."".Client   `  type.*"".Client   Àğ type.*"".Client   ğ  (go.string.hdr."Auth"     0type.func("".Auth) error      Htype.func(*"".Client, "".Auth) error   °  """.(*Client).Auth   À  """.(*Client).Auth   Ğ  *go.string.hdr."Close"   ğ  "type.func() error   €  6type.func(*"".Client) error     $"".(*Client).Close      $"".(*Client).Close   °  (go.string.hdr."Data"   Ğ  Ftype.func() (io.WriteCloser, error)   à  Ztype.func(*"".Client) (io.WriteCloser, error)   ğ  """.(*Client).Data   €  """.(*Client).Data     2go.string.hdr."Extension"   °  @type.func(string) (bool, string)   À  Xtype.func(*"".Client, string) (bool, string)   Ğ  ,"".(*Client).Extension   à  ,"".(*Client).Extension   ğ  *go.string.hdr."Hello"     .type.func(string) error      Ftype.func(*"".Client, string) error   °  $"".(*Client).Hello   À  $"".(*Client).Hello   Ğ  (go.string.hdr."Mail"   ğ  .type.func(string) error   €  Ftype.func(*"".Client, string) error     """.(*Client).Mail      """.(*Client).Mail   °  (go.string.hdr."Quit"   Ğ  "type.func() error   à  6type.func(*"".Client) error   ğ  """.(*Client).Quit   €  """.(*Client).Quit     (go.string.hdr."Rcpt"   °  .type.func(string) error   À  Ftype.func(*"".Client, string) error   Ğ  """.(*Client).Rcpt   à  """.(*Client).Rcpt   ğ  *go.string.hdr."Reset"     "type.func() error      6type.func(*"".Client) error   °  $"".(*Client).Reset   À  $"".(*Client).Reset   Ğ  0go.string.hdr."StartTLS"   ğ  Ftype.func(*crypto/tls.Config) error   €	  ^type.func(*"".Client, *crypto/tls.Config) error   	  *"".(*Client).StartTLS    	  *"".(*Client).StartTLS   °	  Dgo.string.hdr."TLSConnectionState"   Ğ	  \type.func() (crypto/tls.ConnectionState, bool)   à	  ptype.func(*"".Client) (crypto/tls.ConnectionState, bool)   ğ	  >"".(*Client).TLSConnectionState   €
+  >"".(*Client).TLSConnectionState   
+  ,go.string.hdr."Verify"   °
+  .type.func(string) error   À
+  Ftype.func(*"".Client, string) error   Ğ
+  &"".(*Client).Verify   à
+  &"".(*Client).Verify   ğ
+  &go.string.hdr."cmd"   €  "go.importpath."".     xtype.func(int, string, ...interface {}) (int, string, error)      type.func(*"".Client, int, string, ...interface {}) (int, string, error)   °   "".(*Client).cmd   À   "".(*Client).cmd   Ğ  (go.string.hdr."ehlo"   à  "go.importpath."".   ğ  "type.func() error   €  6type.func(*"".Client) error     """.(*Client).ehlo      """.(*Client).ehlo   °  *go.string.hdr."hello"   À  "go.importpath."".   Ğ  "type.func() error   à  6type.func(*"".Client) error   ğ  $"".(*Client).hello   €  $"".(*Client).hello     (go.string.hdr."helo"      "go.importpath."".   °  "type.func() error   À  6type.func(*"".Client) error   Ğ  """.(*Client).helo   à  """.(*Client).helo   şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2             şTgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787                   şTgclocalsÂ·51af24152615272c3d9efc8538f95767                  ş<type..hashfunc.[1]interface {}              4type..hash.[1]interface {}   ş8type..eqfunc.[1]interface {}              0type..eq.[1]interface {}   ş2type..alg.[1]interface {}                        <type..hashfunc.[1]interface {}     8type..eqfunc.[1]interface {}   ş>go.string.hdr."[1]interface {}"                       6go.string."[1]interface {}"   ş6go.string."[1]interface {}"     [1]interface {}  ş(type.[1]interface {} À  À              P‘[ú                                                                        0  2type..alg.[1]interface {}   @  "runtime.gcbits.03   P  >go.string.hdr."[1]interface {}"   p  :go.weak.type.*[1]interface {}   €  "runtime.zerovalue     "type.interface {}      &type.[]interface {}   şVgo.typelink.[1]interface {}	[1]interface {}              (type.[1]interface {}   ş@go.string.hdr."*[1]interface {}"                       8go.string."*[1]interface {}"   ş8go.string."*[1]interface {}" 0  "*[1]interface {}  ş*type.*[1]interface {}                   ¿¨5 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  @go.string.hdr."*[1]interface {}"   p  <go.weak.type.**[1]interface {}   €  "runtime.zerovalue     (type.[1]interface {}   şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2             şTgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787                   şTgclocalsÂ·51af24152615272c3d9efc8538f95767                  ş8type..hashfunc."".dataCloser              0type..hash."".dataCloser   ş4type..eqfunc."".dataCloser              ,type..eq."".dataCloser   ş.type..alg."".dataCloser                        8type..hashfunc."".dataCloser     4type..eqfunc."".dataCloser   ş"runtime.gcbits.07    ş>go.string.hdr."smtp.dataCloser"                       6go.string."smtp.dataCloser"   ş6go.string."smtp.dataCloser"     smtp.dataCloser  ş"go.string.hdr."c"                       go.string."c"   şgo.string."c"   c  şTgclocalsÂ·64ca935d1a2110a30e2d604686188539                    şTgclocalsÂ·8cf14f50ac1bf7ae2848fda35f0590ec              c    şTgclocalsÂ·64ca935d1a2110a30e2d604686188539                    şTgclocalsÂ·48652dbd6a30e32111535a45351a2d7a        	         şvgo.string.hdr."func(smtp.dataCloser, []uint8) (int, error)"             +          ngo.string."func(smtp.dataCloser, []uint8) (int, error)"   şngo.string."func(smtp.dataCloser, []uint8) (int, error)" `  Xfunc(smtp.dataCloser, []uint8) (int, error)  ş\type.func("".dataCloser, []uint8) (int, error) À  À              DÁÅ 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  vgo.string.hdr."func(smtp.dataCloser, []uint8) (int, error)"   p  ngo.weak.type.*func("".dataCloser, []uint8) (int, error)   €  "runtime.zerovalue    € \type.func("".dataCloser, []uint8) (int, error)   Ğ  \type.func("".dataCloser, []uint8) (int, error)   €  $type."".dataCloser     type.[]uint8      type.int   °  type.error   şÂgo.typelink.func(smtp.dataCloser, []uint8) (int, error)	func("".dataCloser, []uint8) (int, error)              \type.func("".dataCloser, []uint8) (int, error)   ş4go.string.hdr."dataCloser"             
+          ,go.string."dataCloser"   ş,go.string."dataCloser"    dataCloser  ş*go.string.hdr."Write"                       "go.string."Write"   ş"go.string."Write"   Write  şTgo.string.hdr."func([]uint8) (int, error)"                       Lgo.string."func([]uint8) (int, error)"   şLgo.string."func([]uint8) (int, error)" @  6func([]uint8) (int, error)  ş>type.func([]uint8) (int, error) °  °              „N4P 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  Tgo.string.hdr."func([]uint8) (int, error)"   p  Pgo.weak.type.*func([]uint8) (int, error)   €  "runtime.zerovalue    € >type.func([]uint8) (int, error)   Ğ >type.func([]uint8) (int, error)   €  type.[]uint8     type.int      type.error   ş‚go.typelink.func([]uint8) (int, error)	func([]uint8) (int, error)              >type.func([]uint8) (int, error)   ş$type."".dataCloser                  _Í                                                                                                                                                                                                                                            &0  .type..alg."".dataCloser   @  "runtime.gcbits.07   P  >go.string.hdr."smtp.dataCloser"   p  &type.*"".dataCloser   €  "runtime.zerovalue   À $type."".dataCloser   À  "go.string.hdr."c"   Ğ  "go.importpath."".   à  type.*"".Client   °  &type.io.WriteCloser   `à $type."".dataCloser   à  4go.string.hdr."dataCloser"   ğ  "go.importpath."".   €° $type."".dataCloser   °  *go.string.hdr."Write"   Ğ  >type.func([]uint8) (int, error)   à  \type.func("".dataCloser, []uint8) (int, error)   ğ  ,"".(*dataCloser).Write   €  &"".dataCloser.Write   ş@go.string.hdr."*smtp.dataCloser"                       8go.string."*smtp.dataCloser"   ş8go.string."*smtp.dataCloser" 0  "*smtp.dataCloser  şXgo.string.hdr."func(*smtp.dataCloser) error"                       Pgo.string."func(*smtp.dataCloser) error"   şPgo.string."func(*smtp.dataCloser) error" @  :func(*smtp.dataCloser) error  ş>type.func(*"".dataCloser) error                   RØ2 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Xgo.string.hdr."func(*smtp.dataCloser) error"   p  Pgo.weak.type.*func(*"".dataCloser) error   €  "runtime.zerovalue    € >type.func(*"".dataCloser) error   Ğ >type.func(*"".dataCloser) error   €  &type.*"".dataCloser     type.error   ş†go.typelink.func(*smtp.dataCloser) error	func(*"".dataCloser) error              >type.func(*"".dataCloser) error   şxgo.string.hdr."func(*smtp.dataCloser, []uint8) (int, error)"             ,          pgo.string."func(*smtp.dataCloser, []uint8) (int, error)"   şpgo.string."func(*smtp.dataCloser, []uint8) (int, error)" `  Zfunc(*smtp.dataCloser, []uint8) (int, error)  ş^type.func(*"".dataCloser, []uint8) (int, error) À  À              Ïÿø 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  xgo.string.hdr."func(*smtp.dataCloser, []uint8) (int, error)"   p  pgo.weak.type.*func(*"".dataCloser, []uint8) (int, error)   €  "runtime.zerovalue    € ^type.func(*"".dataCloser, []uint8) (int, error)   Ğ  ^type.func(*"".dataCloser, []uint8) (int, error)   €  &type.*"".dataCloser     type.[]uint8      type.int   °  type.error   şÆgo.typelink.func(*smtp.dataCloser, []uint8) (int, error)	func(*"".dataCloser, []uint8) (int, error)              ^type.func(*"".dataCloser, []uint8) (int, error)   ş&type.*"".dataCloser  °  °              V	¼Ğ 6                                                                                                                                                                                              $0   runtime.algarray   @  "runtime.gcbits.01   P  @go.string.hdr."*smtp.dataCloser"   p  8go.weak.type.**"".dataCloser   €  "runtime.zerovalue     $type."".dataCloser   `  &type.*"".dataCloser   Àğ &type.*"".dataCloser   ğ  *go.string.hdr."Close"     "type.func() error      >type.func(*"".dataCloser) error   °  ,"".(*dataCloser).Close   À  ,"".(*dataCloser).Close   Ğ  *go.string.hdr."Write"   ğ  >type.func([]uint8) (int, error)   €  ^type.func(*"".dataCloser, []uint8) (int, error)     ,"".(*dataCloser).Write      ,"".(*dataCloser).Write   şBgo.string.hdr."func(*tls.Config)"                       :go.string."func(*tls.Config)"   ş:go.string."func(*tls.Config)" 0  $func(*tls.Config)  ş:type.func(*crypto/tls.Config)                 ä~}* 3                                                                                                              0€  runtime.algarray   @  "runtime.gcbits.01   P  Bgo.string.hdr."func(*tls.Config)"   p  Lgo.weak.type.*func(*crypto/tls.Config)   €  "runtime.zerovalue    € :type.func(*crypto/tls.Config)   Ğ :type.func(*crypto/tls.Config)   €  .type.*crypto/tls.Config   şlgo.typelink.func(*tls.Config)	func(*crypto/tls.Config)              :type.func(*crypto/tls.Config)   ş4go.string.hdr."*[8]string"             
+          ,go.string."*[8]string"   ş,go.string."*[8]string"    *[8]string  ştype.*[8]string                   ­”o 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  4go.string.hdr."*[8]string"   p  0go.weak.type.**[8]string   €  "runtime.zerovalue     type.[8]string   ş.go.string.hdr."runtime"                       &go.string."runtime"   ş&go.string."runtime"   runtime  ş,go.importpath.runtime.                       &go.string."runtime"   ş6go.string.hdr."crypto/hmac"                       .go.string."crypto/hmac"   ş.go.string."crypto/hmac"    crypto/hmac  ş4go.importpath.crypto/hmac.                       .go.string."crypto/hmac"   ş$go.string.hdr."io"                       go.string."io"   şgo.string."io"   io  ş"go.importpath.io.                       go.string."io"   ş4go.string.hdr."crypto/md5"             
+          ,go.string."crypto/md5"   ş,go.string."crypto/md5"    crypto/md5  ş2go.importpath.crypto/md5.             
+          ,go.string."crypto/md5"   ş,go.string.hdr."errors"                       $go.string."errors"   ş$go.string."errors"   errors  ş*go.importpath.errors.                       $go.string."errors"   ş&go.string.hdr."fmt"                       go.string."fmt"   şgo.string."fmt"   fmt  ş$go.importpath.fmt.                       go.string."fmt"   ş4go.string.hdr."crypto/tls"             
+          ,go.string."crypto/tls"   ş,go.string."crypto/tls"    crypto/tls  ş2go.importpath.crypto/tls.             
+          ,go.string."crypto/tls"   ş.go.string.hdr."strings"                       &go.string."strings"   ş&go.string."strings"   strings  ş,go.importpath.strings.                       &go.string."strings"   ş&go.string.hdr."net"                       go.string."net"   şgo.string."net"   net  ş$go.importpath.net.                       go.string."net"   ş>go.string.hdr."encoding/base64"                       6go.string."encoding/base64"   ş6go.string."encoding/base64"     encoding/base64  ş<go.importpath.encoding/base64.                       6go.string."encoding/base64"   ş:go.string.hdr."net/textproto"                       2go.string."net/textproto"   ş2go.string."net/textproto"    net/textproto  ş8go.importpath.net/textproto.                       2go.string."net/textproto"   ş4type..hash."".plainAuthÂ·f              .type..hash."".plainAuth   ş0type..eq."".plainAuthÂ·f              *type..eq."".plainAuth   ş"".Auth.NextÂ·f              "".Auth.Next   ş "".Auth.StartÂ·f              "".Auth.Start   ş8type..hash."".cramMD5AuthÂ·f              2type..hash."".cramMD5Auth   ş4type..eq."".cramMD5AuthÂ·f              .type..eq."".cramMD5Auth   ş:type..hash.[2]interface {}Â·f              4type..hash.[2]interface {}   ş6type..eq.[2]interface {}Â·f              0type..eq.[2]interface {}   ş.type..hash.[8]stringÂ·f              (type..hash.[8]string   ş*type..eq.[8]stringÂ·f              $type..eq.[8]string   ş:type..hash.[1]interface {}Â·f              4type..hash.[1]interface {}   ş6type..eq.[1]interface {}Â·f              0type..eq.[1]interface {}   ş6type..hash."".dataCloserÂ·f              0type..hash."".dataCloser   ş2type..eq."".dataCloserÂ·f              ,type..eq."".dataCloser   ş2"".(*dataCloser).WriteÂ·f              ,"".(*dataCloser).Write   ş,"".dataCloser.WriteÂ·f              &"".dataCloser.Write   ş"runtime.zerovalue      ÿÿgo13ld

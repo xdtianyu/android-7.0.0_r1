@@ -1,0 +1,1196 @@
+!<arch>
+__.PKGDEF       0           0     0     644     8991      `
+go object linux amd64 go1.5.1 X:none
+build id "2cc29f6e975f70ed8f9b5e017e27dc79fb2a150d"
+
+$$
+package gif
+	import runtime "runtime"
+	import bufio "bufio"
+	import bytes "bytes"
+	import errors "errors"
+	import io "io"
+	import lzw "compress/lzw"
+	import fmt "fmt"
+	import image "image"
+	import color "image/color"
+	import palette "image/color/palette"
+	import draw "image/draw"
+	const @"".DisposalNone = 0x1
+	const @"".DisposalBackground = 0x2
+	const @"".DisposalPrevious = 0x3
+	type @"image/color".Color interface { RGBA() (@"image/color".r uint32, @"image/color".g uint32, @"image/color".b uint32, @"image/color".a uint32) }
+	type @"image".Point struct { X int; Y int }
+	func (@"image".pÂ·2 @"image".Point) Add (@"image".qÂ·3 @"image".Point) (? @"image".Point) { return (@"image".Point{ X:@"image".pÂ·2.X + @"image".qÂ·3.X, Y:@"image".pÂ·2.Y + @"image".qÂ·3.Y }) }
+	func (@"image".pÂ·2 @"image".Point) Div (@"image".kÂ·3 int) (? @"image".Point) { return (@"image".Point{ X:@"image".pÂ·2.X / @"image".kÂ·3, Y:@"image".pÂ·2.Y / @"image".kÂ·3 }) }
+	func (@"image".pÂ·2 @"image".Point) Eq (@"image".qÂ·3 @"image".Point) (? bool) { return @"image".pÂ·2 == @"image".qÂ·3 }
+	func (@"image".pÂ·2 @"image".Point) In (@"image".rÂ·3 @"image".Rectangle) (? bool) { return @"image".rÂ·3.Min.X <= @"image".pÂ·2.X && @"image".pÂ·2.X < @"image".rÂ·3.Max.X && @"image".rÂ·3.Min.Y <= @"image".pÂ·2.Y && @"image".pÂ·2.Y < @"image".rÂ·3.Max.Y }
+	func (@"image".pÂ·2 @"image".Point) Mod (@"image".rÂ·3 @"image".Rectangle) (? @"image".Point)
+	func (@"image".pÂ·2 @"image".Point) Mul (@"image".kÂ·3 int) (? @"image".Point) { return (@"image".Point{ X:@"image".pÂ·2.X * @"image".kÂ·3, Y:@"image".pÂ·2.Y * @"image".kÂ·3 }) }
+	func (@"image".pÂ·2 @"image".Point) String () (? string)
+	func (@"image".pÂ·2 @"image".Point) Sub (@"image".qÂ·3 @"image".Point) (? @"image".Point) { return (@"image".Point{ X:@"image".pÂ·2.X - @"image".qÂ·3.X, Y:@"image".pÂ·2.Y - @"image".qÂ·3.Y }) }
+	type @"image/color".Model interface { Convert(@"image/color".c @"image/color".Color) (? @"image/color".Color) }
+	type @"image".Rectangle struct { Min @"image".Point; Max @"image".Point }
+	func (@"image".rÂ·2 @"image".Rectangle) Add (@"image".pÂ·3 @"image".Point) (? @"image".Rectangle) { return (@"image".Rectangle{ Min:(@"image".Point{ X:@"image".rÂ·2.Min.X + @"image".pÂ·3.X, Y:@"image".rÂ·2.Min.Y + @"image".pÂ·3.Y }), Max:(@"image".Point{ X:@"image".rÂ·2.Max.X + @"image".pÂ·3.X, Y:@"image".rÂ·2.Max.Y + @"image".pÂ·3.Y }) }) }
+	func (@"image".rÂ·2 @"image".Rectangle) At (@"image".xÂ·3 int, @"image".yÂ·4 int) (? @"image/color".Color) { if (@"image".Point{ X:@"image".xÂ·3, Y:@"image".yÂ·4 }).In(@"image".rÂ·2) { return @"image/color".Opaque }; return @"image/color".Transparent }
+	func (@"image".rÂ·2 @"image".Rectangle) Bounds () (? @"image".Rectangle) { return @"image".rÂ·2 }
+	func (@"image".rÂ·2 @"image".Rectangle) Canon () (? @"image".Rectangle) { if @"image".rÂ·2.Max.X < @"image".rÂ·2.Min.X { @"image".rÂ·2.Min.X, @"image".rÂ·2.Max.X = @"image".rÂ·2.Max.X, @"image".rÂ·2.Min.X }; if @"image".rÂ·2.Max.Y < @"image".rÂ·2.Min.Y { @"image".rÂ·2.Min.Y, @"image".rÂ·2.Max.Y = @"image".rÂ·2.Max.Y, @"image".rÂ·2.Min.Y }; return @"image".rÂ·2 }
+	func (@"image".rÂ·2 @"image".Rectangle) ColorModel () (? @"image/color".Model) { return @"image/color".Alpha16Model }
+	func (@"image".rÂ·2 @"image".Rectangle) Dx () (? int) { return @"image".rÂ·2.Max.X - @"image".rÂ·2.Min.X }
+	func (@"image".rÂ·2 @"image".Rectangle) Dy () (? int) { return @"image".rÂ·2.Max.Y - @"image".rÂ·2.Min.Y }
+	func (@"image".rÂ·2 @"image".Rectangle) Empty () (? bool) { return @"image".rÂ·2.Min.X >= @"image".rÂ·2.Max.X || @"image".rÂ·2.Min.Y >= @"image".rÂ·2.Max.Y }
+	func (@"image".rÂ·2 @"image".Rectangle) Eq (@"image".sÂ·3 @"image".Rectangle) (? bool) { return @"image".rÂ·2 == @"image".sÂ·3 || @"image".rÂ·2.Empty() && @"image".sÂ·3.Empty() }
+	func (@"image".rÂ·2 @"image".Rectangle) In (@"image".sÂ·3 @"image".Rectangle) (? bool) { if @"image".rÂ·2.Empty() { return true }; return @"image".sÂ·3.Min.X <= @"image".rÂ·2.Min.X && @"image".rÂ·2.Max.X <= @"image".sÂ·3.Max.X && @"image".sÂ·3.Min.Y <= @"image".rÂ·2.Min.Y && @"image".rÂ·2.Max.Y <= @"image".sÂ·3.Max.Y }
+	func (@"image".rÂ·2 @"image".Rectangle) Inset (@"image".nÂ·3 int) (? @"image".Rectangle)
+	func (@"image".rÂ·2 @"image".Rectangle) Intersect (@"image".sÂ·3 @"image".Rectangle) (? @"image".Rectangle)
+	func (@"image".rÂ·2 @"image".Rectangle) Overlaps (@"image".sÂ·3 @"image".Rectangle) (? bool)
+	func (@"image".rÂ·2 @"image".Rectangle) Size () (? @"image".Point) { return (@"image".Point{ X:@"image".rÂ·2.Max.X - @"image".rÂ·2.Min.X, Y:@"image".rÂ·2.Max.Y - @"image".rÂ·2.Min.Y }) }
+	func (@"image".rÂ·2 @"image".Rectangle) String () (? string)
+	func (@"image".rÂ·2 @"image".Rectangle) Sub (@"image".pÂ·3 @"image".Point) (? @"image".Rectangle) { return (@"image".Rectangle{ Min:(@"image".Point{ X:@"image".rÂ·2.Min.X - @"image".pÂ·3.X, Y:@"image".rÂ·2.Min.Y - @"image".pÂ·3.Y }), Max:(@"image".Point{ X:@"image".rÂ·2.Max.X - @"image".pÂ·3.X, Y:@"image".rÂ·2.Max.Y - @"image".pÂ·3.Y }) }) }
+	func (@"image".rÂ·2 @"image".Rectangle) Union (@"image".sÂ·3 @"image".Rectangle) (? @"image".Rectangle)
+	type @"image".Image interface { At(@"image".x int, @"image".y int) (? @"image/color".Color); Bounds() (? @"image".Rectangle); ColorModel() (? @"image/color".Model) }
+	type @"io".Reader interface { Read(@"io".p []byte) (@"io".n int, @"io".err error) }
+	func @"".Decode (@"".rÂ·3 @"io".Reader) (? @"image".Image, ? error)
+	type @"image/color".Palette []@"image/color".Color
+	func (@"image/color".pÂ·2 @"image/color".Palette "esc:0x2a") Convert (@"image/color".cÂ·3 @"image/color".Color) (? @"image/color".Color)
+	func (@"image/color".pÂ·2 @"image/color".Palette "esc:0x9") Index (@"image/color".cÂ·3 @"image/color".Color) (? int)
+	type @"image".Paletted struct { Pix []uint8; Stride int; Rect @"image".Rectangle; Palette @"image/color".Palette }
+	func (@"image".pÂ·2 *@"image".Paletted "esc:0x32") At (@"image".xÂ·3 int, @"image".yÂ·4 int) (? @"image/color".Color)
+	func (@"image".pÂ·2 *@"image".Paletted "esc:0x1") Bounds () (? @"image".Rectangle) { return @"image".pÂ·2.Rect }
+	func (@"image".pÂ·2 *@"image".Paletted "esc:0x1") ColorIndexAt (@"image".xÂ·3 int, @"image".yÂ·4 int) (? uint8)
+	func (@"image".pÂ·2 *@"image".Paletted "esc:0x22") ColorModel () (? @"image/color".Model) { return @"image".pÂ·2.Palette }
+	func (@"image".pÂ·2 *@"image".Paletted "esc:0x9") Opaque () (? bool)
+	func (@"image".pÂ·2 *@"image".Paletted "esc:0x1") PixOffset (@"image".xÂ·3 int, @"image".yÂ·4 int) (? int) { return (@"image".yÂ·4 - @"image".pÂ·2.Rect.Min.Y) * @"image".pÂ·2.Stride + (@"image".xÂ·3 - @"image".pÂ·2.Rect.Min.X) * 0x1 }
+	func (@"image".pÂ·1 *@"image".Paletted "esc:0x9") Set (@"image".xÂ·2 int, @"image".yÂ·3 int, @"image".cÂ·4 @"image/color".Color)
+	func (@"image".pÂ·1 *@"image".Paletted "esc:0x1") SetColorIndex (@"image".xÂ·2 int, @"image".yÂ·3 int, @"image".indexÂ·4 uint8)
+	func (@"image".pÂ·2 *@"image".Paletted "esc:0xa") SubImage (@"image".rÂ·3 @"image".Rectangle) (? @"image".Image)
+	type @"image".Config struct { ColorModel @"image/color".Model; Width int; Height int }
+	type @"".GIF struct { Image []*@"image".Paletted; Delay []int; LoopCount int; Disposal []byte; Config @"image".Config; BackgroundIndex byte }
+	func @"".DecodeAll (@"".rÂ·3 @"io".Reader) (? *@"".GIF, ? error)
+	func @"".DecodeConfig (@"".rÂ·3 @"io".Reader) (? @"image".Config, ? error)
+	type @"image/draw".Quantizer interface { Quantize(@"image/draw".p @"image/color".Palette, @"image/draw".m @"image".Image) (? @"image/color".Palette) }
+	type @"image/draw".Image interface { At(@"image".x int, @"image".y int) (? @"image/color".Color); Bounds() (? @"image".Rectangle); ColorModel() (? @"image/color".Model); Set(@"image/draw".x int, @"image/draw".y int, @"image/draw".c @"image/color".Color) }
+	type @"image/draw".Drawer interface { Draw(@"image/draw".dst @"image/draw".Image, @"image/draw".r @"image".Rectangle, @"image/draw".src @"image".Image, @"image/draw".sp @"image".Point) }
+	type @"".Options struct { NumColors int; Quantizer @"image/draw".Quantizer; Drawer @"image/draw".Drawer }
+	type @"io".Writer interface { Write(@"io".p []byte) (@"io".n int, @"io".err error) }
+	func @"".EncodeAll (@"".wÂ·2 @"io".Writer, @"".gÂ·3 *@"".GIF "esc:0x2a") (? error)
+	func @"".Encode (@"".wÂ·2 @"io".Writer, @"".mÂ·3 @"image".Image, @"".oÂ·4 *@"".Options "esc:0x9") (? error)
+	func @"".init ()
+	type @"image/color".Alpha16 struct { A uint16 }
+	func (@"image/color".cÂ·5 @"image/color".Alpha16) RGBA () (@"image/color".rÂ·1 uint32, @"image/color".gÂ·2 uint32, @"image/color".bÂ·3 uint32, @"image/color".aÂ·4 uint32) { @"image/color".aÂ·4 = uint32(@"image/color".cÂ·5.A); return @"image/color".aÂ·4, @"image/color".aÂ·4, @"image/color".aÂ·4, @"image/color".aÂ·4 }
+	var @"image/color".Opaque @"image/color".Alpha16
+	var @"image/color".Transparent @"image/color".Alpha16
+	var @"image/color".Alpha16Model @"image/color".Model
+
+$$
+ _go_.o          0           0     0     644     190488    `
+go object linux amd64 go1.5.1 X:none
+
+!
+  go13ldbufio.acompress/lzw.aerrors.a
+fmt.aimage.aimage/color.aio.abytes.a*image/color/palette.aimage/draw.a ş,"".(*blockReader).Read  à  ÜdH‹%    HD$øH;A†L  Hìˆ   H‹œ$ˆ   H‰$è    1ÛH‰œ$¸   H‰œ$À   H‹œ$   H‰$Hƒ$(è    H‹Œ$   H‹i(Hƒı tQH‰$Hƒ$(è    HÇ„$°       H‹œ$   Hƒû t%H‹k(H‰¬$¸   H‹k0H‰¬$À   è    HÄˆ   Ã‰ë×H‹œ$    Hƒû u+HÇ„$°       1ÛH‰œ$¸   H‰œ$À   è    HÄˆ   ÃH‰$Hƒ$è    H‹„$   H‹hHƒı …G  H‰$è    H‹œ$   Hƒû „%  H‹H‹kH‰l$XH‰,$H‰L$PH‹Y(ÿÓ¶\$H‰ØH‹\$H‰\$`H‹\$H‰\$hˆD$GH‹œ$   H‰$Hƒ$(è    H‹œ$   H‹l$`H‰k(H‹l$h€=     …š  H‰k0H‹œ$   H‰$Hƒ$(è    ¶L$GH‹„$   H‹h(Hƒı tQH‰$Hƒ$(è    HÇ„$°       H‹œ$   Hƒû t%H‹k(H‰¬$¸   H‹k0H‰¬$À   è    HÄˆ   Ã‰ë×€ù …²   H‰$Hƒ$(è    H    H‰$è    H‹œ$   H‹-    H‰k(H‹-    €=     u]H‰k0H‹œ$   H‰$Hƒ$(è    HÇ„$°       H‹œ$   Hƒû t%H‹k(H‰¬$¸   H‹k0H‰¬$À   è    HÄˆ   Ã‰ë×LC0L‰$H‰l$è    ë“¶ÙHû   ‡F  H‰ÅHƒÅ8Hƒı „-  H‰\$xHÇ„$€      H‰l$pH‰$Hƒ$è    H‹œ$   H‹l$xH‰kH‹¬$€   H‰k H‹l$p€=     …Ã  H‰kH‹œ$   H‰$è    H‹œ$   H‰$Hƒ$è    H    H‰$H‹´$   H|$H‹H‰H‹NH‰Oè    H\$H‹H‰$H‹KH‰L$H‹´$   Hƒş „?  H^H|$H‹H‰H‹KH‰OH‹KH‰Oè    H‹\$0H‰\$`H‹\$8H‰\$hH‹œ$   H‰$Hƒ$(è    H‹œ$   H‹l$`H‰k(H‹l$h€=     …·  H‰k0H‹œ$   H‰$Hƒ$(è    H‹„$   H‹h(Hƒı tQH‰$Hƒ$(è    HÇ„$°       H‹œ$   Hƒû t%H‹k(H‰¬$¸   H‹k0H‰¬$À   è    HÄˆ   Ã‰ë×H‰$Hƒ$è    H‹œ$˜   H‰$H‹œ$    H‰\$H‹œ$¨   H‰\$H‹´$   Hƒş „í   H^H|$H‹H‰H‹KH‰OH‹KH‰OHÇD$0   è    H‹\$8H‰\$HH‹œ$   H‰$Hƒ$è    H‹œ$   H‰$Hƒ$è    H‹„$   H‹l$HL‹@L‹H L9ÅwiL‹PI)èI)éIƒù tM*L‰@L‰H €=     u0L‰PH‹\$HH‰œ$°   1ÛH‰œ$¸   H‰œ$À   è    HÄˆ   ÃHhH‰,$L‰T$è    ëÀè    ‰éÿÿÿLC0L‰$H‰l$è    é6şÿÿ‰éºıÿÿLCL‰$H‰l$è    é*ıÿÿ‰E éËüÿÿè    LC0L‰$H‰l$è    éSûÿÿ‰éÔúÿÿé_şÿÿè    é’ùÿÿ`
+      X
+  *runtime.racefuncenter   ¨
+   runtime.raceread   è
+   runtime.raceread   Ö
+  (runtime.racefuncexit   Ğ
+  (runtime.racefuncexit   ü
+   runtime.raceread   º
+   runtime.raceread   ˜       €
+  "runtime.racewrite   ¸ 6runtime.writeBarrierEnabled   ú
+   runtime.raceread   Ä
+   runtime.raceread   ²
+  (runtime.racefuncexit   ø
+  "runtime.racewrite   †	  io.EOF   ˜	
+   runtime.raceread   ¶	  io.EOF   Ì	 io.EOF   Ø	 6runtime.writeBarrierEnabled   ’
+
+   runtime.raceread   €
+  (runtime.racefuncexit   ¼
+  .runtime.writebarrierptr   Ê
+  "runtime.racewrite   š 6runtime.writeBarrierEnabled   Ò
+   runtime.raceread   ş
+   runtime.raceread   Œ  type.io.Reader   Ô
+  runtime.convI2I   ê
+  io.ReadFull   ¾
+  "runtime.racewrite   ö 6runtime.writeBarrierEnabled   ¸
+   runtime.raceread   ø
+   runtime.raceread   æ
+  (runtime.racefuncexit   š
+   runtime.raceread   ä
+  "runtime.slicecopy   ¤
+  "runtime.racewrite   Ğ
+   runtime.raceread   È 6runtime.writeBarrierEnabled   
+  (runtime.racefuncexit   Ò
+  .runtime.writebarrierptr   à
+  $runtime.panicslice   –
+  .runtime.writebarrierptr   Ò
+  .runtime.writebarrierptr   ö
+  $runtime.panicslice   
+  .runtime.writebarrierptr   Ê
+  0runtime.morestack_noctxt   p  "".autotmp_0011  type.int "".autotmp_0010  type.error "".autotmp_0009 /type.[]uint8 "".autotmp_0008 Otype.error "".autotmp_0006  type.int "".n type.int "".blockLen type.uint8 "".~r2 Ptype.error "".~r1 @type.int "".p type.[]uint8 "".b  (type.*"".blockReader `—<°¦ò›• ğ ´Ü0/(@,+&%$“-@	EHx–@
+	}o,+ T +S‚=\#„GD¶=W‚ˆ TgclocalsÂ·8673e44a15fbaa7367253006e3f68366 TgclocalsÂ·2de3026f2f1a4e76c4da3271e2c4e98d   \prebuilts/go/linux-x86/src/image/gif/reader.goş("".(*decoder).decode   x   xdH‹%    H„$pıÿÿH;A†ë  Hì  H‹œ$  H‰$è    1ÛH‰œ$8  H‰œ$@  1ÛH‰œ$è  H‰œ$ğ  H    H‰$H‹œ$   H‰\$H‹œ$(  H‰\$Hœ$è  H‰\$è    ¶\$ H‰ØH‹œ$è  H‰œ$ø   H‹œ$ğ  H‰œ$   < „Š  H‹œ$  H‰$è    H‹œ$  H‹¬$ø   H‰+H‹¬$   €=     …:  H‰kH‹œ$  H‰$è    H‹L$H‹T$H‰”$@  H‰Œ$8  Hƒù t#H‰Œ$8  H‰”$@  è    è    HÄ  Ã€¼$0   t%1ÛH‰œ$8  H‰œ$@  è    è    HÄ  ÃH‹œ$  H‰$è    H‹œ$  Hƒû „‰  H‹H‹kH‰¬$°  H‰,$H‰„$¨  H‹X(ÿÓH‹´$  ¶\$H‹l$H‹T$H‰”$`  H‰¬$X  Hƒı t#H‰¬$8  H‰”$@  è    è    HÄ  Ã€û!uPH‰4$è    H‹T$H‹L$H‰Œ$`  H‰”$X  Hƒú „:ÿÿÿH‰”$8  H‰Œ$@  è    è    HÄ  Ã€û,…È  H‰4$è    H‹L$H‹l$H‹T$H‰Œ$€   H‰”$P  H‰¬$H  Hƒı t#H‰¬$8  H‰”$@  è    è    HÄ  ÃH‹œ$  H‰$Hƒ$Bè    H‹„$  ¶XBHã€   €û •Á€ù ˆL$G„n  H‰$Hƒ$Bè    H‹„$  H‰$¶hB@ˆl$è    H‹\$H‰œ$ˆ  H‹\$H‰œ$  H‹\$ H‰œ$˜  H‹\$(H‰œ$Ø  H‹\$0H‰œ$à  H‹œ$€   H‰$Hƒ$@è    H‹œ$€   H‹¬$  H‰kHH‹¬$˜  H‰kPH‹¬$ˆ  €=     …£  H‰k@H‹Œ$Ø  H‹”$à  H‰”$P  H‰Œ$H  Hƒù t#H‰Œ$8  H‰”$@  è    è    HÄ  ÃH‹œ$  H‰$Hƒ$Dè    L‹Œ$  A¶YD€û „ƒ  H‹œ$€   H‰$Hƒ$@è    H‹œ$€   H‹kHH‰l$pH‹œ$  H‰$Hƒ$Cè    L‹Œ$  A¶YCH‹l$pH9ë+  €|$G …Ã  L‰$Hƒ$Hè    H‹œ$  Hƒû „   H‹kHH‰¬$X  H‹SPH‹kXH‰¬$h  1ÿH‰ùH‰øH‰¼$  H‰”$`  HĞH)ÈHƒø ~SH    H‰$H‰¼$ˆ  H‰|$H‰|$H‰Œ$˜  H‰L$H‰D$ è    H‹”$`  H‹|$(H‹\$0H‰œ$  H‹L$8H    H‰$1Û1íHÕI‰ÈH‰Œ$˜  H9Í‡à  H9ë‡×  H)İI)ØI‰ùH‰¼$ˆ  Iƒø tHkÛIÙH‰l$L‰D$L‰L$H‹œ$X  H‰\$ H‰T$(H‹œ$h  H‰\$0è    H‹Œ$˜  H‹¬$`  1ÛHëH9Ë‡a  H‰ØH‹œ$ˆ  H‰œ$p  H‰„$x  H‰Œ$€  H‹œ$€   H‰$Hƒ$@è    H‹œ$€   H‹¬$x  H‰kHH‹¬$€  H‰kPH‹¬$p  €=     …Ü  H‰k@1Ûˆ\$Lˆ\$Mˆ\$Nˆ\$OH‹œ$€   H‰$Hƒ$@è    H‹œ$  H‰$Hƒ$Cè    H‹œ$  ¶kCH‹œ$€   H‰èH‹S@H‹KHH‹kPH‰¬$˜  H‰ÓH‰”$ˆ  ¶èH‰Œ$  H9ÍƒI  HÁåHëH‰$è    H    H‰$H    H‰\$H    H‰\$H\$LH‰\$HÇD$     è    L‹Œ$  H‹T$(H‹L$0A¶iCH‹œ$€   H‰èHƒû „Ë  H‹{@H‹sHH‹kPH‰¬$˜  H‰ûH‰¼$ˆ  ¶èH‰´$  H9õƒ‘  HÁåHëH‰”$˜  H‰H‰Œ$   €=     …K  H‰KL‰$è    H‹œ$  Hƒû „%  H‹H‹kH‰¬$°  H‰,$H‰„$¨  H‹X(ÿÓ¶\$H‰ÙH‹l$H‹T$H‰”$P  H‰¬$H  Hƒı t#H‰¬$8  H‰”$@  è    è    HÄ  Ã€û‚S  ˆL$I€ù‡F  H    H‰$è    H‹D$H‰„$    H‰$HÇD$8  è    H‹¼$    H‰ùHƒÿ „û  1ÀHƒÇøè    H‰$è    H‹œ$  H‰$è    H‹¬$  Hƒı „¼  H‹œ$    Hƒû „£  H‰\$H‰l$H-    H‰,$è    H‹„$    H‰„$˜   H‰„$    H‹    1íH9è„-  H‹Œ$    H‰„$ˆ  H‰$H‰Œ$  H‰L$HÇD$    ¶\$IH‰\$è    H‹L$ H‹D$(H‰„$0  H‰D$H‰Œ$(  Hƒù „Ä  HY Ç$   H‰\$è    ƒø …“  H‹œ$€   H‰$è    H    H‰$H‹œ$(  H‰\$H‹œ$0  H‰\$è    H\$H‹H‰$H‹KH‰L$H‹´$€   H|$H‹H‰H‹NH‰OH‹NH‰Oè    H‹L$0H‹D$8H‰„$P  H‰Œ$H  Hƒù „ì   H    H‰$è    H‹œ$H  H‹-    H9ë…‘   H    H‰$è    H‹¬$H  H‰,$H‹¬$P  H‰l$H‹-    H‰l$H‹-    H‰l$è    ¶\$ €û tAH    H‰$è    H‹    H‰œ$8  H‹    H‰œ$@  è    è    HÄ  ÃH‹œ$H  H‰œ$8  H‹œ$P  H‰œ$@  è    è    HÄ  ÃH‹”$  Hƒú „ò	  HÂ¨   Hƒú „Ú	  HÇÁ   HÇÀ   H‰”$   H‰T$H‰Œ$¨  H‰L$H‰„$°  H‰D$H‹œ$0  H‰$H‹œ$(  H‹[(ÿÓH‹L$ H‹l$(H‹T$0H‰¬$x  H‰”$€  Hƒù …à  H    H‰$è    H‹œ$x  H‹-    H9ë…@  H    H‰$è    H‹¬$x  H‰,$H‹¬$€  H‰l$H‹-    H‰l$H‹-    H‰l$è    ¶\$ €û „ì  H‹”$  Hƒú „Ó  HÂ¨   Hƒú „»  H‹œ$˜   HÇÁ   HÇÀ   H‰$H‰”$   H‰T$H‰Œ$¨  H‰L$H‰„$°  H‰D$è    H‹L$ H‹l$(H‹T$0H‰¬$h  H‰”$p  Hƒù …Ê  H    H‰$è    H‹œ$h  H‹-    H9ë…¢  H    H‰$è    H‹¬$h  H‰,$H‹¬$p  H‰l$H‹-    H‰l$H‹-    H‰l$è    ¶\$ €û „N  H‹œ$€   H‰$Hƒ$@è    H‹Œ$€   H‹iHHı     H‰$è    H‹œ$€   Hƒû „ı  H‹H‹KH‹kH‰¬$°  1ÀH‰Œ$¨  H‰L$XH‰”$   H‰ÑH‰D$`H‹l$XH9è´   H‰Œ$°   H‰$è    H‹œ$°   ¶+@ˆl$HH‹œ$€   H‰$Hƒ$@è    H‹œ$€   H‹kH¶\$HH9ë|AH    H‰$è    H‹    H‰œ$8  H‹    H‰œ$@  è    è    HÄ  ÃH‹Œ$°   HÿÁH‹D$`HÿÀH‰D$`H‹l$XH9èŒLÿÿÿH‹œ$  H‰$Hƒ$Bè    H‹¬$  ¶]BHƒã@€û tH‹œ$€   H‰$è    H‹œ$  H‰$H$   è    H‹œ$  Hƒû „›  H‹“   H‹ƒ˜   H‹›    H‰ÙH)ÃHƒû}QH    H‰$H‰”$(  H‰T$H‰D$H‰Œ$8  H‰L$H‰ÃH‰„$0  HÿÃH‰\$ è    H‹T$(H‹D$0H‹L$8H‰ÃHÿÃH‰Œ$8  H9Ë‡  H‰œ$0  H‰”$(  H‰D$hHÂH‰$è    H‹œ$(  H‹l$hHëH‹¬$€   €=     …°  H‰+H‹œ$  H‰$H$   è    H‹œ$  H‹¬$0  H‰«˜   H‹¬$8  H‰«    H‹¬$(  €=     …?  H‰«   H‹œ$  H‰$Hƒ$8è    H‹„$  H‹h8H‰l$hH‰$Hƒ$`è    H‹œ$  Hƒû „ê  H‹S`H‹ChH‹[pH‰ÙH)ÃHƒû}QH    H‰$H‰”$  H‰T$H‰D$H‰Œ$   H‰L$H‰ÃH‰„$  HÿÃH‰\$ è    H‹T$(H‹D$0H‹L$8H‰ÃHÿÃH‰Œ$   H9Ë‡c  H‰œ$  H‰”$  H‰D$`HÂH‰$è    H‹œ$  H‹l$`HëH‹l$hH‰+H‹œ$  H‰$Hƒ$`è    H‹œ$  H‹¬$  H‰khH‹¬$   H‰kpH‹¬$  €=     …Æ  H‰k`H‹œ$  H‰$Hƒ$Aè    H‹„$  ¶hA@ˆl$KH‰$Hƒ$xè    H‹œ$  Hƒû „t  H‹SxH‹ƒ€   H‹›ˆ   H‰ÙH)ÃHƒû}QH    H‰$H‰”$   H‰T$H‰D$H‰Œ$°  H‰L$H‰ÃH‰„$¨  HÿÃH‰\$ è    H‹T$(H‹D$0H‹L$8H‰ÃHÿÃH‰Œ$°  H9Ë‡ç   H‰œ$¨  H‰”$   H‰D$`HH‰$è    H‹œ$   H‹l$`H+¶l$K@ˆ+H‹œ$  H‰$Hƒ$xè    H‹œ$  H‹¬$¨  H‰«€   H‹¬$°  H‰«ˆ   H‹¬$   €=     uKH‰kxH‹œ$  H‰$Hƒ$8è    H‹„$  HÇ@8    H‰$Hƒ$Dè    H‹œ$  1í@ˆkDéiîÿÿLCxL‰$H‰l$è    ë¥è    ‰é…şÿÿLC`L‰$H‰l$è    é'şÿÿè    ‰éıÿÿLƒ   L‰$H‰l$è    é®üÿÿH‰$H‰l$è    é@üÿÿè    ‰é^ûÿÿ‰éüùÿÿH‹œ$h  Hƒû t3H‹œ$h  H‰œ$8  H‹œ$p  H‰œ$@  è    è    HÄ  ÃH    H‰$è    H‹    H‰œ$8  H‹    H‰œ$@  è    è    HÄ  Ã‰é>øÿÿ‰é&øÿÿH    H‰$è    H‹œ$x  H‹-    H9ëuTH    H‰$è    H‹¬$x  H‰,$H‹¬$€  H‰l$H‹-    H‰l$H‹-    H‰l$è    ¶\$ €û …œ÷ÿÿH‹œ$x  Hƒû t3H‹œ$x  H‰œ$8  H‹œ$€  H‰œ$@  è    è    HÄ  ÃH    H‰$è    H‹    H‰œ$8  H‹    H‰œ$@  è    è    HÄ  Ã‰éöÿÿ‰éöÿÿè    è    HÄ  Ã‰é5ôÿÿH    H‰$H    H‰\$H    H‰\$è    H‹D$é¡óÿÿ‰éVóÿÿ‰E é<óÿÿ‰éşòÿÿˆL$J1ÛH‰œ$È  H‰œ$Ğ  Hœ$È  Hƒû „.  HÇ„$H     HÇ„$P     H‰œ$@  H    H‰$H\$JH‰\$HÇD$    è    H‹\$H‰œ$¸  H‹\$ H‰œ$À  H‹œ$@  H‰$è    H‹œ$@  H‹¬$¸  H‰+H‹¬$À  €=     …   H‰kH    H‰$HÇD$*   H‹œ$@  H‰\$H‹œ$H  H‰\$H‹œ$P  H‰\$ è    H‹T$(H‹L$0H‰”$Ø  H‰”$8  H‰Œ$à  H‰Œ$@  è    è    HÄ  ÃLCL‰$H‰l$è    élÿÿÿ‰éËşÿÿ‰éÔğÿÿLCL‰$H‰L$è    L‹Œ$  éšğÿÿè    ‰é.ğÿÿè    LC@L‰$H‰l$è    éïÿÿè    è    ‰éYíÿÿLC@L‰$H‰l$è    éJìÿÿH‰$Hƒ$Hè    H‹œ$  H‹kHHƒı …*  H    H‰œ$Ø   HÇ„$à      1ÛH‰œ$È   H‰œ$Ğ   H    H‰$è    H‹D$H‰„$¨   H‰$è    H‹œ$¨   H‹¬$à   H‰kH‹¬$Ø   €=     …›   H‰+H‹œ$¨   H‰œ$¨   H‹    1íH9étKH‹¬$¨   H‰Œ$Ø  H‰¬$à  H‰Œ$È   H‰Œ$8  H‰¬$Ğ   H‰¬$@  è    è    HÄ  ÃH    H‰$H    H‰\$H    H‰\$è    H‹L$ë†H‰$H‰l$è    éUÿÿÿH‹œ$€   H‰$Hƒ$@è    H‹œ$  H‰$Hƒ$Hè    H‹œ$  Hƒû t9HkHH‹œ$€   Hƒû t#LC@L‰D$H‰l$H-    H‰,$è    éÖêÿÿ‰ëÙ‰ëÃ€û;…Œ   H‰4$H$   è    H‹œ$  H‹«˜   Hƒı uAH    H‰$è    H‹    H‰œ$8  H‹    H‰œ$@  è    è    HÄ  Ã1ÛH‰œ$8  H‰œ$@  è    è    HÄ  Ãˆ\$J1ÛH‰œ$È  H‰œ$Ğ  Hœ$È  Hƒû „.  HÇ„$H     HÇ„$P     H‰œ$@  H    H‰$H\$JH‰\$HÇD$    è    H‹\$H‰œ$¸  H‹\$ H‰œ$À  H‹œ$@  H‰$è    H‹œ$@  H‹¬$¸  H‰+H‹¬$À  €=     …   H‰kH    H‰$HÇD$   H‹œ$@  H‰\$H‹œ$H  H‰\$H‹œ$P  H‰\$ è    H‹T$(H‹L$0H‰”$Ø  H‰”$8  H‰Œ$à  H‰Œ$@  è    è    HÄ  ÃLCL‰$H‰l$è    élÿÿÿ‰éËşÿÿ‰épæÿÿLCL‰$H‰l$è    é³åÿÿH‹Œ$   H‹„$(  H‰Œ$  H‰„$  HÇD$P   HÇ„$À       H    H‰$H‰Œ$  H‰L$H‰„$   H‰D$Hœ$À   H‰\$è    ¶\$ H‹Œ$À   €û „õ   H‰Œ$ˆ   H‰$è    H‹Œ$ˆ   H‹YH‹l$PH9ëŒÊ   H‰ÈH‰„$¸   H‹    H‰„$°   1íH9ètoH‹œ$  H‰$è    H‹Œ$¸   H‹„$°   H‹œ$  Hƒû t<H‰„$¨  H‰H‰Œ$°  €=     u	H‰Ké‘äÿÿLCL‰$H‰L$è    ézäÿÿ‰ëÀH    H‰$H    H‰\$H    H‰\$è    H‹\$H‰œ$°   éWÿÿÿH‹\$PHƒû}	HÇD$P   H    H‰$è    H‹L$PH‹D$H‰D$xH‰„$   H    H‰$H‰L$H‰L$è    L‹D$H‹t$ H‹l$(H‹”$  H‹Œ$   H¼$¸  1ÀHƒÇøè    L‰„$ø  L‰„$¸  H‰´$   H‰´$À  H‰¬$  H‰¬$È  H‰”$è   H‰”$Ğ  H‰Œ$ğ   H‰Œ$Ø  HÇ„$   ÿÿÿÿHÇ„$  ÿÿÿÿH‹œ$   H‰$HÇD$X   è    H‹œ$   Hƒû t,H¬$¸  H‰\$H‰l$H-    H‰,$è    H‹D$xéöıÿÿ‰ëĞè    éğáÿÿè
+      ^
+  *runtime.racefuncenter   ´  type."".reader   ”
+  $runtime.assertI2I2   –
+  "runtime.racewrite   Ø 6runtime.writeBarrierEnabled   
+  V"".(*decoder).readHeaderAndScreenDescriptor   ü
+  &runtime.deferreturn   †
+  (runtime.racefuncexit   Ú
+  &runtime.deferreturn   ä
+  (runtime.racefuncexit   –
+   runtime.raceread   €       ‚
+  &runtime.deferreturn   Œ
+  (runtime.racefuncexit   ¸
+  6"".(*decoder).readExtension   ¬	
+  &runtime.deferreturn   ¶	
+  (runtime.racefuncexit   ê	
+  H"".(*decoder).newImageFromDescriptor   ğ
+
+  &runtime.deferreturn   ú
+
+  (runtime.racefuncexit   ¶
+   runtime.raceread   
+   runtime.raceread   Ò
+  8"".(*decoder).readColorTable   €
+  "runtime.racewrite   Ü 6runtime.writeBarrierEnabled   ê
+  &runtime.deferreturn   ô
+  (runtime.racefuncexit   °
+   runtime.raceread   ˆ
+   runtime.raceread   Ö
+   runtime.raceread   ¾
+   runtime.raceread   ğ  0type.image/color.Palette   Ê
+  &runtime.growslice_n   –  ,type.image/color.Color   ˆ
+  ,runtime.typedslicecopy   ¶
+  "runtime.racewrite   ’ 6runtime.writeBarrierEnabled   ø
+   runtime.raceread   ¤
+   runtime.raceread   Ø
+  "runtime.racewrite   æ  *type.image/color.RGBA   ü  ,type.image/color.Color   ”  Tgo.itab.image/color.RGBA.image/color.Color   Î
+  runtime.convT2I   Ì 6runtime.writeBarrierEnabled   ô
+   runtime.raceread   Ş       Ö 
+  &runtime.deferreturn   à 
+  (runtime.racefuncexit   ª!  &type."".blockReader   ¼!
+  "runtime.newobject   ú!
+  ,runtime.racewriterange   º"
+Ê  runtime.duffzero   Ì"
+  "runtime.racewrite   î"
+   runtime.raceread   Ø#  type."".reader   ê#
+  (runtime.typedmemmove   ¨$  Bgo.itab.*"".blockReader.io.Reader   °%
+  ,compress/lzw.NewReader   ¬&
+  "runtime.deferproc   à&
+   runtime.raceread   î&  type.io.Reader   ´'
+  runtime.convI2I   ®(
+  io.ReadFull   „)  &io.ErrUnexpectedEOF   –)
+   runtime.raceread   ´)  &io.ErrUnexpectedEOF   Ô)  &io.ErrUnexpectedEOF   æ)
+   runtime.raceread   ¦*  &io.ErrUnexpectedEOF   ¾* &io.ErrUnexpectedEOF   Ò*
+  runtime.ifaceeq   ô*  "".errNotEnough   †+
+   runtime.raceread   ”+  "".errNotEnough   ²+ "".errNotEnough   Î+
+  &runtime.deferreturn   Ø+
+  (runtime.racefuncexit   ´,
+  &runtime.deferreturn   ¾,
+  (runtime.racefuncexit   ¶.       ’/  io.EOF   ¤/
+   runtime.raceread   Â/  io.EOF   â/  io.EOF   ô/
+   runtime.raceread   ´0  io.EOF   Ì0 io.EOF   à0
+  runtime.ifaceeq   Î2
+  ,"".(*blockReader).Read   ®3  io.EOF   À3
+   runtime.raceread   Ş3  io.EOF   ş3  io.EOF   4
+   runtime.raceread   Ğ4  io.EOF   è4 io.EOF   ü4
+  runtime.ifaceeq   Ä5
+   runtime.raceread   ˆ6
+   runtime.raceread   Î7
+   runtime.raceread   š8
+   runtime.raceread   Ô8  "".errBadPixel   æ8
+   runtime.raceread   ô8  "".errBadPixel   ’9 "".errBadPixel   ®9
+  &runtime.deferreturn   ¸9
+  (runtime.racefuncexit   À:
+   runtime.raceread   Œ;
+  "".uninterlace   ¾;
+   runtime.raceread   ²<  ,type.[]*image.Paletted   ¨=
+  "runtime.growslice   ¸>
+  "runtime.racewrite   ö> 6runtime.writeBarrierEnabled   ¼?
+  "runtime.racewrite   ¤@ 6runtime.writeBarrierEnabled   ì@
+   runtime.raceread   ªA
+   runtime.raceread   ŒB  type.[]int   ‚C
+  "runtime.growslice   ’D
+  "runtime.racewrite   ğD
+  "runtime.racewrite   ÌE 6runtime.writeBarrierEnabled   F
+   runtime.raceread   ÌF
+   runtime.raceread   ºG  type.[]uint8   °H
+  "runtime.growslice   ÀI
+  "runtime.racewrite   J
+  "runtime.racewrite   †K 6runtime.writeBarrierEnabled   ÀK
+  "runtime.racewrite   üK
+  "runtime.racewrite   ÆL
+  .runtime.writebarrierptr   ÔL
+  $runtime.panicslice   ŠM
+  .runtime.writebarrierptr   M
+  $runtime.panicslice   ÚM
+  .runtime.writebarrierptr   €N
+  .runtime.writebarrierptr   ”N
+  $runtime.panicslice   œO
+  &runtime.deferreturn   ¦O
+  (runtime.racefuncexit   ÄO  "".errTooMuch   ÖO
+   runtime.raceread   äO  "".errTooMuch   ‚P "".errTooMuch   P
+  &runtime.deferreturn   ¨P
+  (runtime.racefuncexit   âP  &io.ErrUnexpectedEOF   ôP
+   runtime.raceread   ’Q  &io.ErrUnexpectedEOF   ªQ  &io.ErrUnexpectedEOF   ¼Q
+   runtime.raceread   üQ  &io.ErrUnexpectedEOF   ”R &io.ErrUnexpectedEOF   ¨R
+  runtime.ifaceeq   ¬S
+  &runtime.deferreturn   ¶S
+  (runtime.racefuncexit   ÔS  "".errTooMuch   æS
+   runtime.raceread   ôS  "".errTooMuch   ’T "".errTooMuch   ®T
+  &runtime.deferreturn   ¸T
+  (runtime.racefuncexit   ğT
+  &runtime.deferreturn   úT
+  (runtime.racefuncexit   ¦U  (type.*"".blockReader   ¼U  type.io.Reader   ÔU  Bgo.itab.*"".blockReader.io.Reader   èU
+   runtime.typ2Itab   ÆW  type.uint8   şW
+  runtime.convT2E   ÔX
+  "runtime.racewrite   –Y 6runtime.writeBarrierEnabled   ºY  lgo.string."gif: pixel size in decode out of range: %d"   ¬Z
+  fmt.Errorf   Œ[
+  &runtime.deferreturn   –[
+  (runtime.racefuncexit   Ê[
+  .runtime.writebarrierptr   ”\
+  .runtime.writebarrierptr   ¸\
+  $runtime.panicindex   Ô\
+  $runtime.panicindex   ü\
+  .runtime.writebarrierptr   ]
+  $runtime.panicslice   ]
+  $runtime.panicslice   Ô]
+  .runtime.writebarrierptr   ú]
+   runtime.raceread   ´^  >go.string."gif: no color table"   _  .type.errors.errorString    _
+  "runtime.newobject   Ì_
+  "runtime.racewrite   ` 6runtime.writeBarrierEnabled   Ò`  Bgo.itab.*errors.errorString.error   Üa
+  &runtime.deferreturn   æa
+  (runtime.racefuncexit   „b  0type.*errors.errorString   šb  type.error   ²b  Bgo.itab.*errors.errorString.error   Æb
+   runtime.typ2Itab   ğb
+  .runtime.writebarrierptr   ¦c
+  "runtime.racewrite   Òc
+   runtime.raceread   ¼d  0type.image/color.Palette   Îd
+  (runtime.typedmemmove   œe
+   runtime.raceread   Ôe  &io.ErrUnexpectedEOF   æe
+   runtime.raceread   ôe  &io.ErrUnexpectedEOF   ’f &io.ErrUnexpectedEOF   ®f
+  &runtime.deferreturn   ¸f
+  (runtime.racefuncexit   øf
+  &runtime.deferreturn   ‚g
+  (runtime.racefuncexit   °h  type.uint8   èh
+  runtime.convT2E   ¾i
+  "runtime.racewrite   €j 6runtime.writeBarrierEnabled   ¤j  Vgo.string."gif: unknown block type: 0x%.2x"   –k
+  fmt.Errorf   ök
+  &runtime.deferreturn   €l
+  (runtime.racefuncexit   ´l
+  .runtime.writebarrierptr   şl
+  .runtime.writebarrierptr   €n  $type.*bufio.Reader   àn
+  $runtime.assertI2T2   ®o
+   runtime.raceread   †p  >go.itab.*bufio.Reader."".reader   Æp
+  "runtime.racewrite   ´q 6runtime.writeBarrierEnabled   ğq
+  .runtime.writebarrierptr   r  $type.*bufio.Reader   ¦r  type."".reader   ¾r  >go.itab.*bufio.Reader."".reader   Òr
+   runtime.typ2Itab   ¬s  "type.bufio.Reader   ¾s
+  "runtime.newobject   ús  type.[]uint8    t
+  "runtime.makeslice   „u
+Ô  runtime.duffzero   ˆw
+  ,runtime.racewriterange   Öw  "type.bufio.Reader   èw
+  (runtime.typedmemmove   x
+  0runtime.morestack_noctxt   `   ¶"".autotmp_0083  "type.interface {} "".autotmp_0082  (type.[1]interface {} "".autotmp_0080  *type.*[1]interface {} "".autotmp_0079  &type.[]interface {} "".autotmp_0078  type.int "".autotmp_0077  type.[]uint8 "".autotmp_0076  type.uint8 "".autotmp_0075  type.int "".autotmp_0074 ÿtype.[]int "".autotmp_0073  type.int "".autotmp_0072  type.int "".autotmp_0071 Ï,type.[]*image.Paletted "".autotmp_0070  type.uint8 "".autotmp_0069  type.*uint8 "".autotmp_0068 ï
+type.int "".autotmp_0067 ß
+type.int "".autotmp_0066  type.*uint8 "".autotmp_0065 ß	(type.*"".blockReader "".autotmp_0064 ¯"type.interface {} "".autotmp_0063 (type.[1]interface {} "".autotmp_0060 Ÿ&type.[]interface {} "".autotmp_0059 Ï
+type.int "".autotmp_0058  0type.image/color.Palette "".autotmp_0057 ï0type.[]image/color.Color "".autotmp_0056  type.*uint8 "".autotmp_0055  type.error "".autotmp_0054 Ï	0type.*errors.errorString "".autotmp_0053  type.uint8 "".autotmp_0052 ¿	type.*uint8 "".autotmp_0051  $type.*bufio.Reader "".autotmp_0050  type.error "".autotmp_0049  type.uint8 "".autotmp_0048  type.int "".autotmp_0046  type.[]uint8 "".autotmp_0045  type.int "".autotmp_0044  type.error "".autotmp_0043  type.int "".autotmp_0042  type.[]uint8 "".autotmp_0041  type.error "".autotmp_0040  type.int "".autotmp_0039  type.[]uint8 "".autotmp_0038  type.error "".autotmp_0036  (type.*"".blockReader "".autotmp_0035  type.error "".autotmp_0034 ‹type.uint8 "".autotmp_0033  type.error "".autotmp_0032  type.uint8 "".autotmp_0031 ‡*type.image/color.RGBA "".autotmp_0030 ¿0type.image/color.Palette "".autotmp_0029  type.int "".autotmp_0028  0type.*errors.errorString "".autotmp_0027  type.error "".autotmp_0026 0type.image/color.Palette "".autotmp_0025  type.error "".autotmp_0023  type.error "".autotmp_0022  type.error "".autotmp_0021 ‰type.uint8 "".autotmp_0020 ïtype.error "".autotmp_0019  $type.*bufio.Reader "".autotmp_0018 ¯"type.bufio.Reader "".autotmp_0017 ßtype.[]uint8 "".autotmp_0016 ¯	$type.*bufio.Reader "".autotmp_0015 ¿
+type.int "".autotmp_0014 Ÿ	$type.*bufio.Reader "".autotmp_0013 Ïtype."".reader "".~r0 	type.error errors.textÂ·2 ïtype.string bufio.rÂ·3 Ïtype.io.Reader bufio.bufÂ·2 ¯type.[]uint8 bufio.bÂ·1 ÿ	$type.*bufio.Reader bufio.rÂ·6 ¯
+$type.*bufio.Reader bufio.bÂ·4 
+$type.*bufio.Reader bufio.sizeÂ·3 ÿ
+type.int bufio.rdÂ·2 ïtype.io.Reader bufio.rdÂ·2 type.io.Reader "".pixel type.uint8 "".err Ïtype.error "".err ¯type.error "".lzwr Ï$type.io.ReadCloser 
+"".br ï	(type.*"".blockReader "".litWidth type.uint8 *"".useLocalColorTable ‘type.bool "".err type.error "".m Ÿ
+(type.*image.Paletted "".err ïtype.error "".err ¯type.error 
+"".rr ¯type."".reader "".~r2 @type.error "".configOnly 0type.bool "".r type.io.Reader "".d   type.*"".decoder –" ¬Ÿ .Ÿ “Ÿ TŸ aŸ ¼Ÿ µŸ »Ÿ 2Ÿ ¼Ÿ ö
+Ÿ @Ÿ ÆŸ @Ÿ  Ÿ Ÿ §Ÿ ¨Ÿ $Ÿ ¾Ÿ „ < ˆ”"*)y=
+#
+c-	(/Ğ„ÃİV?@¯e=œx4YZ&UV—/|,4•–&+ÚÑÙ&¿¶!&ƒ„4‡ˆx&wx4{|#OP2²EF&	
+$Û%&Jj’	&4¿ÀÃÄ²ÉÊ&Ñ
+…	
+ ú .[A=Ó¥t$ŸWa®4Û>µx1#¶(6Õ9‚… L7#Jü"BX5Ó8~7Ù:€9J
+6
+;C#,.›-#^&‹+l/ %)"
+"S‡60	{H<+l/ %;q'LU161´0 TgclocalsÂ·0a36944aa36b6ab1001db46d1337945e TgclocalsÂ·bcd393509e676e83e48888afa0238fd2   \prebuilts/go/linux-x86/src/image/gif/reader.goşV"".(*decoder).readHeaderAndScreenDescriptor  €  ädH‹%    HD$ H;A†Ğ  Hìà   H‹œ$à   H‰$è    H‹„$è   1ÛH‰œ$ğ   H‰œ$ø   H‰ÃHƒø „Š  HÃ¨   Hƒû „r  HÇ„$Ğ      HÇ„$Ø      H‰œ$È   H‰$è    H    H‰$H‹´$è   H|$H‹H‰H‹NH‰Oè    H\$H‹H‰$H‹KH‰L$H‹œ$È   H‰\$H‹œ$Ğ   H‰\$H‹œ$Ø   H‰\$ è    H‹”$è   H‹D$0H‹L$8H‰L$PH‰D$HHƒø tH‰„$ğ   H‰Œ$ø   è    HÄà   ÃH‰ÓHƒú „Š  HÃ¨   Hƒû „r  HÇ„$Ğ      HÇ„$Ø      H‰œ$È   H‰$Hƒ$è    HÇ$    H‹œ$È   H‰\$H‹œ$Ğ   H‰\$H‹œ$Ø   H‰\$è    H‹L$ H‹D$(H‹œ$è   Hƒû „í  H‰D$`H‰CH‰L$X€=     …»  H‰KH‹œ$è   H‰$Hƒ$è    H‹”$è   Hƒú „ˆ  H‹JH‰L$XH‹BH‰D$`Hƒø…  H‰$H‰D$H-    H‰l$HÇD$   è    H‹”$è   ¶\$ €û „e  H‰$Hƒ$ è    H‹œ$è   H«¨   HƒÅH‰,$è    H‹œ$è   H«¨   HƒÅH‰,$è    H‹„$è   ¶˜®   ¶¨¯   HÁåHëH‰X H‰$Hƒ$(è    H‹œ$è   H«¨   HƒÅH‰,$è    H‹œ$è   H«¨   HƒÅ	H‰,$è    H‹„$è   ¶˜°   ¶¨±   HÁåHëH‰X(H¨¨   HƒÅ
+H‰,$è    H‹Œ$è   ¶©²   H‰ë@ˆl$GHã€   €û „"  H‰$Hƒ$@è    H‹œ$è   H«¨   HƒÅH‰,$è    H‹„$è   Hƒø „  ¶¨³   @ˆh@H‰$¶\$Gˆ\$è    H‹\$H‰œ$°   H‹\$H‰œ$¸   H‹\$ H‰œ$À   H‹\$(H‰œ$ˆ   H‹\$0H‰œ$   H‹œ$è   H‰$Hƒ$Hè    H‹œ$è   H‹¬$¸   H‰kPH‹¬$À   H‰kXH‹¬$°   €=     u`H‰kHH‹„$ˆ   H‹Œ$   H‰L$PH‰D$HHƒø tH‰„$ğ   H‰Œ$ø   è    HÄà   Ã1ÛH‰œ$ğ   H‰œ$ø   è    HÄà   ÃLCHL‰$H‰l$è    ë‰ éàşÿÿH‰$Hƒ$è    H‹”$è   Hƒú „§  H‹JH‰L$XH‹BH‰D$`Hƒøu9H‰$H‰D$H-    H‰l$HÇD$   è    H‹”$è   ¶\$ €û …*ıÿÿ1ÛH‰\$xH‰œ$€   H\$xHƒû „1  HÇ„$       HÇ„$¨      H‰œ$˜   H    H‰$H‰T$Hƒ|$ „é   HƒD$HÇD$    è    H‹\$H‰\$hH‹\$ H‰\$pH‹œ$˜   H‰$è    H‹œ$˜   H‹l$hH‰+H‹l$p€=     u{H‰kH    H‰$HÇD$   H‹œ$˜   H‰\$H‹œ$    H‰\$H‹œ$¨   H‰\$ è    H‹L$(H‹D$0H‰Œ$ˆ   H‰Œ$ğ   H‰„$   H‰„$ø   è    HÄà   ÃLCL‰$H‰l$è    érÿÿÿ‰%    éÿÿÿ‰éÈşÿÿ‰éRşÿÿ‰éqûÿÿLCL‰$H‰L$è    é2ûÿÿ‰éûÿÿ‰é‡úÿÿ‰éoúÿÿ‰é‡ùÿÿ‰ éoùÿÿè    éùÿÿR
+      X
+  *runtime.racefuncenter   š
+   runtime.raceread   ¨  type.io.Reader   ğ
+  runtime.convI2I   ò
+  io.ReadFull   à
+  (runtime.racefuncexit   ˆ
+  "runtime.racewrite   ğ
+  2runtime.slicebytetostring   Ğ 6runtime.writeBarrierEnabled   ’
+   runtime.raceread   	  $go.string."GIF87a"   ´	
+   runtime.eqstring   ü	
+  "runtime.racewrite   ´
+
+   runtime.raceread   ì
+
+   runtime.raceread   Ê
+  "runtime.racewrite   ‚
+   runtime.raceread   º
+   runtime.raceread   ¤
+   runtime.raceread   
+  "runtime.racewrite   Æ
+   runtime.raceread   ¤
+  8"".(*decoder).readColorTable   Ò
+  "runtime.racewrite   ® 6runtime.writeBarrierEnabled   ¦
+  (runtime.racefuncexit   ä
+  (runtime.racefuncexit   ˜
+  .runtime.writebarrierptr   Æ
+   runtime.raceread   º  $go.string."GIF89a"   à
+   runtime.eqstring   –  type.string   è
+  runtime.convT2E   ²
+  "runtime.racewrite   è 6runtime.writeBarrierEnabled   „  Tgo.string."gif: can't recognize format %s"   ö
+  fmt.Errorf   Ô
+  (runtime.racefuncexit   ˆ
+  .runtime.writebarrierptr   ø
+  .runtime.writebarrierptr   Ò
+  0runtime.morestack_noctxt   0À  "".autotmp_0108 ï"type.interface {} "".autotmp_0107 Ï(type.[1]interface {} "".autotmp_0104 &type.[]interface {} "".autotmp_0103  type.string "".autotmp_0102  type.string "".autotmp_0101  type.error "".autotmp_0100 _0type.image/color.Palette "".autotmp_0099  type.error "".autotmp_0098  type.[]uint8 "".autotmp_0097 ¯type.error "".autotmp_0096 /type.[]uint8 "".fields ±type.uint8 "".err ¯type.error "".~r0 type.error "".d   type.*"".decoder DÀœ¿Àâ¿À¿À·¿ÀŠ € ˆ’&%Ê »}gg;G¾	qŸ2 J +al7T4ñj9Ñ
+%b/8	E TgclocalsÂ·35a1729b099c0d71fdd08adea73b0542 TgclocalsÂ·7e9c1a0358207526648c7a6c5b3be550   \prebuilts/go/linux-x86/src/image/gif/reader.goş8"".(*decoder).readColorTable  €  ødH‹%    H„$xÿÿÿH;A†  Hì  H‹œ$  H‰$è    H‹”$  1ÛH‰œ$   H‰œ$(  H‰œ$0  1ÛH‰œ$8  H‰œ$@  ¶Œ$  Hƒá¶ÉHÿÁHÇÅ   Hƒù@ƒ¡  HÓåH‰ëH‰l$HHkÛHû   ‡~  H‰ÕHƒú „j  HÅ¨   Hƒı „Q  H‰œ$ø   HÇ„$      H‰¬$ğ   H‰$è    H    H‰$H‹´$  H|$H‹H‰H‹NH‰Oè    H\$H‹H‰$H‹KH‰L$H‹œ$ğ   H‰\$H‹œ$ø   H‰\$H‹œ$   H‰\$ è    H‹l$HH‹L$0H‹T$8H‰T$xH‰L$pHƒù „X  1ÛH‰œ$    H‰œ$¨   Hœ$    Hƒû „-  HÇ„$à      HÇ„$è      H‰œ$Ø   H‰$H‰T$è    H‹\$H‰œ$   H‹\$H‰œ$˜   H‹œ$Ø   H‰$è    H‹œ$Ø   H‹¬$   H‰+H‹¬$˜   €=     …•   H‰kH    H‰$HÇD$"   H‹œ$Ø   H‰\$H‹œ$à   H‰\$H‹œ$è   H‰\$ è    H‹L$(H‹D$01ÛH‰œ$   H‰œ$(  H‰œ$0  H‰Œ$°   H‰Œ$8  H‰„$¸   H‰„$@  è    HÄ  ÃLCL‰$H‰l$è    éXÿÿÿ‰éÌşÿÿH    H‰$H‰l$H‰l$è    H‹l$H‹T$ H‹D$(1ÉH‰¬$À   H‰”$È   H‰„$Ğ   H‹œ$È   1ÀH‰\$`H‹l$`H9è2  H‰D$hH‰D$X1Ûˆ\$Dˆ\$Eˆ\$Fˆ\$GH‰ÈH‰L$PH‹œ$  HƒÀ H«¨   H=   ƒ›  Hl H‰,$è    H‹”$  H‹D$PH‰ÁHƒÀ Hƒú „h  Hª¨   H=   ƒN  Hl ¶] ˆ\$DH‰ÈHÿÀHª¨   H=   ƒ!  Hl H‰,$è    H‹”$  H‹D$PH‰ÁHÿÀHƒú „ï  Hª¨   H=   ƒÕ  Hl ¶] ˆ\$EH‰ÈHƒÀHª¨   H=   ƒ§  Hl H‰,$è    H‹D$PH‹œ$  HƒÀHƒû „w  H«¨   H=   ƒ]  Hl ¶] ˆ\$FÆD$GÿH‹œ$À   H‹l$XL‹„$È   L9Åƒ&  HÁåHëH‰$è    H    H‰$H    H‰\$H    H‰\$H\$DH‰\$HÇD$     è    H‹L$(H‹D$0H‹œ$À   H‹l$XL‹„$È   L9Åƒ¬   HÁåHëH‰Œ$€   H‰H‰„$ˆ   €=     urH‰CH‹L$PHƒÁH‹D$hHÿÀH‹l$`H9èŒÎıÿÿH‹œ$À   H‰œ$   H‹œ$È   H‰œ$(  H‹œ$Ğ   H‰œ$0  1ÛH‰œ$8  H‰œ$@  è    HÄ  ÃLCL‰$H‰D$è    é{ÿÿÿè    è    è    ‰é‚şÿÿè    è    ‰é
+şÿÿè    è    ‰é‘ıÿÿè    ‰E é§úÿÿ‰éúÿÿè    1íéXúÿÿè    éÄùÿÿH
+      ^
+  *runtime.racefuncenter   Ê
+   runtime.raceread   Ø  type.io.Reader    
+  runtime.convI2I   ¢
+  io.ReadFull   Œ
+  runtime.convI2E   â
+  "runtime.racewrite   ¤ 6runtime.writeBarrierEnabled   È  \go.string."gif: short read on color table: %s"   º	
+  fmt.Errorf   Ì
+
+  (runtime.racefuncexit   €
+  .runtime.writebarrierptr   ¦  0type.image/color.Palette   Ì
+  "runtime.makeslice   ú
+   runtime.raceread   Ä
+   runtime.raceread   
+   runtime.raceread   ê
+  "runtime.racewrite   ø  *type.image/color.RGBA     ,type.image/color.Color   ¦  Tgo.itab.image/color.RGBA.image/color.Color   à
+  runtime.convT2I   ğ 6runtime.writeBarrierEnabled   Ê
+  (runtime.racefuncexit   ş
+  .runtime.writebarrierptr   ’
+  $runtime.panicindex    
+  $runtime.panicindex   ®
+  $runtime.panicindex   Ê
+  $runtime.panicindex   Ø
+  $runtime.panicindex   ô
+  $runtime.panicindex   ‚
+  $runtime.panicindex   
+  $runtime.panicindex   Ê
+  $runtime.panicslice   æ
+  0runtime.morestack_noctxt   p  ("".autotmp_0123 Ïtype.int "".autotmp_0122  type.int "".autotmp_0121 ï"type.interface {} "".autotmp_0120 Ï(type.[1]interface {} "".autotmp_0117 _&type.[]interface {} "".autotmp_0116  type.int "".autotmp_0115 ‡*type.image/color.RGBA "".autotmp_0113  type.error "".autotmp_0112 ¯type.error "".autotmp_0111 /type.[]uint8 "".autotmp_0110 ¿type.int "".i ßtype.int "".p 0type.image/color.Palette "".j ïtype.int "".err ¯type.error "".n ÿtype.int "".~r2 Ptype.error "".~r1  0type.image/color.Palette "".fields type.uint8 "".d   type.*"".decoder *"ş À ^¾",&Ü­&C'‰	OM @ .¶lu+lI&—¨
+x TgclocalsÂ·6fa66bd28ff106d38cd5e72e1558bac1 TgclocalsÂ·cdd9e31f464a29f54111441026eac2bd   \prebuilts/go/linux-x86/src/image/gif/reader.goş6"".(*decoder).readExtension  à  ÊdH‹%    H„$`ÿÿÿH;A†€  Hì   H‹œ$   H‰$è    1ÛH‰œ$0  H‰œ$8  H‹œ$(  H‰$è    H‹œ$(  Hƒû „,  H‹H‹kH‰¬$¨   H‰,$H‰Œ$    H‹Y(ÿÓH‹´$(  ¶\$H‹D$H‹L$H‰İH‰Œ$ˆ   H‰„$€   Hƒø tH‰„$0  H‰Œ$8  è    HÄ   Ã1Éˆ\$F€ûù‡  €û…k  HÇÁ   Hƒù 
+  H‰L$HHù   ‡A  H‰õHƒş „-  HÅ¨   Hƒı „  H‰Œ$  HÇ„$     H‰¬$  H‰4$è    H    H‰$H‹´$(  H|$H‹H‰H‹NH‰Oè    H\$H‹H‰$H‹KH‰L$H‹œ$  H‰\$H‹œ$  H‰\$H‹œ$  H‰\$ è    ¶l$FH‹´$(  H‹L$HH‹D$0H‹T$8H‰T$xH‰D$pHƒø tH‰„$0  H‰”$8  è    HÄ   Ã@€ıÿ…—  Hù   ‡  H‰õHƒş „  HÅ¨   Hƒı „ï  H‰ÊHÇÁ   H‰¬$  H‰,$H‰”$  H‰T$H‰Œ$  H‰L$è    H‹´$(  H‹L$H‰Œ$°   H‹D$ H‰„$¸   Hƒø…  H‰$H‰D$H-    H‰l$HÇD$   è    H‹´$(  ¶\$ €û „Ò   H‰4$è    H‹´$(  H‹D$H‹T$H‹L$H‰L$hHƒø „  H‰T$`Hƒú …õ   Hƒø…Š   H®¨   H‰,$è    H‹´$(  ¶¨   €ûufH‰4$Hƒ$0è    H‹œ$(  H«¨   HÿÅH‰,$è    H‹œ$(  H«¨   HƒÅH‰,$è    H‹´$(  ¶©   ¶®ª   HÁåH	ëH‰^0H‰4$è    H‹´$(  H‹D$H‹T$H‹L$H‰Œ$˜   Hƒø tH‰”$   Hƒú tÄH‰”$   H‰”$0  H‰Œ$8  è    HÄ   ÃH‰T$`H‰”$0  H‰Œ$8  è    HÄ   Ã‰E é	şÿÿ‰éñıÿÿè    ‰E éäüÿÿ‰éÌüÿÿè    €ûùu@H‰4$è    H‹L$H‹D$H‰Œ$à   H‰Œ$0  H‰„$è   H‰„$8  è    HÄ   Ã@ˆl$G1ÛH‰œ$Ğ   H‰œ$Ø   Hœ$Ğ   Hƒû „$  HÇ„$ø      HÇ„$      H‰œ$ğ   H    H‰$H\$GH‰\$HÇD$    è    H‹\$H‰œ$À   H‹\$ H‰œ$È   H‹œ$ğ   H‰$è    H‹œ$ğ   H‹¬$À   H‰+H‹¬$È   €=     u{H‰kH    H‰$HÇD$   H‹œ$ğ   H‰\$H‹œ$ø   H‰\$H‹œ$   H‰\$ è    H‹L$(H‹D$0H‰Œ$à   H‰Œ$0  H‰„$è   H‰„$8  è    HÄ   ÃLCL‰$H‰l$è    érÿÿÿ‰éÕşÿÿ€ûş„úúÿÿ€ûÿ…šşÿÿH‰4$è    H‹œ$(  Hƒû tuH‹H‹kH‰¬$¨   H‰,$H‰Œ$    H‹Y(ÿÓ¶l$FH‹´$(  ¶\$H‹D$H‹T$H‰T$XH‰D$PHƒø tH‰„$0  H‰”$8  è    HÄ   Ã¶ÛH‰Ùéeúÿÿ‰ë‡‰éÍùÿÿè    é[ùÿÿJ
+      ^
+  *runtime.racefuncenter   ¤
+   runtime.raceread          ”
+  (runtime.racefuncexit    
+   runtime.raceread   ®  type.io.Reader   ö
+  runtime.convI2I   ø
+  io.ReadFull   ú
+  (runtime.racefuncexit   Ş	
+  8runtime.slicebytetostringtmp   Ö
+  .go.string."NETSCAPE2.0"   ü
+
+   runtime.eqstring   º
+  ."".(*decoder).readBlock   Ø
+   runtime.raceread   œ
+  "runtime.racewrite   Ò
+   runtime.raceread   Š
+   runtime.raceread   Ş
+  ."".(*decoder).readBlock   ş
+  (runtime.racefuncexit   Â
+  (runtime.racefuncexit   ú
+  $runtime.panicslice   ¦
+  $runtime.panicslice   Æ
+  @"".(*decoder).readGraphicControl   ¤
+  (runtime.racefuncexit   Ô  type.uint8   Œ
+  runtime.convT2E   â
+  "runtime.racewrite   ¤ 6runtime.writeBarrierEnabled   À  Rgo.string."gif: unknown extension 0x%.2x"   ²
+  fmt.Errorf   
+  (runtime.racefuncexit   Ä
+  .runtime.writebarrierptr   ’
+   runtime.raceread   ô       ò
+  (runtime.racefuncexit   ¸
+  0runtime.morestack_noctxt   0À  4"".autotmp_0151 ßtype.string "".autotmp_0150 ¿"type.interface {} "".autotmp_0149 Ÿ(type.[1]interface {} "".autotmp_0146 _&type.[]interface {} "".autotmp_0145  type.uint8 "".autotmp_0144  type.error "".autotmp_0143  type.int "".autotmp_0142  type.error "".autotmp_0140  type.[]uint8 "".autotmp_0139  type.error "".autotmp_0138 /type.[]uint8 "".autotmp_0137  type.error "".autotmp_0136 ±type.uint8 "".autotmp_0135  type.error "".autotmp_0134  type.uint8 "".autotmp_0133  type.error "".autotmp_0132 type.error "".err Ÿtype.error "".err ÿtype.error "".err ßtype.error "".err Ÿtype.error "".size ¯type.int "".err ¿type.error "".extension ³type.uint8 "".~r0 type.error "".d   type.*"".decoder j"À³¿À²¿À¿À!¿Àp¿Àµ¿À°¿À+ ° ÎÚ"VUfPO	
+í$#Ï%.f(%3BA©,+&		Y65 L .›†lAr>Ut+h/'p8 TgclocalsÂ·9e286b0ce6b91a896378d8ebafa3879c TgclocalsÂ·455b2218b4ecd9700a90c3ae801c6535   \prebuilts/go/linux-x86/src/image/gif/reader.goş@"".(*decoder).readGraphicControl  à  ÎdH‹%    HD$ÈH;A†…  Hì¸   H‹œ$¸   H‰$è    H‹„$À   1ÛH‰œ$È   H‰œ$Ğ   H‰ÃHƒø „?  HÃ¨   Hƒû „'  HÇ„$¨      HÇ„$°      H‰œ$    H‰$è    H    H‰$H‹´$À   H|$H‹H‰H‹NH‰Oè    H\$H‹H‰$H‹KH‰L$H‹œ$    H‰\$H‹œ$¨   H‰\$H‹œ$°   H‰\$ è    H‹L$0H‹T$8H‰T$PH‰L$HHƒù „"  1ÛH‰\$hH‰\$pH\$hHƒû „   HÇ„$      HÇ„$˜      H‰œ$ˆ   H‰$H‰T$è    H‹\$H‰\$XH‹\$H‰\$`H‹œ$ˆ   H‰$è    H‹œ$ˆ   H‹l$XH‰+H‹l$`€=     uxH‰kH    H‰$HÇD$#   H‹œ$ˆ   H‰\$H‹œ$   H‰\$H‹œ$˜   H‰\$ è    H‹L$(H‹D$0H‰L$xH‰Œ$È   H‰„$€   H‰„$Ğ   è    HÄ¸   ÃLCL‰$H‰l$è    éuÿÿÿ‰éùşÿÿH‹œ$À   H«¨   HÿÅH‰,$è    H‹„$À   ¶¨©   @ˆl$GH‰$Hƒ$Aè    H‹„$À   ¶l$GHƒå@Àí@ˆhAH‰$Hƒ$8è    H‹œ$À   H«¨   HƒÅH‰,$è    H‹œ$À   H«¨   HƒÅH‰,$è    H‹„$À   ¶˜ª   ¶¨«   HÁåH	ëH‰X8¶\$GHƒã€û tdH‰$Hƒ$Cè    H‹œ$À   H«¨   HƒÅH‰,$è    H‹„$À   Hƒø tK¶¨¬   @ˆhCH‰$Hƒ$Dè    H‹œ$À   HÇÅ   @ˆkD1ÛH‰œ$È   H‰œ$Ğ   è    HÄ¸   Ã‰ ë±‰éÒüÿÿ‰ éºüÿÿè    éYüÿÿ.
+      X
+  *runtime.racefuncenter   š
+   runtime.raceread   ¨  type.io.Reader   ğ
+  runtime.convI2I   ò
+  io.ReadFull   À
+  runtime.convI2E   Š
+  "runtime.racewrite   À 6runtime.writeBarrierEnabled   Ü  ^go.string."gif: can't read graphic control: %s"   Î
+  fmt.Errorf   ¦
+  (runtime.racefuncexit   Ú
+  .runtime.writebarrierptr   ¨	
+   runtime.raceread   ì	
+  "runtime.racewrite   º
+
+  "runtime.racewrite   ò
+
+   runtime.raceread   ª
+   runtime.raceread   ¤
+  "runtime.racewrite   Ü
+   runtime.raceread   ª
+  "runtime.racewrite   ş
+  (runtime.racefuncexit   ¼
+  0runtime.morestack_noctxt   0ğ  "".autotmp_0161 ¿"type.interface {} "".autotmp_0160 Ÿ(type.[1]interface {} "".autotmp_0157 _&type.[]interface {} "".autotmp_0156  type.error "".autotmp_0155 type.error "".autotmp_0154 /type.[]uint8 "".flags átype.uint8 "".err ßtype.error "".~r0 type.error "".d   type.*"".decoder (ğÿïğëïğ% ° LºÑ÷&/'gC! 0 +alg%b,'«2 TgclocalsÂ·8db80988d5fec26b916d3152e6310442 TgclocalsÂ·8f800ad3214d4a86dfcc286895fca734   \prebuilts/go/linux-x86/src/image/gif/reader.goşH"".(*decoder).newImageFromDescriptor  €.  ê-dH‹%    H„$àıÿÿH;A†P  Hì   H‹œ$   H‰$è    H‹„$¨  1ÛH‰œ$¸  H‰œ$À  H‰ÃHƒø „
+  HÃ¨   Hƒû „ò
+  HÇ„$  	   HÇ„$˜     H‰œ$ˆ  H‰$è    H    H‰$H‹´$¨  H|$H‹H‰H‹NH‰Oè    H\$H‹H‰$H‹KH‰L$H‹œ$ˆ  H‰\$H‹œ$  H‰\$H‹œ$˜  H‰\$ è    H‹L$0H‹T$8H‰”$  H‰Œ$   Hƒù „J  1ÛH‰œ$   H‰œ$(  Hœ$   Hƒû „  HÇ„$x     HÇ„$€     H‰œ$p  H‰$H‰T$è    H‹\$H‰œ$  H‹\$H‰œ$  H‹œ$p  H‰$è    H‹œ$p  H‹¬$  H‰+H‹¬$  €=     …‡   H‰kH    H‰$HÇD$$   H‹œ$p  H‰\$H‹œ$x  H‰\$H‹œ$€  H‰\$ è    H‹L$(H‹D$0HÇ„$°      H‰Œ$0  H‰Œ$¸  H‰„$8  H‰„$À  è    HÄ   ÃLCL‰$H‰l$è    éfÿÿÿ‰éÚşÿÿH‹œ$¨  H«¨   H‰,$è    H‹œ$¨  H«¨   HÿÅH‰,$è    H‹„$¨  ¶˜¨   ¶¨©   HÁåHëH‰\$xH¨¨   HƒÅH‰,$è    H‹œ$¨  H«¨   HƒÅH‰,$è    H‹„$¨  ¶˜ª   ¶¨«   HÁåHëH‰\$pH¨¨   HƒÅH‰,$è    H‹œ$¨  H«¨   HƒÅH‰,$è    H‹„$¨  ¶˜¬   ¶¨­   HÁåHëH‰\$hH¨¨   HƒÅH‰,$è    H‹œ$¨  H«¨   HƒÅH‰,$è    H‹„$¨  ¶˜®   ¶¨¯   HÁåHëH‰œ$€   H‰$Hƒ$Bè    H‹œ$¨  H«¨   HƒÅH‰,$è    H‹L$xH‹D$pH‹¼$¨  Hƒÿ „T  ¶¯°   @ˆoBH‹l$hH‰ÎHéH‹¬$€   H‰ÂHè1ÛH9Î~	H‰õH‰ÎH‰éH9Â~	H‰ÕH‰ÂH‰è1ÛH‰´$P  H‰”$X  H‰Œ$`  H‰„$h  H‰´$°   H‰´$0  H‰”$¸   H‰”$8  H‰Œ$À   H‰Œ$@  H‰„$È   H‰„$H  H‰<$Hƒ$ è    H‹„$¨  H‹h H‰¬$ˆ   H‰$Hƒ$(è    H‹œ$¨  H‹C(H‹Œ$ˆ   1ö1Ò1ÛH9Î~	H‰õH‰ÎH‰éH9Â~	H‰ÕH‰ÂH‰è1ÛH‰´$P  H‰”$X  H‰Œ$`  H‰„$h  H‹œ$0  H‰$H‹œ$8  H‰\$H‹œ$@  H‰\$H‹œ$H  H‰\$H‰´$   H‰t$ H‰”$˜   H‰T$(H‰Œ$    H‰L$0H‰„$¨   H‰D$8è    H‹\$@H‰œ$  H‹\$HH‰œ$˜  H‹\$PH‰œ$   H‹\$XH‰œ$¨  H‹œ$0  H‰œ$p  H‹œ$8  H‰œ$x  H‹Œ$@  H‰Œ$€  H‹„$H  H‰„$ˆ  H„$p  HŒ$  H‰„$Ø  Hƒø „  H‰Œ$Ğ  Hƒù „  H‰Œ$À  H‰„$È  H‰$è    H‹œ$À  H‰$è    H‹„$È  H‹L‹„$À  I‹(H9ë…  H‰$Hƒ$è    H‹œ$À  H‰$Hƒ$è    H‹¬$È  H‹]L‹„$À  I‹hH9ë…:  H‹„$Ø  Hƒø „_  H‹Œ$Ğ  HƒÀHƒù „B  HƒÁH‰Œ$È  H‰„$À  H‰$è    H‹œ$È  H‰$è    H‹„$À  H‹L‹„$È  I‹(H9ë…Å  H‰$Hƒ$è    H‹œ$È  H‰$Hƒ$è    H‹¬$À  H‹]L‹„$È  I‹hH9ë…€  H‹¼$0  H‹´$8  H‹”$@  H‹„$H  1ÛH‰œ$@  H‰œ$H  H‰œ$P  H‰´$Ø   H‰„$è   H‰ÑH‰”$à   H‰¼$Ğ   H)ùH‰¼$ğ   H‰¼$  H‰´$ø   H‰”$   H‰”$   H‰„$  H‰ÃH‰„$(  H‰´$  H)óH‰Ø1ÛH‰œ$X  H‰œ$`  H‰œ$h  H‰ËH‰L$`H¯ØH‰ØH    H‰$H‰D$H‰D$è    H‹D$H‹T$ H‹L$(H‰„$X  H‰”$`  H‰Œ$h  H    H‰$è    H‹D$H‰„$°  H‰$è    H‹œ$°  H‹¬$`  H‰kH‹¬$h  H‰kH‹¬$X  €=     …ÿ   H‰+H‹œ$°  H‰$Hƒ$è    H‹„$°  H‹l$`H‰hH‰$Hƒ$ HÇD$    è    H‹„$°  H‹¬$ğ   H‰h H‹¬$ø   H‰h(H‹¬$   H‰h0H‹¬$  H‰h8H‰$Hƒ$@è    H‹œ$°  H‹¬$H  H‰kHH‹¬$P  H‰kPH‹¬$@  €=     u3H‰k@H‹œ$°  H‰œ$°  1ÛH‰œ$¸  H‰œ$À  è    HÄ   ÃLC@L‰$H‰l$è    ë½H‰$H‰l$è    éñşÿÿH    H‰œ$ğ  HÇ„$ø  *   1ÛH‰œ$à  H‰œ$è  H    H‰$è    H‹D$H‰„$¸  H‰$è    H‹œ$¸  H‹¬$ø  H‰kH‹¬$ğ  €=     …¡   H‰+H‹œ$¸  H‰œ$¸  H‹    1íH9ètQH‹”$¸  H‰„$0  H‰”$8  HÇ„$°      H‰„$à  H‰„$¸  H‰”$è  H‰”$À  è    HÄ   ÃH    H‰$H    H‰\$H    H‰\$è    H‹D$ë€H‰$H‰l$è    éOÿÿÿ‰é·ûÿÿ‰ éšûÿÿ‰éóúÿÿ‰ éÚúÿÿ‰é¥øÿÿ‰éõÿÿ‰ éïôÿÿè    é‹ôÿÿx
+      ^
+  *runtime.racefuncenter    
+   runtime.raceread   ®  type.io.Reader   ö
+  runtime.convI2I   ø
+  io.ReadFull   ä
+  runtime.convI2E   º
+  "runtime.racewrite   ü 6runtime.writeBarrierEnabled      `go.string."gif: can't read image descriptor: %s"   ’
+  fmt.Errorf   ˆ	
+  (runtime.racefuncexit   ¼	
+  .runtime.writebarrierptr   „
+
+   runtime.raceread   º
+
+   runtime.raceread   ¦
+   runtime.raceread   Ş
+   runtime.raceread   Ê
+   runtime.raceread   ‚
+   runtime.raceread   î
+   runtime.raceread   ¦
+   runtime.raceread   Œ
+  "runtime.racewrite   Ä
+   runtime.raceread   à
+   runtime.raceread   ¤
+   runtime.raceread   ¬
+  2image.Rectangle.Intersect   ®
+   runtime.raceread   Ğ
+   runtime.raceread   ª
+   runtime.raceread   Ö
+   runtime.raceread   ¢
+   runtime.raceread   Ä
+   runtime.raceread   
+   runtime.raceread   Ê
+   runtime.raceread   ¾!  type.[]uint8   ä!
+  "runtime.makeslice   À"  &type.image.Paletted   Ò"
+  "runtime.newobject   ş"
+  "runtime.racewrite   Ú# 6runtime.writeBarrierEnabled   š$
+  "runtime.racewrite   ê$
+  ,runtime.racewriterange   ö%
+  "runtime.racewrite   Ò& 6runtime.writeBarrierEnabled   ®'
+  (runtime.racefuncexit   â'
+  .runtime.writebarrierptr   ‚(
+  .runtime.writebarrierptr   š(  lgo.string."gif: frame bounds larger than image bounds"   ô(  .type.errors.errorString   †)
+  "runtime.newobject   ²)
+  "runtime.racewrite   ö) 6runtime.writeBarrierEnabled   ¸*  Bgo.itab.*errors.errorString.error   Ø+
+  (runtime.racefuncexit   ö+  0type.*errors.errorString   Œ,  type.error   ¤,  Bgo.itab.*errors.errorString.error   ¸,
+   runtime.typ2Itab   â,
+  .runtime.writebarrierptr   Ø-
+  0runtime.morestack_noctxt   @À
+  j"".autotmp_0199 ß(type.*image.Paletted "".autotmp_0198  (type.*image.Paletted "".autotmp_0197  type.int "".autotmp_0196  type.int "".autotmp_0195  type.int "".autotmp_0194  type.int "".autotmp_0193  type.int "".autotmp_0191  type.error "".autotmp_0190 Ï0type.*errors.errorString "".autotmp_0189  "type.*image.Point "".autotmp_0188  "type.*image.Point "".autotmp_0187 ¿"type.*image.Point "".autotmp_0186 ¯"type.*image.Point "".autotmp_0185 Ÿ*type.*image.Rectangle "".autotmp_0184 *type.*image.Rectangle "".autotmp_0183  (type.image.Rectangle "".autotmp_0182  type.int "".autotmp_0181  type.int "".autotmp_0180  type.int "".autotmp_0179  type.int "".autotmp_0178 Ÿ(type.image.Rectangle "".autotmp_0177  type.int "".autotmp_0176  type.int "".autotmp_0175 ¯type.int "".autotmp_0173 Ÿ"type.interface {} "".autotmp_0172 ÿ(type.[1]interface {} "".autotmp_0169 _&type.[]interface {} "".autotmp_0168  type.[]uint8 "".autotmp_0167  0type.*errors.errorString "".autotmp_0166 ß(type.image.Rectangle "".autotmp_0165 Ÿ(type.image.Rectangle "".autotmp_0164  type.error "".autotmp_0163 ßtype.error "".autotmp_0162 /type.[]uint8 image.rÂ·2 Ÿ(type.image.Rectangle image.rÂ·2 Ÿ(type.image.Rectangle image.pixÂ·6 type.[]uint8 image.wÂ·4 ÿtype.int image.pÂ·3 ¿0type.image/color.Palette image.rÂ·2 ß(type.image.Rectangle "".~r0 ÿtype.error errors.textÂ·2 ßtype.string "".~r0 Ÿ(type.image.Rectangle "".~r0 ß(type.image.Rectangle "".bounds ß(type.image.Rectangle "".height ¿type.int "".width ïtype.int "".top ßtype.int "".left Ïtype.int "".err ¿type.error "".~r1  type.error "".~r0 (type.*image.Paletted "".d   type.*"".decoder 8"À
+­¿
+À
+’¿
+À
+”¿
+À
+ˆ € hÖ""!×Ÿ&URRUQ
+™ä€áJ h .alv+l;$Õºá7NÊB“0e TgclocalsÂ·20371ed4e285e99d2b3700a68882dc55 TgclocalsÂ·d708aee26fd07c525342115091d3ff3d   \prebuilts/go/linux-x86/src/image/gif/reader.goş."".(*decoder).readBlock  €  ôdH‹%    HD$øH;A†Ø  Hìˆ   H‹œ$ˆ   H‰$è    1ÛH‰œ$    H‰œ$¨   H‹œ$   H‰$è    H‹œ$   Hƒû „„  H‹H‹kH‰l$XH‰,$H‰L$PH‹Y(ÿÓH‹´$   ¶\$H‹T$H‹L$H‰L$H€û „  H‰T$@Hƒú …  ¶ÛHû   ‡ğ   H‰õHƒş „Ü   HÅ¨   Hƒı „Ã   H‰\$xHÇ„$€      H‰l$pH‰4$è    H    H‰$H‹´$   H|$H‹H‰H‹NH‰Oè    H\$H‹H‰$H‹KH‰L$H‹\$pH‰\$H‹\$xH‰\$H‹œ$€   H‰\$ è    H‹D$(H‹T$0H‹L$8H‰„$˜   H‰T$`H‰”$    H‰L$hH‰Œ$¨   è    HÄˆ   Ã‰E é5ÿÿÿ‰éÿÿÿè    HÇ„$˜       H‰T$@H‰”$    H‰Œ$¨   è    HÄˆ   Ã‰éuşÿÿè    éşÿÿ
+      X
+  *runtime.racefuncenter   
+   runtime.raceread   ü       ú
+   runtime.raceread   ˆ  type.io.Reader   Ğ
+  runtime.convI2I   Æ
+  io.ReadFull   ²
+  (runtime.racefuncexit   ê
+  $runtime.panicslice   º
+  (runtime.racefuncexit   â
+  0runtime.morestack_noctxt   @  "".autotmp_0207  type.error "".autotmp_0205 /type.[]uint8 "".autotmp_0204 Otype.error "".err type.error "".~r1  type.error "".~r0 type.int "".d   type.*"".decoder &…C € 2ş
+	Z‡!   +Ñf6($ TgclocalsÂ·06be4abc148cc801a93c492b76c8e5c8 TgclocalsÂ·8dacdca6a9d3d5c313f9478f38bacba5   \prebuilts/go/linux-x86/src/image/gif/reader.goş"".uninterlace  à  ÎdH‹%    H„$èşÿÿH;A†Â  Hì˜  H‹œ$˜  H‰$è    1ÛH‰œ$8  H‰œ$@  H‰œ$H  H‹„$   1ÛH‰œ$    H‰œ$¨   H‰œ$°   H‰œ$¸   H‰„$   H‰$Hƒ$ HÇD$    è    H‹œ$   Hƒû „.  H‹K H‹s(H‹C0H‹k8H‰Œ$    H‰´$¨   H‰´$è   H‰„$°   H‰¬$¸   H‰¬$ø   H‰ÃH‰„$ğ   H‰Œ$à   H)ËH‰\$`H‹„$   1ÛH‰œ$À   H‰œ$È   H‰œ$Ğ   H‰œ$Ø   H‰„$(  H‰$Hƒ$ HÇD$    è    H‹œ$(  Hƒû „q  H‹s H‹K(H‹S0H‹C8H‰´$À   H‰´$   H‰Œ$È   H‰”$Ğ   H‰”$  H‰„$Ø   H‰„$  H‰Œ$  H‹\$`H)ÈH‰D$XH¯ØH‰ØH    H‰$H‰D$H‰D$è    H‹T$H‹L$ H‹D$(H‰”$8  H‰Œ$@  H‰„$H  HÇD$H    H    H‰$è    H‹    H‹    H‹    H‰œ$x  1ÉH‰„$p  H‰D$hH‰”$h  H‰ĞH‰L$pH‹l$hH9éò  H‰„$0  H‰$HÇD$   è    H‹|$HH‹D$`H‹œ$0  Hƒû „,  H‹H‹KH‰”$   H‰”$€   H‰Œ$˜   H‰ÊH¯ÈH‰”$ˆ   H‰T$@H‹l$XH9êT  H‰ÍHÅH‰L$PL‹„$H  L9Å‡È  H9é‡¿  L‹Œ$8  H)ÍI)ÈIƒø tM	H‰¬$ˆ  L‰„$  L‰Œ$€  H‰ûHÃH‰\$xH‹œ$   H‰$è    H‹œ$   H‹l$HL‹D$xL‹KM9È‡M  L9Å‡D  L‹I)èI)éIƒù tM*H‹œ$€  H‰$H‹œ$ˆ  H‰\$H‹œ$  H‰\$L‰”$P  L‰T$L‰„$X  L‰D$ L‰Œ$`  L‰L$(HÇD$0   è    H‹´$€   H‹D$`H‹|$HHÇH‰|$HH‹L$PH‰óH¯ØHËH‰ÙH‹T$@H‰óHÓH‰ÚH‰T$@H‹l$XH9êŒ¬şÿÿH‹„$0  H‹L$pHƒÀHÿÁH‰L$pH‹l$hH9éŒşÿÿH‹œ$   H‰$è    H‹œ$   H‹¬$@  H‰kH‹¬$H  H‰kH‹¬$8  €=     uH‰+è    HÄ˜  ÃH‰$H‰l$è    ëãè    è    ‰éÍıÿÿ‰éˆüÿÿ‰éËûÿÿè    éûÿÿ*
+      ^
+  *runtime.racefuncenter   ¤
+  *runtime.racereadrange   
+  *runtime.racereadrange   Š  type.[]uint8   °
+  "runtime.makeslice     "".interlacing   °
+   runtime.raceread   ¾  "".interlacing   Ì "".interlacing   Ú  "".interlacing   ø	
+  *runtime.racereadrange   ”
+   runtime.raceread   À
+  "runtime.slicecopy   Ê
+  "runtime.racewrite   ¦ 6runtime.writeBarrierEnabled   ¼
+  (runtime.racefuncexit   è
+  .runtime.writebarrierptr   ö
+  $runtime.panicslice   „
+  $runtime.panicslice   ¼
+  0runtime.morestack_noctxt   °  :"".autotmp_0224 *type."".interlaceScan "".autotmp_0223 Ï,type.*"".interlaceScan "".autotmp_0222 ßtype.int "".autotmp_0221  type.int "".autotmp_0220  type.int "".autotmp_0219  type.int "".autotmp_0218 Ïtype.int "".autotmp_0216  type.int "".autotmp_0215  type.int "".autotmp_0214 type.[]uint8 "".autotmp_0213 ¿type.int "".autotmp_0212  type.[]uint8 "".autotmp_0211  type.int "".autotmp_0210 _.type.[]"".interlaceScan "".autotmp_0209 /type.[]uint8 image.rÂ·2 ¯(type.image.Rectangle "".~r0 ¯(type.image.Rectangle image.pÂ·2 ß(type.*image.Paletted image.rÂ·2 ï(type.image.Rectangle "".~r0 ï(type.image.Rectangle image.pÂ·2 ï(type.*image.Paletted "".y ¯type.int "".nOffset type.int "".pass ¯*type."".interlaceScan "".offset Ÿtype.int 
+"".dy ÿtype.int 
+"".dx ïtype.int "".nPix ¿type.[]uint8 "".m  (type.*image.Paletted "°‡	¯°F ğ	 pª"¶«M	²”!'J	 8 .c¶@dÎ–…9S TgclocalsÂ·6718fa3ce60556785ebaaf7cd5569ede TgclocalsÂ·6e00bf9a86c700b36097754b8f007201   \prebuilts/go/linux-x86/src/image/gif/reader.goş"".Decode  €  òdH‹%    H;a†Ü  HƒìhH‹\$hH‰$è    1ÛH‰œ$€   H‰œ$ˆ   1ÛH‰œ$   H‰œ$˜   H    H‰$è    H‹D$H‰D$8H‰$HÇD$¨  è    H‹\$8H‰$H‹\$pH‰\$H‹\$xH‰\$ÆD$ è    H‹D$ H‹L$(H‰L$HH‰D$@Hƒø t,1ÛH‰œ$€   H‰œ$ˆ   H‰„$   H‰Œ$˜   è    HƒÄhÃH‹    H‰D$01íH9è„¿   H‹\$8H‰$H$   è    H‹\$8H‹‹   H‹ƒ˜   H‹«    H‰l$`H‰L$PHƒø H‰D$XvsH‰$è    H‹\$8H‹‹   H‹ƒ˜   H‹«    H‰l$`H‰L$PHƒø H‰D$Xv4H‹)H‰¬$ˆ   H‹\$0H‰œ$€   1ÛH‰œ$   H‰œ$˜   è    HƒÄhÃè    è    H    H‰$H    H‰\$H    H‰\$è    H‹\$H‰\$0é
+ÿÿÿè    éşÿÿ$
+      B
+  *runtime.racefuncenter   ˜  type."".decoder   ª
+  "runtime.newobject   â
+  ,runtime.racewriterange   °
+  ("".(*decoder).decode   ²
+  (runtime.racefuncexit   Ê  Fgo.itab.*image.Paletted.image.Image   –
+   runtime.raceread   †
+   runtime.raceread   Â
+  (runtime.racefuncexit   Ö
+  $runtime.panicindex   ä
+  $runtime.panicindex   ö  (type.*image.Paletted   Œ   type.image.Image   ¤  Fgo.itab.*image.Paletted.image.Image   ¸
+   runtime.typ2Itab   à
+  0runtime.morestack_noctxt   `Ğ  "".autotmp_0226 otype.*uint8 
+"".&d _ type.*"".decoder "".err Otype.error "".~r2 @type.error "".~r1   type.image.Image "".r  type.io.Reader (ĞÊÏĞÇÏĞV € .Ğ
+	$,A"	 $  Ph2–
+1% TgclocalsÂ·ea9b4378ddf21a9476f9692715326ef5 TgclocalsÂ·3531f87782d37f810e650e7542e5bb1b   \prebuilts/go/linux-x86/src/image/gif/reader.goş"".DecodeAll  €  òdH‹%    H;a†œ  HƒìhH‹\$hH‰$è    1ÛH‰œ$ˆ   H‰œ$   H    H‰$è    H‹D$H‰D$@H‰$HÇD$¨  è    H‹\$@H‰$H‹\$pH‰\$H‹\$xH‰\$ÆD$ è    H‹D$ H‹L$(H‰L$PH‰D$HHƒø t&HÇ„$€       H‰„$ˆ   H‰Œ$   è    HƒÄhÃH    H‰$è    H‹D$H‰D$8H‰$è    H‹\$@H‰$H$   è    H‹\$@H«   H‹\$8Hƒû „Š  H‰\$H‰l$H-    H‰,$è    H‹\$8H‰$Hƒ$0è    H‹\$@H‰$Hƒ$0è    H‹D$8L‹D$@I‹h0H‰h0H‰$Hƒ$è    H‹\$@H‰$Hƒ$`è    H‹\$@Hk`H‹\$8Hƒû „ø  LCL‰D$H‰l$H-    H‰,$è    H‹\$8H‰$Hƒ$8è    H‹\$@H‰$Hƒ$xè    H‹\$@HkxH‹\$8Hƒû „•  LC8L‰D$H‰l$H-    H‰,$è    H‹\$8H‰$Hƒ$Pè    H    H‰$H    H‰\$H    H‰\$H‹\$@H‰\$HƒD$HHÇD$     è    H‹L$(H‹D$0H‹\$8Hƒû „  H‰L$XH‰KPH‰D$`€=     …Ñ   H‰CXH‹\$8H‰$Hƒ$PHƒ$è    H‹\$@H‰$Hƒ$ è    H‹D$8L‹D$@I‹h H‰h`H‰$Hƒ$PHƒ$è    H‹\$@H‰$Hƒ$(è    H‹D$8L‹D$@I‹h(H‰hhH‰$Hƒ$pè    H‹\$@H‰$Hƒ$@è    H‹D$8L‹D$@A¶h@@ˆhpH‰„$€   1ÛH‰œ$ˆ   H‰œ$   è    HƒÄhÃLCXL‰$H‰D$è    éÿÿÿ‰éöşÿÿ‰édşÿÿ‰éşÿÿ‰éoıÿÿè    éGüÿÿL
+      B
+  *runtime.racefuncenter   t  type."".decoder   †
+  "runtime.newobject   ¾
+  ,runtime.racewriterange   Œ
+  ("".(*decoder).decode   ‚
+  (runtime.racefuncexit   š  type."".GIF   ¬
+  "runtime.newobject   Ò
+  "runtime.racewrite   ş
+   runtime.raceread   Ö  ,type.[]*image.Paletted   è
+  (runtime.typedmemmove   
+  "runtime.racewrite   ´
+   runtime.raceread   ô
+  "runtime.racewrite   š
+   runtime.raceread   ô  type.[]int   †
+  (runtime.typedmemmove   ¬
+  "runtime.racewrite   Ò
+   runtime.raceread   ¬  type.[]uint8   ¾
+  (runtime.typedmemmove   ä
+  "runtime.racewrite   ò  0type.image/color.Palette   ˆ	  ,type.image/color.Model    	  Zgo.itab.image/color.Palette.image/color.Model   æ	
+  runtime.convT2I   À
+ 6runtime.writeBarrierEnabled   †
+  "runtime.racewrite   ¬
+   runtime.raceread   ö
+  "runtime.racewrite   œ
+   runtime.raceread   Ü
+  "runtime.racewrite   ‚
+   runtime.raceread   æ
+  (runtime.racefuncexit   ”
+  .runtime.writebarrierptr   à
+  0runtime.morestack_noctxt   PĞ  "".autotmp_0231 _type.*"".GIF 
+"".&d O type.*"".decoder "".err ?type.error "".~r2 0type.error "".~r1  type.*"".GIF "".r  type.io.Reader (Ğ²ÏĞ±ÏĞD À €–"!,A#K%IIy%%4$ $  >bŠ7 TgclocalsÂ·d261d82a8a39c85fbf1f08752bcb09ee TgclocalsÂ·b6e1bcbe3bc38d0bc564f298485ff663   \prebuilts/go/linux-x86/src/image/gif/reader.goş"".DecodeConfig  €	  èdH‹%    H;a†  HƒìpH‹\$pH‰$è    1ÛH‰œ$ˆ   H‰œ$   H‰œ$˜   H‰œ$    1ÛH‰œ$¨   H‰œ$°   H    H‰$è    H‹D$H‰D$8H‰$HÇD$¨  è    H‹\$8H‰$H‹\$xH‰\$H‹œ$€   H‰\$ÆD$è    H‹D$ H‹L$(H‰L$HH‰D$@Hƒø td1ÛH‰\$PH‰\$XH‰\$`H‰\$hH‹\$PH‰œ$ˆ   H‹\$XH‰œ$   H‹\$`H‰œ$˜   H‹\$hH‰œ$    H‰„$¨   H‰Œ$°   è    HƒÄpÃ1ÛH‰\$PH‰\$XH‰\$`H‰\$hH    H‰$H    H‰\$H    H‰\$H‹\$8H‰\$HƒD$HHÇD$     è    H\$(Hl$PH‹H‰M H‹KH‰MH‹\$8H‰$Hƒ$ è    H‹D$8H‹X H‰\$`H‰$Hƒ$(è    H‹l$8H‹](H‰\$hH‹\$PH‰œ$ˆ   H‹\$XH‰œ$   H‹\$`H‰œ$˜   H‹\$hH‰œ$    1ÛH‰œ$¨   H‰œ$°   è    HƒÄpÃè    éÌıÿÿ
+      B
+  *runtime.racefuncenter   ¸  type."".decoder   Ê
+  "runtime.newobject   ‚
+  ,runtime.racewriterange   Ö
+  ("".(*decoder).decode   È
+  (runtime.racefuncexit   Œ  0type.image/color.Palette   ¢  ,type.image/color.Model   º  Zgo.itab.image/color.Palette.image/color.Model   €
+  runtime.convT2I   Ø
+   runtime.raceread   
+   runtime.raceread   Â
+  (runtime.racefuncexit   Ö
+  0runtime.morestack_noctxt   €à  "".autotmp_0235  "type.image.Config "".autotmp_0234 ?"type.image.Config 
+"".&d o type.*"".decoder "".err _type.error "".~r2 `type.error "".~r1  "type.image.Config "".r  type.io.Reader (à•ßàüßà À <Â4,DZZ!P   `£\¡  TgclocalsÂ·1063e9b0825c2f159be1df1d038ae622 TgclocalsÂ·438fde6662dcd8c84e163dac1c04db70   \prebuilts/go/linux-x86/src/image/gif/reader.goş"".init.1  à  àdH‹%    HD$ĞH;A†  Hì°   H‹œ$°   H‰$è    H    H    H=    HÇÆ   H-    HÇÂ   1ÛH‰œ$€   H‰œ$ˆ   H‰œ$   H‰œ$˜   H‰œ$    H‰œ$¨   H‰|$HH‰¼$€   H‰t$PH‰´$ˆ   H‰l$XH‰¬$   H‰T$`H‰”$˜   H‰Œ$    H‰„$¨   H    H‰$è    H‹    H‹    H‹    H‰ËH)ÃHƒû}HH    H‰$H‰T$hH‰T$H‰D$H‰L$xH‰L$H‰ÃH‰D$pHÿÃH‰\$ è    H‹T$(H‹D$0H‹L$8H‰ÃHÿÃH‰L$xH9Ë‡Â   H‰\$pH‰ÓH‰T$hH‰ÅH‰D$@Hkí0HëH‰$HÇD$0   è    H‹\$hH‹l$@Hkí0HëH¬$€   H‰\$H‰l$H-    H‰,$è    H    H‰$è    H‹\$pH‰    H‹\$xH‰    H‹\$h€=     uH‰    è    HÄ°   ÃH-    H‰,$H‰\$è    ëÜè    è    éĞıÿÿ6
+      X
+  *runtime.racefuncenter   f  "".DecodeÂ·f   t  $"".DecodeConfigÂ·f   ‚  go.string."gif"     $go.string."GIF8?a"   ¦  image.formats   ¸
+   runtime.raceread   Æ  image.formats   Ô image.formats   â  image.formats   ˆ  &type.[]image.format   ì
+  "runtime.growslice   
+  ,runtime.racewriterange   â  "type.image.format   ô
+  (runtime.typedmemmove   ‚  image.formats   ”
+  "runtime.racewrite   ¬ image.formats   Ä  image.formats   Ú 6runtime.writeBarrierEnabled   î  image.formats   ø
+  (runtime.racefuncexit   –  image.formats   ²
+  .runtime.writebarrierptr   À
+  $runtime.panicslice   Î
+  0runtime.morestack_noctxt    à  
+"".autotmp_0240 ßtype.int "".autotmp_0239 &type.[]image.format "".autotmp_0238 _"type.image.format image.magicÂ·2 ¯type.string image.nameÂ·1 Ïtype.string àèßà( ° Úá
+  +°«3B5 TgclocalsÂ·f6bd6b3389b872033d462029172c8612 TgclocalsÂ·d288a648545c6dd73287fed249acfcae   \prebuilts/go/linux-x86/src/image/gif/reader.goş"".log2  à  ÔdH‹%    H;a†  HƒìhH‹\$hH‰$è    H    H‰$HÇD$@   è    H‹    H‰\$ H‹    H‰\$(H‹    H‰\$0H‹    H‰\$8H‹    H‰\$@H‹    H‰\$HH‹    H‰\$PH‹    H‰D$X1ÉHÇD$   HD$ H‰L$H‹l$H9é}PH‰D$`H‰$è    H‹t$H‹T$`H‹*H‹\$pH9ëH‰t$xè    HƒÄhÃH‰ĞHƒÀH‰ñHÿÁH‰L$H‹l$H9é|°HÇD$xÿÿÿÿè    HƒÄhÃè    éÖşÿÿ 
+      B
+  *runtime.racefuncenter   P  "".log2Lookup   t
+  *runtime.racereadrange   ‚  "".log2Lookup   š "".log2Lookup   ²  "".log2Lookup   Ê0 "".log2Lookup   â@ "".log2Lookup   úP "".log2Lookup   ’` "".log2Lookup   ªp "".log2Lookup   
+   runtime.raceread   Ğ
+  (runtime.racefuncexit   ®
+  (runtime.racefuncexit   Â
+  0runtime.morestack_noctxt    Ğ  "".autotmp_0244 type.*int "".autotmp_0243 ¯type.int "".autotmp_0242 Ÿtype.int "".autotmp_0241 type.[8]int "".~r1 type.int "".x  type.int &ĞÙÏĞ.ÏĞ ° ,8	³
+
+   ¦!I TgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45 TgclocalsÂ·0c8aa8e80191a30eac23f1a218103f16   \prebuilts/go/linux-x86/src/image/gif/writer.goş"".writeUint16  €  ìdH‹%    H;a†™   HƒìH‹\$H‰$è    H‹\$Hƒ|$ vsH‰$è    H‹L$H‹D$Hƒø vSH·l$(@ˆ)H‰ËHƒøv:HÿÃH‰$è    H‹\$Hƒ|$vHÿÃH·l$(fÁí@ˆ+è    HƒÄÃè    è    è    è    è    éJÿÿÿ
+      B
+  *runtime.racefuncenter   n
+  "runtime.racewrite   Ê
+  "runtime.racewrite   
+  (runtime.racefuncexit   ¢
+  $runtime.panicindex   °
+  $runtime.panicindex   ¾
+  $runtime.panicindex   Ì
+  $runtime.panicindex   Ú
+  0runtime.morestack_noctxt   @  "".u 0type.uint16 "".b  type.[]uint8 x0 À FLŠ.‡ˆ…†ƒ†‡ˆ‰     TgclocalsÂ·2fccd208efe70893f9ac8d682812ae72 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   \prebuilts/go/linux-x86/src/image/gif/writer.goş("".blockWriter.Write     ’dH‹%    HD$àH;A†ç  Hì    H‹œ$    H‰$è    1ÛH‰œ$Ğ   H‰œ$Ø   H‹œ$¨   H‰$Hƒ$è    H‹”$¸   H‹Œ$¨   H‹iHƒı tQH‰$Hƒ$è    HÇ„$È       H‹œ$¨   Hƒû t%H‹kH‰¬$Ğ   H‹kH‰¬$Ø   è    HÄ    Ã‰ë×Hƒú u+HÇ„$È       1ÛH‰œ$Ğ   H‰œ$Ø   è    HÄ    ÃE1ÀL‰D$@I9Ğ¨  H‰ÎHƒù „”  HÆ    Hƒş „|  HÿÆIÇÂÿ   HÇÇÿ   L‰ÃL‹„$À   H‰ÕH9Ó‡M  L‹Œ$°   H)İI)ØIƒø tMH‰´$ˆ   H‰4$L‰”$   L‰T$H‰¼$˜   H‰|$L‰L$pL‰L$H‰l$xH‰l$ L‰„$€   L‰D$(HÇD$0   è    H‹L$8H‹\$@H‰L$HHËH‰\$@H‹œ$¨   H«    H‰,$è    H‹\$HH‹Œ$¨   ˆ™    HÿÃHû   ‡‡  H‰ÍHÅ    Hƒı „k  H‰\$xHÇ„$€      H‰l$pH‰$è    H‹œ$¨   Hƒû „3  H‹H‹kH‹\$pH‰\$H‹\$xH‰\$H‹œ$€   H‰\$H‰l$XH‰,$H‰L$PH‹Y(ÿÓH‹D$ H‹\$(H‰\$`H‹\$0H‰\$hH‹œ$¨   H‰$Hƒ$è    H‹œ$¨   H‹l$`H‰kH‹l$h€=     …   H‰kH‹œ$¨   H‰$Hƒ$è    L‹D$@H‹”$¸   H‹Œ$¨   H‹iHƒı „İıÿÿH‰$Hƒ$è    HÇ„$È       H‹œ$¨   Hƒû t%H‹kH‰¬$Ğ   H‹kH‰¬$Ø   è    HÄ    Ã‰ë×LCL‰$H‰l$è    é_ÿÿÿ‰éÆşÿÿ‰E éşÿÿè    è    ‰é}ıÿÿ‰éeıÿÿH‰$Hƒ$è    H‹\$@H‰œ$È   H‹œ$¨   Hƒû t%H‹kH‰¬$Ğ   H‹kH‰¬$Ø   è    HÄ    Ã‰ë×è    é÷ûÿÿ*
+      X
+  *runtime.racefuncenter   ¨
+   runtime.raceread   ø
+   runtime.raceread   æ
+  (runtime.racefuncexit   Ğ
+  (runtime.racefuncexit   è
+  "runtime.slicecopy   Æ
+  "runtime.racewrite   ò
+   runtime.raceread   ’
+       ì
+
+  "runtime.racewrite   ¤ 6runtime.writeBarrierEnabled   æ
+   runtime.raceread   È
+   runtime.raceread   ¶
+  (runtime.racefuncexit   ò
+  .runtime.writebarrierptr   ¤
+  $runtime.panicslice   ²
+  $runtime.panicslice   î
+   runtime.raceread   Ş
+  (runtime.racefuncexit   €
+  0runtime.morestack_noctxt   pÀ  "".autotmp_0255 type.error "".autotmp_0253  type.[]uint8 "".autotmp_0252  type.int "".autotmp_0251  type.int "".autotmp_0249 _type.[]uint8 "".autotmp_0248 /type.[]uint8 "".autotmp_0247  type.int "".n ¯type.int "".total ¿type.int "".~r2 Ptype.error "".~r1 @type.int "".data type.[]uint8 "".b  &type."".blockWriter BÀŸ¿À4¿Àò¿À“¿À  l”$#0@ ¸+ç9@-R# 4 +‡…Q,=hv" TgclocalsÂ·8673e44a15fbaa7367253006e3f68366 TgclocalsÂ·27b7aed50b5eb0ea6bf3eed688cd420b   \prebuilts/go/linux-x86/src/image/gif/writer.goş&"".(*encoder).flush  €  ôdH‹%    H;a†İ   Hƒì8H‹\$8H‰$è    H‹\$@H‰$Hƒ$è    H‹D$@H‹hHƒı t
+è    HƒÄ8ÃH‰$è    H‹\$@Hƒû „€   H‹H‹kH‰l$ H‰,$H‰L$H‹Y ÿÓH‹\$H‰\$(H‹\$H‰\$0H‹\$@H‰$Hƒ$è    H‹\$@H‹l$(H‰kH‹l$0€=     uH‰kè    HƒÄ8ÃLCL‰$H‰l$è    ëâ‰éyÿÿÿè    éÿÿÿ
+      B
+  *runtime.racefuncenter   h
+   runtime.raceread   
+  (runtime.racefuncexit   ¬
+   runtime.raceread   „       Î
+  "runtime.racewrite   € 6runtime.writeBarrierEnabled   ˜
+  (runtime.racefuncexit   Æ
+  .runtime.writebarrierptr   â
+  0runtime.morestack_noctxt   p  "".autotmp_0257 type.error "".e   type.*"".encoder p9opƒop+ € (¾"   †%5 TgclocalsÂ·51fa0e13d53d6bad7f86670d3edaeac6 TgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787   \prebuilts/go/linux-x86/src/image/gif/writer.goş&"".(*encoder).write  À  °dH‹%    H;a†û   HƒìXH‹\$XH‰$è    H‹\$`H‰$Hƒ$è    H‹D$`H‹hHƒı t
+è    HƒÄXÃH‰$è    H‹\$`Hƒû „   H‹H‹kH‹\$hH‰\$H‹\$pH‰\$H‹\$xH‰\$H‰l$@H‰,$H‰L$8H‹Y(ÿÓH‹\$(H‰\$HH‹\$0H‰\$PH‹\$`H‰$Hƒ$è    H‹\$`H‹l$HH‰kH‹l$P€=     uH‰kè    HƒÄXÃLCL‰$H‰l$è    ëâ‰é[ÿÿÿè    éèşÿÿ
+      B
+  *runtime.racefuncenter   h
+   runtime.raceread   
+  (runtime.racefuncexit   ¬
+   runtime.raceread   À       Š
+  "runtime.racewrite   ¼ 6runtime.writeBarrierEnabled   Ô
+  (runtime.racefuncexit   ‚
+  .runtime.writebarrierptr   
+  0runtime.morestack_noctxt   @°  "".autotmp_0259 type.error "".p type.[]uint8 "".e   type.*"".encoder &°9¯°¡¯°-   *Ì"   ¤%7 TgclocalsÂ·aefd16b155593f6f07980a05b297ad1f TgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787   \prebuilts/go/linux-x86/src/image/gif/writer.goş."".(*encoder).writeByte     †dH‹%    H;a†æ   Hƒì@H‹\$@H‰$è    H‹\$HH‰$Hƒ$è    H‹D$HH‹hHƒı t
+è    HƒÄ@ÃH‰$è    H‹\$HHƒû „‰   H‹H‹k¶\$Pˆ\$H‰l$(H‰,$H‰L$ H‹Y0ÿÓH‹\$H‰\$0H‹\$H‰\$8H‹\$HH‰$Hƒ$è    H‹\$HH‹l$0H‰kH‹l$8€=     uH‰kè    HƒÄ@ÃLCL‰$H‰l$è    ëâ‰épÿÿÿè    éışÿÿ
+      B
+  *runtime.racefuncenter   h
+   runtime.raceread   
+  (runtime.racefuncexit   ¬
+   runtime.raceread   –       à
+  "runtime.racewrite   ’ 6runtime.writeBarrierEnabled   ª
+  (runtime.racefuncexit   Ø
+  .runtime.writebarrierptr   ô
+  0runtime.morestack_noctxt    €  "".autotmp_0261 type.error "".b type.uint8 "".e   type.*"".encoder "€9€Œ€2  *Ú"ˆ   %< TgclocalsÂ·32bd5c6dc84e3e86dd35593b3922d3aa TgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787   \prebuilts/go/linux-x86/src/image/gif/writer.goş2"".(*encoder).writeHeader  À0  º0dH‹%    HD$ˆH;A†û  Hìø   H‹œ$ø   H‰$è    H‹œ$   H‰$Hƒ$è    H‹„$   H‹hHƒı tè    HÄø   ÃH‰$è    H    H‰$H‹´$   H|$H‹H‰H‹NH‰Oè    H\$H‹H‰$H‹KH‰L$H    H‰\$HÇD$   è    H‹\$(H‰\$XH‹\$0H‰\$`H‹œ$   H‰$Hƒ$è    H‹œ$   H‹l$XH‰kH‹l$`€=     …ç
+  H‰kH‹œ$   H‰$Hƒ$è    H‹„$   H‹hHƒı tè    HÄø   ÃH‰ÃHÃ    Hƒû „“
+  HÇ„$è      HÇ„$ğ      H‰œ$à   H‰$Hƒ$ Hƒ$PHƒ$è    H‹¬$   H‹…€   H‹”$à   H‹Œ$è   H‹œ$ğ   H‰œ$¨   f‰D$BH‰”$˜   Hƒù H‰Œ$    †
+  H‰$è    H‹Œ$˜   H‹„$    Hƒø †Ü	  H·l$B@ˆ)H‰ËHƒø†¿	  HÿÃH‰$è    H‹„$   H‹œ$˜   Hƒ¼$    †	  HÿÃH·l$BfÁí@ˆ+H‰ÃHƒø „i	  HÃ    Hƒû „Q	  HƒÃHÇ„$è      HÇ„$ğ   ş   H‰œ$à   H‰$Hƒ$ Hƒ$PHƒ$è    H‹¬$   H‹…ˆ   H‹”$à   H‹Œ$è   H‹œ$ğ   H‰œ$   f‰D$DH‰”$€   Hƒù H‰Œ$ˆ   †À  H‰$è    H‹Œ$€   H‹„$ˆ   Hƒø †–  H·l$D@ˆ)H‰ËHƒø†y  HÿÃH‰$è    H‹´$   H‹œ$€   Hƒ¼$ˆ   †G  HÿÃH·l$DfÁí@ˆ+H‰ğHƒş „#  H    Hƒø „  HÇÂ   HÇÁ   H‰4$H‰„$à   H‰D$H‰”$è   H‰T$H‰Œ$ğ   H‰L$è    1ÛH‰œ$È   H‰œ$Ğ   H‰œ$Ø   H‹œ$   H‰$Hƒ$ Hƒ$Pè    H    H‰$H‹´$   Hƒş „u  H^pH|$H‹H‰H‹KH‰OHœ$È   H‰\$è    ¶\$ H‰ØH‹œ$È   H‰\$hH‹Œ$Ğ   H‰L$pH‹œ$Ø   H‰\$x< „R  Hƒù H  H‰$è    H‹\$H‰\$HH‹œ$   H«    H‰,$è    H‹„$   H‹l$HHÍ€   @ˆ¨    H¨    HÿÅH‰,$è    H‹œ$   H‰$Hƒ$ Hƒ$pè    H‹„$   Hƒø „»  D¶€   Dˆ€¡   H¨    HƒÅH‰,$è    H‹Œ$   Æ¢    H‰ÈHÁ    Hƒù „n  HÇÅ   HÇÂ   H‰$H‰Œ$à   H‰L$H‰¬$è   H‰l$H‰”$ğ   H‰T$è    H‹„$   Hƒø „  H   Hƒø „   HÇÂ   HÇÁ   H‰„$à   H‰$H‰”$è   H‰T$H‰Œ$ğ   H‰L$H‹\$hH‰\$H‹\$pH‰\$ H‹\$xH‰\$(H‹\$HH‰\$0è    H‹\$8H‰\$PH‹œ$   H‰$H$˜   è    H‹„$   H‹l$PH‰¨˜   H‰$H$˜   è    H‹Œ$   H‹™˜   Hû   ‡4  H‰ÍHÅ   Hƒı „  HÇÂ   H‰$H‰¬$à   H‰l$H‰œ$è   H‰\$H‰”$ğ   H‰T$è    H‹œ$   H‰$Hƒ$ è    H‹Œ$   H‹i(Hƒıc  H©    H‰,$è    H‹„$   Æ€    !H¨    HÿÅH‰,$è    H‹„$   Æ€¡   ÿH¨    HƒÅH‰,$è    H‹Œ$   Æ¢   H‰ÈHÁ    Hƒù „6  HÇÅ   HÇÂ   H‰$H‰Œ$à   H‰L$H‰¬$è   H‰l$H‰”$ğ   H‰T$è    H‹œ$   H‰$è    H    H‰$H‹´$   H|$H‹H‰H‹NH‰Oè    H\$H‹H‰$H‹KH‰L$H    H‰\$HÇD$   è    H‹\$(H‰\$XH‹\$0H‰\$`H‹œ$   H‰$Hƒ$è    H‹œ$   H‹l$XH‰kH‹l$`€=     …)  H‰kH‹œ$   H‰$Hƒ$è    H‹„$   H‹hHƒı tè    HÄø   ÃH¨    H‰,$è    H‹„$   Æ€    H¨    HÿÅH‰,$è    H‹œ$   Æƒ¡   H‰ØHÃ    Hƒû „”  HƒÃHÇ„$è      HÇ„$ğ   ş   H‰œ$à   H‰$Hƒ$ Hƒ$0è    H‹¬$   H‹EPH‹”$à   H‹Œ$è   H‹œ$ğ   H‰œ$À   f‰D$FH‰”$°   Hƒù H‰Œ$¸   †  H‰$è    H‹Œ$°   H‹„$¸   Hƒø †á   H·l$F@ˆ)H‰ËHƒø†Ä   HÿÃH‰$è    H‹œ$°   Hƒ¼$¸   †š   HÿÃH·l$FfÁí@ˆ+H‹œ$   H«    HƒÅH‰,$è    H‹Œ$   Æ¤    H‰ÈHÁ    Hƒù tKHÇÅ   HÇÂ   H‰$H‰Œ$à   H‰L$H‰¬$è   H‰l$H‰”$ğ   H‰T$è    è    HÄø   Ã‰ë±è    è    è    è    ‰éeşÿÿLCL‰$H‰l$è    éÄıÿÿ‰éÃüÿÿ‰E éàûÿÿè    ‰ éùúÿÿ‰ éâúÿÿ‰é‹úÿÿ‰ é>úÿÿH‹œ$   H«    H‰,$è    H‹„$   Æ€     H¨    HÿÅH‰,$è    H‹„$   Æ€¡    H¨    HƒÅH‰,$è    H‹Œ$   Æ¢    H‰ÈHÁ    Hƒù tCHÇÅ   HÇÂ   H‰$H‰Œ$à   H‰L$H‰¬$è   H‰l$H‰”$ğ   H‰T$è    é5ûÿÿ‰ë¹‰é„øÿÿ‰ éí÷ÿÿ‰éÖ÷ÿÿè    è    è    è    ‰é¨öÿÿ‰ éöÿÿè    è    è    è    ‰éfõÿÿLCL‰$H‰l$è    éõÿÿè    éãóÿÿ–
+      X
+  *runtime.racefuncenter   „
+   runtime.raceread   ²
+  (runtime.racefuncexit   Ô
+   runtime.raceread   â  type.io.Writer   ª
+  runtime.convI2I   â  $go.string."GIF89a"   ˆ
+  io.WriteString   Ü
+  "runtime.racewrite   ” 6runtime.writeBarrierEnabled   Ö
+   runtime.raceread   „
+  (runtime.racefuncexit   ¬
+   runtime.raceread   Ú
+  "runtime.racewrite   Ò
+  "runtime.racewrite   ä
+
+   runtime.raceread   ’
+  "runtime.racewrite   Š
+  "runtime.racewrite   
+  &"".(*encoder).write   ˆ
+   runtime.raceread   –  0type.image/color.Palette   ”
+  $runtime.assertI2T2   ¨
+  "".log2   ì
+  "runtime.racewrite   È
+  "runtime.racewrite   ş
+   runtime.raceread   è
+  "runtime.racewrite   ª
+  &"".(*encoder).write   °
+  &"".encodeColorTable   ö
+  "runtime.racewrite   À
+   runtime.raceread   
+  &"".(*encoder).write   º
+   runtime.raceread   †
+  "runtime.racewrite   Ê
+  "runtime.racewrite   
+  "runtime.racewrite   Ò
+  &"".(*encoder).write   ô
+   runtime.raceread   ‚  type.io.Writer   Ê
+  runtime.convI2I   ‚   .go.string."NETSCAPE2.0"   ¨ 
+  io.WriteString   ü 
+  "runtime.racewrite   ´! 6runtime.writeBarrierEnabled   ö!
+   runtime.raceread   ¤"
+  (runtime.racefuncexit   Ô"
+  "runtime.racewrite   ˜#
+  "runtime.racewrite   Ì$
+   runtime.raceread   ô%
+  "runtime.racewrite   ì&
+  "runtime.racewrite   ò'
+  "runtime.racewrite   ¬)
+  &"".(*encoder).write   ¶)
+  (runtime.racefuncexit   Ø)
+  $runtime.panicindex   æ)
+  $runtime.panicindex   ô)
+  $runtime.panicindex   ‚*
+  $runtime.panicindex   ¸*
+  .runtime.writebarrierptr   ê*
+  $runtime.panicslice   Ö+
+  "runtime.racewrite   š,
+  "runtime.racewrite   à,
+  "runtime.racewrite   š.
+  &"".(*encoder).write   à.
+  $runtime.panicindex   î.
+  $runtime.panicindex   ü.
+  $runtime.panicindex   Š/
+  $runtime.panicindex   ´/
+  $runtime.panicindex   Â/
+  $runtime.panicindex   Ğ/
+  $runtime.panicindex   Ş/
+  $runtime.panicindex   ”0
+  .runtime.writebarrierptr   ¨0
+  0runtime.morestack_noctxt   ğ  8"".autotmp_0284  type.uint16 "".autotmp_0283  type.uint16 "".autotmp_0281  type.[]uint8 "".autotmp_0280  type.[]uint8 "".autotmp_0279  type.error "".autotmp_0278  type.[]uint8 "".autotmp_0277  type.int "".autotmp_0276  type.[]uint8 "".autotmp_0275  type.[]uint8 "".autotmp_0274  type.int "".autotmp_0273  type.int "".autotmp_0272  type.[]uint8 "".autotmp_0271  type.[]uint8 "".autotmp_0270 Ïtype.int "".autotmp_0267 _0type.image/color.Palette "".autotmp_0266  type.[]uint8 "".autotmp_0265  type.[]uint8 "".autotmp_0264 /type.[]uint8 "".autotmp_0263 ¿type.error "".u ãtype.uint16 "".b type.[]uint8 "".u çtype.uint16 "".b ïtype.[]uint8 "".u ëtype.uint16 "".b ¿type.[]uint8 "".paddedSize ßtype.int "".p Ÿ0type.image/color.Palette "".e   type.*"".encoder DğEïğèïğÏïğÈïğ¹   ˆè@=(>;´(63€Ú3ÙÚ!Ù'Ø3×Ø!×'[¼3O#Rºx,"#R¼("|˜3—˜—'+N˜—˜—'"#NØ×Ø×ÚÙÚÙ	 V +Â=kWÅWÆ5
+„¦=«T
+¨ TgclocalsÂ·a9ea41aae9e32efcc8711d8fabe405fb TgclocalsÂ·7f58a2053bec7f12637693406995051d   \prebuilts/go/linux-x86/src/image/gif/writer.goş&"".encodeColorTable     ˆdH‹%    H;a†g  HƒìXH‹\$XH‰$è    H    H‹¬$   Hƒıƒ5  HëH‰$è    H‹t$`H‹T$hH    H‹¬$   Hƒıƒş  HëH‹+H‰l$(1ÀH‹l$(H9è•  H‹Œ$€   H9È×  H‹\$xH‰ÅH‰D$0L‹„$€   L9Àƒ²  HÁåHëH‰$è    H‹\$xH‹l$0L‹„$€   L9Åƒ€  HÁåHëH‹H‹kH‰l$PH‰,$H‰L$HH‹Y ÿÓ‹T$‹L$‹D$‰T$‰L$ ‰D$$H‹D$0H‹\$`HkÀHƒÀ H‰D$8L‹D$hL9Àƒ  HH‰$è    H‹L$`H‹D$hH‹l$8H9Åƒî   H)‹l$Áí@ˆ+H‹T$0HkÒHÿÂH‰T$8H9Âƒ¿   HH‰$è    H‹L$`H‹D$hH‹l$8H9Åƒ“   H)‹l$ Áí@ˆ+H‹T$0HkÒHƒÂH‰T$8H9ÂsgHH‰$è    H‹t$`H‹T$hH‹l$8H9Õs?H.‹l$$Áí@ˆ+H‹D$0HÿÀH‹l$(H9èŒkşÿÿH‹\$(HkÛH‰œ$˜   è    HƒÄXÃè    è    è    è    è    è    è    è    H‰ÃH‰D$0HkÛHƒÃ H‰\$@H9ÓƒÕ   HH‰$è    H‹L$`H‹D$hH‹l$@H9Åƒ©   H)Æ H‹T$0HkÒHÿÂH‰T$@H9Âƒ   HH‰$è    H‹L$`H‹D$hH‹l$@H9ÅsYH)Æ H‹T$0HkÒHƒÂH‰T$@H9Âs4HH‰$è    H‹t$`H‹T$hH‹l$@H9ÕsH.Æ éÇşÿÿè    è    è    è    è    è    è    è    è    é|üÿÿ>
+      B
+  *runtime.racefuncenter   P  "".log2Lookup   
+   runtime.raceread   °  "".log2Lookup   Š
+   runtime.raceread   ˆ       ˜
+  "runtime.racewrite   ²
+  "runtime.racewrite   Æ
+  "runtime.racewrite   â
+  (runtime.racefuncexit   ö
+  $runtime.panicindex   „	
+  $runtime.panicindex   ’	
+  $runtime.panicindex    	
+  $runtime.panicindex   ®	
+  $runtime.panicindex   ¼	
+  $runtime.panicindex   Ê	
+  $runtime.panicindex   Ø	
+  $runtime.panicindex   ²
+
+  "runtime.racewrite   ¾
+  "runtime.racewrite   ¼
+  "runtime.racewrite   †
+  $runtime.panicindex   ”
+  $runtime.panicindex   ¢
+  $runtime.panicindex   °
+  $runtime.panicindex   ¾
+  $runtime.panicindex   Ì
+  $runtime.panicindex   Ú
+  $runtime.panicindex   è
+  $runtime.panicindex   ö
+  0runtime.morestack_noctxt   €°  """.autotmp_0295  type.int "".autotmp_0294  type.int "".autotmp_0293  type.int "".autotmp_0292  type.int "".autotmp_0291  type.int "".autotmp_0290 ?type.int "".autotmp_0289 /type.int "".autotmp_0285  type.int "".b gtype.uint32 "".g otype.uint32 "".r wtype.uint32 "".i Otype.int "".n _type.int "".~r3 ptype.int "".size `type.int "".p 00type.image/color.Palette "".dst  type.[]uint8 °¢¯°Ö  fÊUƒXMF	JB?   ğ TgclocalsÂ·739018a0fedb7c38faa3101fb8dac3ab TgclocalsÂ·23e8278e2b69a3a75fa59b23c49ed6ad   \prebuilts/go/linux-x86/src/image/gif/writer.goş:"".(*encoder).writeImageBlock  €]  ş\dH‹%    H„$ıÿÿH;A†  Hìh  H‹œ$h  H‰$è    H‹œ$p  H‰$Hƒ$è    H‹œ$p  H‹kHƒı tè    HÄh  ÃH‹œ$x  H‰$Hƒ$@è    H‹Œ$x  H‹iHHƒı …n  H    H‰œ$  HÇ„$  1   1ÛH‰œ$à  H‰œ$è  H    H‰$è    H‹D$H‰„$Ğ  H‰$è    H‹œ$Ğ  H‹¬$  H‰kH‹¬$  €=     …ß   H‰+H‹œ$Ğ  H‰œ$Ğ  H‹    1íH9è„ˆ   H‹Œ$Ğ  H‰„$€  H‰„$à  H‰Œ$ˆ  H‰Œ$è  H‹œ$p  H‰$Hƒ$è    H‹œ$p  H‹¬$à  H‰kH‹¬$è  €=     uH‰kè    HÄh  ÃLCL‰$H‰l$è    ëßH    H‰$H    H‰\$H    H‰\$è    H‹D$éFÿÿÿH‰$H‰l$è    éÿÿÿ1ÛH‰œ$    H‰œ$¨   H‰œ$°   H‰œ$¸   H‰Œ$À  H‰$Hƒ$ HÇD$    è    H‹œ$À  Hƒû „Ù  H‹s H‹S(H‹K0H‹C8H‰´$    H‰”$¨   H‰”$ˆ  H‰Œ$°   H‰Œ$  H‰„$¸   H‰„$˜  H‰´$€  Hƒş Œ  Hù     Hƒú Œú  H=   î  H‰´$   H‰”$  H‰Œ$  H‰„$  1ÛH‰œ$   H‰œ$¨  H‰œ$°  H‰œ$¸  H‹œ$p  H‰$Hƒ$ Hƒ$PHƒ$è    H‹„$p  H‹˜€   H‰œ$°  H‰$Hƒ$ Hƒ$PHƒ$è    L‹¬$   L‹¤$  L‹œ$  L‹”$  H‹¬$p  H‹µˆ   L‹Œ$   L‰Œ$À   L‹„$¨  L‰„$È   H‹¼$°  H‰¼$Ğ   H‰´$Ø   L‰¤$H  L‰”$X  L‰¬$@  L‰œ$P  M9İÁ  M9ÔÀ< „’  HÇÀ   < …n  H    H‰œ$   HÇ„$(  !   1ÛH‰œ$   H‰œ$  H    H‰$è    H‹D$H‰„$Ğ  H‰$è    H‹œ$Ğ  H‹¬$(  H‰kH‹¬$   €=     …ß   H‰+H‹œ$Ğ  H‰œ$Ğ  H‹    1íH9è„ˆ   H‹Œ$Ğ  H‰„$€  H‰„$   H‰Œ$ˆ  H‰Œ$  H‹œ$p  H‰$Hƒ$è    H‹œ$p  H‹¬$   H‰kH‹¬$  €=     uH‰kè    HÄh  ÃLCL‰$H‰l$è    ëßH    H‰$H    H‰\$H    H‰\$è    H‹D$éFÿÿÿH‰$H‰l$è    éÿÿÿHÇD$XÿÿÿÿH‹œ$x  H‰$Hƒ$@è    H‹œ$x  Hƒû „İ  H‹S@H‹CHH‹kPH‰¬$`  1ÉH‰„$X  H‰„$   H‰”$P  H‰ĞH‰Œ$˜   H‹¬$   H9é}xH‰„$È  H‰$è    H‹œ$È  Hƒû „m  H‹H‹kH‹œ$˜   H‰\$xH‰Œ$p  H‰¬$x  H‰¬$X  H‰,$H‰Œ$P  H‹Y ÿÓ‹\$ƒû …  H‹\$xH‰\$XH‹œ$€  Hƒû .  ¶œ$ˆ  €û …  H‹\$XHƒûÿ…  H‹œ$p  H«    H‰,$è    H‹´$p  Æ†    ,HÆ    Hƒş „Ï  HÿÆH‹„$€  HÇÅ   HÇÂÿ   H‰”$   f‰D$HH‰´$ğ  Hƒı H‰¬$ø  †ˆ  H‰4$è    H‹Œ$ğ  H‹„$ø  Hƒø †^  H·l$H@ˆ)H‰ËHƒø†A  HÿÃH‰$è    H‹œ$ğ  Hƒ¼$ø  †  HÿÃH·l$HfÁí@ˆ+H‹´$p  Hƒş „î
+  HÆ    Hƒş „Ö
+  HƒÆH‹„$ˆ  HÇÅ   HÇÂı   H‰”$   f‰D$FH‰´$  Hƒı H‰¬$˜  †
+  H‰4$è    H‹Œ$  H‹„$˜  Hƒø †d
+  H·l$F@ˆ)H‰ËHƒø†G
+  HÿÃH‰$è    H‹œ$  Hƒ¼$˜  †
+  HÿÃH·l$FfÁí@ˆ+H‹¬$p  Hƒı „ó	  HÅ    Hƒı „Ú	  HƒÅHÇÆ   HÇÂû   H‹¼$€  H‹œ$ˆ  H‰œ$è   H‹„$  H‹œ$˜  H‰œ$ø   H‰ÃH‰„$ğ   H‰¼$à   H)ûH‰”$è  f‰\$NH‰¬$Ø  Hƒş H‰´$à  †T	  H‰,$è    H‹Œ$Ø  H‹„$à  Hƒø †*	  H·l$N@ˆ)H‰ËHƒø†	  HÿÃH‰$è    H‹œ$Ø  Hƒ¼$à  †ã  HÿÃH·l$NfÁí@ˆ+H‹¬$p  Hƒı „¹  HÅ    Hƒı „   HƒÅHÇÆ   HÇÂù   H‹œ$€  H‰œ$   H‹¼$ˆ  H‹œ$  H‰œ$0  H‹„$˜  H‰„$8  H‰¼$(  H)øH‰”$¸  f‰D$JH‰¬$¨  Hƒş H‰´$°  †  H‰,$è    H‹Œ$¨  H‹„$°  Hƒø †ó  H·l$J@ˆ)H‰ËHƒø†Ö  HÿÃH‰$è    H‹´$p  H‹œ$¨  Hƒ¼$°  †¤  HÿÃH·l$JfÁí@ˆ+H‰ğHƒş „€  H    Hƒø „i  HÇÂ	   HÇÁ   H‰4$H‰„$8  H‰D$H‰”$@  H‰T$H‰Œ$H  H‰L$è    H‹œ$x  H‰$Hƒ$@è    H‹œ$x  H‹kHH‰,$è    H‹\$H‰\$`H‹œ$p  Hƒû „İ  HÃ   Hƒû „Å  HÇ„$@     HÇ„$H     H‰œ$8  H‹œ$x  H‰$Hƒ$@è    H‹œ$8  H‰$H‹œ$@  H‰\$H‹œ$H  H‰\$H‹´$x  Hƒş „P  H^@H|$H‹H‰H‹KH‰OH‹KH‰OH‹\$`H‰\$0è    H‹\$8H‰œ$ˆ   H‹œ$p  H‰$H$˜   è    H‹Œ$ˆ   H‹„$p  H‹˜˜   H9Ë…+  Hù   ‡È  H‰ÆHÆ   Hƒş „­  I‰ÈHÇÇ   Hù   ‡  H‰ÅHÅ   Hƒı „s  H‰ÊHÇÁ   H‰´$8  H‰4$L‰„$@  L‰D$H‰¼$H  H‰|$H‰¬$   H‰l$H‰”$(  H‰T$ H‰Œ$0  H‰L$(è    H‹„$p  ¶\$0€û „m  H‰$ÆD$ è    H‹D$`HÿÀHƒø}HÇÀ   H‹œ$p  H‰$H‰D$hˆD$è    1ÛH‹œ$p  H‰œ$Ø  H‹    1íH9è„Ú  H‹Œ$Ø  H‰„$`  H‰$H‰Œ$h  H‰L$HÇD$    H‹\$hH‰\$è    H‹L$ H‹D$(H‰Œ$@  H‰„$H  H‹Œ$€  H‹œ$ˆ  H‰œ$h  H‹„$  H‹œ$˜  H‰œ$x  H‰ÃH‰„$p  H‰Œ$`  H)ËH‰œ$€   H‹œ$x  H‰$Hƒ$è    H‹”$x  H‹ZH‹¬$€   H9ë…F  H‰$è    H‹´$x  H|$H‹H‰H‹NH‰OH‹NH‰OH‹œ$H  H‰$H‹œ$@  H‹[(ÿÓH‹\$(H‰œ$€  H‹\$0H‰œ$ˆ  H‹œ$p  H‰$Hƒ$è    H‹œ$p  H‹¬$€  H‰kH‹¬$ˆ  €=     …   H‰kH‹œ$p  H‰$Hƒ$è    H‹œ$p  H‹kHƒı t'H‹œ$H  H‰$H‹œ$@  H‹[ ÿÓè    HÄh  ÃH‹œ$H  H‰$H‹œ$@  H‹[ ÿÓH‹œ$p  H‰$ÆD$ è    è    HÄh  ÃLCL‰$H‰l$è    é]ÿÿÿH‹„$ˆ  1ÉH‹œ$˜  H‰D$PH9Ã~H‰ËH‰L$pH‹¬$€   HëH‰œ$   H‰$è    H‹œ$x  H‹l$pL‹„$   L‹KM9È‡W  L9Å‡N  L‹I)èI)éIƒù tM*L‰”$  L‰T$L‰„$  L‰D$L‰Œ$  L‰L$H‹œ$H  H‰$H‹œ$@  H‹[(ÿÓH‹\$(H‰œ$€  H‹\$0H‰œ$ˆ  H‹œ$p  H‰$Hƒ$è    H‹œ$p  H‹¬$€  H‰kH‹¬$ˆ  €=     …Š   H‰kH‹œ$p  H‰$Hƒ$è    H‹œ$p  H‹kHƒı t'H‹œ$H  H‰$H‹œ$@  H‹[ ÿÓè    HÄh  ÃH‹œ$x  H‰$Hƒ$è    H‹”$x  H‹JH‹l$pH‹D$PHéHÿÀéhşÿÿLCL‰$H‰l$è    écÿÿÿè    H    H‰$H    H‰\$H    H‰\$è    H‹D$éôûÿÿH‰$H‹\$`HË€   ˆ\$è    H‹´$p  H‹œ$ˆ   Hû   w[H‰õHƒş tNHÅ   Hƒı t<HÇÁ   H‰4$H‰¬$  H‰l$H‰œ$  H‰\$H‰Œ$  H‰L$è    éûÿÿ‰E ë¿‰ë®è    ‰E é…úÿÿè    ‰éLúÿÿè    ‰é©ùÿÿ‰é4ùÿÿ‰éùÿÿ‰ éøÿÿ‰éyøÿÿè    è    è    è    ‰E éX÷ÿÿ‰E é?÷ÿÿè    è    è    è    ‰E éöÿÿ‰E éöÿÿè    è    è    è    ‰é#õÿÿ‰éõÿÿè    è    è    è    ‰é*ôÿÿH‹œ$p  H«    H‰,$è    H‹„$p  Æ€    !H¨    HÿÅH‰,$è    H‹„$p  Æ€¡   ùH¨    HƒÅH‰,$è    H‹„$p  Æ€¢   H‹\$XHƒûÿ„	  H¨    HƒÅH‰,$è    H‹„$p  ¶¬$ˆ  HÁåHƒÍ@ˆ¨£   H‰ÆHƒø „Â  HÆ    Hƒş „ª  HƒÆH‹„$€  HÇÅ   HÇÂü   H‰”$Ğ  f‰D$LH‰´$À  Hƒı H‰¬$È  †b  H‰4$è    H‹Œ$À  H‹„$È  Hƒø †8  H·l$L@ˆ)H‰ËHƒø†  HÿÃH‰$è    H‹„$p  H‹œ$À  Hƒ¼$È  †é   HÿÃH·l$LfÁí@ˆ+H‹\$XHƒûÿ„¢   H¨    HƒÅH‰,$è    H‹„$p  H‹l$X@ˆ¨¦   H¨    HƒÅH‰,$è    H‹Œ$p  Æ§    H‰ÈHÁ    Hƒù tCHÇÅ   HÇÂ   H‰$H‰Œ$8  H‰L$H‰¬$@  H‰l$H‰”$H  H‰T$è    éÄñÿÿ‰ë¹H¨    HƒÅH‰,$è    H‹„$p  Æ€¦    é^ÿÿÿè    è    è    è    ‰éOşÿÿ‰ é7şÿÿH¨    HƒÅH‰,$è    H‹„$p  ¶¬$ˆ  HÁåHƒÍ @ˆ¨£   éòıÿÿH‹„$È  H‹Œ$˜   HƒÀHÿÁé[ğÿÿ‰éŒğÿÿ‰éğÿÿM9éI9ûM9àI9òÀé[îÿÿ1ÀéTîÿÿHÇÀ   é9îÿÿH    H‰œ$0  HÇ„$8  '   1ÛH‰œ$ğ  H‰œ$ø  H    H‰$è    H‹D$H‰„$Ğ  H‰$è    H‹œ$Ğ  H‹¬$8  H‰kH‹¬$0  €=     …ß   H‰+H‹œ$Ğ  H‰œ$Ğ  H‹    1íH9è„ˆ   H‹Œ$Ğ  H‰„$€  H‰„$ğ  H‰Œ$ˆ  H‰Œ$ø  H‹œ$p  H‰$Hƒ$è    H‹œ$p  H‹¬$ğ  H‰kH‹¬$ø  €=     uH‰kè    HÄh  ÃLCL‰$H‰l$è    ëßH    H‰$H    H‰\$H    H‰\$è    H‹D$éFÿÿÿH‰$H‰l$è    éÿÿÿ‰é ëÿÿè    éÁèÿÿ–
+      ^
+  *runtime.racefuncenter   Š
+   runtime.raceread   ¸
+  (runtime.racefuncexit   ô
+   runtime.raceread   ®  zgo.string."gif: cannot encode image block with empty palette"   ˆ  .type.errors.errorString   š
+  "runtime.newobject   Æ
+  "runtime.racewrite   Š 6runtime.writeBarrierEnabled   Ì  Bgo.itab.*errors.errorString.error   Ş
+  "runtime.racewrite   ¢ 6runtime.writeBarrierEnabled   º
+  (runtime.racefuncexit   î
+  .runtime.writebarrierptr   €  0type.*errors.errorString   –  type.error   ®  Bgo.itab.*errors.errorString.error   Â
+   runtime.typ2Itab   ò
+  .runtime.writebarrierptr   ş
+  *runtime.racereadrange   à
+   runtime.raceread   ¾
+   runtime.raceread   ¦  Zgo.string."gif: image block is out of bounds"   €  .type.errors.errorString   ’
+  "runtime.newobject   ¾
+  "runtime.racewrite   ‚ 6runtime.writeBarrierEnabled   Ä  Bgo.itab.*errors.errorString.error   Ö
+  "runtime.racewrite   š 6runtime.writeBarrierEnabled   ²
+  (runtime.racefuncexit   æ
+  .runtime.writebarrierptr   ø  0type.*errors.errorString     type.error   ¦  Bgo.itab.*errors.errorString.error   º
+   runtime.typ2Itab   ê
+  .runtime.writebarrierptr   ²
+   runtime.raceread   „
+   runtime.raceread   ¨       æ
+  "runtime.racewrite   ¸
+  "runtime.racewrite   °
+  "runtime.racewrite   Ø
+  "runtime.racewrite   Ğ 
+  "runtime.racewrite   ô#
+  "runtime.racewrite   ì$
+  "runtime.racewrite   Š(
+  "runtime.racewrite   ‚)
+  "runtime.racewrite   –+
+  &"".(*encoder).write   Â+
+   runtime.raceread   ì+
+  "".log2   ²-
+   runtime.raceread   ş.
+  &"".encodeColorTable   Ê/
+   runtime.raceread   Ú2
+  bytes.Equal   ¢3
+  ."".(*encoder).writeByte   €4
+  ."".(*encoder).writeByte   ²4  @go.itab."".blockWriter.io.Writer   º5
+  ,compress/lzw.NewWriter   ¶7
+   runtime.raceread   ‚8
+   runtime.raceread   €9       Ü9
+  "runtime.racewrite    : 6runtime.writeBarrierEnabled   â:
+   runtime.raceread   ¾;       Ä;
+  (runtime.racefuncexit   Œ<       ´<
+  ."".(*encoder).writeByte   ¾<
+  (runtime.racefuncexit   ò<
+  .runtime.writebarrierptr   ü=
+   runtime.raceread   ş?       Ú@
+  "runtime.racewrite   A 6runtime.writeBarrierEnabled   àA
+   runtime.raceread   ¼B       ÂB
+  (runtime.racefuncexit   şB
+   runtime.raceread   äC
+  .runtime.writebarrierptr   øC
+  $runtime.panicslice   ŠD  &type."".blockWriter    D  type.io.Writer   ¸D  @go.itab."".blockWriter.io.Writer   ÌD
+   runtime.typ2Itab   ’E
+  ."".(*encoder).writeByte   ŞF
+  &"".(*encoder).write   „G
+  $runtime.panicslice   ¢G
+  $runtime.panicslice   ¾G
+  $runtime.panicslice   ’H
+  $runtime.panicindex    H
+  $runtime.panicindex   ®H
+  $runtime.panicindex   ¼H
+  $runtime.panicindex   êH
+  $runtime.panicindex   øH
+  $runtime.panicindex   †I
+  $runtime.panicindex   ”I
+  $runtime.panicindex   ÂI
+  $runtime.panicindex   ĞI
+  $runtime.panicindex   ŞI
+  $runtime.panicindex   ìI
+  $runtime.panicindex   –J
+  $runtime.panicindex   ¤J
+  $runtime.panicindex   ²J
+  $runtime.panicindex   ÀJ
+  $runtime.panicindex   ‚K
+  "runtime.racewrite   ÆK
+  "runtime.racewrite   ŒL
+  "runtime.racewrite   ğL
+  "runtime.racewrite   şN
+  "runtime.racewrite   öO
+  "runtime.racewrite   šQ
+  "runtime.racewrite   êQ
+  "runtime.racewrite   ¤S
+  &"".(*encoder).write   ŞS
+  "runtime.racewrite   T
+  $runtime.panicindex   T
+  $runtime.panicindex   ¬T
+  $runtime.panicindex   ºT
+  $runtime.panicindex   ‚U
+  "runtime.racewrite   †W  fgo.string."gif: image block is too large to encode"   àW  .type.errors.errorString   òW
+  "runtime.newobject   X
+  "runtime.racewrite   âX 6runtime.writeBarrierEnabled   ¤Y  Bgo.itab.*errors.errorString.error   ¶Z
+  "runtime.racewrite   úZ 6runtime.writeBarrierEnabled   ’[
+  (runtime.racefuncexit   Æ[
+  .runtime.writebarrierptr   Ø[  0type.*errors.errorString   î[  type.error   †\  Bgo.itab.*errors.errorString.error   š\
+   runtime.typ2Itab   Ê\
+  .runtime.writebarrierptr   ì\
+  0runtime.morestack_noctxt   @Ğ  ²"".autotmp_0351  type.int "".autotmp_0350  type.int "".autotmp_0349  type.int "".autotmp_0348  type.int "".autotmp_0347  type.*uint8 "".autotmp_0346  type.uint16 "".autotmp_0345  type.int "".autotmp_0344  type.uint16 "".autotmp_0343  type.int "".autotmp_0342  type.uint16 "".autotmp_0341  type.uint16 "".autotmp_0339 ï,type.image/color.Color "".autotmp_0338 ¿.type.*image/color.Color "".autotmp_0337 ¯type.int "".autotmp_0336  type.int "".autotmp_0335  type.*uint8 "".autotmp_0334  type.error "".autotmp_0333  0type.*errors.errorString "".autotmp_0332  type.bool "".autotmp_0330 (type.image.Rectangle "".autotmp_0329  type.*uint8 "".autotmp_0328  type.error "".autotmp_0327  0type.*errors.errorString "".autotmp_0325 Ïtype.error "".autotmp_0324 ¯0type.*errors.errorString "".autotmp_0323  type.error "".autotmp_0322  type.[]uint8 "".autotmp_0321  type.int "".autotmp_0320  type.error "".autotmp_0318 Ÿ&type."".blockWriter "".autotmp_0317 ¿type.[]uint8 "".autotmp_0316  type.bool "".autotmp_0315 type.[]uint8 "".autotmp_0314  type.[]uint8 "".autotmp_0313  type.int "".autotmp_0312  type.[]uint8 "".autotmp_0311  type.int "".autotmp_0310  type.int "".autotmp_0309  type.[]uint8 "".autotmp_0308  type.[]uint8 "".autotmp_0307  type.[]uint8 "".autotmp_0306  type.[]uint8 "".autotmp_0305  type.[]uint8 "".autotmp_0304  type.[]uint8 "".autotmp_0303 _type.[]uint8 "".autotmp_0301 /0type.image/color.Palette "".autotmp_0300  0type.*errors.errorString "".autotmp_0299  0type.*errors.errorString "".autotmp_0298  0type.*errors.errorString "".autotmp_0297 Ÿtype.int image.rÂ·2 (type.image.Rectangle "".u »type.uint16 "".b ÿtype.[]uint8 image.rÂ·2 	(type.image.Rectangle "".u ³type.uint16 "".b Ÿtype.[]uint8 image.rÂ·2 
+(type.image.Rectangle "".u Ãtype.uint16 "".b ¯type.[]uint8 "".u ¿type.uint16 "".b ïtype.[]uint8 "".u ·type.uint16 "".b Ïtype.[]uint8 "".~r0 Ïtype.error errors.textÂ·2 type.string image.rÂ·2 Ï(type.image.Rectangle image.sÂ·3 Ï
+(type.image.Rectangle image.rÂ·2 Ï	(type.image.Rectangle "".~r0 ïtype.error errors.textÂ·2 ïtype.string "".~r0 (type.image.Rectangle image.pÂ·2 Ï(type.*image.Paletted "".~r0 type.error errors.textÂ·2 ¯type.string "".y ¯type.int "".i ïtype.int 
+"".dx Ïtype.int "".lzww Ï&type.io.WriteCloser "".litWidth ÿtype.int 
+"".ct ¿type.int "".paddedSize type.int "".c ¯,type.image/color.Color "".i ßtype.int &"".transparentIndex Ÿtype.int "".b Ï(type.image.Rectangle "".disposal 0type.uint8 "".delay  type.int 
+"".pm (type.*image.Paletted "".e   type.*"".encoder j"ĞEÏĞÀÏĞûÏĞÈÏĞ<ÏĞÏĞ§ÏĞk À. Òî"²¯(°­,ˆ¦£¦¥E›5¾ˆ’’‘E	µ'
+
+2('73'J3'ˆ3'“[5Ì÷w£(
+€(	72!^,''"#3E3!'(#N#3*-ˆš—š™E Ò .Œ.D^ñ	™Œ.D<i±iĞ‹Æfœ"“C/!Y"ôC/! "=!* #ö¬&Œ.)D4 TgclocalsÂ·f6296cfde20a742c77302c9ea66f7adc TgclocalsÂ·5ea47e4012ef688a16d4de31d0970ec2   \prebuilts/go/linux-x86/src/image/gif/writer.goş"".EncodeAll   D  œDdH‹%    H„$˜öÿÿH;A†é  Hìè	  H‹œ$è	  H‰$è    1ÛH‰œ$
+  H‰œ$
+  H‹œ$ 
+  H‰$è    H‹Œ$ 
+  H‹iHƒı …$  H    H‰œ$p  HÇ„$x  $   1ÛH‰œ$  H‰œ$  H    H‰$è    H‹D$H‰„$È   H‰$è    H‹œ$È   H‹¬$x  H‰kH‹¬$p  €=     …•   H‰+H‹œ$È   H‰œ$È   H‹    1íH9ètEH‹Œ$È   H‰„$À  H‰Œ$È  H‰„$  H‰„$
+  H‰Œ$  H‰Œ$
+  è    HÄè	  ÃH    H‰$H    H‰\$H    H‰\$è    H‹D$ëŒH‰$H‰l$è    é[ÿÿÿH‰$è    H‹„$ 
+  H‹hH‰l$PH‰$Hƒ$è    H‹Œ$ 
+  H‹i H‹\$PH9ë„$  H    H‰œ$P  HÇ„$X  '   1ÛH‰œ$ğ   H‰œ$ø   H    H‰$è    H‹D$H‰„$È   H‰$è    H‹œ$È   H‹¬$X  H‰kH‹¬$P  €=     …•   H‰+H‹œ$È   H‰œ$È   H‹    1íH9ètEH‹”$È   H‰„$À  H‰”$È  H‰„$ğ   H‰„$
+  H‰”$ø   H‰”$
+  è    HÄè	  ÃH    H‰$H    H‰\$H    H‰\$è    H‹D$ëŒH‰$H‰l$è    é[ÿÿÿH‰$Hƒ$0è    H‹„$ 
+  H‹X0Hƒû }H‰$Hƒ$0è    H‹œ$ 
+  HÇC0    H    H‰$è    H‹\$H‰œ$Ø   H¼$H  1ÀHÇÁô   óH«H‹œ$ 
+  H‰$HÇD$x   è    H‹´$ 
+  Hƒş „l  Hœ$h  H‰ßè    H‹œ$Ø   H‰$HÇD$   è    H‹œ$Ø   H¬$H  H‰\$H‰l$H-    H‰,$è    H‹œ$Ø   H‰$Hƒ$ Hƒ$8è    H‹„$Ø   H‹hXHƒı „p  H‰$Hƒ$ è    H‹„$Ø   H‹h(H‰l$PH‰$Hƒ$ Hƒ$8è    H‹„$Ø   H‹h`H‹\$PH9ë„$  H    H‰œ$`  HÇ„$h  *   1ÛH‰œ$à   H‰œ$è   H    H‰$è    H‹D$H‰„$È   H‰$è    H‹œ$È   H‹¬$h  H‰kH‹¬$`  €=     …•   H‰+H‹œ$È   H‰œ$È   H‹    1íH9ètEH‹”$È   H‰„$À  H‰”$È  H‰„$à   H‰„$
+  H‰”$è   H‰”$
+  è    HÄè	  ÃH    H‰$H    H‰\$H    H‰\$è    H‹D$ëŒH‰$H‰l$è    é[ÿÿÿ1ÛH‰œ$(  H‰œ$0  H‰œ$8  H‰œ$@  HƒÀ HƒÀPH‰„$¸   Hœ$(  H‰œ$°   H‰$è    H‹œ$°   Hƒû „  H‹+H‰¬$°  H‹kH‰¬$¸  H‹œ$¸   H‰$è    H‹”$°  H‹œ$¸   Hƒû „Ê
+  H‹H‹KH‰Œ$¨  H‰„$   H9Ğ…ü  H‰$H‰L$H‰T$H‹¬$¸  H‰l$è    ¶\$ €û „Î  H‹œ$¸   H‰$Hƒ$è    H‹œ$°   H‰$Hƒ$è    H‹„$¸   H‹XL‹„$°   I‹hH9ë…  H‰$Hƒ$è    H‹œ$°   H‰$Hƒ$è    H‹¬$¸   H‹]L‹„$°   I‹hH9ë…<  H‹œ$ 
+  H‰$è    H‹œ$ 
+  H‹H‹CH‹kH‰¬$  H‰Œ$ø  Hƒø H‰„$   †ï  H‰$è    H‹œ$ 
+  Hƒû „Í  H‹H‹CH‹kH‰¬$  H‰Œ$ø  Hƒø H‰„$   †™  H‹)1ÛH‰\$hH‰\$pH‰\$xH‰œ$€   H‰¬$ˆ   H‰,$Hƒ$ HÇD$    è    H‹œ$ˆ   Hƒû „E  H‹k H‰l$hH‹k(H‰l$pH‹k0H‰l$xH‹k8H‰¬$€   H\$hH‹kH‰l$XH‹kH‰l$`H‹œ$Ø   H‰$Hƒ$ Hƒ$PHƒ$è    H‹„$Ø   H‹l$XH‰¨€   H‰$Hƒ$ Hƒ$PHƒ$è    H‹œ$Ø   H‹l$`H‰«ˆ   1ÛH‰œ$Ğ  H‰œ$Ø  H    H‰$H‹œ$ğ	  H‰\$H‹œ$ø	  H‰\$Hœ$Ğ  H‰\$è    ¶\$ H‰ØH‹œ$Ğ  H‰œ$@  H‹œ$Ø  H‰œ$H  < „Z  H‹œ$Ø   H‰$è    H‹œ$Ø   H‹¬$@  H‰+H‹¬$H  €=     …
+  H‰kH‹œ$Ø   H‰$è    H‹œ$ 
+  H‰$è    H‹œ$ 
+  Hƒû „Ë  H‹H‹CH‹kH‰¬$  1ÉH‰„$   H‰D$HH‰”$ø  H‰ĞH‰L$PH‹l$HH9é÷  H‰„$    H‰$è    H‹œ$    H‹+H‹\$PH‰\$@H‰¬$   ÆD$7 H‹œ$ 
+  H‰$Hƒ$8è    H‹„$ 
+  H‹h8Hƒı „¥   H‰$Hƒ$8è    H‹œ$ 
+  H‹K8H‹C@H‹kHH‰¬$   H‰Œ$  H‹l$@H‰„$  H9Åƒİ  H)H‰$è    H‹„$ 
+  Hƒø „·  H‹P8H‹H@H‹hHH‰¬$   H‰”$  H‹l$@H‰Œ$  H9Íƒ~  H*¶+@ˆl$7H‰$Hƒ$è    H‹œ$ 
+  H‹KH‹C H‹k(H‰¬$ğ  H‰Œ$à  H‹l$@H‰„$è  H9Åƒ#  HéH‰$è    H‹œ$Ø   H‰$H‹œ$   H‰\$H‹œ$ 
+  Hƒû „ä   H‹KH‹C H‹k(H‰¬$ğ  H‰Œ$à  H‹l$@H‰„$è  H9Åƒ«   HéH‹+H‰l$¶\$7ˆ\$è    H‹„$    H‹L$PHƒÀHÿÁH‰L$PH‹l$HH9éŒ	şÿÿH‹œ$Ø   H‰$ÆD$;è    H‹œ$Ø   H‰$è    H‹œ$Ø   H‰$Hƒ$è    H‹œ$Ø   H‹kH‰¬$
+  H‹kH‰¬$
+  è    HÄè	  Ãè    ‰éÿÿÿè    è    ‰ éBşÿÿè    ‰é.ıÿÿLCL‰$H‰l$è    éãüÿÿH‹Œ$ğ	  H‹„$ø	  H‰Œ$   H‰„$(  HÇD$8   HÇ„$Ğ       H    H‰$H‰Œ$0  H‰L$H‰„$8  H‰D$Hœ$Ğ   H‰\$è    H‹D$8¶\$ H‹”$Ğ   €û „ğ   H‰”$˜   H‰$Hƒ$è    H‹”$˜   H‹D$8H‹ZH9ÃŒÀ   H‰ĞH‰„$¨   H‹    H‰„$À   1íH9èteH‹œ$Ø   H‰$è    H‹Œ$¨   H‹„$À   H‹œ$Ø   H‰„$  H‰H‰Œ$˜  €=     u	H‰Ké½ûÿÿLCL‰$H‰L$è    é¦ûÿÿH    H‰$H    H‰\$H    H‰\$è    H‹\$H‰œ$À   éaÿÿÿHƒø HÇÀ   H    H‰$H‰D$H‰D$è    H‹\$H‰œ$  H‹\$ H‰œ$  H‹\$(H‰œ$   H    H‰$è    H‹D$H‰„$¨   H‰$HÇD$@   è    H‹„$¨   1íH‰(H‰hH‰hH‰hH‰h H‰h(H‰h0H‰h8H‰$Hƒ$è    H‹œ$¨   H‹¬$  H‰kH‹¬$   H‰k H‹¬$  €=     udH‰kH‹œ$¨   H‰$Hƒ$0è    H‹œ$¨   H‹¬$0  H‰k0H‹¬$8  €=     uH‰k8H‹„$¨   éşÿÿLC8L‰$H‰l$è    ëßLCL‰$H‰l$è    ëŒ‰é´øÿÿè    ‰é,øÿÿè    H‹œ$Ø   H‰$Hƒ$ Hƒ$Pè    H‹„$Ø   H‹hpHƒı „ùÿÿH‰$Hƒ$ Hƒ$Pè    H    H‰$H‹´$Ø   H^pH|$H‹H‰H‹KH‰OHÇD$    è    ¶\$ €û …³øÿÿH    H‰œ$€  HÇ„$ˆ  ,   1ÛH‰œ$   H‰œ$  H    H‰$è    H‹D$H‰„$È   H‰$è    H‹œ$È   H‹¬$ˆ  H‰kH‹¬$€  €=     …•   H‰+H‹œ$È   H‰œ$È   H‹    1íH9ètEH‹”$È   H‰„$À  H‰”$È  H‰„$   H‰„$
+  H‰”$  H‰”$
+  è    HÄè	  ÃH    H‰$H    H‰\$H    H‰\$è    H‹D$ëŒH‰$H‰l$è    é[ÿÿÿ‰é/õÿÿ‰éæôÿÿ‰éòÿÿè    éòîÿÿ€
+      ^
+  *runtime.racefuncenter   ¤
+   runtime.raceread   Ş  `go.string."gif: must provide at least one image"   ¸  .type.errors.errorString   Ê
+  "runtime.newobject   ö
+  "runtime.racewrite   º 6runtime.writeBarrierEnabled   ü  Bgo.itab.*errors.errorString.error   „
+  (runtime.racefuncexit   ¢  0type.*errors.errorString   ¸  type.error   Ğ  Bgo.itab.*errors.errorString.error   ä
+   runtime.typ2Itab   
+  .runtime.writebarrierptr   ª
+   runtime.raceread   è
+   runtime.raceread   ª  fgo.string."gif: mismatched image and delay lengths"   „  .type.errors.errorString   –
+  "runtime.newobject   Â
+  "runtime.racewrite   †	 6runtime.writeBarrierEnabled   È	  Bgo.itab.*errors.errorString.error   Ğ
+
+  (runtime.racefuncexit   î
+  0type.*errors.errorString   „  type.error   œ  Bgo.itab.*errors.errorString.error   °
+   runtime.typ2Itab   Ú
+  .runtime.writebarrierptr   €
+   runtime.raceread   À
+  "runtime.racewrite   î  type."".encoder   €
+  "runtime.newobject   ö
+  *runtime.racereadrange   º
+Ü  runtime.duffcopy   î
+  ,runtime.racewriterange   °  type."".encoder   Â
+  (runtime.typedmemmove   ø
+   runtime.raceread   À
+   runtime.raceread   ˆ
+   runtime.raceread   Ê  lgo.string."gif: mismatched image and disposal lengths"   ¤  .type.errors.errorString   ¶
+  "runtime.newobject   â
+  "runtime.racewrite   ¦ 6runtime.writeBarrierEnabled   è  Bgo.itab.*errors.errorString.error   ğ
+  (runtime.racefuncexit     0type.*errors.errorString   ¤  type.error   ¼  Bgo.itab.*errors.errorString.error   Ğ
+   runtime.typ2Itab   ú
+  .runtime.writebarrierptr   š
+   runtime.raceread   
+   runtime.raceread   Â
+  runtime.ifaceeq   Š
+   runtime.raceread   ¶
+   runtime.raceread   ”
+   runtime.raceread   À
+   runtime.raceread   ¤
+   runtime.raceread    
+   runtime.raceread   ”
+  *runtime.racereadrange   ô 
+  "runtime.racewrite   Ì!
+  "runtime.racewrite   ¦"  type."".writer   †#
+  $runtime.assertI2I2   ˆ$
+  "runtime.racewrite   Ê$ 6runtime.writeBarrierEnabled   ‚%
+  2"".(*encoder).writeHeader   ¤%
+   runtime.raceread   ê&
+   runtime.raceread   Ú'
+   runtime.raceread   ¢(
+   runtime.raceread   °)
+   runtime.raceread   ì*
+   runtime.raceread   ú+
+   runtime.raceread   è-
+  :"".(*encoder).writeImageBlock   â.
+  ."".(*encoder).writeByte   „/
+  &"".(*encoder).flush   °/
+   runtime.raceread   ú/
+  (runtime.racefuncexit   ”0
+  $runtime.panicindex   °0
+  $runtime.panicindex   ¾0
+  $runtime.panicindex   Ú0
+  $runtime.panicindex   1
+  .runtime.writebarrierptr   ’2  $type.*bufio.Writer   ò2
+  $runtime.assertI2T2   Ô3
+   runtime.raceread   ¬4  >go.itab.*bufio.Writer."".writer   ì4
+  "runtime.racewrite   Î5 6runtime.writeBarrierEnabled   Š6
+  .runtime.writebarrierptr   ¢6  $type.*bufio.Writer   ¸6  type."".writer   Ğ6  >go.itab.*bufio.Writer."".writer   ä6
+   runtime.typ2Itab   °7  type.[]uint8   Ö7
+  "runtime.makeslice   ²8  "type.bufio.Writer   Ä8
+  "runtime.newobject   ‚9
+  ,runtime.racewriterange   ğ9
+  "runtime.racewrite   Ì: 6runtime.writeBarrierEnabled   †;
+  "runtime.racewrite   Ê; 6runtime.writeBarrierEnabled   –<
+  .runtime.writebarrierptr   ¾<
+  .runtime.writebarrierptr   Ú<
+  $runtime.panicindex   ö<
+  $runtime.panicindex   °=
+   runtime.raceread   ‚>
+   runtime.raceread   >  0type.image/color.Palette   ò>
+  $runtime.assertI2T2   œ?  pgo.string."gif: GIF color model must be a color.Palette"   ö?  .type.errors.errorString   ˆ@
+  "runtime.newobject   ´@
+  "runtime.racewrite   ø@ 6runtime.writeBarrierEnabled   ºA  Bgo.itab.*errors.errorString.error   ÂB
+  (runtime.racefuncexit   àB  0type.*errors.errorString   öB  type.error   C  Bgo.itab.*errors.errorString.error   ¢C
+   runtime.typ2Itab   ÌC
+  .runtime.writebarrierptr   ŠD
+  0runtime.morestack_noctxt   PĞ'  ~"".autotmp_0396 %*type.**image.Paletted "".autotmp_0395  type.int "".autotmp_0394  type.int "".autotmp_0393  type.*uint8 "".autotmp_0392  $type.*bufio.Writer "".autotmp_0391 ÿ$$type.*bufio.Writer "".autotmp_0390  $type.*bufio.Writer "".autotmp_0389  type.*uint8 "".autotmp_0388  type.error "".autotmp_0387  0type.*errors.errorString "".autotmp_0386 !,type.image/color.Model "".autotmp_0385 ï ,type.image/color.Model "".autotmp_0384 ï$$type.*image.Config "".autotmp_0383 ß$$type.*image.Config "".autotmp_0382  type.*uint8 "".autotmp_0381  type.error "".autotmp_0380  0type.*errors.errorString "".autotmp_0379  type.*uint8 "".autotmp_0378  type.error "".autotmp_0377  0type.*errors.errorString "".autotmp_0376 Ï$type.*uint8 "".autotmp_0375 Ï type.error "".autotmp_0374 ¿$0type.*errors.errorString "".autotmp_0373  ,type.[]*image.Paletted "".autotmp_0372  $type.*bufio.Writer "".autotmp_0371 ¯type.[]uint8 "".autotmp_0370  type.int "".autotmp_0369 ¯$$type.*bufio.Writer "".autotmp_0368 ¯ type."".writer "".autotmp_0367  0type.*errors.errorString "".autotmp_0366 ÿ"type.image.Config "".autotmp_0365  0type.*errors.errorString "".autotmp_0364  type.int "".autotmp_0363  type.int "".autotmp_0362 ¿type."".encoder "".autotmp_0361  0type.*errors.errorString "".autotmp_0360 ¿&type.int "".autotmp_0359  type.int "".autotmp_0358  0type.*errors.errorString "".autotmp_0357 ¯&type.int 
+"".&e Ÿ$ type.*"".encoder bufio.bÂ·4 Ÿ%$type.*bufio.Writer bufio.sizeÂ·3 ß&type.int bufio.wÂ·2 ï"type.io.Writer bufio.wÂ·2 #type.io.Writer "".~r0 ÿ%(type.image.Rectangle image.pÂ·2 ¿%(type.*image.Paletted "".~r0 Ï#type.error errors.textÂ·2 Ï!type.string "".~r0 $type.error errors.textÂ·2 "type.string "".~r0 ï#type.error errors.textÂ·2 ¯"type.string "".~r0 ¯#type.error errors.textÂ·2 ï!type.string "".disposal á&type.uint8 
+"".pm ¯%(type.*image.Paletted "".i Ï&type.int 
+"".ww Ï"type."".writer "".p Ÿ& type.image.Point "".~r2 0type.error "".g  type.*"".GIF "".w  type.io.Writer R"Ğ'«Ï'Ğ'åÏ'Ğ'Ï'Ğ'ÄÏ'Ğ'£	Ï'Ğ'c " ğÈ"ZY'ÕVUJBÕNMJ ±}Õ87Jÿ™4,y=
+‘,¥Ì	'C
+¡—1YÕ('J ä .v‡0#v
+‡0({fº‡0e:Z±¸
+p	‰A=t$8‡=#L>q1LO!- 97‚H-+¬‡0@ TgclocalsÂ·00fa23bc08429312d6db34b48a436a57 TgclocalsÂ·edb7136f268c5e62a59674e9490e6c3e   \prebuilts/go/linux-x86/src/image/gif/writer.goş"".Encode   <   <dH‹%    H„$¨üÿÿH;A†ë  HìØ  H‹œ$Ø  H‰$è    1ÛH‰œ$  H‰œ$  H‹œ$ø  H‰$H‹œ$ğ  H‹[(ÿÓL‹„$   H‹|$H‹t$H‹\$H‹L$ H‰¼$¸  H‰´$À  H‰´$   H‰œ$È  H‰Œ$Ğ  H‰Œ$0  H‰ÚH‰œ$(  H‰¼$  H)ûHû     H‰¼$X  H‰”$h  H‰ËH‰Œ$p  H‰´$`  H)óHû   á  1ÉH‰Œ$8  H‰Œ$@  H‰Œ$H  H‰ÈH‰Œ$P  H‰Œ$X  1íI9ètOL‰$HÇD$(   è    H‹œ$   Hƒû „‚  H‹H‹kH‰¬$@  H‹kH‰¬$H  H‹KH‹k H‰¬$X  HƒøŒ<  H‰„$8  H=   (  H‰Œ$P  Hƒù u.H    H‰$è    H‹    H‰œ$P  H‹    H‰œ$X  HÇ„$8      H    H‰$H‹œ$ğ  H‰\$H‹œ$ø  H‰\$Hœ$8  H‰\$è    ¶\$ H‹Œ$8  €û „`  H‰Œ$ø  H‰$Hƒ$@è    H‹œ$ø  H‹kHH‹œ$8  H9ëŒ-  1ÛH‰œ$ˆ   H‰œ$   H‹„$ø  Hƒø „  HƒÀ Hœ$ˆ   H‰œ$  H‰„$  H‰$è    H‹œ$  H‰$è    H‹„$  H‹L‹„$  I‹(H9ë…Ï  H‰$Hƒ$è    H‹œ$  H‰$Hƒ$è    H‹¬$  H‹]L‹„$  I‹hH9ë…Š  H‹Œ$¸  H‹œ$À  H‰œ$€  H‹„$È  H‹œ$Ğ  H‰œ$  H‰ÃH‰„$ˆ  H‰Œ$x  H)ËH‰\$XH‹œ$¸  H‰œ$˜  H‹Œ$À  H‹œ$È  H‰œ$¨  H‹œ$Ğ  H‰œ$°  H‰Œ$   H)ËH‰\$`H¼$`  1ÀHƒÇøè    Hœ$`  H‰œ$  H‰$HÇD$x   è    H‹¼$  Hƒÿ „©  1ÀHƒÇøè    H    H‰$è    H‹D$Hƒø „x  HÇ„$ø     HÇ„$      H‰„$ğ  H‰$è    H‹œ$ğ  H‹¬$ø  €=     …  H‰+H‹œ$  H‰$è    H‹œ$  H‹¬$ğ  H‰+H‹¬$ø  H‰kH‹¬$   H‰kH    H‰$è    H‹D$H‰„$   H‰$HÇD$   è    H‹„$   H‹-    H‰(HÇ„$à     HÇ„$è     H‰„$Ø  H‹œ$  H‰$Hƒ$è    H‹„$  H‹¬$Ø  H‰hH‹¬$à  H‰h H‹¬$è  H‰h(H‰$Hƒ$Pè    H    H‰$H    H‰\$H    H‰\$H‹œ$ø  H‰\$Hƒ|$ „ç   HƒD$@HÇD$     è    H‹„$  H\$(Hƒø „µ   HhPH‹H‰M H‹KH‰MH‰$Hƒ$PHƒ$è    H‹„$  H‹l$XH‰h`H‰$Hƒ$PHƒ$è    H‹„$  H‹l$`H‰hhH‹œ$à  H‰$H‹œ$è  H‰\$H‰D$è    H‹D$H‹L$ H‰„$˜  H‰„$  H‰Œ$   H‰Œ$  è    HÄØ  Ã‰ éDÿÿÿ‰%    éÿÿÿH‰$H‰l$è    éÑıÿÿ‰ éıÿÿ‰éPıÿÿH    H‰$è    H‹D$H‰„$@  H‰$HÇD$X   è    H‹œ$ø  H‰$HÇD$X   è    H‹œ$ø  Hƒû „|  H‹¬$@  H‰l$H‰\$H    H‰$è    H‹œ$@  H‰$Hƒ$ HÇD$    è    H‹„$@  H‹h H‰¬$ø   H‹h(H‰¬$   H‹h0H‰¬$  H‹h8H‰¬$  H‰$Hƒ$ HÇD$   è    H‹”$@  H‹J H‹B(1Û1ÛH‹¼$ø   H‹´$   H‹œ$  H)ÏH)ÆH‰L$xH)ËH‰ÙH‹œ$  H‰„$€   H)ÃH‰¼$Ø  H‰¼$˜   H‰´$à  H‰´$    H‰Œ$è  H‰Œ$¨   H‰œ$ğ  H‰œ$°   H‰$Hƒ$ HÇD$    è    H‹„$@  H‹¬$˜   H‰h H‹¬$    H‰h(H‹¬$¨   H‰h0H‹¬$°   H‰h8H‰„$ø  éŸúÿÿ‰é}şÿÿ‰ é÷ùÿÿH‹œ$8  H‰\$pH    H‰$è    H‹\$pH‹-    H9ë‡ú  L‹    H‹¼$¸  H‹´$À  H‹”$È  H‹„$Ğ  L‰„$  L‰„$¨  H‰œ$  H‰œ$°  H‰¬$  H‰¬$¸  H‰´$@  H‰„$P  H‰ÑH‰”$H  H‰¼$8  H)ùH‰¼$Ø   H‰¼$¸   H‰´$à   H‰”$è   H‰”$È   H‰„$ğ   H‰„$Ğ   H‰´$À   H)ğ1ÛH‰œ$À  H‰œ$È  H‰œ$Ğ  H‰ËH‰L$hH¯ØH‰ØH    H‰$H‰D$H‰D$è    H‹T$H‹L$ H‹D$(H‰”$À  H‰Œ$È  H‰„$Ğ  H    H‰$è    H‹D$H‰„$   H‰$è    H‹œ$   H‹¬$È  H‰kH‹¬$Ğ  H‰kH‹¬$À  €=     …b  H‰+H‹œ$   H‰$Hƒ$è    H‹„$   H‹l$hH‰hH‰$Hƒ$ HÇD$    è    H‹„$   H‹¬$Ø   H‰h H‹¬$à   H‰h(H‹¬$è   H‰h0H‹¬$ğ   H‰h8H‰$Hƒ$@è    H‹œ$   H‹¬$°  H‰kHH‹¬$¸  H‰kPH‹¬$¨  €=     …  H‰k@H‹œ$   H‰œ$ø  H‹œ$@  Hƒû „  H    H‰$HÇD$    H‹œ$8  H‰\$è    H‹t$H‹l$ H‹T$(H‹Œ$@  H‹„$H  H‰´$  H‰t$H‰¬$  H‰l$H‰”$  H‰T$H‹œ$ğ  H‰\$ H‹œ$ø  H‰\$(H‰„$  H‰$H‰Œ$ˆ  H‹Y ÿÓH‹\$0H‰œ$   H‹\$8H‰œ$(  H‹\$@H‰œ$0  H‹œ$ø  H‰$Hƒ$@è    H‹œ$ø  H‹¬$(  H‰kHH‹¬$0  H‰kPH‹¬$   €=     …@  H‰k@H‹œ$ø  H‰œ$   H‹    H‰„$(  1íH9è„Ø   H    H‰$HÇD$   è    H‹¬$P  H‹”$X  H‹Œ$   H‹„$(  H‰„$h  H‰D$H‰Œ$p  H‰L$H‹œ$¸  H‰\$H‹œ$À  H‰\$ H‹œ$È  H‰\$(H‹œ$Ğ  H‰\$0H‹œ$ğ  H‰\$8H‹œ$ø  H‰\$@H‹    H‰\$HH‹    H‰\$PH‰”$€  H‰$H‰¬$x  H‹] ÿÓé"õÿÿH    H‰$H    H‰\$H    H‰\$è    H‹\$H‰œ$(  éîşÿÿLC@L‰$H‰l$è    é­şÿÿLC@L‰$H‰l$è    é^ıÿÿH‰$H‰l$è    éüÿÿè    HÇ„$8     éÇóÿÿ‰éwóÿÿH    H‰œ$X  HÇ„$`  !   1ÛH‰œ$H  H‰œ$P  H    H‰$è    H‹D$H‰„$0  H‰$è    H‹œ$0  H‹¬$`  H‰kH‹¬$X  €=     …•   H‰+H‹œ$0  H‰œ$0  H‹    1íH9ètEH‹Œ$0  H‰„$˜  H‰Œ$   H‰„$H  H‰„$  H‰Œ$P  H‰Œ$  è    HÄØ  ÃH    H‰$H    H‰\$H    H‰\$è    H‹D$ëŒH‰$H‰l$è    é[ÿÿÿè    éğğÿÿº
+      ^
+  *runtime.racefuncenter   º       †
+  *runtime.racereadrange   æ  2image/draw.FloydSteinberg   ø
+   runtime.raceread   †  2image/draw.FloydSteinberg   ¤ 2image/draw.FloydSteinberg   Ú  (type.*image.Paletted   º
+  $runtime.assertI2T2   ’	
+   runtime.raceread   Ş
+
+   runtime.raceread   €
+   runtime.raceread   Ú
+   runtime.raceread   †
+   runtime.raceread   ”
+®  runtime.duffzero   Ø
+  ,runtime.racewriterange   ’
+®  runtime.duffzero      .type.[1]*image.Paletted   ²
+  "runtime.newobject   ¢
+  "runtime.racewrite   Î 6runtime.writeBarrierEnabled   „
+  "runtime.racewrite   è  type.[1]int   ú
+  "runtime.newobject   ¸
+  ,runtime.racewriterange   Ö  """.statictmp_0446   È
+  "runtime.racewrite   ¼
+  "runtime.racewrite   Ê  0type.image/color.Palette   à  ,type.image/color.Model   ø  Zgo.itab.image/color.Palette.image/color.Model   Ü
+  runtime.convT2I   Ö
+  "runtime.racewrite   
+  "runtime.racewrite   †
+  "".EncodeAll   ä
+  (runtime.racefuncexit   ¶
+  .runtime.writebarrierptr   ê  &type.image.Paletted   ü
+  "runtime.newobject   º
+  ,runtime.racewriterange   î
+  *runtime.racereadrange   Ä  &type.image.Paletted   Ö
+  (runtime.typedmemmove   ”
+  *runtime.racereadrange   ²
+  *runtime.racereadrange   €!
+  ,runtime.racewriterange   Î"  2image/color/palette.Plan9   à"
+   runtime.raceread   ø"  2image/color/palette.Plan9   ˜#  2image/color/palette.Plan9   ê&  type.[]uint8   '
+  "runtime.makeslice   ì'  &type.image.Paletted   ş'
+  "runtime.newobject   ª(
+  "runtime.racewrite   †) 6runtime.writeBarrierEnabled   Æ)
+  "runtime.racewrite   –*
+  ,runtime.racewriterange   ¢+
+  "runtime.racewrite   ş+ 6runtime.writeBarrierEnabled   æ,  0type.image/color.Palette   ¤-
+  "runtime.makeslice   œ/       ’0
+  "runtime.racewrite   î0 6runtime.writeBarrierEnabled   ²1  Pgo.itab.*image.Paletted.image/draw.Image   æ1  image.ZP   Š2
+  *runtime.racereadrange   ¨4  image.ZP   À4 image.ZP   ‚5       –5  (type.*image.Paletted   ¬5  *type.image/draw.Image   Ä5  Pgo.itab.*image.Paletted.image/draw.Image   Ø5
+   runtime.typ2Itab    6
+  .runtime.writebarrierptr   Î6
+  .runtime.writebarrierptr   ô6
+  .runtime.writebarrierptr   ˆ7
+  $runtime.panicslice   Ê7  Zgo.string."gif: image is too large to encode"   ¤8  .type.errors.errorString   ¶8
+  "runtime.newobject   â8
+  "runtime.racewrite   ¦9 6runtime.writeBarrierEnabled   è9  Bgo.itab.*errors.errorString.error   ğ:
+  (runtime.racefuncexit   ;  0type.*errors.errorString   ¤;  type.error   ¼;  Bgo.itab.*errors.errorString.error   Ğ;
+   runtime.typ2Itab   ú;
+  .runtime.writebarrierptr   <
+  0runtime.morestack_noctxt   p°  r"".autotmp_0447 ¯type.*[1]int "".autotmp_0445 ÿtype.[]int "".autotmp_0443 Ï,type.[]*image.Paletted "".autotmp_0442 ïtype."".GIF "".autotmp_0441 Ÿtype.*"".GIF "".autotmp_0440  type.int "".autotmp_0439  type.int "".autotmp_0438  (type.image.Rectangle "".autotmp_0437 "type.*image.Point "".autotmp_0436 ÿ"type.*image.Point "".autotmp_0435  type.*uint8 "".autotmp_0434 ï(type.*image.Paletted "".autotmp_0433  (type.*image.Paletted "".autotmp_0432  type.int "".autotmp_0430  type.int "".autotmp_0429  type.int "".autotmp_0428  type.int "".autotmp_0427 Ÿ0type.image/color.Palette "".autotmp_0426 ßtype.*uint8 "".autotmp_0425 ÿtype.error "".autotmp_0424 Ï0type.*errors.errorString "".autotmp_0423  type.int "".autotmp_0421  type.error "".autotmp_0420 Ÿ type.image.Point "".autotmp_0419  (type.*image.Paletted "".autotmp_0418 ï0type.image/color.Palette "".autotmp_0417  0type.image/color.Palette "".autotmp_0414 Ïtype.int "".autotmp_0413  type.int "".autotmp_0412 ¿(type.*image.Paletted "".autotmp_0411  0type.*errors.errorString "".autotmp_0410 ÿ(type.image.Rectangle "".&dup ¯(type.*image.Paletted "".~r0 ïtype.int image.rÂ·2 ÿ(type.image.Rectangle "".~r0 ÿtype.int image.rÂ·2 ¿	(type.image.Rectangle "".~r0 ÿ(type.image.Rectangle image.pÂ·3 ¿ type.image.Point image.rÂ·2 ¿(type.image.Rectangle image.rÂ·2 ¿(type.image.Rectangle image.rÂ·2 ¿
+(type.image.Rectangle image.pixÂ·6 ¯type.[]uint8 image.wÂ·4 ßtype.int image.pÂ·3 ß0type.image/color.Palette image.rÂ·2 ÿ(type.image.Rectangle "".~r0 Ÿtype.error errors.textÂ·2 ÿtype.string image.rÂ·2 ÿ	(type.image.Rectangle image.rÂ·2 ÿ
+(type.image.Rectangle 
+"".pm ¿(type.*image.Paletted "".opts ¿type."".Options "".b ¿(type.image.Rectangle "".~r3 Ptype.error "".o @ type.*"".Options "".m   type.image.Image "".w  type.io.Writer ("°Û¯°Å¯°L  öªE6†-O.P<¾KHRh+a
+	$
+z		MYZ}Í‡–ı:1		ÕJ
+ ¨ .a,f½elH:P•/)	#	N…˜7Nï·|½*$
+
+W.‡0) TgclocalsÂ·fff17d160b6635d6f93e2479b5cf023b TgclocalsÂ·d9067249b47371d25db7183ce016ea3b   \prebuilts/go/linux-x86/src/image/gif/writer.goş"".init   	  	dH‹%    H;a†2  Hƒì0H‹\$0H‰$è    H    H‰$è    ¶    €û t-H    H‰$è    ¶    €ûu
+è    HƒÄ0Ãè    H    H‰$è    Æ    è    è    è    è    è    è    è    è    è    H    H‰$HÇD$   è    H‹\$H‰\$ H‹\$H‰\$(H    H‰$è    H‹\$ H‰    H‹\$(€=     …  H‰    H    H‰$HÇD$   è    H‹\$H‰\$ H‹\$H‰\$(H    H‰$è    H‹\$ H‰    H‹\$(€=     …¢   H‰    H    H‰$HÇD$   è    H‹\$H‰\$ H‹\$H‰\$(H    H‰$è    H‹\$ H‰    H‹\$(€=     u-H‰    è    H    H‰$è    Æ    è    HƒÄ0ÃH-    H‰,$H‰\$è    ëÃH-    H‰,$H‰\$è    éKÿÿÿH-    H‰,$H‰\$è    éÏşÿÿè    é±ıÿÿn
+      B
+  *runtime.racefuncenter   P  "".initdoneÂ·   b
+   runtime.raceread   p  "".initdoneÂ·   ˆ  "".initdoneÂ·   š
+   runtime.raceread   ¨  "".initdoneÂ·   ¼
+  (runtime.racefuncexit   Ğ
+  "runtime.throwinit   â  "".initdoneÂ·   ô
+  "runtime.racewrite   € "".initdoneÂ·   Œ
+  bufio.init   –
+  "compress/lzw.init    
+  fmt.init   ª
+  image.init   ´
+   image/color.init   ¾
+  io.init   È
+  bytes.init   Ò
+  0image/color/palette.init   Ü
+  image/draw.init   ê  Lgo.string."gif: not enough image data"   
+  errors.New   Ä  "".errNotEnough   Ö
+  "runtime.racewrite   î  "".errNotEnough   „ 6runtime.writeBarrierEnabled     "".errNotEnough   ®  Hgo.string."gif: too much image data"   Ò
+  errors.New   ˆ  "".errTooMuch   š
+  "runtime.racewrite   ²  "".errTooMuch   È 6runtime.writeBarrierEnabled   ä "".errTooMuch   ò  Hgo.string."gif: invalid pixel value"   –
+  errors.New   Ì  "".errBadPixel   Ş
+  "runtime.racewrite   ö  "".errBadPixel   Œ 6runtime.writeBarrierEnabled     "".errBadPixel   ª
+  "".init.1   ¸  "".initdoneÂ·   Ê
+  "runtime.racewrite   Ö "".initdoneÂ·   â
+  (runtime.racefuncexit   ú "".errBadPixel   –
+  .runtime.writebarrierptr   ¨ "".errTooMuch   Ä
+  .runtime.writebarrierptr   Ü "".errNotEnough   ø
+  .runtime.writebarrierptr   Œ	
+  0runtime.morestack_noctxt    `  "".autotmp_0456  type.error "".autotmp_0455  type.error "".autotmp_0454 type.error `O_`’_`V "²¢&4 B†²Ùbb^Ö&ÕÖ×Ø $  Ê>$>$&| TgclocalsÂ·69c1753bd5f81501d95132d08af04464 TgclocalsÂ·21a8f585a14d020f181242c5256583dc   \prebuilts/go/linux-x86/src/image/gif/writer.go\prebuilts/go/linux-x86/src/image/gif/reader.goş"".reader.Read    †dH‹%    H;a†¦   HƒìHH‹Y H…ÛtH|$PH9;uH‰#H‹\$HH‰$è    1Û1ÛH‰œ$€   H‰œ$ˆ   H‹\$`H‰\$H‹\$hH‰\$H‹\$pH‰\$H‹\$XH‰$H‹\$PH‹[ ÿÓH‹D$ H‹T$(H‹L$0H‰D$xH‰T$8H‰”$€   H‰L$@H‰Œ$ˆ   è    HƒÄHÃè    é=ÿÿÿ
+
+      n
+  *runtime.racefuncenter   ş       à
+  (runtime.racefuncexit   ô
+  0runtime.morestack_noctxt   €  
+"".autotmp_0458 type.error io.err `type.error io.n Ptype.int io.p  type.[]uint8 ""..this  type."".reader ¡ Ğ Ğ  6y! TgclocalsÂ·d2fd9951e910becfd07ba7f8ff7b525a TgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45   <autogenerated>ş$"".reader.ReadByte À  ¨dH‹%    H;av{Hƒì0H‹Y H…ÛtH|$8H9;uH‰#H‹\$0H‰$è    1Û1ÛH‰\$PH‰\$XH‹\$@H‰$H‹\$8H‹[(ÿÓ¶\$H‹T$H‹L$ˆ\$HH‰T$ H‰T$PH‰L$(H‰L$Xè    HƒÄ0Ãè    élÿÿÿ
+
+      f
+  *runtime.racefuncenter   ®       ‚
+  (runtime.racefuncexit   –
+  0runtime.morestack_noctxt   P`  "".autotmp_0462 type.error io.err 0type.error io.c  type.uint8 ""..this  type."".reader `v_`      2N  TgclocalsÂ·e4b5616e5783a0b08ed3851f8c75ffed TgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45   <autogenerated>ş4type..hash.[1]interface {} €  údH‹%    H;a†    Hƒì(H‹\$(H‰$è    H‹T$81ÀHÇD$   H‹l$H9è}\H‰D$ H‰ÅH‰ĞHÁÀH»¿c»kïR H¯ØH‰ØH‹\$0Hƒû tEHÁåHëH‰$H‰D$8H‰D$è    H‹T$H‹D$ HÿÀH‹l$H9è|¤H‰T$8H‰T$@è    HƒÄ(Ã‰ë·è    éCÿÿÿ
+
+      B
+  *runtime.racefuncenter   €
+  (runtime.nilinterhash   Ì
+  (runtime.racefuncexit   è
+  0runtime.morestack_noctxt   0P  
+"".autotmp_0467 type.int "".autotmp_0466 type.int "".~r2  type.uintptr "".h type.uintptr "".p  *type.*[1]interface {} P—OP À À     TgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   \prebuilts/go/linux-x86/src/image/gif/reader.goş0type..eq.[1]interface {}    ˜dH‹%    H;a†/  Hƒì`H‹\$`H‰$è    1ÀHÇD$0   H‹l$0H9èØ   H‰D$8H‹\$pH‰ÅH‰D$(HÁåHëH‰$è    H‹D$(H‹\$pHƒû „Ç   H‰ÅHÁåHëH‹+H‰l$PH‹kH‰l$XH‹\$hH‰ÅHÁåHëH‰$è    H‹T$PH‹\$hHƒû t}H‹l$(HÁåHëH‹H‹KH‰L$HH‰D$@H9ĞuLH‰$H‰L$H‰T$H‹l$XH‰l$è    ¶\$ €û t%H‹D$8HÿÀH‹l$0H9èŒ(ÿÿÿÆD$xè    HƒÄ`ÃÆD$x è    HƒÄ`Ã‰é|ÿÿÿ‰é2ÿÿÿè    é´şÿÿ
+      B
+  *runtime.racefuncenter   ¸
+   runtime.raceread   Æ
+   runtime.raceread   ä
+  runtime.efaceeq   ¸
+  (runtime.racefuncexit   Ö
+  (runtime.racefuncexit   †
+  0runtime.morestack_noctxt   0À  "".autotmp_0471 ?"type.interface {} "".autotmp_0470 "type.interface {} "".autotmp_0469 _type.int "".autotmp_0468 Otype.int "".i otype.int "".~r2  type.bool "".q *type.*[1]interface {} "".p  *type.*[1]interface {} &À¿À¿À Ğ Ğ   ‚O_ TgclocalsÂ·51af24152615272c3d9efc8538f95767 TgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787   \prebuilts/go/linux-x86/src/image/gif/reader.goş"".writer.Flush    ’dH‹%    H;avpHƒì(H‹Y H…ÛtH|$0H9;uH‰#H‹\$(H‰$è    1ÛH‰\$@H‰\$HH‹\$8H‰$H‹\$0H‹[ ÿÓH‹L$H‹D$H‰L$H‰L$@H‰D$ H‰D$Hè    HƒÄ(Ãè    éwÿÿÿ
+
+      f
+  *runtime.racefuncenter   ª       ì
+  (runtime.racefuncexit   €
+  0runtime.morestack_noctxt   @P  "".autotmp_0472 type.error "".~r0  type.error ""..this  type."".writer PkOP    2C TgclocalsÂ·19b49d53e9c11805652fa4c0885cbb29 TgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45   <autogenerated>ş"".writer.Write    †dH‹%    H;a†¦   HƒìHH‹Y H…ÛtH|$PH9;uH‰#H‹\$HH‰$è    1Û1ÛH‰œ$€   H‰œ$ˆ   H‹\$`H‰\$H‹\$hH‰\$H‹\$pH‰\$H‹\$XH‰$H‹\$PH‹[(ÿÓH‹D$ H‹T$(H‹L$0H‰D$xH‰T$8H‰”$€   H‰L$@H‰Œ$ˆ   è    HƒÄHÃè    é=ÿÿÿ
+
+      n
+  *runtime.racefuncenter   ş       à
+  (runtime.racefuncexit   ô
+  0runtime.morestack_noctxt   €  
+"".autotmp_0474 type.error io.err `type.error io.n Ptype.int io.p  type.[]uint8 ""..this  type."".writer ¡ Ğ 
+Ğ  6y! TgclocalsÂ·d2fd9951e910becfd07ba7f8ff7b525a TgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45   <autogenerated>ş&"".writer.WriteByte À  ¤dH‹%    H;avyHƒì0H‹Y H…ÛtH|$8H9;uH‰#H‹\$0H‰$è    1ÛH‰\$PH‰\$X¶\$Hˆ\$H‹\$@H‰$H‹\$8H‹[0ÿÓH‹L$H‹D$H‰L$ H‰L$PH‰D$(H‰D$Xè    HƒÄ0Ãè    énÿÿÿ
+
+      f
+  *runtime.racefuncenter   ¼       ş
+  (runtime.racefuncexit   ’
+  0runtime.morestack_noctxt   P`  "".autotmp_0477 type.error "".~r2 0type.error io.c  type.uint8 ""..this  type."".writer `t_`      2L" TgclocalsÂ·e4b5616e5783a0b08ed3851f8c75ffed TgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45   <autogenerated>ş."".(*blockWriter).Write À  ÀdH‹%    H;a†  HƒìHH‹Y H…ÛtH|$PH9;uH‰#H‹\$HH‰$è    1ÛH‰\$xH‰œ$€   H‹\$P1íH9ëuEH    H‰$HÇD$   H    H‰\$HÇD$   H    H‰\$ HÇD$(   è    H‹\$PH‰$HÇD$   è    H‹t$PH‹H‰$H‹\$XH‰\$H‹\$`H‰\$H‹\$hH‰\$è    H‹D$ H‹T$(H‹L$0H‰D$pH‰T$8H‰T$xH‰L$@H‰Œ$€   è    HƒÄHÃè    éàşÿÿ
+      n
+  *runtime.racefuncenter   ²  go.string."gif"   Ú  .go.string."blockWriter"   „  "go.string."Write"   ª
+  "runtime.panicwrap   Ü
+  *runtime.racereadrange   º
+  ("".blockWriter.Write   š
+  (runtime.racefuncexit   ®
+  0runtime.morestack_noctxt   p  
+"".autotmp_0479 type.error "".~r2 Ptype.error "".~r1 @type.int "".data type.[]uint8 ""..this  (type.*"".blockWriter ş
+      6Ö TgclocalsÂ·8cf14f50ac1bf7ae2848fda35f0590ec TgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45   <autogenerated>ş*type..hash."".Options à  ÈdH‹%    H;a†Ç   Hƒì H‹\$ H‰$è    H‹\$(H‰$Hƒ<$ „•   H‹\$0H‰\$HÇD$   è    H‹D$H‹\$(H‰$Hƒ<$ t_Hƒ$H‰D$0H‰D$è    H‹D$H‹\$(H‰$Hƒ<$ t-Hƒ$H‰D$0H‰D$è    H‹D$H‰D$0H‰D$8è    HƒÄ Ã‰%    ëÊ‰%    ë˜‰%    é_ÿÿÿè    éÿÿÿ
+      B
+  *runtime.racefuncenter   š
+  runtime.memhash   ì
+  "runtime.interhash   ¾
+  "runtime.interhash   æ
+  (runtime.racefuncexit   ¶
+  0runtime.morestack_noctxt   0@  
+"".autotmp_0484  type.uintptr "".autotmp_0483  type.uintptr "".~r2  type.uintptr "".h type.uintptr "".p   type.*"".Options @¤?@4 ğ ğ   Ğ TgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   \prebuilts/go/linux-x86/src/image/gif/reader.goş&type..eq."".Options €  ædH‹%    H;a†Ö  HƒìhH‹\$hH‰$è    H‹\$pH‰$è    H‹\$xH‰$è    H‹D$xH‹l$pH‹] H‹(H9ëtÆ„$€    è    HƒÄhÃH‰$Hƒ$è    H‹\$xHƒû „\  H‹kH‰l$XH‹kH‰l$`H‹\$pH‰$Hƒ$è    H‹T$XH‹\$pHƒû „  H‹CH‹KH‰L$PH‰D$HH9Ğ…ï   H‰$H‰L$H‰T$H‹l$`H‰l$è    ¶\$ €û „Ä   H‹\$xH‰$Hƒ$è    H‹\$xHƒû „›   H‹kH‰l$8H‹k H‰l$@H‹\$pH‰$Hƒ$è    H‹T$8H‹\$pHƒû tbH‹CH‹K H‰L$0H‰D$(H9Ğu9H‰$H‰L$H‰T$H‹l$@H‰l$è    ¶\$ €û tÆ„$€   è    HƒÄhÃÆ„$€    è    HƒÄhÃ‰ëš‰é^ÿÿÿÆ„$€    è    HƒÄhÃ‰éİşÿÿ‰éşÿÿè    éşÿÿ
+      B
+  *runtime.racefuncenter   ^
+   runtime.raceread   z
+   runtime.raceread   À
+  (runtime.racefuncexit   æ
+   runtime.raceread   Î
+   runtime.raceread   æ
+  runtime.ifaceeq   ¨
+   runtime.raceread   
+   runtime.raceread   ˜
+  runtime.ifaceeq   Æ
+  (runtime.racefuncexit   ê
+  (runtime.racefuncexit   ¤
+  (runtime.racefuncexit   Ô
+  0runtime.morestack_noctxt   0Ğ  "".autotmp_0488 ,type.image/draw.Drawer "".autotmp_0487 _,type.image/draw.Drawer "".autotmp_0486 ?2type.image/draw.Quantizer "".autotmp_0485 2type.image/draw.Quantizer "".~r2  type.bool "".q  type.*"".Options "".p   type.*"".Options >ĞQÏĞÂÏĞÏĞÏĞ% € €   †LUDu TgclocalsÂ·9c91d8a91ac42440a3d1507bc8d2e808 TgclocalsÂ·e85dd0d10221e69476a0daf9bc0a53b6   \prebuilts/go/linux-x86/src/image/gif/reader.goşTgclocalsÂ·2de3026f2f1a4e76c4da3271e2c4e98d 0  0                     şTgclocalsÂ·8673e44a15fbaa7367253006e3f68366 0  0         c          ş0>go.itab.*bufio.Reader."".reader     ş0Bgo.itab.*errors.errorString.error     ş0Tgo.itab.image/color.RGBA.image/color.Color     ş0Bgo.itab.*"".blockReader.io.Reader     şFgo.string.hdr."gif: no color table"                       >go.string."gif: no color table"   ş>go.string."gif: no color table" 0  (gif: no color table  ştgo.string.hdr."gif: pixel size in decode out of range: %d"             *          lgo.string."gif: pixel size in decode out of range: %d"   şlgo.string."gif: pixel size in decode out of range: %d" `  Vgif: pixel size in decode out of range: %d  ş^go.string.hdr."gif: unknown block type: 0x%.2x"                       Vgo.string."gif: unknown block type: 0x%.2x"   şVgo.string."gif: unknown block type: 0x%.2x" @  @gif: unknown block type: 0x%.2x  şTgclocalsÂ·bcd393509e676e83e48888afa0238fd2 ˆ  ˆ%   S                    À                              0          0           0         	 0         	        ™                       €                         0         0                 @          @                                    €    "           2                       À                                À        ‚                @           @                                                                       şTgclocalsÂ·0a36944aa36b6ab1001db46d1337945e ¸  ¸%         7   7   7   7   7   7   7   7   7   7   7   7   7   7            7   7   7   7   7   7   7      7   7   7   7   7   7   7            7    ş,go.string.hdr."GIF87a"                       $go.string."GIF87a"   ş$go.string."GIF87a"   GIF87a  ş,go.string.hdr."GIF89a"                       $go.string."GIF89a"   ş$go.string."GIF89a"   GIF89a  ş\go.string.hdr."gif: can't recognize format %s"                       Tgo.string."gif: can't recognize format %s"   şTgo.string."gif: can't recognize format %s" @  >gif: can't recognize format %s  şTgclocalsÂ·7e9c1a0358207526648c7a6c5b3be550 X  X	                  #     À  ğ  À   À    şTgclocalsÂ·35a1729b099c0d71fdd08adea73b0542 X  X	                                  şdgo.string.hdr."gif: short read on color table: %s"             "          \go.string."gif: short read on color table: %s"   ş\go.string."gif: short read on color table: %s" P  Fgif: short read on color table: %s  şTgclocalsÂ·cdd9e31f464a29f54111441026eac2bd P  P             À   ğ   À   À           şTgclocalsÂ·6fa66bd28ff106d38cd5e72e1558bac1 P  P                     e      e    şZgo.string.hdr."gif: unknown extension 0x%.2x"                       Rgo.string."gif: unknown extension 0x%.2x"   şRgo.string."gif: unknown extension 0x%.2x" @  <gif: unknown extension 0x%.2x  ş6go.string.hdr."NETSCAPE2.0"                       .go.string."NETSCAPE2.0"   ş.go.string."NETSCAPE2.0"    NETSCAPE2.0  şTgclocalsÂ·455b2218b4ecd9700a90c3ae801c6535 H  H                €     À        şTgclocalsÂ·9e286b0ce6b91a896378d8ebafa3879c H  H                            şfgo.string.hdr."gif: can't read graphic control: %s"             #          ^go.string."gif: can't read graphic control: %s"   ş^go.string."gif: can't read graphic control: %s" P  Hgif: can't read graphic control: %s  şTgclocalsÂ·8f800ad3214d4a86dfcc286895fca734 H  H             0  <  0   0        şTgclocalsÂ·8db80988d5fec26b916d3152e6310442 H  H                            şhgo.string.hdr."gif: can't read image descriptor: %s"             $          `go.string."gif: can't read image descriptor: %s"   ş`go.string."gif: can't read image descriptor: %s" P  Jgif: can't read image descriptor: %s  ştgo.string.hdr."gif: frame bounds larger than image bounds"             *          lgo.string."gif: frame bounds larger than image bounds"   şlgo.string."gif: frame bounds larger than image bounds" `  Vgif: frame bounds larger than image bounds  şTgclocalsÂ·d708aee26fd07c525342115091d3ff3d ˜  ˜              À  ğ  À   À  <           $  $                   şTgclocalsÂ·20371ed4e285e99d2b3700a68882dc55 ˜  ˜                                                          şTgclocalsÂ·8dacdca6a9d3d5c313f9478f38bacba5 (  (   	       @        şTgclocalsÂ·06be4abc148cc801a93c492b76c8e5c8 (  (                şTgclocalsÂ·6e00bf9a86c700b36097754b8f007201 @  @                         şTgclocalsÂ·6718fa3ce60556785ebaaf7cd5569ede @  @                         ş0Fgo.itab.*image.Paletted.image.Image     şTgclocalsÂ·3531f87782d37f810e650e7542e5bb1b 0  0                     şTgclocalsÂ·ea9b4378ddf21a9476f9692715326ef5 0  0            ?       ş0Zgo.itab.image/color.Palette.image/color.Model     şTgclocalsÂ·b6e1bcbe3bc38d0bc564f298485ff663 0  0                     şTgclocalsÂ·d261d82a8a39c85fbf1f08752bcb09ee 0  0                   şTgclocalsÂ·438fde6662dcd8c84e163dac1c04db70 0  0                     şTgclocalsÂ·1063e9b0825c2f159be1df1d038ae622 0  0            Ï       ş&go.string.hdr."gif"                       go.string."gif"   şgo.string."gif"   gif  ş,go.string.hdr."GIF8?a"                       $go.string."GIF8?a"   ş$go.string."GIF8?a"   GIF8?a  şTgclocalsÂ·d288a648545c6dd73287fed249acfcae 0  0          €        şTgclocalsÂ·f6bd6b3389b872033d462029172c8612           şTgclocalsÂ·0c8aa8e80191a30eac23f1a218103f16                   şTgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45                    şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·2fccd208efe70893f9ac8d682812ae72             şTgclocalsÂ·27b7aed50b5eb0ea6bf3eed688cd420b 0  0   
+                  şTgclocalsÂ·8673e44a15fbaa7367253006e3f68366 0  0         c          şTgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787                   şTgclocalsÂ·51fa0e13d53d6bad7f86670d3edaeac6                  şTgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787                   şTgclocalsÂ·aefd16b155593f6f07980a05b297ad1f                  şTgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787                   şTgclocalsÂ·32bd5c6dc84e3e86dd35593b3922d3aa                  şTgclocalsÂ·7f58a2053bec7f12637693406995051d P  P                        @         şTgclocalsÂ·a9ea41aae9e32efcc8711d8fabe405fb P  P                               şTgclocalsÂ·23e8278e2b69a3a75fa59b23c49ed6ad              şTgclocalsÂ·739018a0fedb7c38faa3101fb8dac3ab         	    ş0@go.itab."".blockWriter.io.Writer     ş‚go.string.hdr."gif: cannot encode image block with empty palette"             1          zgo.string."gif: cannot encode image block with empty palette"   şzgo.string."gif: cannot encode image block with empty palette" p  dgif: cannot encode image block with empty palette  şngo.string.hdr."gif: image block is too large to encode"             '          fgo.string."gif: image block is too large to encode"   şfgo.string."gif: image block is too large to encode" P  Pgif: image block is too large to encode  şbgo.string.hdr."gif: image block is out of bounds"             !          Zgo.string."gif: image block is out of bounds"   şZgo.string."gif: image block is out of bounds" P  Dgif: image block is out of bounds  şTgclocalsÂ·5ea47e4012ef688a16d4de31d0970ec2 ğ  ğ   5                               0                                                    @                              €                       @      @      À        şTgclocalsÂ·f6296cfde20a742c77302c9ea66f7adc À  À                                                                         ş0>go.itab.*bufio.Writer."".writer     şhgo.string.hdr."gif: must provide at least one image"             $          `go.string."gif: must provide at least one image"   ş`go.string."gif: must provide at least one image" P  Jgif: must provide at least one image  şngo.string.hdr."gif: mismatched image and delay lengths"             '          fgo.string."gif: mismatched image and delay lengths"   şfgo.string."gif: mismatched image and delay lengths" P  Pgif: mismatched image and delay lengths  ştgo.string.hdr."gif: mismatched image and disposal lengths"             *          lgo.string."gif: mismatched image and disposal lengths"   şlgo.string."gif: mismatched image and disposal lengths" `  Vgif: mismatched image and disposal lengths  şxgo.string.hdr."gif: GIF color model must be a color.Palette"             ,          pgo.string."gif: GIF color model must be a color.Palette"   şpgo.string."gif: GIF color model must be a color.Palette" `  Zgif: GIF color model must be a color.Palette  şTgclocalsÂ·edb7136f268c5e62a59674e9490e6c3e Ğ  Ğ   ,                                                                                                                                                                                                                                                                                           ŸÈ                                                                                                                                                   `    0                                 `  ` 0                                                                          €                                      €                                                                           €                                     `                                     `                                      `                                      `                                    `                                    `                                                                                                                                                       
+                                       şTgclocalsÂ·00fa23bc08429312d6db34b48a436a57 ğ  ğ                                                                                           ş0Pgo.itab.*image.Paletted.image/draw.Image     şbgo.string.hdr."gif: image is too large to encode"             !          Zgo.string."gif: image is too large to encode"   şZgo.string."gif: image is too large to encode" P  Dgif: image is too large to encode  şTgclocalsÂ·d9067249b47371d25db7183ce016ea3b À  À   <                                @      @     @     @                 !      a                                      ‘  €  ‘     ‘    ‘     ‘      ‘      ‘       €      €                şTgclocalsÂ·fff17d160b6635d6f93e2479b5cf023b è  è                                                                                        şTgo.string.hdr."gif: not enough image data"                       Lgo.string."gif: not enough image data"   şLgo.string."gif: not enough image data" @  6gif: not enough image data  şPgo.string.hdr."gif: too much image data"                       Hgo.string."gif: too much image data"   şHgo.string."gif: too much image data" @  2gif: too much image data  şPgo.string.hdr."gif: invalid pixel value"                       Hgo.string."gif: invalid pixel value"   şHgo.string."gif: invalid pixel value" @  2gif: invalid pixel value  şTgclocalsÂ·21a8f585a14d020f181242c5256583dc                   şTgclocalsÂ·69c1753bd5f81501d95132d08af04464           ş."".errNotEnough   type.error   ş."".errTooMuch   type.error   ş."".errBadPixel   type.error   ş."".interlacing  0.type.[]"".interlaceScan 0                         """.statictmp_0453   ş0"".log2Lookup  €type.[8]int €                                    @       €               ş""".statictmp_0446  type.[1]int          ş0""".statictmp_0453  €0type.[4]"".interlaceScan €                                                          ş0"".initdoneÂ·  type.uint8   ş2"".(*blockReader).ReadÂ·f              ,"".(*blockReader).Read   ş."".(*decoder).decodeÂ·f              ("".(*decoder).decode   ş\"".(*decoder).readHeaderAndScreenDescriptorÂ·f              V"".(*decoder).readHeaderAndScreenDescriptor   ş>"".(*decoder).readColorTableÂ·f              8"".(*decoder).readColorTable   ş<"".(*decoder).readExtensionÂ·f              6"".(*decoder).readExtension   şF"".(*decoder).readGraphicControlÂ·f              @"".(*decoder).readGraphicControl   şN"".(*decoder).newImageFromDescriptorÂ·f              H"".(*decoder).newImageFromDescriptor   ş4"".(*decoder).readBlockÂ·f              ."".(*decoder).readBlock   ş""".uninterlaceÂ·f              "".uninterlace   ş"".DecodeÂ·f              "".Decode   ş"".DecodeAllÂ·f              "".DecodeAll   ş$"".DecodeConfigÂ·f              "".DecodeConfig   ş"".init.1Â·f              "".init.1   ş"".log2Â·f              "".log2   ş""".writeUint16Â·f              "".writeUint16   ş."".blockWriter.WriteÂ·f              ("".blockWriter.Write   ş,"".(*encoder).flushÂ·f              &"".(*encoder).flush   ş,"".(*encoder).writeÂ·f              &"".(*encoder).write   ş4"".(*encoder).writeByteÂ·f              ."".(*encoder).writeByte   ş8"".(*encoder).writeHeaderÂ·f              2"".(*encoder).writeHeader   ş,"".encodeColorTableÂ·f              &"".encodeColorTable   ş@"".(*encoder).writeImageBlockÂ·f              :"".(*encoder).writeImageBlock   ş"".EncodeAllÂ·f              "".EncodeAll   ş"".EncodeÂ·f              "".Encode   ş"".initÂ·f              "".init   şTgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45                    şTgclocalsÂ·d2fd9951e910becfd07ba7f8ff7b525a              Ç    şTgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45                    şTgclocalsÂ·e4b5616e5783a0b08ed3851f8c75ffed                  ş"runtime.gcbits.01    ş.go.string.hdr."[]uint8"                       &go.string."[]uint8"   ş&go.string."[]uint8"   []uint8  ştype.[]uint8                   ß~.8                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  .go.string.hdr."[]uint8"   p  *go.weak.type.*[]uint8   €  "runtime.zerovalue     type.uint8   ş6go.typelink.[]uint8	[]uint8              type.[]uint8   şTgo.string.hdr."func([]uint8) (int, error)"                       Lgo.string."func([]uint8) (int, error)"   şLgo.string."func([]uint8) (int, error)" @  6func([]uint8) (int, error)  ş>type.func([]uint8) (int, error) °  °              „N4P 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  Tgo.string.hdr."func([]uint8) (int, error)"   p  Pgo.weak.type.*func([]uint8) (int, error)   €  "runtime.zerovalue    € >type.func([]uint8) (int, error)   Ğ >type.func([]uint8) (int, error)   €  type.[]uint8     type.int      type.error   ş‚go.typelink.func([]uint8) (int, error)	func([]uint8) (int, error)              >type.func([]uint8) (int, error)   şJgo.string.hdr."func() (uint8, error)"                       Bgo.string."func() (uint8, error)"   şBgo.string."func() (uint8, error)" 0  ,func() (uint8, error)  ş4type.func() (uint8, error)                   TÜ´ 3                                                                                                                      0€  runtime.algarray   @  "runtime.gcbits.01   P  Jgo.string.hdr."func() (uint8, error)"   p  Fgo.weak.type.*func() (uint8, error)   €  "runtime.zerovalue    € 4type.func() (uint8, error)   Ğ€ 4type.func() (uint8, error)   €  type.uint8     type.error   şngo.typelink.func() (uint8, error)	func() (uint8, error)              4type.func() (uint8, error)   ş6go.string.hdr."*gif.reader"                       .go.string."*gif.reader"   ş.go.string."*gif.reader"    *gif.reader  ştype.*"".reader                    |­n\ 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  6go.string.hdr."*gif.reader"   p  0go.weak.type.**"".reader   €  "runtime.zerovalue     type."".reader   ş"runtime.gcbits.03    ş4go.string.hdr."gif.reader"             
+          ,go.string."gif.reader"   ş,go.string."gif.reader"    gif.reader  ş(go.string.hdr."Read"                        go.string."Read"   ş go.string."Read"   
+Read  ş0go.string.hdr."ReadByte"                       (go.string."ReadByte"   ş(go.string."ReadByte"    ReadByte  ş,go.string.hdr."reader"                       $go.string."reader"   ş$go.string."reader"   reader  ş2go.string.hdr."image/gif"             	          *go.string."image/gif"   ş*go.string."image/gif"    image/gif  ş"go.importpath."".             	          *go.string."image/gif"   ştype."".reader  ğ  ğ              ò‚¾%                                                                                                                                                               0à  runtime.algarray   @  "runtime.gcbits.03   P  4go.string.hdr."gif.reader"   p  type.*"".reader   €  "runtime.zerovalue   À type."".reader   À  (go.string.hdr."Read"   à  >type.func([]uint8) (int, error)   ğ  0go.string.hdr."ReadByte"     4type.func() (uint8, error)   `  type."".reader      ,go.string.hdr."reader"   °  "go.importpath."".   Àğ type."".reader   ş"type..hashfunc256                       ,runtime.memhash_varlen   ştype..eqfunc256                       .runtime.memequal_varlen   ştype..alg256                        "type..hashfunc256     type..eqfunc256   şruntime.gcbits.      ş4go.string.hdr."[256]uint8"             
+          ,go.string."[256]uint8"   ş,go.string."[256]uint8"    [256]uint8  ştype.[256]uint8 À  À               °ÿ ‘                                                                       0  type..alg256   @  runtime.gcbits.   P  4go.string.hdr."[256]uint8"   p  0go.weak.type.*[256]uint8   €  "runtime.zerovalue     type.uint8      type.[]uint8   şBgo.typelink.[256]uint8	[256]uint8              type.[256]uint8   ş"runtime.gcbits.67   g ş>go.string.hdr."gif.blockReader"                       6go.string."gif.blockReader"   ş6go.string."gif.blockReader"     gif.blockReader  ş"go.string.hdr."r"                       go.string."r"   şgo.string."r"   r  ş*go.string.hdr."slice"                       "go.string."slice"   ş"go.string."slice"   slice  ş&go.string.hdr."err"                       go.string."err"   şgo.string."err"   err  ş&go.string.hdr."tmp"                       go.string."tmp"   şgo.string."tmp"   tmp  ş6go.string.hdr."blockReader"                       .go.string."blockReader"   ş.go.string."blockReader"    blockReader  ş&type."".blockReader  Ğ  Ğ8      8       S¼                                                                                                                                                                                      (                                       8                                               ,0à  runtime.algarray   @  "runtime.gcbits.67   P  >go.string.hdr."gif.blockReader"   p  (type.*"".blockReader   €  "runtime.zerovalue   À &type."".blockReader   À  "go.string.hdr."r"   Ğ  "go.importpath."".   à  type."".reader     *go.string.hdr."slice"      "go.importpath."".   °  type.[]uint8   à  &go.string.hdr."err"   ğ  "go.importpath."".   €  type.error   °  &go.string.hdr."tmp"   À  "go.importpath."".   Ğ  type.[256]uint8   `€ &type."".blockReader   €  6go.string.hdr."blockReader"     "go.importpath."".    Ğ &type."".blockReader   ş@go.string.hdr."*gif.blockReader"                       8go.string."*gif.blockReader"   ş8go.string."*gif.blockReader" 0  "*gif.blockReader  şxgo.string.hdr."func(*gif.blockReader, []uint8) (int, error)"             ,          pgo.string."func(*gif.blockReader, []uint8) (int, error)"   şpgo.string."func(*gif.blockReader, []uint8) (int, error)" `  Zfunc(*gif.blockReader, []uint8) (int, error)  ş`type.func(*"".blockReader, []uint8) (int, error) À  À              -@¬Ü 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  xgo.string.hdr."func(*gif.blockReader, []uint8) (int, error)"   p  rgo.weak.type.*func(*"".blockReader, []uint8) (int, error)   €  "runtime.zerovalue    € `type.func(*"".blockReader, []uint8) (int, error)   Ğ  `type.func(*"".blockReader, []uint8) (int, error)   €  (type.*"".blockReader     type.[]uint8      type.int   °  type.error   şÈgo.typelink.func(*gif.blockReader, []uint8) (int, error)	func(*"".blockReader, []uint8) (int, error)              `type.func(*"".blockReader, []uint8) (int, error)   ş(type.*"".blockReader  Ğ  Ğ              ú½ı› 6                                                                                                                                              0   runtime.algarray   @  "runtime.gcbits.01   P  @go.string.hdr."*gif.blockReader"   p  :go.weak.type.**"".blockReader   €  "runtime.zerovalue     &type."".blockReader   `  (type.*"".blockReader   Àğ (type.*"".blockReader   ğ  (go.string.hdr."Read"     >type.func([]uint8) (int, error)      `type.func(*"".blockReader, []uint8) (int, error)   °  ,"".(*blockReader).Read   À  ,"".(*blockReader).Read   şBgo.string.hdr."[]*image.Paletted"                       :go.string."[]*image.Paletted"   ş:go.string."[]*image.Paletted" 0  $[]*image.Paletted  ş,type.[]*image.Paletted                   +ó/                                                          0   runtime.algarray   @  "runtime.gcbits.01   P  Bgo.string.hdr."[]*image.Paletted"   p  >go.weak.type.*[]*image.Paletted   €  "runtime.zerovalue     (type.*image.Paletted   ş^go.typelink.[]*image.Paletted	[]*image.Paletted              ,type.[]*image.Paletted   ş*go.string.hdr."[]int"                       "go.string."[]int"   ş"go.string."[]int"   []int  ştype.[]int                   fù                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  *go.string.hdr."[]int"   p  &go.weak.type.*[]int   €  "runtime.zerovalue     type.int   ş.go.typelink.[]int	[]int              type.[]int   ş$type..hashfunc1024                       ,runtime.memhash_varlen   ş type..eqfunc1024                       .runtime.memequal_varlen   ştype..alg1024                        $type..hashfunc1024      type..eqfunc1024   ş6go.string.hdr."[1024]uint8"                       .go.string."[1024]uint8"   ş.go.string."[1024]uint8"    [1024]uint8  ş type.[1024]uint8 À  À                QÓj ‘                                                                       0  type..alg1024   @  runtime.gcbits.   P  6go.string.hdr."[1024]uint8"   p  2go.weak.type.*[1024]uint8   €  "runtime.zerovalue     type.uint8      type.[]uint8   şFgo.typelink.[1024]uint8	[1024]uint8               type.[1024]uint8   ş*runtime.gcbits.079204   ’ ş6go.string.hdr."gif.decoder"                       .go.string."gif.decoder"   ş.go.string."gif.decoder"    gif.decoder  ş(go.string.hdr."vers"                        go.string."vers"   ş go.string."vers"   
+vers  ş*go.string.hdr."width"                       "go.string."width"   ş"go.string."width"   width  ş,go.string.hdr."height"                       $go.string."height"   ş$go.string."height"   height  ş2go.string.hdr."loopCount"             	          *go.string."loopCount"   ş*go.string."loopCount"    loopCount  ş2go.string.hdr."delayTime"             	          *go.string."delayTime"   ş*go.string."delayTime"    delayTime  ş>go.string.hdr."backgroundIndex"                       6go.string."backgroundIndex"   ş6go.string."backgroundIndex"     backgroundIndex  ş<go.string.hdr."disposalMethod"                       4go.string."disposalMethod"   ş4go.string."disposalMethod"    disposalMethod  ş6go.string.hdr."imageFields"                       .go.string."imageFields"   ş.go.string."imageFields"    imageFields  ş@go.string.hdr."transparentIndex"                       8go.string."transparentIndex"   ş8go.string."transparentIndex" 0  "transparentIndex  şFgo.string.hdr."hasTransparentIndex"                       >go.string."hasTransparentIndex"   ş>go.string."hasTransparentIndex" 0  (hasTransparentIndex  ş@go.string.hdr."globalColorTable"                       8go.string."globalColorTable"   ş8go.string."globalColorTable" 0  "globalColorTable  ş*go.string.hdr."delay"                       "go.string."delay"   ş"go.string."delay"   delay  ş0go.string.hdr."disposal"                       (go.string."disposal"   ş(go.string."disposal"    disposal  ş*go.string.hdr."image"                       "go.string."image"   ş"go.string."image"   image  ş.go.string.hdr."decoder"                       &go.string."decoder"   ş&go.string."decoder"   decoder  ştype."".decoder    ¨      ˜       Js%y                                                                                                                                                                                                                              (                                       0                                       8                                       @                                       A                                       B                                       C                                       D                                       H                                       `                                       x                                                                              ¨                                               t0à  runtime.algarray   @  *runtime.gcbits.079204   P  6go.string.hdr."gif.decoder"   p   type.*"".decoder   €  "runtime.zerovalue   À type."".decoder   À  "go.string.hdr."r"   Ğ  "go.importpath."".   à  type."".reader     (go.string.hdr."vers"      "go.importpath."".   °  type.string   à  *go.string.hdr."width"   ğ  "go.importpath."".   €  type.int   °  ,go.string.hdr."height"   À  "go.importpath."".   Ğ  type.int   €  2go.string.hdr."loopCount"     "go.importpath."".      type.int   Ğ  2go.string.hdr."delayTime"   à  "go.importpath."".   ğ  type.int      >go.string.hdr."backgroundIndex"   °  "go.importpath."".   À  type.uint8   ğ  <go.string.hdr."disposalMethod"   €  "go.importpath."".     type.uint8   À  6go.string.hdr."imageFields"   Ğ  "go.importpath."".   à  type.uint8     @go.string.hdr."transparentIndex"      "go.importpath."".   °  type.uint8   à  Fgo.string.hdr."hasTransparentIndex"   ğ  "go.importpath."".   €  type.bool   °  @go.string.hdr."globalColorTable"   À  "go.importpath."".   Ğ  0type.image/color.Palette   €	  *go.string.hdr."delay"   	  "go.importpath."".    	  type.[]int   Ğ	  0go.string.hdr."disposal"   à	  "go.importpath."".   ğ	  type.[]uint8    
+  *go.string.hdr."image"   °
+  "go.importpath."".   À
+  ,type.[]*image.Paletted   ğ
+  &go.string.hdr."tmp"   €  "go.importpath."".      type.[1024]uint8   `À type."".decoder   À  .go.string.hdr."decoder"   Ğ  "go.importpath."".   à type."".decoder   ş8go.string.hdr."*gif.decoder"                       0go.string."*gif.decoder"   ş0go.string."*gif.decoder"    *gif.decoder  şrgo.string.hdr."func(*gif.decoder, io.Reader, bool) error"             )          jgo.string."func(*gif.decoder, io.Reader, bool) error"   şjgo.string."func(*gif.decoder, io.Reader, bool) error" `  Tfunc(*gif.decoder, io.Reader, bool) error  şZtype.func(*"".decoder, io.Reader, bool) error À  À              Ç×XÕ 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  rgo.string.hdr."func(*gif.decoder, io.Reader, bool) error"   p  lgo.weak.type.*func(*"".decoder, io.Reader, bool) error   €  "runtime.zerovalue    € Ztype.func(*"".decoder, io.Reader, bool) error   Ğ° Ztype.func(*"".decoder, io.Reader, bool) error   €   type.*"".decoder     type.io.Reader      type.bool   °  type.error   ş¼go.typelink.func(*gif.decoder, io.Reader, bool) error	func(*"".decoder, io.Reader, bool) error              Ztype.func(*"".decoder, io.Reader, bool) error   şvgo.string.hdr."func(*gif.decoder) (*image.Paletted, error)"             +          ngo.string."func(*gif.decoder) (*image.Paletted, error)"   şngo.string."func(*gif.decoder) (*image.Paletted, error)" `  Xfunc(*gif.decoder) (*image.Paletted, error)  ş^type.func(*"".decoder) (*image.Paletted, error) °  °              ´Æí± 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  vgo.string.hdr."func(*gif.decoder) (*image.Paletted, error)"   p  pgo.weak.type.*func(*"".decoder) (*image.Paletted, error)   €  "runtime.zerovalue    € ^type.func(*"".decoder) (*image.Paletted, error)   Ğ ^type.func(*"".decoder) (*image.Paletted, error)   €   type.*"".decoder     (type.*image.Paletted      type.error   şÄgo.typelink.func(*gif.decoder) (*image.Paletted, error)	func(*"".decoder) (*image.Paletted, error)              ^type.func(*"".decoder) (*image.Paletted, error)   ş^go.string.hdr."func(*gif.decoder) (int, error)"                       Vgo.string."func(*gif.decoder) (int, error)"   şVgo.string."func(*gif.decoder) (int, error)" @  @func(*gif.decoder) (int, error)  şFtype.func(*"".decoder) (int, error) °  °              (Üº 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  ^go.string.hdr."func(*gif.decoder) (int, error)"   p  Xgo.weak.type.*func(*"".decoder) (int, error)   €  "runtime.zerovalue    € Ftype.func(*"".decoder) (int, error)   Ğ Ftype.func(*"".decoder) (int, error)   €   type.*"".decoder     type.int      type.error   ş”go.typelink.func(*gif.decoder) (int, error)	func(*"".decoder) (int, error)              Ftype.func(*"".decoder) (int, error)   ş€go.string.hdr."func(*gif.decoder, uint8) (color.Palette, error)"             0          xgo.string."func(*gif.decoder, uint8) (color.Palette, error)"   şxgo.string."func(*gif.decoder, uint8) (color.Palette, error)" p  bfunc(*gif.decoder, uint8) (color.Palette, error)  şttype.func(*"".decoder, uint8) (image/color.Palette, error) À  À              ~„J 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  €go.string.hdr."func(*gif.decoder, uint8) (color.Palette, error)"   p  †go.weak.type.*func(*"".decoder, uint8) (image/color.Palette, error)   €  "runtime.zerovalue    € ttype.func(*"".decoder, uint8) (image/color.Palette, error)   Ğ  ttype.func(*"".decoder, uint8) (image/color.Palette, error)   €   type.*"".decoder     type.uint8      0type.image/color.Palette   °  type.error   şägo.typelink.func(*gif.decoder, uint8) (color.Palette, error)	func(*"".decoder, uint8) (image/color.Palette, error)              ttype.func(*"".decoder, uint8) (image/color.Palette, error)   şPgo.string.hdr."func(*gif.decoder) error"                       Hgo.string."func(*gif.decoder) error"   şHgo.string."func(*gif.decoder) error" @  2func(*gif.decoder) error  ş8type.func(*"".decoder) error                   Q-+ 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Pgo.string.hdr."func(*gif.decoder) error"   p  Jgo.weak.type.*func(*"".decoder) error   €  "runtime.zerovalue    € 8type.func(*"".decoder) error   Ğ 8type.func(*"".decoder) error   €   type.*"".decoder     type.error   şxgo.typelink.func(*gif.decoder) error	func(*"".decoder) error              8type.func(*"".decoder) error   ş,go.string.hdr."decode"                       $go.string."decode"   ş$go.string."decode"   decode  şVgo.string.hdr."func(io.Reader, bool) error"                       Ngo.string."func(io.Reader, bool) error"   şNgo.string."func(io.Reader, bool) error" @  8func(io.Reader, bool) error  ş@type.func(io.Reader, bool) error °  °              _n&R 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  Vgo.string.hdr."func(io.Reader, bool) error"   p  Rgo.weak.type.*func(io.Reader, bool) error   €  "runtime.zerovalue    € @type.func(io.Reader, bool) error   Ğ  @type.func(io.Reader, bool) error   €  type.io.Reader     type.bool      type.error   ş†go.typelink.func(io.Reader, bool) error	func(io.Reader, bool) error              @type.func(io.Reader, bool) error   şLgo.string.hdr."newImageFromDescriptor"                       Dgo.string."newImageFromDescriptor"   şDgo.string."newImageFromDescriptor" 0  .newImageFromDescriptor  ş^go.string.hdr."func() (*image.Paletted, error)"                       Vgo.string."func() (*image.Paletted, error)"   şVgo.string."func() (*image.Paletted, error)" @  @func() (*image.Paletted, error)  şHtype.func() (*image.Paletted, error)                   ’ñËô 3                                                                                                                      0€  runtime.algarray   @  "runtime.gcbits.01   P  ^go.string.hdr."func() (*image.Paletted, error)"   p  Zgo.weak.type.*func() (*image.Paletted, error)   €  "runtime.zerovalue    € Htype.func() (*image.Paletted, error)   Ğ€ Htype.func() (*image.Paletted, error)   €  (type.*image.Paletted     type.error   ş–go.typelink.func() (*image.Paletted, error)	func() (*image.Paletted, error)              Htype.func() (*image.Paletted, error)   ş2go.string.hdr."readBlock"             	          *go.string."readBlock"   ş*go.string."readBlock"    readBlock  şFgo.string.hdr."func() (int, error)"                       >go.string."func() (int, error)"   ş>go.string."func() (int, error)" 0  (func() (int, error)  ş0type.func() (int, error)                   ê€Ô 3                                                                                                                      0€  runtime.algarray   @  "runtime.gcbits.01   P  Fgo.string.hdr."func() (int, error)"   p  Bgo.weak.type.*func() (int, error)   €  "runtime.zerovalue    € 0type.func() (int, error)   Ğ€ 0type.func() (int, error)   €  type.int     type.error   şfgo.typelink.func() (int, error)	func() (int, error)              0type.func() (int, error)   ş<go.string.hdr."readColorTable"                       4go.string."readColorTable"   ş4go.string."readColorTable"    readColorTable  şdgo.string.hdr."func(uint8) (color.Palette, error)"             "          \go.string."func(uint8) (color.Palette, error)"   ş\go.string."func(uint8) (color.Palette, error)" P  Ffunc(uint8) (color.Palette, error)  şZtype.func(uint8) (image/color.Palette, error) °  °              X¤p 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  dgo.string.hdr."func(uint8) (color.Palette, error)"   p  lgo.weak.type.*func(uint8) (image/color.Palette, error)   €  "runtime.zerovalue    € Ztype.func(uint8) (image/color.Palette, error)   Ğ Ztype.func(uint8) (image/color.Palette, error)   €  type.uint8     0type.image/color.Palette      type.error   ş®go.typelink.func(uint8) (color.Palette, error)	func(uint8) (image/color.Palette, error)              Ztype.func(uint8) (image/color.Palette, error)   ş:go.string.hdr."readExtension"                       2go.string."readExtension"   ş2go.string."readExtension"    readExtension  ş8go.string.hdr."func() error"                       0go.string."func() error"   ş0go.string."func() error"    func() error  ş"type.func() error                 œ‚Öµ 3                                                                                                              0€  runtime.algarray   @  "runtime.gcbits.01   P  8go.string.hdr."func() error"   p  4go.weak.type.*func() error   €  "runtime.zerovalue    € "type.func() error   Ğ€ "type.func() error   €  type.error   şJgo.typelink.func() error	func() error              "type.func() error   şDgo.string.hdr."readGraphicControl"                       <go.string."readGraphicControl"   ş<go.string."readGraphicControl" 0  &readGraphicControl  şZgo.string.hdr."readHeaderAndScreenDescriptor"                       Rgo.string."readHeaderAndScreenDescriptor"   şRgo.string."readHeaderAndScreenDescriptor" @  <readHeaderAndScreenDescriptor  ş type.*"".decoder                  «Áx« 6                                                                                                                                                                                                                                                                                                                                                                                                                                              d0   runtime.algarray   @  "runtime.gcbits.01   P  8go.string.hdr."*gif.decoder"   p  2go.weak.type.**"".decoder   €  "runtime.zerovalue     type."".decoder   `   type.*"".decoder   Àğ  type.*"".decoder   ğ  ,go.string.hdr."decode"   €  "go.importpath."".     @type.func(io.Reader, bool) error      Ztype.func(*"".decoder, io.Reader, bool) error   °  ("".(*decoder).decode   À  ("".(*decoder).decode   Ğ  Lgo.string.hdr."newImageFromDescriptor"   à  "go.importpath."".   ğ  Htype.func() (*image.Paletted, error)   €  ^type.func(*"".decoder) (*image.Paletted, error)     H"".(*decoder).newImageFromDescriptor      H"".(*decoder).newImageFromDescriptor   °  2go.string.hdr."readBlock"   À  "go.importpath."".   Ğ  0type.func() (int, error)   à  Ftype.func(*"".decoder) (int, error)   ğ  ."".(*decoder).readBlock   €  ."".(*decoder).readBlock     <go.string.hdr."readColorTable"      "go.importpath."".   °  Ztype.func(uint8) (image/color.Palette, error)   À  ttype.func(*"".decoder, uint8) (image/color.Palette, error)   Ğ  8"".(*decoder).readColorTable   à  8"".(*decoder).readColorTable   ğ  :go.string.hdr."readExtension"   €  "go.importpath."".     "type.func() error      8type.func(*"".decoder) error   °  6"".(*decoder).readExtension   À  6"".(*decoder).readExtension   Ğ  Dgo.string.hdr."readGraphicControl"   à  "go.importpath."".   ğ  "type.func() error   €  8type.func(*"".decoder) error     @"".(*decoder).readGraphicControl      @"".(*decoder).readGraphicControl   °  Zgo.string.hdr."readHeaderAndScreenDescriptor"   À  "go.importpath."".   Ğ  "type.func() error   à  8type.func(*"".decoder) error   ğ  V"".(*decoder).readHeaderAndScreenDescriptor   €  V"".(*decoder).readHeaderAndScreenDescriptor   ş:go.string.hdr."[]color.Color"                       2go.string."[]color.Color"   ş2go.string."[]color.Color"    []color.Color  ş0type.[]image/color.Color                   :tNŠ                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  :go.string.hdr."[]color.Color"   p  Bgo.weak.type.*[]image/color.Color   €  "runtime.zerovalue     ,type.image/color.Color   şZgo.typelink.[]color.Color	[]image/color.Color              0type.[]image/color.Color   ş8go.string.hdr."interface {}"                       0go.string."interface {}"   ş0go.string."interface {}"    interface {}  ş"type.interface {} À  À              çW                                                                          0€  runtime.algarray   @  "runtime.gcbits.03   P  8go.string.hdr."interface {}"   p  4go.weak.type.*interface {}   €  "runtime.zerovalue   À "type.interface {}   ş<go.string.hdr."[]interface {}"                       4go.string."[]interface {}"   ş4go.string."[]interface {}"    []interface {}  ş&type.[]interface {}                   p“ê/                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  <go.string.hdr."[]interface {}"   p  8go.weak.type.*[]interface {}   €  "runtime.zerovalue     "type.interface {}   şRgo.typelink.[]interface {}	[]interface {}              &type.[]interface {}   şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2             şTgclocalsÂ·2c78d3ad9d760b5f66e2e47be684c787                   şTgclocalsÂ·51af24152615272c3d9efc8538f95767                  ş<type..hashfunc.[1]interface {}              4type..hash.[1]interface {}   ş8type..eqfunc.[1]interface {}              0type..eq.[1]interface {}   ş2type..alg.[1]interface {}                        <type..hashfunc.[1]interface {}     8type..eqfunc.[1]interface {}   ş>go.string.hdr."[1]interface {}"                       6go.string."[1]interface {}"   ş6go.string."[1]interface {}"     [1]interface {}  ş(type.[1]interface {} À  À              P‘[ú                                                                        0  2type..alg.[1]interface {}   @  "runtime.gcbits.03   P  >go.string.hdr."[1]interface {}"   p  :go.weak.type.*[1]interface {}   €  "runtime.zerovalue     "type.interface {}      &type.[]interface {}   şVgo.typelink.[1]interface {}	[1]interface {}              (type.[1]interface {}   ş@go.string.hdr."*[1]interface {}"                       8go.string."*[1]interface {}"   ş8go.string."*[1]interface {}" 0  "*[1]interface {}  ş*type.*[1]interface {}                   ¿¨5 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  @go.string.hdr."*[1]interface {}"   p  <go.weak.type.**[1]interface {}   €  "runtime.zerovalue     (type.[1]interface {}   şDgo.string.hdr."*gif.interlaceScan"                       <go.string."*gif.interlaceScan"   ş<go.string."*gif.interlaceScan" 0  &*gif.interlaceScan  ş,type.*"".interlaceScan                    ‡¹Ì 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  Dgo.string.hdr."*gif.interlaceScan"   p  >go.weak.type.**"".interlaceScan   €  "runtime.zerovalue     *type."".interlaceScan   şBgo.string.hdr."gif.interlaceScan"                       :go.string."gif.interlaceScan"   ş:go.string."gif.interlaceScan" 0  $gif.interlaceScan  ş(go.string.hdr."skip"                        go.string."skip"   ş go.string."skip"   
+skip  ş*go.string.hdr."start"                       "go.string."start"   ş"go.string."start"   start  ş:go.string.hdr."interlaceScan"                       2go.string."interlaceScan"   ş2go.string."interlaceScan"    interlaceScan  ş*type."".interlaceScan  °  °               pä”» ™                                                                                                                                                                                              0À  runtime.algarray   @  runtime.gcbits.   P  Bgo.string.hdr."gif.interlaceScan"   p  ,type.*"".interlaceScan   €  "runtime.zerovalue   À *type."".interlaceScan   À  (go.string.hdr."skip"   Ğ  "go.importpath."".   à  type.int     *go.string.hdr."start"      "go.importpath."".   °  type.int   `à *type."".interlaceScan   à  :go.string.hdr."interlaceScan"   ğ  "go.importpath."".   €° *type."".interlaceScan   şFgo.string.hdr."[]gif.interlaceScan"                       >go.string."[]gif.interlaceScan"   ş>go.string."[]gif.interlaceScan" 0  ([]gif.interlaceScan  ş.type.[]"".interlaceScan                   âxø€                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  Fgo.string.hdr."[]gif.interlaceScan"   p  @go.weak.type.*[]"".interlaceScan   €  "runtime.zerovalue     *type."".interlaceScan   şdgo.typelink.[]gif.interlaceScan	[]"".interlaceScan              .type.[]"".interlaceScan   ş0go.string.hdr."*gif.GIF"                       (go.string."*gif.GIF"   ş(go.string."*gif.GIF"    *gif.GIF  ştype.*"".GIF                    Ï¶×ß 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  0go.string.hdr."*gif.GIF"   p  *go.weak.type.**"".GIF   €  "runtime.zerovalue     type."".GIF   ş&runtime.gcbits.890c   ‰ ş.go.string.hdr."gif.GIF"                       &go.string."gif.GIF"   ş&go.string."gif.GIF"   gif.GIF  ş*go.string.hdr."Image"                       "go.string."Image"   ş"go.string."Image"   Image  ş*go.string.hdr."Delay"                       "go.string."Delay"   ş"go.string."Delay"   Delay  ş2go.string.hdr."LoopCount"             	          *go.string."LoopCount"   ş*go.string."LoopCount"    LoopCount  ş0go.string.hdr."Disposal"                       (go.string."Disposal"   ş(go.string."Disposal"    Disposal  ş,go.string.hdr."Config"                       $go.string."Config"   ş$go.string."Config"   Config  ş>go.string.hdr."BackgroundIndex"                       6go.string."BackgroundIndex"   ş6go.string."BackgroundIndex"     BackgroundIndex  ş&go.string.hdr."GIF"                       go.string."GIF"   şgo.string."GIF"   GIF  ştype."".GIF  ğ  ğx       `       ÒÓ                                                                                                                                                                                      0                                       8                                       P                                       p                                               ,0à  runtime.algarray   @  &runtime.gcbits.890c   P  .go.string.hdr."gif.GIF"   p  type.*"".GIF   €  "runtime.zerovalue   À type."".GIF   À  *go.string.hdr."Image"   à  ,type.[]*image.Paletted     *go.string.hdr."Delay"   °  type.[]int   à  2go.string.hdr."LoopCount"   €  type.int   °  0go.string.hdr."Disposal"   Ğ  type.[]uint8   €  ,go.string.hdr."Config"      "type.image.Config   Ğ  >go.string.hdr."BackgroundIndex"   ğ  type.uint8   `  type."".GIF      &go.string.hdr."GIF"   °  "go.importpath."".   Àğ type."".GIF   ş<go.string.hdr."[]image.format"                       4go.string."[]image.format"   ş4go.string."[]image.format"    []image.format  ş&type.[]image.format                   2{1                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  <go.string.hdr."[]image.format"   p  8go.weak.type.*[]image.format   €  "runtime.zerovalue     "type.image.format   şRgo.typelink.[]image.format	[]image.format              &type.[]image.format   şhgo.string.hdr."func(io.Reader) (image.Image, error)"             $          `go.string."func(io.Reader) (image.Image, error)"   ş`go.string."func(io.Reader) (image.Image, error)" P  Jfunc(io.Reader) (image.Image, error)  şRtype.func(io.Reader) (image.Image, error) °  °              ‚ïº@ 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  hgo.string.hdr."func(io.Reader) (image.Image, error)"   p  dgo.weak.type.*func(io.Reader) (image.Image, error)   €  "runtime.zerovalue    € Rtype.func(io.Reader) (image.Image, error)   Ğ Rtype.func(io.Reader) (image.Image, error)   €  type.io.Reader      type.image.Image      type.error   şªgo.typelink.func(io.Reader) (image.Image, error)	func(io.Reader) (image.Image, error)              Rtype.func(io.Reader) (image.Image, error)   şjgo.string.hdr."func(io.Reader) (image.Config, error)"             %          bgo.string."func(io.Reader) (image.Config, error)"   şbgo.string."func(io.Reader) (image.Config, error)" P  Lfunc(io.Reader) (image.Config, error)  şTtype.func(io.Reader) (image.Config, error) °  °              ã3/ö 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  jgo.string.hdr."func(io.Reader) (image.Config, error)"   p  fgo.weak.type.*func(io.Reader) (image.Config, error)   €  "runtime.zerovalue    € Ttype.func(io.Reader) (image.Config, error)   Ğ Ttype.func(io.Reader) (image.Config, error)   €  type.io.Reader     "type.image.Config      type.error   ş®go.typelink.func(io.Reader) (image.Config, error)	func(io.Reader) (image.Config, error)              Ttype.func(io.Reader) (image.Config, error)   ş type..hashfunc64             @          ,runtime.memhash_varlen   ştype..eqfunc64             @          .runtime.memequal_varlen   ştype..alg64                         type..hashfunc64     type..eqfunc64   ş,go.string.hdr."[8]int"                       $go.string."[8]int"   ş$go.string."[8]int"   [8]int  ştype.[8]int À  À@               –™Õ ‘                                                                       0  type..alg64   @  runtime.gcbits.   P  ,go.string.hdr."[8]int"   p  (go.weak.type.*[8]int   €  "runtime.zerovalue     type.int      type.[]int   ş2go.typelink.[8]int	[8]int              type.[8]int   şTgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45                    şTgclocalsÂ·19b49d53e9c11805652fa4c0885cbb29                  şTgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45                    şTgclocalsÂ·d2fd9951e910becfd07ba7f8ff7b525a              Ç    şTgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45                    şTgclocalsÂ·e4b5616e5783a0b08ed3851f8c75ffed                  şBgo.string.hdr."func(uint8) error"                       :go.string."func(uint8) error"   ş:go.string."func(uint8) error" 0  $func(uint8) error  ş,type.func(uint8) error                   IˆX 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Bgo.string.hdr."func(uint8) error"   p  >go.weak.type.*func(uint8) error   €  "runtime.zerovalue    € ,type.func(uint8) error   Ğ ,type.func(uint8) error   €  type.uint8     type.error   ş^go.typelink.func(uint8) error	func(uint8) error              ,type.func(uint8) error   ş6go.string.hdr."*gif.writer"                       .go.string."*gif.writer"   ş.go.string."*gif.writer"    *gif.writer  ştype.*"".writer                    î­¤º 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  6go.string.hdr."*gif.writer"   p  0go.weak.type.**"".writer   €  "runtime.zerovalue     type."".writer   ş4go.string.hdr."gif.writer"             
+          ,go.string."gif.writer"   ş,go.string."gif.writer"    gif.writer  ş*go.string.hdr."Flush"                       "go.string."Flush"   ş"go.string."Flush"   Flush  ş*go.string.hdr."Write"                       "go.string."Write"   ş"go.string."Write"   Write  ş2go.string.hdr."WriteByte"             	          *go.string."WriteByte"   ş*go.string."WriteByte"    WriteByte  ş,go.string.hdr."writer"                       $go.string."writer"   ş$go.string."writer"   writer  ştype."".writer                    ­ŒR                                                                                                                                                                                        0à  runtime.algarray   @  "runtime.gcbits.03   P  4go.string.hdr."gif.writer"   p  type.*"".writer   €  "runtime.zerovalue   À type."".writer   À  *go.string.hdr."Flush"   à  "type.func() error   ğ  *go.string.hdr."Write"     >type.func([]uint8) (int, error)      2go.string.hdr."WriteByte"   À  ,type.func(uint8) error   `Ğ type."".writer   Ğ  ,go.string.hdr."writer"   à  "go.importpath."".   ğ  type."".writer   ş"type..hashfunc768                       ,runtime.memhash_varlen   ştype..eqfunc768                       .runtime.memequal_varlen   ştype..alg768                        "type..hashfunc768     type..eqfunc768   ş4go.string.hdr."[768]uint8"             
+          ,go.string."[768]uint8"   ş,go.string."[768]uint8"    [768]uint8  ştype.[768]uint8 À  À               	¡ ‘                                                                       0  type..alg768   @  runtime.gcbits.   P  4go.string.hdr."[768]uint8"   p  0go.weak.type.*[768]uint8   €  "runtime.zerovalue     type.uint8      type.[]uint8   şBgo.typelink.[768]uint8	[768]uint8              type.[768]uint8   ş&runtime.gcbits.9fc8   ŸÈ ş6go.string.hdr."gif.encoder"                       .go.string."gif.encoder"   ş.go.string."gif.encoder"    gif.encoder  ş"go.string.hdr."w"                       go.string."w"   şgo.string."w"   w  ş"go.string.hdr."g"                       go.string."g"   şgo.string."g"   g  ş0go.string.hdr."globalCT"                       (go.string."globalCT"   ş(go.string."globalCT"    globalCT  ş&go.string.hdr."buf"                       go.string."buf"   şgo.string."buf"   buf  ş>go.string.hdr."localColorTable"                       6go.string."localColorTable"   ş6go.string."localColorTable"     localColorTable  ş.go.string.hdr."encoder"                       &go.string."encoder"   ş&go.string."encoder"   encoder  ştype."".encoder  À  À       €       ¬åuü                                                                                                                                                                                                                              ˜                                                                                                                                                                     >0à  runtime.algarray   @  &runtime.gcbits.9fc8   P  6go.string.hdr."gif.encoder"   p   type.*"".encoder   €  "runtime.zerovalue   À type."".encoder   À  "go.string.hdr."w"   Ğ  "go.importpath."".   à  type."".writer     &go.string.hdr."err"      "go.importpath."".   °  type.error   à  "go.string.hdr."g"   ğ  "go.importpath."".   €  type."".GIF   °  0go.string.hdr."globalCT"   À  "go.importpath."".   Ğ  type.int   €  &go.string.hdr."buf"     "go.importpath."".      type.[256]uint8   Ğ  @go.string.hdr."globalColorTable"   à  "go.importpath."".   ğ  type.[768]uint8      >go.string.hdr."localColorTable"   °  "go.importpath."".   À  type.[768]uint8   `ğ type."".encoder   ğ  .go.string.hdr."encoder"   €  "go.importpath."".   À type."".encoder   ş8go.string.hdr."*gif.encoder"                       0go.string."*gif.encoder"   ş0go.string."*gif.encoder"    *gif.encoder  şDgo.string.hdr."func(*gif.encoder)"                       <go.string."func(*gif.encoder)"   ş<go.string."func(*gif.encoder)" 0  &func(*gif.encoder)  ş,type.func(*"".encoder)                 kÖ? 3                                                                                                              0€  runtime.algarray   @  "runtime.gcbits.01   P  Dgo.string.hdr."func(*gif.encoder)"   p  >go.weak.type.*func(*"".encoder)   €  "runtime.zerovalue    € ,type.func(*"".encoder)   Ğ ,type.func(*"".encoder)   €   type.*"".encoder   ş`go.typelink.func(*gif.encoder)	func(*"".encoder)              ,type.func(*"".encoder)   şVgo.string.hdr."func(*gif.encoder, []uint8)"                       Ngo.string."func(*gif.encoder, []uint8)"   şNgo.string."func(*gif.encoder, []uint8)" @  8func(*gif.encoder, []uint8)  ş>type.func(*"".encoder, []uint8)                   êjó 3                                                                                                                      0€  runtime.algarray   @  "runtime.gcbits.01   P  Vgo.string.hdr."func(*gif.encoder, []uint8)"   p  Pgo.weak.type.*func(*"".encoder, []uint8)   €  "runtime.zerovalue    € >type.func(*"".encoder, []uint8)   Ğ  >type.func(*"".encoder, []uint8)   €   type.*"".encoder     type.[]uint8   ş„go.typelink.func(*gif.encoder, []uint8)	func(*"".encoder, []uint8)              >type.func(*"".encoder, []uint8)   şRgo.string.hdr."func(*gif.encoder, uint8)"                       Jgo.string."func(*gif.encoder, uint8)"   şJgo.string."func(*gif.encoder, uint8)" @  4func(*gif.encoder, uint8)  ş:type.func(*"".encoder, uint8)                   ›ñ&ƒ 3                                                                                                                      0€  runtime.algarray   @  "runtime.gcbits.01   P  Rgo.string.hdr."func(*gif.encoder, uint8)"   p  Lgo.weak.type.*func(*"".encoder, uint8)   €  "runtime.zerovalue    € :type.func(*"".encoder, uint8)   Ğ  :type.func(*"".encoder, uint8)   €   type.*"".encoder     type.uint8   ş|go.typelink.func(*gif.encoder, uint8)	func(*"".encoder, uint8)              :type.func(*"".encoder, uint8)   ş~go.string.hdr."func(*gif.encoder, *image.Paletted, int, uint8)"             /          vgo.string."func(*gif.encoder, *image.Paletted, int, uint8)"   şvgo.string."func(*gif.encoder, *image.Paletted, int, uint8)" `  `func(*gif.encoder, *image.Paletted, int, uint8)  şftype.func(*"".encoder, *image.Paletted, int, uint8) À  À              MV” 3                                                                                                                                      0€  runtime.algarray   @  "runtime.gcbits.01   P  ~go.string.hdr."func(*gif.encoder, *image.Paletted, int, uint8)"   p  xgo.weak.type.*func(*"".encoder, *image.Paletted, int, uint8)   €  "runtime.zerovalue    € ftype.func(*"".encoder, *image.Paletted, int, uint8)   ĞÀ ftype.func(*"".encoder, *image.Paletted, int, uint8)   €   type.*"".encoder     (type.*image.Paletted      type.int   °  type.uint8   şÔgo.typelink.func(*gif.encoder, *image.Paletted, int, uint8)	func(*"".encoder, *image.Paletted, int, uint8)              ftype.func(*"".encoder, *image.Paletted, int, uint8)   ş*go.string.hdr."flush"                       "go.string."flush"   ş"go.string."flush"   flush  ş,go.string.hdr."func()"                       $go.string."func()"   ş$go.string."func()"   func()  ştype.func() €  €              ö¼‚ö 3                                                                                                        0€  runtime.algarray   @  "runtime.gcbits.01   P  ,go.string.hdr."func()"   p  (go.weak.type.*func()   €  "runtime.zerovalue    € type.func()   Ğ€ type.func()   ş2go.typelink.func()	func()              type.func()   ş*go.string.hdr."write"                       "go.string."write"   ş"go.string."write"   write  ş:go.string.hdr."func([]uint8)"                       2go.string."func([]uint8)"   ş2go.string."func([]uint8)"    func([]uint8)  ş$type.func([]uint8)                 §{í· 3                                                                                                              0€  runtime.algarray   @  "runtime.gcbits.01   P  :go.string.hdr."func([]uint8)"   p  6go.weak.type.*func([]uint8)   €  "runtime.zerovalue    € $type.func([]uint8)   Ğ $type.func([]uint8)   €  type.[]uint8   şNgo.typelink.func([]uint8)	func([]uint8)              $type.func([]uint8)   ş2go.string.hdr."writeByte"             	          *go.string."writeByte"   ş*go.string."writeByte"    writeByte  ş6go.string.hdr."func(uint8)"                       .go.string."func(uint8)"   ş.go.string."func(uint8)"    func(uint8)  ş type.func(uint8)                 Ï$«q 3                                                                                                              0€  runtime.algarray   @  "runtime.gcbits.01   P  6go.string.hdr."func(uint8)"   p  2go.weak.type.*func(uint8)   €  "runtime.zerovalue    €  type.func(uint8)   Ğ  type.func(uint8)   €  type.uint8   şFgo.typelink.func(uint8)	func(uint8)               type.func(uint8)   ş6go.string.hdr."writeHeader"                       .go.string."writeHeader"   ş.go.string."writeHeader"    writeHeader  ş>go.string.hdr."writeImageBlock"                       6go.string."writeImageBlock"   ş6go.string."writeImageBlock"     writeImageBlock  şbgo.string.hdr."func(*image.Paletted, int, uint8)"             !          Zgo.string."func(*image.Paletted, int, uint8)"   şZgo.string."func(*image.Paletted, int, uint8)" P  Dfunc(*image.Paletted, int, uint8)  şLtype.func(*image.Paletted, int, uint8) °  °              ÊoVë 3                                                                                                                              0€  runtime.algarray   @  "runtime.gcbits.01   P  bgo.string.hdr."func(*image.Paletted, int, uint8)"   p  ^go.weak.type.*func(*image.Paletted, int, uint8)   €  "runtime.zerovalue    € Ltype.func(*image.Paletted, int, uint8)   Ğ° Ltype.func(*image.Paletted, int, uint8)   €  (type.*image.Paletted     type.int      type.uint8   şgo.typelink.func(*image.Paletted, int, uint8)	func(*image.Paletted, int, uint8)              Ltype.func(*image.Paletted, int, uint8)   ş type.*"".encoder  Ğ  Ğ              ògV¤ 6                                                                                                                                                                                                                                                                                                                                              L0   runtime.algarray   @  "runtime.gcbits.01   P  8go.string.hdr."*gif.encoder"   p  2go.weak.type.**"".encoder   €  "runtime.zerovalue     type."".encoder   `   type.*"".encoder   Àğ  type.*"".encoder   ğ  *go.string.hdr."flush"   €  "go.importpath."".     type.func()      ,type.func(*"".encoder)   °  &"".(*encoder).flush   À  &"".(*encoder).flush   Ğ  *go.string.hdr."write"   à  "go.importpath."".   ğ  $type.func([]uint8)   €  >type.func(*"".encoder, []uint8)     &"".(*encoder).write      &"".(*encoder).write   °  2go.string.hdr."writeByte"   À  "go.importpath."".   Ğ   type.func(uint8)   à  :type.func(*"".encoder, uint8)   ğ  ."".(*encoder).writeByte   €  ."".(*encoder).writeByte     6go.string.hdr."writeHeader"      "go.importpath."".   °  type.func()   À  ,type.func(*"".encoder)   Ğ  2"".(*encoder).writeHeader   à  2"".(*encoder).writeHeader   ğ  >go.string.hdr."writeImageBlock"   €  "go.importpath."".     Ltype.func(*image.Paletted, int, uint8)      ftype.func(*"".encoder, *image.Paletted, int, uint8)   °  :"".(*encoder).writeImageBlock   À  :"".(*encoder).writeImageBlock   ş@go.string.hdr."*gif.blockWriter"                       8go.string."*gif.blockWriter"   ş8go.string."*gif.blockWriter" 0  "*gif.blockWriter  ş6go.string.hdr."blockWriter"                       .go.string."blockWriter"   ş.go.string."blockWriter"    blockWriter  şTgclocalsÂ·c55cf99de9cdd8c8202a466952fa1a45                    şTgclocalsÂ·8cf14f50ac1bf7ae2848fda35f0590ec              c    şxgo.string.hdr."func(*gif.blockWriter, []uint8) (int, error)"             ,          pgo.string."func(*gif.blockWriter, []uint8) (int, error)"   şpgo.string."func(*gif.blockWriter, []uint8) (int, error)" `  Zfunc(*gif.blockWriter, []uint8) (int, error)  ş`type.func(*"".blockWriter, []uint8) (int, error) À  À              &‰ğÀ 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  xgo.string.hdr."func(*gif.blockWriter, []uint8) (int, error)"   p  rgo.weak.type.*func(*"".blockWriter, []uint8) (int, error)   €  "runtime.zerovalue    € `type.func(*"".blockWriter, []uint8) (int, error)   Ğ  `type.func(*"".blockWriter, []uint8) (int, error)   €  (type.*"".blockWriter     type.[]uint8      type.int   °  type.error   şÈgo.typelink.func(*gif.blockWriter, []uint8) (int, error)	func(*"".blockWriter, []uint8) (int, error)              `type.func(*"".blockWriter, []uint8) (int, error)   ş(type.*"".blockWriter  Ğ  Ğ              ã¼0— 6                                                                                                                                              0   runtime.algarray   @  "runtime.gcbits.01   P  @go.string.hdr."*gif.blockWriter"   p  :go.weak.type.**"".blockWriter   €  "runtime.zerovalue     &type."".blockWriter   `  (type.*"".blockWriter   Àğ (type.*"".blockWriter   ğ  *go.string.hdr."Write"     >type.func([]uint8) (int, error)      `type.func(*"".blockWriter, []uint8) (int, error)   °  ."".(*blockWriter).Write   À  ."".(*blockWriter).Write   ş>go.string.hdr."gif.blockWriter"                       6go.string."gif.blockWriter"   ş6go.string."gif.blockWriter"     gif.blockWriter  ş"go.string.hdr."e"                       go.string."e"   şgo.string."e"   e  şvgo.string.hdr."func(gif.blockWriter, []uint8) (int, error)"             +          ngo.string."func(gif.blockWriter, []uint8) (int, error)"   şngo.string."func(gif.blockWriter, []uint8) (int, error)" `  Xfunc(gif.blockWriter, []uint8) (int, error)  ş^type.func("".blockWriter, []uint8) (int, error) À  À              õ»—ï 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  vgo.string.hdr."func(gif.blockWriter, []uint8) (int, error)"   p  pgo.weak.type.*func("".blockWriter, []uint8) (int, error)   €  "runtime.zerovalue    € ^type.func("".blockWriter, []uint8) (int, error)   Ğ  ^type.func("".blockWriter, []uint8) (int, error)   €  &type."".blockWriter     type.[]uint8      type.int   °  type.error   şÄgo.typelink.func(gif.blockWriter, []uint8) (int, error)	func("".blockWriter, []uint8) (int, error)              ^type.func("".blockWriter, []uint8) (int, error)   ş&type."".blockWriter  À  À              ¤af 9                                                                                                                                                                                                    $0   runtime.algarray   @  "runtime.gcbits.01   P  >go.string.hdr."gif.blockWriter"   p  (type.*"".blockWriter   €  "runtime.zerovalue   À &type."".blockWriter   À  "go.string.hdr."e"   Ğ  "go.importpath."".   à   type.*"".encoder   ` &type."".blockWriter     6go.string.hdr."blockWriter"      "go.importpath."".   °à &type."".blockWriter   à  *go.string.hdr."Write"   €  >type.func([]uint8) (int, error)     ^type.func("".blockWriter, []uint8) (int, error)      ("".blockWriter.Write   °  ("".blockWriter.Write   ş@go.string.hdr."**image.Paletted"                       8go.string."**image.Paletted"   ş8go.string."**image.Paletted" 0  "**image.Paletted  ş*type.**image.Paletted                   "	
+ 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  @go.string.hdr."**image.Paletted"   p  <go.weak.type.***image.Paletted   €  "runtime.zerovalue     (type.*image.Paletted   şDgo.string.hdr."[1]*image.Paletted"                       <go.string."[1]*image.Paletted"   ş<go.string."[1]*image.Paletted" 0  &[1]*image.Paletted  ş.type.[1]*image.Paletted À  À              9>}‘ 1                                                                       0   runtime.algarray   @  "runtime.gcbits.01   P  Dgo.string.hdr."[1]*image.Paletted"   p  @go.weak.type.*[1]*image.Paletted   €  "runtime.zerovalue     (type.*image.Paletted      ,type.[]*image.Paletted   şbgo.typelink.[1]*image.Paletted	[1]*image.Paletted              .type.[1]*image.Paletted   ş,go.string.hdr."[1]int"                       $go.string."[1]int"   ş$go.string."[1]int"   [1]int  ştype.[1]int À  À               ­µ²T ‘                                                                       0   runtime.algarray   @  runtime.gcbits.   P  ,go.string.hdr."[1]int"   p  (go.weak.type.*[1]int   €  "runtime.zerovalue     type.int      type.[]int   ş2go.typelink.[1]int	[1]int              type.[1]int   şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·0b86ef39f3fed835f14ba5f4d7c62fa2             şTgclocalsÂ·e85dd0d10221e69476a0daf9bc0a53b6 (  (          À       şTgclocalsÂ·9c91d8a91ac42440a3d1507bc8d2e808 (  (                ş2type..hashfunc."".Options              *type..hash."".Options   ş.type..eqfunc."".Options              &type..eq."".Options   ş(type..alg."".Options                        2type..hashfunc."".Options     .type..eqfunc."".Options   ş"runtime.gcbits.1e    ş6go.string.hdr."gif.Options"                       .go.string."gif.Options"   ş.go.string."gif.Options"    gif.Options  ş2go.string.hdr."NumColors"             	          *go.string."NumColors"   ş*go.string."NumColors"    NumColors  ş2go.string.hdr."Quantizer"             	          *go.string."Quantizer"   ş*go.string."Quantizer"    Quantizer  ş,go.string.hdr."Drawer"                       $go.string."Drawer"   ş$go.string."Drawer"   Drawer  ş.go.string.hdr."Options"                       &go.string."Options"   ş&go.string."Options"   Options  ştype."".Options  €  €(       (       6/­Ê                                                                                                                                                                                                                                      0  (type..alg."".Options   @  "runtime.gcbits.1e   P  6go.string.hdr."gif.Options"   p   type.*"".Options   €  "runtime.zerovalue   À type."".Options   À  2go.string.hdr."NumColors"   à  type.int     2go.string.hdr."Quantizer"   °  2type.image/draw.Quantizer   à  ,go.string.hdr."Drawer"   €  ,type.image/draw.Drawer   `° type."".Options   °  .go.string.hdr."Options"   À  "go.importpath."".   Ğ€ type."".Options   ş8go.string.hdr."*gif.Options"                       0go.string."*gif.Options"   ş0go.string."*gif.Options"    *gif.Options  ş type.*"".Options                    ìw¼ê 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  8go.string.hdr."*gif.Options"   p  2go.weak.type.**"".Options   €  "runtime.zerovalue     type."".Options   şFgo.string.hdr."*[1]*image.Paletted"                       >go.string."*[1]*image.Paletted"   ş>go.string."*[1]*image.Paletted" 0  (*[1]*image.Paletted  ş0type.*[1]*image.Paletted                   CvSÄ 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  Fgo.string.hdr."*[1]*image.Paletted"   p  Bgo.weak.type.**[1]*image.Paletted   €  "runtime.zerovalue     .type.[1]*image.Paletted   ş.go.string.hdr."*[1]int"                       &go.string."*[1]int"   ş&go.string."*[1]int"   *[1]int  ştype.*[1]int                   ñ5@ 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  .go.string.hdr."*[1]int"   p  *go.weak.type.**[1]int   €  "runtime.zerovalue     type.[1]int   şHgo.string.hdr."[4]gif.interlaceScan"                       @go.string."[4]gif.interlaceScan"   ş@go.string."[4]gif.interlaceScan" 0  *[4]gif.interlaceScan  ş0type.[4]"".interlaceScan À  À@               f‚c' ‘                                                                       0  type..alg64   @  runtime.gcbits.   P  Hgo.string.hdr."[4]gif.interlaceScan"   p  Bgo.weak.type.*[4]"".interlaceScan   €  "runtime.zerovalue     *type."".interlaceScan      .type.[]"".interlaceScan   şhgo.typelink.[4]gif.interlaceScan	[4]"".interlaceScan              0type.[4]"".interlaceScan   ş.go.string.hdr."runtime"                       &go.string."runtime"   ş&go.string."runtime"   runtime  ş,go.importpath.runtime.                       &go.string."runtime"   ş*go.string.hdr."bufio"                       "go.string."bufio"   ş"go.string."bufio"   bufio  ş(go.importpath.bufio.                       "go.string."bufio"   ş*go.string.hdr."bytes"                       "go.string."bytes"   ş"go.string."bytes"   bytes  ş(go.importpath.bytes.                       "go.string."bytes"   ş,go.string.hdr."errors"                       $go.string."errors"   ş$go.string."errors"   errors  ş*go.importpath.errors.                       $go.string."errors"   ş$go.string.hdr."io"                       go.string."io"   şgo.string."io"   io  ş"go.importpath.io.                       go.string."io"   ş8go.string.hdr."compress/lzw"                       0go.string."compress/lzw"   ş0go.string."compress/lzw"    compress/lzw  ş6go.importpath.compress/lzw.                       0go.string."compress/lzw"   ş&go.string.hdr."fmt"                       go.string."fmt"   şgo.string."fmt"   fmt  ş$go.importpath.fmt.                       go.string."fmt"   ş(go.importpath.image.                       "go.string."image"   ş6go.string.hdr."image/color"                       .go.string."image/color"   ş.go.string."image/color"    image/color  ş4go.importpath.image/color.                       .go.string."image/color"   şFgo.string.hdr."image/color/palette"                       >go.string."image/color/palette"   ş>go.string."image/color/palette" 0  (image/color/palette  şDgo.importpath.image/color/palette.                       >go.string."image/color/palette"   ş4go.string.hdr."image/draw"             
+          ,go.string."image/draw"   ş,go.string."image/draw"    image/draw  ş2go.importpath.image/draw.             
+          ,go.string."image/draw"   ş""".reader.ReadÂ·f              "".reader.Read   ş*"".reader.ReadByteÂ·f              $"".reader.ReadByte   ş:type..hash.[1]interface {}Â·f              4type..hash.[1]interface {}   ş6type..eq.[1]interface {}Â·f              0type..eq.[1]interface {}   ş$"".writer.FlushÂ·f              "".writer.Flush   ş$"".writer.WriteÂ·f              "".writer.Write   ş,"".writer.WriteByteÂ·f              &"".writer.WriteByte   ş4"".(*blockWriter).WriteÂ·f              ."".(*blockWriter).Write   ş0type..hash."".OptionsÂ·f              *type..hash."".Options   ş,type..eq."".OptionsÂ·f              &type..eq."".Options   ş"runtime.zerovalue      ÿÿgo13ld

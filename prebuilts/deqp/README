@@ -1,0 +1,5 @@
+This directory contains prebuilt SPIR-V binaries used by the deqp
+tests suite. The main deqp project can be found at external/deqp.
+
+Binaries were built by running following command in external/deqp directory:
+python external/vulkancts/build_spirv_binaries.py -d `pwd`/../../prebuilts/deqp/spirv/vulkan/prebuilt

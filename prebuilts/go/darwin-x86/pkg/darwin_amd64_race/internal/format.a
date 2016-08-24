@@ -1,0 +1,266 @@
+!<arch>
+__.PKGDEF       0           0     0     644     11456     `
+go object darwin amd64 go1.5.1 X:none
+build id "216ccb6797e81c94a03fa6bf3aa10b3f21aeadc5"
+
+$$
+package format
+	import runtime "runtime"
+	import bytes "bytes"
+	import ast "go/ast"
+	import token "go/token"
+	import strings "strings"
+	import parser "go/parser"
+	import printer "go/printer"
+	type @"go/token".Pos int
+	func (@"go/token".pÂ·2 @"go/token".Pos) IsValid () (? bool) { return @"go/token".pÂ·2 != @"go/token".Pos(0x0) }
+	type @"go/ast".Comment struct { Slash @"go/token".Pos; Text string }
+	func (@"go/ast".cÂ·2 *@"go/ast".Comment "esc:0x1") End () (? @"go/token".Pos) { return @"go/token".Pos(int(@"go/ast".cÂ·2.Slash) + len(@"go/ast".cÂ·2.Text)) }
+	func (@"go/ast".cÂ·2 *@"go/ast".Comment "esc:0x1") Pos () (? @"go/token".Pos) { return @"go/ast".cÂ·2.Slash }
+	type @"go/ast".CommentGroup struct { List []*@"go/ast".Comment }
+	func (@"go/ast".gÂ·2 *@"go/ast".CommentGroup "esc:0x1") End () (? @"go/token".Pos) { return @"go/ast".gÂ·2.List[len(@"go/ast".gÂ·2.List) - 0x1].End() }
+	func (@"go/ast".gÂ·2 *@"go/ast".CommentGroup "esc:0x1") Pos () (? @"go/token".Pos) { return @"go/ast".gÂ·2.List[0x0].Pos() }
+	func (@"go/ast".gÂ·2 *@"go/ast".CommentGroup "esc:0x9") Text () (? string)
+	type @"go/ast".ObjKind int
+	func (@"go/ast".kindÂ·2 @"go/ast".ObjKind) String () (? string) { return @"go/ast".objKindStrings[@"go/ast".kindÂ·2] }
+	type @"go/ast".Object struct { Kind @"go/ast".ObjKind; Name string; Decl interface {}; Data interface {}; Type interface {} }
+	func (@"go/ast".objÂ·2 *@"go/ast".Object "esc:0x1") Pos () (? @"go/token".Pos)
+	type @"go/ast".Ident struct { NamePos @"go/token".Pos; Name string; Obj *@"go/ast".Object }
+	func (@"go/ast".xÂ·2 *@"go/ast".Ident "esc:0x1") End () (? @"go/token".Pos) { return @"go/token".Pos(int(@"go/ast".xÂ·2.NamePos) + len(@"go/ast".xÂ·2.Name)) }
+	func (@"go/ast".idÂ·2 *@"go/ast".Ident "esc:0x1") IsExported () (? bool)
+	func (@"go/ast".xÂ·2 *@"go/ast".Ident "esc:0x1") Pos () (? @"go/token".Pos) { return @"go/ast".xÂ·2.NamePos }
+	func (@"go/ast".idÂ·2 *@"go/ast".Ident "esc:0x22") String () (? string) { if @"go/ast".idÂ·2 != nil { return @"go/ast".idÂ·2.Name }; return "<nil>" }
+	func (? *@"go/ast".Ident) @"go/ast".exprNode () {  }
+	type @"go/ast".Decl interface { End() (? @"go/token".Pos); Pos() (? @"go/token".Pos); @"go/ast".declNode() }
+	type @"go/ast".Scope struct { Outer *@"go/ast".Scope; Objects map[string]*@"go/ast".Object }
+	func (@"go/ast".sÂ·2 *@"go/ast".Scope "esc:0x1") Insert (@"go/ast".objÂ·3 *@"go/ast".Object) (@"go/ast".altÂ·1 *@"go/ast".Object) { if @"go/ast".altÂ·1 = @"go/ast".sÂ·2.Objects[@"go/ast".objÂ·3.Name]; @"go/ast".altÂ·1 == nil { @"go/ast".sÂ·2.Objects[@"go/ast".objÂ·3.Name] = @"go/ast".objÂ·3 }; return  }
+	func (@"go/ast".sÂ·2 *@"go/ast".Scope "esc:0x1") Lookup (@"go/ast".nameÂ·3 string "esc:0x1") (? *@"go/ast".Object) { return @"go/ast".sÂ·2.Objects[@"go/ast".nameÂ·3] }
+	func (@"go/ast".sÂ·2 *@"go/ast".Scope) String () (? string)
+	type @"go/token".Token int
+	func (@"go/token".tokÂ·2 @"go/token".Token) IsKeyword () (? bool) { return @"go/token".Token(0x3c) < @"go/token".tokÂ·2 && @"go/token".tokÂ·2 < @"go/token".Token(0x56) }
+	func (@"go/token".tokÂ·2 @"go/token".Token) IsLiteral () (? bool) { return @"go/token".Token(0x3) < @"go/token".tokÂ·2 && @"go/token".tokÂ·2 < @"go/token".Token(0xa) }
+	func (@"go/token".tokÂ·2 @"go/token".Token) IsOperator () (? bool) { return @"go/token".Token(0xb) < @"go/token".tokÂ·2 && @"go/token".tokÂ·2 < @"go/token".Token(0x3b) }
+	func (@"go/token".opÂ·2 @"go/token".Token) Precedence () (? int)
+	func (@"go/token".tokÂ·2 @"go/token".Token) String () (? string)
+	type @"go/ast".BasicLit struct { ValuePos @"go/token".Pos; Kind @"go/token".Token; Value string }
+	func (@"go/ast".xÂ·2 *@"go/ast".BasicLit "esc:0x1") End () (? @"go/token".Pos) { return @"go/token".Pos(int(@"go/ast".xÂ·2.ValuePos) + len(@"go/ast".xÂ·2.Value)) }
+	func (@"go/ast".xÂ·2 *@"go/ast".BasicLit "esc:0x1") Pos () (? @"go/token".Pos) { return @"go/ast".xÂ·2.ValuePos }
+	func (? *@"go/ast".BasicLit) @"go/ast".exprNode () {  }
+	type @"go/ast".ImportSpec struct { Doc *@"go/ast".CommentGroup; Name *@"go/ast".Ident; Path *@"go/ast".BasicLit; Comment *@"go/ast".CommentGroup; EndPos @"go/token".Pos }
+	func (@"go/ast".sÂ·2 *@"go/ast".ImportSpec "esc:0x1") End () (? @"go/token".Pos) { if @"go/ast".sÂ·2.EndPos != @"go/token".Pos(0x0) { return @"go/ast".sÂ·2.EndPos }; return @"go/ast".sÂ·2.Path.End() }
+	func (@"go/ast".sÂ·2 *@"go/ast".ImportSpec "esc:0x1") Pos () (? @"go/token".Pos) { if @"go/ast".sÂ·2.Name != nil { return @"go/ast".sÂ·2.Name.Pos() }; return @"go/ast".sÂ·2.Path.Pos() }
+	func (? *@"go/ast".ImportSpec) @"go/ast".specNode () {  }
+	type @"go/ast".File struct { Doc *@"go/ast".CommentGroup; Package @"go/token".Pos; Name *@"go/ast".Ident; Decls []@"go/ast".Decl; Scope *@"go/ast".Scope; Imports []*@"go/ast".ImportSpec; Unresolved []*@"go/ast".Ident; Comments []*@"go/ast".CommentGroup }
+	func (@"go/ast".fÂ·2 *@"go/ast".File "esc:0x9") End () (? @"go/token".Pos)
+	func (@"go/ast".fÂ·2 *@"go/ast".File "esc:0x1") Pos () (? @"go/token".Pos) { return @"go/ast".fÂ·2.Package }
+	import sync "sync" // indirect
+	type @"sync".Mutex struct { @"sync".state int32; @"sync".sema uint32 }
+	func (@"sync".mÂ·1 *@"sync".Mutex) Lock ()
+	func (@"sync".mÂ·1 *@"sync".Mutex) Unlock ()
+	type @"sync".Locker interface { Lock(); Unlock() }
+	type @"sync".RWMutex struct { @"sync".w @"sync".Mutex; @"sync".writerSem uint32; @"sync".readerSem uint32; @"sync".readerCount int32; @"sync".readerWait int32 }
+	func (@"sync".rwÂ·1 *@"sync".RWMutex) Lock ()
+	func (@"sync".rwÂ·1 *@"sync".RWMutex) RLock ()
+	func (@"sync".rwÂ·2 *@"sync".RWMutex "esc:0x12") RLocker () (? @"sync".Locker) { return (*@"sync".rlocker)(@"sync".rwÂ·2) }
+	func (@"sync".rwÂ·1 *@"sync".RWMutex) RUnlock ()
+	func (@"sync".rwÂ·1 *@"sync".RWMutex) Unlock ()
+	type @"go/token".lineInfo struct { Offset int; Filename string; Line int }
+	type @"go/token".Position struct { Filename string; Offset int; Line int; Column int }
+	func (@"go/token".posÂ·2 *@"go/token".Position "esc:0x1") IsValid () (? bool) { return @"go/token".posÂ·2.Line > 0x0 }
+	func (@"go/token".posÂ·2 @"go/token".Position "esc:0x12") String () (? string)
+	type @"go/token".File struct { @"go/token".set *@"go/token".FileSet; @"go/token".name string; @"go/token".base int; @"go/token".size int; @"go/token".lines []int; @"go/token".infos []@"go/token".lineInfo }
+	func (@"go/token".fÂ·1 *@"go/token".File "esc:0x9") AddLine (@"go/token".offsetÂ·2 int)
+	func (@"go/token".fÂ·1 *@"go/token".File "esc:0x9") AddLineInfo (@"go/token".offsetÂ·2 int, @"go/token".filenameÂ·3 string, @"go/token".lineÂ·4 int)
+	func (@"go/token".fÂ·2 *@"go/token".File "esc:0x1") Base () (? int) { return @"go/token".fÂ·2.@"go/token".base }
+	func (@"go/token".fÂ·2 *@"go/token".File "esc:0x1") Line (@"go/token".pÂ·3 @"go/token".Pos) (? int)
+	func (@"go/token".fÂ·2 *@"go/token".File "esc:0x9") LineCount () (? int)
+	func (@"go/token".fÂ·1 *@"go/token".File "esc:0x9") MergeLine (@"go/token".lineÂ·2 int)
+	func (@"go/token".fÂ·2 *@"go/token".File "esc:0x22") Name () (? string) { return @"go/token".fÂ·2.@"go/token".name }
+	func (@"go/token".fÂ·2 *@"go/token".File "esc:0x1") Offset (@"go/token".pÂ·3 @"go/token".Pos) (? int)
+	func (@"go/token".fÂ·2 *@"go/token".File "esc:0x1") Pos (@"go/token".offsetÂ·3 int) (? @"go/token".Pos)
+	func (@"go/token".fÂ·2 *@"go/token".File "esc:0x22") Position (@"go/token".pÂ·3 @"go/token".Pos) (@"go/token".posÂ·1 @"go/token".Position)
+	func (@"go/token".fÂ·2 *@"go/token".File "esc:0x22") PositionFor (@"go/token".pÂ·3 @"go/token".Pos, @"go/token".adjustedÂ·4 bool) (@"go/token".posÂ·1 @"go/token".Position)
+	func (@"go/token".fÂ·2 *@"go/token".File "esc:0x9") SetLines (@"go/token".linesÂ·3 []int) (? bool)
+	func (@"go/token".fÂ·1 *@"go/token".File "esc:0x9") SetLinesForContent (@"go/token".contentÂ·2 []byte "esc:0x1")
+	func (@"go/token".fÂ·2 *@"go/token".File "esc:0x1") Size () (? int) { return @"go/token".fÂ·2.@"go/token".size }
+	func (@"go/token".fÂ·2 *@"go/token".File "esc:0x22") @"go/token".position (@"go/token".pÂ·3 @"go/token".Pos, @"go/token".adjustedÂ·4 bool) (@"go/token".posÂ·1 @"go/token".Position)
+	func (@"go/token".fÂ·4 *@"go/token".File "esc:0x22") @"go/token".unpack (@"go/token".offsetÂ·5 int, @"go/token".adjustedÂ·6 bool) (@"go/token".filenameÂ·1 string, @"go/token".lineÂ·2 int, @"go/token".columnÂ·3 int)
+	type @"go/token".FileSet struct { @"go/token".mutex @"sync".RWMutex; @"go/token".base int; @"go/token".files []*@"go/token".File; @"go/token".last *@"go/token".File }
+	func (@"go/token".sÂ·2 *@"go/token".FileSet) AddFile (@"go/token".filenameÂ·3 string, @"go/token".baseÂ·4 int, @"go/token".sizeÂ·5 int) (? *@"go/token".File)
+	func (@"go/token".sÂ·2 *@"go/token".FileSet) Base () (? int)
+	func (@"go/token".sÂ·2 *@"go/token".FileSet) File (@"go/token".pÂ·3 @"go/token".Pos) (@"go/token".fÂ·1 *@"go/token".File)
+	func (@"go/token".sÂ·1 *@"go/token".FileSet) Iterate (@"go/token".fÂ·2 func(? *@"go/token".File) (? bool) "esc:0x1")
+	func (@"go/token".sÂ·2 *@"go/token".FileSet) Position (@"go/token".pÂ·3 @"go/token".Pos) (@"go/token".posÂ·1 @"go/token".Position)
+	func (@"go/token".sÂ·2 *@"go/token".FileSet) PositionFor (@"go/token".pÂ·3 @"go/token".Pos, @"go/token".adjustedÂ·4 bool) (@"go/token".posÂ·1 @"go/token".Position)
+	func (@"go/token".sÂ·2 *@"go/token".FileSet) Read (@"go/token".decodeÂ·3 func(? interface {}) (? error) "esc:0x1") (? error)
+	func (@"go/token".sÂ·2 *@"go/token".FileSet) Write (@"go/token".encodeÂ·3 func(? interface {}) (? error) "esc:0x1") (? error)
+	func (@"go/token".sÂ·2 *@"go/token".FileSet) @"go/token".file (@"go/token".pÂ·3 @"go/token".Pos) (? *@"go/token".File)
+	func @"".Parse (@"".fsetÂ·5 *@"go/token".FileSet, @"".filenameÂ·6 string, @"".srcÂ·7 []byte, @"".fragmentOkÂ·8 bool) (@"".fileÂ·1 *@"go/ast".File, @"".sourceAdjÂ·2 func(@"".src []byte, @"".indent int) (? []byte), @"".indentAdjÂ·3 int, @"".errÂ·4 error)
+	type @"go/printer".Mode uint
+	import io "io" // indirect
+	type @"io".Writer interface { Write(@"io".p []byte) (@"io".n int, @"io".err error) }
+	type @"go/ast".Node interface { End() (? @"go/token".Pos); Pos() (? @"go/token".Pos) }
+	type @"go/printer".Config struct { Mode @"go/printer".Mode; Tabwidth int; Indent int }
+	func (@"go/printer".cfgÂ·2 *@"go/printer".Config "esc:0x1") Fprint (@"go/printer".outputÂ·3 @"io".Writer, @"go/printer".fsetÂ·4 *@"go/token".FileSet, @"go/printer".nodeÂ·5 interface {}) (? error)
+	func (@"go/printer".cfgÂ·2 *@"go/printer".Config "esc:0x1") @"go/printer".fprint (@"go/printer".outputÂ·3 @"io".Writer, @"go/printer".fsetÂ·4 *@"go/token".FileSet, @"go/printer".nodeÂ·5 interface {}, @"go/printer".nodeSizesÂ·6 map[@"go/ast".Node]int) (@"go/printer".errÂ·1 error)
+	func @"".Format (@"".fsetÂ·3 *@"go/token".FileSet, @"".fileÂ·4 *@"go/ast".File, @"".sourceAdjÂ·5 func(@"".src []byte, @"".indent int) (? []byte) "esc:0x1", @"".indentAdjÂ·6 int, @"".srcÂ·7 []byte "esc:0x9", @"".cfgÂ·8 @"go/printer".Config) (? []byte, ? error)
+	func @"".IsSpace (@"".bÂ·2 byte) (? bool) { return @"".bÂ·2 == byte(0x20) || @"".bÂ·2 == byte(0x9) || @"".bÂ·2 == byte(0xa) || @"".bÂ·2 == byte(0xd) }
+	func @"".init ()
+	var @"go/ast".objKindStrings [7]string
+	type @"sync".rlocker struct { @"sync".w @"sync".Mutex; @"sync".writerSem uint32; @"sync".readerSem uint32; @"sync".readerCount int32; @"sync".readerWait int32 }
+	func (@"sync".rÂ·1 *@"sync".rlocker) Lock ()
+	func (@"sync".rÂ·1 *@"sync".rlocker) Unlock ()
+
+$$
+_go_.o          0           0     0     644     19706     `
+go object darwin amd64 go1.5.1 X:none
+
+!
+  go13ldbytes.ago/ast.ago/parser.ago/printer.ago/token.astrings.a ş"".Parse  à  ÚeH‹%    HD$¨H;A†Ë  HìØ   H‹œ$Ø   H‰$è    1Û1ÛH‰œ$0  H‰œ$8  HÇ„$(      HÇ„$       H‹œ$ø   H‰œ$À   H‹œ$   H‰œ$È   H‹œ$  H‰œ$Ğ   H    H‰$Hœ$À   H‰\$HÇD$    è    H\$H|$H‹H‰H‹KH‰OH‹œ$à   H‰$H‹œ$è   H‰\$H‹œ$ğ   H‰\$HÇD$(   è    H‹T$0H‹L$8H‹D$@H‰”$  H‰„$8  H‰Œ$0  Hƒù „§  €¼$   „™  H‰$H‹Y ÿÓH‹L$H‹D$H‰L$PH‰$H‰D$XH‰D$H    H‰\$HÇD$   è    ¶\$ €û „J  HÇ$    H    H‰\$HÇD$
+   è    L‹”$   H‹t$H‹D$ H‹L$(H‰´$¨   H‰„$°   H‰Œ$¸   H‰ÇH‰„$˜   LĞH)ÈHƒø ~[H    H‰$H‰´$   H‰t$H‰|$H‰Œ$    H‰L$H‰D$ è    L‹”$   H‹¼$°   H‹t$(H‹\$0H‰œ$˜   H‹L$8H‰ıLÕI‰ÈH‰Œ$    H9Í‡f  H9ï‡]  H)ıI)øI‰ñH‰´$   Iƒø tM9H‰l$L‰D$L‰$H‹œ$ø   H‰\$L‰T$ H‹œ$  H‰\$(HÇD$0   è    H‹´$    H‹œ$°   H‹¬$   HëH9ó‡Ü  H‹”$   H‰T$`H‰”$À   H‰\$hH‰œ$È   H‰t$pH‰´$Ğ   H    H‰$Hœ$À   H‰\$HÇD$    è    H\$H|$H‹H‰H‹KH‰OH‹œ$à   H‰$H‹œ$è   H‰\$H‹œ$ğ   H‰\$HÇD$(   è    H‹T$0H‹L$8H‹D$@H‰”$  H‰„$8  H‰Œ$0  Hƒù uH    H‰œ$   è    HÄØ   ÃH‰$H‹Y ÿÓH‹L$H‹D$H‰L$PH‰$H‰D$XH‰D$H    H‰\$HÇD$   è    ¶\$ €û uè    HÄØ   ÃHÇ$    H    H‰\$HÇD$   è    L‹”$   H‹|$H‹D$ H‹L$(H‰¼$   H‰„$˜   H‰Œ$    H‰ÂH‰„$°   LĞH)ÈHƒø ~[H    H‰$H‰¼$¨   H‰|$H‰T$H‰Œ$¸   H‰L$H‰D$ è    L‹”$   H‹”$˜   H‹|$(H‹\$0H‰œ$°   H‹L$8H‰ÕLÕI‰ÈH‰Œ$¸   H9Í‡¶  H9ê‡­  H)ÕI)ĞI‰ùH‰¼$¨   Iƒø tMH‰l$L‰D$L‰$H‹œ$ø   H‰\$L‰T$ H‹œ$  H‰\$(HÇD$0   è    H‹Œ$¸   H‹œ$˜   H‹¬$   HëH9Ë‡,  H‰ØH‹”$¨   H‰”$   H‰œ$˜   H‰Œ$    H‰ËH)ÃHƒû}RH    H‰$H‰”$¨   H‰T$H‰D$H‰Œ$¸   H‰L$H‰ÃH‰„$°   HƒÃH‰\$ è    H‹T$(H‹D$0H‹L$8H‰ÃHƒÃH‰Œ$¸   H9Ë‡Œ  H‰œ$°   H‰”$¨   H‰D$HHH‰$è    H‹Œ$¨   H‹D$HHÆ
+HÿÀH‰D$HHH‰$è    H‹Œ$¨   H‹D$HHÆ
+HÿÀH‰D$HHH‰$è    H‹”$¨   H‹l$HH*Æ}H‹Œ$°   H‹„$¸   H‰T$xH‰”$À   H‰Œ$€   H‰Œ$È   H‰„$ˆ   H‰„$Ğ   H    H‰$Hœ$À   H‰\$HÇD$    è    H\$H|$H‹H‰H‹KH‰OH‹œ$à   H‰$H‹œ$è   H‰\$H‹œ$ğ   H‰\$HÇD$(   è    H‹T$0H‹L$8H‹D$@H‰”$  H‰„$8  H‰Œ$0  Hƒù uH    H‰œ$   HÇ„$(  ÿÿÿÿè    HÄØ   Ãè    è    è    è    è    è    HÄØ   Ãè    éøÿÿX
+      X
+  *runtime.racefuncenter     type.[]uint8   Ü
+  runtime.convT2E   ô
+  &go/parser.ParseFile   Š       Î  <go.string."expected 'package'"   ô
+   strings.Contains   ®  ,go.string."package p;"   Ô
+  2runtime.stringtoslicebyte   î  type.[]uint8   È
+  &runtime.growslice_n   ˆ
+  "runtime.slicecopy   ¼  type.[]uint8   ú
+  runtime.convT2E   ’
+  &go/parser.ParseFile   ú  """.Parse.func1Â·f   ”
+  (runtime.racefuncexit   ¼       €  @go.string."expected declaration"   ¦
+   strings.Contains   Ä
+  (runtime.racefuncexit   ò  Bgo.string."package p; func _() {"   ˜
+  2runtime.stringtoslicebyte   ²  type.[]uint8   Œ
+  &runtime.growslice_n   Ì
+  "runtime.slicecopy   €  type.[]uint8   ø
+  "runtime.growslice   Š
+  "runtime.racewrite   Ü
+  "runtime.racewrite   ®
+  "runtime.racewrite   Ş  type.[]uint8   œ
+  runtime.convT2E   ´
+  &go/parser.ParseFile   œ  """.Parse.func2Â·f   Î
+  (runtime.racefuncexit   è
+  $runtime.panicslice   ö
+  $runtime.panicslice   „
+  $runtime.panicslice   ’
+  $runtime.panicslice    
+  $runtime.panicslice   ®
+  (runtime.racefuncexit   È
+  0runtime.morestack_noctxt   À°  :"".autotmp_0023  type.int "".autotmp_0022  type.[]uint8 "".autotmp_0021  type.int "".autotmp_0020  type.[]uint8 "".autotmp_0019  type.[]uint8 "".autotmp_0018 Ÿtype.int "".autotmp_0017 type.[]uint8 "".autotmp_0016 _type.[]uint8 "".autotmp_0015  type.error "".autotmp_0014  "type.*go/ast.File "".autotmp_0013  type.[]uint8 "".autotmp_0012  type.[]uint8 "".autotmp_0011  type.bool "".autotmp_0010  type.string "".autotmp_0009  type.error "".autotmp_0008  "type.*go/ast.File "".autotmp_0007  type.[]uint8 "".autotmp_0005 type.string "".autotmp_0002 /type.[]uint8 "".fsrc ¿type.[]uint8 "".psrc ïtype.[]uint8 "".err  type.error "".indentAdj type.int "".sourceAdj €>type.func([]uint8, int) []uint8 "".file p"type.*go/ast.File "".fragmentOk `type.bool "".src 0type.[]uint8 "".filename type.string "".fset  ,type.*go/token.FileSet @°¶¯°W¯°„¯°/¯° ğ p4xw,Áoè¸LI
+K@=‘¾+/\i \ +‚˜dz y‚z –IÉ™# TgclocalsÂ·900ec4cbeb96e621f7b40dd9d5a5fac9 TgclocalsÂ·35abb1adb287497051fbab87089b43cd   jprebuilts/go/darwin-x86/src/internal/format/format.goş"".Format   7  œ7eH‹%    H„$ÿÿÿH;A†©  Hìp  H‹œ$p  H‰$è    H‹´$   H‹Œ$˜  1ÛH‰œ$È  H‰œ$Ğ  H‰œ$Ø  1ÛH‰œ$à  H‰œ$è  H‹œ$ˆ  1íH9ë…(  H    H‰$è    H‹D$H‰„$¨   H‰$HÇD$p   è    H‹œ$¨   H‰œ$    H‹œ$€  H‰œ$˜   H‹    1íH9è„•  Hœ$°  H‰$H‹Œ$    H‰„$è   H‰D$H‰Œ$ğ   H‰L$H‹„$x  H‰D$H‹Œ$˜   H    H‰„$Ø   H‰D$ H‰Œ$à   H‰L$(è    H‹D$0H‹L$8H‰Œ$Ğ   H‰„$È   Hƒø t71ÛH‰œ$È  H‰œ$Ğ  H‰œ$Ø  H‰„$à  H‰Œ$è  è    HÄp  ÃH‹„$¨   1ÛH‰œ$ø   H‰œ$   H‰œ$  H‰„$ˆ   H‰$Hƒ$è    H‹„$ˆ   H‹hH‰l$xH‰$è    H‹œ$ˆ   H‹l$xL‹CL‹KL9ÅwbL‹I)èI)éIƒù tM*L‰”$ø   L‰”$È  L‰„$   L‰„$Ğ  L‰Œ$  L‰Œ$Ø  1ÛH‰œ$à  H‰œ$è  è    HÄp  Ãè    H    H‰$H    H‰\$H    H‰\$è    H‹D$é9şÿÿHÇD$`    1ÀH‰D$HH9ğÀ   H9ğƒñ
+  HH‰$è    H‹t$HH‹”$   H‹Œ$˜  H9Öƒ¿
+  H1¶+@€ı „¢
+  @€ı	„˜
+  @€ı
+„
+  @€ı”À< t\H9Öƒs
+  H1H‰$è    H‹´$   H‹D$HH‹Œ$˜  H9ğƒA
+  H¶€û
+uH‰ÃHÿÃH‰\$`HÿÀH‰D$HH9ğŒ@ÿÿÿ1ÿH‹\$`H‹¬$¨  H9ë‡ú	  I‰ÚH‰¬$h  H‰Œ$X  H‰¼$(  H‰şH‰¼$0  H‰¼$8  H‰øH‰ùH‰¼$H  H‰œ$`  HÙH)ùHƒù ~[H    H‰$H‰´$@  H‰t$H‰|$H‰„$P  H‰D$H‰L$ è    L‹”$`  H‹¼$0  H‹t$(H‹\$0H‰œ$H  H‹D$8H‰ıLÕI‰ÀH‰„$P  H9Å‡.	  H9ï‡%	  H)ıI)øI‰ñH‰´$@  Iƒø tM9H‰l$L‰D$L‰$H‹œ$X  H‰\$L‰T$ H‹œ$h  H‰\$(HÇD$0   è    H‹Œ$P  H‹œ$0  H‹¬$`  HëH9Ë‡¤  H‰ØH‹œ$@  H‰œ$(  H‰„$0  H‰Œ$8  HÇD$P    ÆD$G H‹\$`H‹l$HL‹„$¨  L9Å‡Q  H9ë‡H  L‹Œ$˜  H)İI)ØIƒø tML‰Œ$X  H‰¬$`  L‰„$h  L‰„$P  1ÀH‰¬$H  H‰l$xL‰Œ$@  L‰ÉH‰D$pH‹l$xH9è}MH‰Œ$   H‰$è    H‹Œ$   ¶)@€ı	…­  H‹\$PHÿÃH‰\$PHÿÁH‹D$pHÿÀH‰D$pH‹l$xH9è|³H‹\$PHƒû u€|$G t	HÇD$P   1ÀH‰D$XH‹l$PH9è  H‹”$(  H‹„$0  H‹œ$8  H‰ÙH)ÃHƒû}QH    H‰$H‰”$@  H‰T$H‰D$H‰Œ$P  H‰L$H‰ÃH‰„$H  HÿÃH‰\$ è    H‹T$(H‹D$0H‹L$8H‰ÃHÿÃH‰Œ$P  H9Ë‡Ã  H‰œ$H  H‰”$@  H‰D$pHH‰$è    H‹„$@  H‹l$pH(Æ	H‰„$(  H‹œ$H  H‰œ$0  H‹œ$P  H‰œ$8  H‹D$XHÿÀH‰D$XH‹l$PH9èŒûşÿÿH‹\$PH‹¬$  HëH‰œ$À  H    H‰$è    H‹D$H‰„$°   H‰$HÇD$p   è    H‹œ$°   H‰œ$    H‹œ$€  H‰œ$˜   H‹    1íH9è„Ÿ  Hœ$°  H‰$H‹Œ$    H‰„$è   H‰D$H‰Œ$ğ   H‰L$H‹„$x  H‰D$H‹Œ$˜   H    H‰„$Ø   H‰D$ H‰Œ$à   H‰L$(è    H‹D$0H‹L$8H‰Œ$À   H‰„$¸   Hƒø t71ÛH‰œ$È  H‰œ$Ğ  H‰œ$Ø  H‰„$à  H‰Œ$è  è    HÄp  ÃH‹„$°   1ÛH‰œ$  H‰œ$  H‰œ$   H‰„$€   H‰$Hƒ$è    H‹„$€   H‹hH‰l$hH‰$è    H‹œ$€   H‹l$hL‹CL‹KL9Å‡h  L‹I)èI)éIƒù tM*L‰”$  L‰$L‰„$  L‰D$L‰Œ$   L‰L$H‹œ$À  H‰\$H‹”$ˆ  H‹ÿÓL‹„$0  H‹\$ H‰œ$@  H‹T$(H‹\$0H‰œ$P  H‹´$(  H‹Œ$8  L‰ÀL‰„$`  H‰”$H  HĞH)ÈHƒø ~[H    H‰$H‰´$X  H‰t$L‰D$H‰Œ$h  H‰L$H‰D$ è    L‹„$0  H‹”$H  H‹t$(H‹\$0H‰œ$`  H‹L$8L‰ÃL‰ÅHÕI‰ÈH‰Œ$h  H9Í‡@  H9ë‡7  H)İI)ØI‰ñH‰´$X  Iƒø tMH‰l$L‰D$L‰$H‹œ$@  H‰\$H‰T$ H‹œ$P  H‰\$(HÇD$0   è    H‹Œ$h  H‹´$˜  H‹”$   H‹œ$0  H‹¬$H  HëH9Ë‡¦  H‰ØH‹œ$X  H‰œ$(  H‰„$0  H‰Œ$8  H‰ÑHƒù †   H‰ÈH‰L$`HÿÈH‰D$pH9ĞƒV  HH‰$è    H‹´$˜  H‹”$   H‹L$`H‹l$pH9Õƒ  H.¶+@€ı „  @€ı	„ø  @€ı
+„î  @€ı”À< tHÿÉHƒù zÿÿÿL‹„$¨  H‰ÕH9Ñ‡»  H)ÍI)ÈI‰ñIƒø tM	H‰êL‰„$P  L‰Œ$@  H‹´$(  H‹Œ$0  H‹„$8  H‰ÏH‰Œ$`  H‰¬$H  HéH)ÁHƒù ~SH    H‰$H‰´$X  H‰t$H‰|$H‰„$h  H‰D$H‰L$ è    H‹”$H  H‹t$(H‹\$0H‰œ$`  H‹D$8H‹œ$0  H‹¬$0  HÕI‰ÀH‰„$h  H9Å‡İ   H9ë‡Ô   H)İI)ØI‰ñH‰´$X  Iƒø tMH‰l$L‰D$L‰$H‹œ$@  H‰\$H‰T$ H‹œ$P  H‰\$(HÇD$0   è    H‹´$h  H‹œ$0  H‹¬$H  HëH9ówWH‹”$X  H‰”$@  H‰”$È  H‰œ$H  H‰œ$Ğ  H‰´$P  H‰´$Ø  1ÛH‰œ$à  H‰œ$è  è    HÄp  Ãè    è    è    HÇÀ   éşÿÿè    è    è    è    è    H    H‰$H    H‰\$H    H‰\$è    H‹D$é/úÿÿè    @€ı …VøÿÿÆD$GéLøÿÿè    è    è    è    è    è    HÇÀ   émõÿÿè    è    è    é2òÿÿ„
+      ^
+  *runtime.racefuncenter   Š  "type.bytes.Buffer   œ
+  "runtime.newobject   Ú
+  ,runtime.racewriterange   ¨  >go.itab.*bytes.Buffer.io.Writer   Ò  "type.*go/ast.File   
+  6go/printer.(*Config).Fprint   ®
+  (runtime.racefuncexit   ®
+   runtime.raceread   â
+   runtime.raceread   Ê	
+  (runtime.racefuncexit   ä	
+  $runtime.panicslice   ö	  $type.*bytes.Buffer   Œ
+  type.io.Writer   ¤
+  >go.itab.*bytes.Buffer.io.Writer   ¸
+
+   runtime.typ2Itab   ª
+   runtime.raceread   ò
+   runtime.raceread   Ü  type.[]uint8   ¶
+  &runtime.growslice_n   ö
+  "runtime.slicecopy   Ì
+   runtime.raceread   ú  type.[]uint8   ğ
+  "runtime.growslice   €
+  "runtime.racewrite   ì  "type.bytes.Buffer   ş
+  "runtime.newobject   ¼
+  ,runtime.racewriterange   Š  >go.itab.*bytes.Buffer.io.Writer   ´  "type.*go/ast.File   ò
+  6go/printer.(*Config).Fprint   !
+  (runtime.racefuncexit   "
+   runtime.raceread   Ä"
+   runtime.raceread   ª$       à%  type.[]uint8   º&
+  &runtime.growslice_n   €)
+  "runtime.slicecopy   ”+
+   runtime.raceread   Ä.  type.[]uint8   /
+  &runtime.growslice_n   è1
+  "runtime.slicecopy   Æ3
+  (runtime.racefuncexit   à3
+  $runtime.panicslice   î3
+  $runtime.panicslice   ü3
+  $runtime.panicslice   ¢4
+  $runtime.panicindex   °4
+  $runtime.panicindex   ¾4
+  $runtime.panicslice   Ì4
+  $runtime.panicslice   Ú4
+  $runtime.panicslice   ì4  $type.*bytes.Buffer   ‚5  type.io.Writer   š5  >go.itab.*bytes.Buffer.io.Writer   ®5
+   runtime.typ2Itab   Ì5
+  $runtime.panicslice   ‚6
+  $runtime.panicslice   6
+  $runtime.panicslice   6
+  $runtime.panicslice   ¬6
+  $runtime.panicslice   º6
+  $runtime.panicindex   È6
+  $runtime.panicindex   î6
+  $runtime.panicindex   ü6
+  $runtime.panicindex   Š7
+  0runtime.morestack_noctxt   ğà  v"".autotmp_0063  type.int "".autotmp_0062  type.[]uint8 "".autotmp_0061  type.bool "".autotmp_0060  type.int "".autotmp_0059  type.int "".autotmp_0058  type.[]uint8 "".autotmp_0057  type.*uint8 "".autotmp_0056  type.int "".autotmp_0055  type.[]uint8 "".autotmp_0054  type.uint8 "".autotmp_0052  type.*uint8 "".autotmp_0051  type.int "".autotmp_0050  type.int "".autotmp_0049  type.int "".autotmp_0048 _type.[]uint8 "".autotmp_0046 ¿type.*uint8 "".autotmp_0045  type.[]uint8 "".autotmp_0044  type.[]uint8 "".autotmp_0043  type.int "".autotmp_0042  type.int "".autotmp_0041  type.[]uint8 "".autotmp_0040  type.[]uint8 "".autotmp_0039  type.int "".autotmp_0038  type.error "".autotmp_0037  "type.*go/ast.File "".autotmp_0036  $type.*bytes.Buffer "".autotmp_0035  type.int "".autotmp_0034 type.int "".autotmp_0033  type.[]uint8 "".autotmp_0032  type.[]uint8 "".autotmp_0031  type.[]uint8 "".autotmp_0030 ÿtype.int "".autotmp_0029  type.int "".autotmp_0028 /type.[]uint8 "".autotmp_0027 ïtype.int "".autotmp_0025 ¯"type.*go/ast.File "".autotmp_0024 Ÿ$type.*bytes.Buffer "".&buf ÿ$type.*bytes.Buffer "".&buf $type.*bytes.Buffer "".~r0 ¿type.[]uint8 bytes.bÂ·2 ß$type.*bytes.Buffer "".~r0 ïtype.[]uint8 bytes.bÂ·2 Ï$type.*bytes.Buffer "".err ïtype.error "".i ¯type.int "".hasSpace Ñtype.bool "".indent ¿type.int "".res type.[]uint8 "".j Ïtype.int "".i Ÿtype.int "".err Ïtype.error "".~r7 Ğtype.error "".~r6  type.[]uint8 "".cfg p,type.go/printer.Config "".src @type.[]uint8 "".indentAdj 0type.int "".sourceAdj  >type.func([]uint8, int) []uint8 "".file "type.*go/ast.File "".fset  ,type.*go/token.FileSet F"à€ßàÍßàâßàš	ßàá Ğ úÆo/­*Á2r@
+	¡
+		ê/­*abÇƒ
+´st2
+ Œ .~ê@*9Æ
+ ëÒHê@‡£Š…¥ogk TgclocalsÂ·4109eb2926e8c9bac72d5f76c97afdf0 TgclocalsÂ·7d1df5bd7ec0bef5cea1af8d6d8d942f   jprebuilts/go/darwin-x86/src/internal/format/format.goş"".IsSpace  À  ¢eH‹%    H;av;HƒìH‹\$H‰$è    ¶D$< t<	t<
+t<”D$è    HƒÄÃÆD$ëïè    ë¯
+      :
+  *runtime.racefuncenter   t
+  (runtime.racefuncexit   –
+  0runtime.morestack_noctxt      "".~r1 type.bool "".b  type.uint8 / `  Ä
+ 
+ D TgclocalsÂ·23e8278e2b69a3a75fa59b23c49ed6ad TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   jprebuilts/go/darwin-x86/src/internal/format/format.goş"".Parse.func1  À  ¦eH‹%    H;a†¶   HƒìHH‹\$HH‰$è    1ÛH‰\$pH‰\$xH‰œ$€   H‹\$hH‹l$XL‹D$`HƒÃ
+H9ëwqL‹L$PH)İI)ØIƒø tML‰L$PL‰$H‰l$XH‰l$L‰D$`L‰D$è    H‹T$H‹L$ H‹D$(H‰T$0H‰T$pH‰L$8H‰L$xH‰D$@H‰„$€   è    HƒÄHÃè    è    é-ÿÿÿ
+      B
+  *runtime.racefuncenter   ˆ
+  bytes.TrimSpace   ò
+  (runtime.racefuncexit   †
+  $runtime.panicslice   ”
+  0runtime.morestack_noctxt   p  "".autotmp_0073 /type.[]uint8 "".~r2 @type.[]uint8 "".indent 0type.int "".src  type.[]uint8 ª à V9-R   ˜
+ TgclocalsÂ·e164b25facb10da87beb89b155f2475e TgclocalsÂ·f56b2291fa344104975cb6587be42b9b   jprebuilts/go/darwin-x86/src/internal/format/format.goş"".Parse.func2  €  úeH‹%    H;a†à   HƒìHH‹\$HH‰$è    H‹D$h1ÛH‰\$pH‰\$xH‰œ$€   Hƒø }1ÀH‰ÃH‰D$hH‹l$XL‹D$`HÑãHƒÃH9ë‡„   L‹L$PH)İI)ØIƒø tMH‰ëHƒëL9Ãw\L‰L$PL‰$H‰\$XH‰\$L‰D$`L‰D$è    H‹T$H‹L$ H‹D$(H‰T$0H‰T$pH‰L$8H‰L$xH‰D$@H‰„$€   è    HƒÄHÃè    è    è    éÿÿÿ
+      B
+  *runtime.racefuncenter   Î
+  bytes.TrimSpace   ¸
+  (runtime.racefuncexit   Ì
+  $runtime.panicslice   Ú
+  $runtime.panicslice   è
+  0runtime.morestack_noctxt   p  
+"".autotmp_0077 /type.[]uint8 "".autotmp_0075  type.int "".~r2 @type.[]uint8 "".indent 0type.int "".src  type.[]uint8 Í € 0†>
+7R   »
+ TgclocalsÂ·e164b25facb10da87beb89b155f2475e TgclocalsÂ·f56b2291fa344104975cb6587be42b9b   jprebuilts/go/darwin-x86/src/internal/format/format.goş"".init     œeH‹%    H;a†±   HƒìH‹\$H‰$è    H    H‰$è    ¶    €û t-H    H‰$è    ¶    €ûu
+è    HƒÄÃè    H    H‰$è    Æ    è    è    è    è    è    è    H    H‰$è    Æ    è    HƒÄÃè    é2ÿÿÿ0
+      B
+  *runtime.racefuncenter   P  "".initdoneÂ·   b
+   runtime.raceread   p  "".initdoneÂ·   ˆ  "".initdoneÂ·   š
+   runtime.raceread   ¨  "".initdoneÂ·   ¼
+  (runtime.racefuncexit   Ğ
+  "runtime.throwinit   â  "".initdoneÂ·   ô
+  "runtime.racewrite   € "".initdoneÂ·   Œ
+  bytes.init   –
+  go/ast.init    
+  go/parser.init   ª
+  go/printer.init   ´
+  go/token.init   ¾
+  strings.init   Ì  "".initdoneÂ·   Ş
+  "runtime.racewrite   ê "".initdoneÂ·   ö
+  (runtime.racefuncexit   Š
+  0runtime.morestack_noctxt       O\ Ğ 
+ÈĞ   ° TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   jprebuilts/go/darwin-x86/src/internal/format/format.goşDgo.string.hdr."expected 'package'"                       <go.string."expected 'package'"   ş<go.string."expected 'package'" 0  &expected 'package'  ş4go.string.hdr."package p;"             
+          ,go.string."package p;"   ş,go.string."package p;"    package p;  şHgo.string.hdr."expected declaration"                       @go.string."expected declaration"   ş@go.string."expected declaration" 0  *expected declaration  şJgo.string.hdr."package p; func _() {"                       Bgo.string."package p; func _() {"   şBgo.string."package p; func _() {" 0  ,package p; func _() {  şTgclocalsÂ·35abb1adb287497051fbab87089b43cd H  H           @              	      şTgclocalsÂ·900ec4cbeb96e621f7b40dd9d5a5fac9 H  H           ‹           ş0>go.itab.*bytes.Buffer.io.Writer     şTgclocalsÂ·7d1df5bd7ec0bef5cea1af8d6d8d942f €  €              8                	          @   X          şTgclocalsÂ·4109eb2926e8c9bac72d5f76c97afdf0 €  €               d                                 şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·23e8278e2b69a3a75fa59b23c49ed6ad              şTgclocalsÂ·f56b2291fa344104975cb6587be42b9b                    şTgclocalsÂ·e164b25facb10da87beb89b155f2475e                  şTgclocalsÂ·f56b2291fa344104975cb6587be42b9b                    şTgclocalsÂ·e164b25facb10da87beb89b155f2475e                  şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           ş0"".initdoneÂ·  type.uint8   ş"".ParseÂ·f              "".Parse   ş"".FormatÂ·f              "".Format   ş"".IsSpaceÂ·f              "".IsSpace   ş""".Parse.func1Â·f              "".Parse.func1   ş""".Parse.func2Â·f              "".Parse.func2   ş"".initÂ·f              "".init   ş"runtime.gcbits.01    ş.go.string.hdr."[]uint8"                       &go.string."[]uint8"   ş&go.string."[]uint8"   []uint8  ştype.[]uint8                   ß~.8                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  .go.string.hdr."[]uint8"   p  *go.weak.type.*[]uint8   €  "runtime.zerovalue     type.uint8   ş6go.typelink.[]uint8	[]uint8              type.[]uint8   şTgo.string.hdr."func([]uint8, int) []uint8"                       Lgo.string."func([]uint8, int) []uint8"   şLgo.string."func([]uint8, int) []uint8" @  6func([]uint8, int) []uint8  ş>type.func([]uint8, int) []uint8 °  °              ±¿9k 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  Tgo.string.hdr."func([]uint8, int) []uint8"   p  Pgo.weak.type.*func([]uint8, int) []uint8   €  "runtime.zerovalue    € >type.func([]uint8, int) []uint8   Ğ  >type.func([]uint8, int) []uint8   €  type.[]uint8     type.int      type.[]uint8   ş‚go.typelink.func([]uint8, int) []uint8	func([]uint8, int) []uint8              >type.func([]uint8, int) []uint8   ş.go.string.hdr."runtime"                       &go.string."runtime"   ş&go.string."runtime"   runtime  ş,go.importpath.runtime.                       &go.string."runtime"   ş*go.string.hdr."bytes"                       "go.string."bytes"   ş"go.string."bytes"   bytes  ş(go.importpath.bytes.                       "go.string."bytes"   ş,go.string.hdr."go/ast"                       $go.string."go/ast"   ş$go.string."go/ast"   go/ast  ş*go.importpath.go/ast.                       $go.string."go/ast"   ş0go.string.hdr."go/token"                       (go.string."go/token"   ş(go.string."go/token"    go/token  ş.go.importpath.go/token.                       (go.string."go/token"   ş.go.string.hdr."strings"                       &go.string."strings"   ş&go.string."strings"   strings  ş,go.importpath.strings.                       &go.string."strings"   ş2go.string.hdr."go/parser"             	          *go.string."go/parser"   ş*go.string."go/parser"    go/parser  ş0go.importpath.go/parser.             	          *go.string."go/parser"   ş4go.string.hdr."go/printer"             
+          ,go.string."go/printer"   ş,go.string."go/printer"    go/printer  ş2go.importpath.go/printer.             
+          ,go.string."go/printer"   ş"runtime.zerovalue      ÿÿgo13ld

@@ -1,0 +1,681 @@
+!<arch>
+__.PKGDEF       0           0     0     644     17204     `
+go object darwin amd64 go1.5.1 X:none
+build id "d66cb56ab939cb4419d2ee9676412d8980741a1d"
+
+$$
+package suffixarray
+	import runtime "runtime"
+	import sort "sort"
+	import bytes "bytes"
+	import io "io"
+	import binary "encoding/binary"
+	import regexp "regexp"
+	type @"io".Reader interface { Read(@"io".p []byte) (@"io".n int, @"io".err error) }
+	type @"io".Writer interface { Write(@"io".p []byte) (@"io".n int, @"io".err error) }
+	import syntax "regexp/syntax" // indirect
+	type @"regexp/syntax".InstOp uint8
+	func (@"regexp/syntax".iÂ·2 @"regexp/syntax".InstOp) String () (? string) { if uint(@"regexp/syntax".iÂ·2) >= uint(len(@"regexp/syntax".instOpNames)) { return "" }; return @"regexp/syntax".instOpNames[@"regexp/syntax".iÂ·2] }
+	type @"regexp/syntax".Inst struct { Op @"regexp/syntax".InstOp; Out uint32; Arg uint32; Rune []rune }
+	func (@"regexp/syntax".iÂ·2 *@"regexp/syntax".Inst "esc:0x1") MatchEmptyWidth (@"regexp/syntax".beforeÂ·3 rune, @"regexp/syntax".afterÂ·4 rune) (? bool)
+	func (@"regexp/syntax".iÂ·2 *@"regexp/syntax".Inst "esc:0x1") MatchRune (@"regexp/syntax".rÂ·3 rune) (? bool)
+	func (@"regexp/syntax".iÂ·2 *@"regexp/syntax".Inst "esc:0x1") MatchRunePos (@"regexp/syntax".rÂ·3 rune) (? int)
+	func (@"regexp/syntax".iÂ·2 *@"regexp/syntax".Inst "esc:0x1") String () (? string)
+	func (@"regexp/syntax".iÂ·2 *@"regexp/syntax".Inst "esc:0x1") @"regexp/syntax".op () (? @"regexp/syntax".InstOp)
+	type @"regexp/syntax".EmptyOp uint8
+	type @"regexp/syntax".Prog struct { Inst []@"regexp/syntax".Inst; Start int; NumCap int }
+	func (@"regexp/syntax".pÂ·3 *@"regexp/syntax".Prog "esc:0x1") Prefix () (@"regexp/syntax".prefixÂ·1 string, @"regexp/syntax".completeÂ·2 bool)
+	func (@"regexp/syntax".pÂ·2 *@"regexp/syntax".Prog "esc:0x1") StartCond () (? @"regexp/syntax".EmptyOp)
+	func (@"regexp/syntax".pÂ·2 *@"regexp/syntax".Prog "esc:0x1") String () (? string)
+	func (@"regexp/syntax".pÂ·3 *@"regexp/syntax".Prog "esc:0x22") @"regexp/syntax".skipNop (@"regexp/syntax".pcÂ·4 uint32) (? *@"regexp/syntax".Inst, ? uint32)
+	type @"regexp".onePassInst struct { ? @"regexp/syntax".Inst; Next []uint32 }
+	type @"regexp".onePassProg struct { Inst []@"regexp".onePassInst; Start int; NumCap int }
+	import sync "sync" // indirect
+	type @"sync".Mutex struct { @"sync".state int32; @"sync".sema uint32 }
+	func (@"sync".mÂ·1 *@"sync".Mutex) Lock ()
+	func (@"sync".mÂ·1 *@"sync".Mutex) Unlock ()
+	type @"regexp".input interface { @"regexp".canCheckPrefix() (? bool); @"regexp".context(@"regexp".pos int) (? @"regexp/syntax".EmptyOp); @"regexp".hasPrefix(@"regexp".re *@"regexp".Regexp) (? bool); @"regexp".index(@"regexp".re *@"regexp".Regexp, @"regexp".pos int) (? int); @"regexp".step(@"regexp".pos int) (@"regexp".r rune, @"regexp".width int) }
+	type @"regexp".job struct { @"regexp".pc uint32; @"regexp".arg int; @"regexp".pos int }
+	type @"regexp".bitState struct { @"regexp".prog *@"regexp/syntax".Prog; @"regexp".end int; @"regexp".cap []int; @"regexp".input @"regexp".input; @"regexp".jobs []@"regexp".job; @"regexp".visited []uint32 }
+	func (@"regexp".bÂ·1 *@"regexp".bitState "esc:0x9") @"regexp".push (@"regexp".pcÂ·2 uint32, @"regexp".posÂ·3 int, @"regexp".argÂ·4 int)
+	func (@"regexp".bÂ·1 *@"regexp".bitState "esc:0x1") @"regexp".reset (@"regexp".endÂ·2 int, @"regexp".ncapÂ·3 int)
+	func (@"regexp".bÂ·2 *@"regexp".bitState "esc:0x1") @"regexp".shouldVisit (@"regexp".pcÂ·3 uint32, @"regexp".posÂ·4 int) (? bool) { var @"regexp".nÂ·5 uint; ; @"regexp".nÂ·5 = uint(int(@"regexp".pcÂ·3) * (@"regexp".bÂ·2.@"regexp".end + 0x1) + @"regexp".posÂ·4); if @"regexp".bÂ·2.@"regexp".visited[@"regexp".nÂ·5 / 0x20] & (0x1 << (@"regexp".nÂ·5 & 0x1f)) != 0x0 { return false }; @"regexp".bÂ·2.@"regexp".visited[@"regexp".nÂ·5 / 0x20] |= 0x1 << (@"regexp".nÂ·5 & 0x1f); return true }
+	type @"regexp".thread struct { @"regexp".inst *@"regexp/syntax".Inst; @"regexp".cap []int }
+	type @"regexp".entry struct { @"regexp".pc uint32; @"regexp".t *@"regexp".thread }
+	type @"regexp".queue struct { @"regexp".sparse []uint32; @"regexp".dense []@"regexp".entry }
+	type @"regexp".inputBytes struct { @"regexp".str []byte }
+	func (@"regexp".iÂ·2 *@"regexp".inputBytes "esc:0x1") @"regexp".canCheckPrefix () (? bool) { return true }
+	func (@"regexp".iÂ·2 *@"regexp".inputBytes "esc:0x1") @"regexp".context (@"regexp".posÂ·3 int) (? @"regexp/syntax".EmptyOp)
+	func (@"regexp".iÂ·2 *@"regexp".inputBytes "esc:0x1") @"regexp".hasPrefix (@"regexp".reÂ·3 *@"regexp".Regexp "esc:0x1") (? bool)
+	func (@"regexp".iÂ·2 *@"regexp".inputBytes "esc:0x1") @"regexp".index (@"regexp".reÂ·3 *@"regexp".Regexp "esc:0x1", @"regexp".posÂ·4 int) (? int)
+	func (@"regexp".iÂ·3 *@"regexp".inputBytes "esc:0x1") @"regexp".step (@"regexp".posÂ·4 int) (? rune, ? int)
+	type @"regexp".inputString struct { @"regexp".str string }
+	func (@"regexp".iÂ·2 *@"regexp".inputString "esc:0x1") @"regexp".canCheckPrefix () (? bool) { return true }
+	func (@"regexp".iÂ·2 *@"regexp".inputString "esc:0x1") @"regexp".context (@"regexp".posÂ·3 int) (? @"regexp/syntax".EmptyOp)
+	func (@"regexp".iÂ·2 *@"regexp".inputString "esc:0x1") @"regexp".hasPrefix (@"regexp".reÂ·3 *@"regexp".Regexp "esc:0x1") (? bool) { return @"strings".HasPrefix(@"regexp".iÂ·2.@"regexp".str, @"regexp".reÂ·3.@"regexp".prefix) }
+	func (@"regexp".iÂ·2 *@"regexp".inputString "esc:0x9") @"regexp".index (@"regexp".reÂ·3 *@"regexp".Regexp "esc:0x1", @"regexp".posÂ·4 int) (? int)
+	func (@"regexp".iÂ·3 *@"regexp".inputString "esc:0x1") @"regexp".step (@"regexp".posÂ·4 int) (? rune, ? int)
+	type @"io".RuneReader interface { ReadRune() (@"io".r rune, @"io".size int, @"io".err error) }
+	type @"regexp".inputReader struct { @"regexp".r @"io".RuneReader; @"regexp".atEOT bool; @"regexp".pos int }
+	func (@"regexp".iÂ·2 *@"regexp".inputReader "esc:0x1") @"regexp".canCheckPrefix () (? bool) { return false }
+	func (@"regexp".iÂ·2 *@"regexp".inputReader "esc:0x1") @"regexp".context (@"regexp".posÂ·3 int) (? @"regexp/syntax".EmptyOp) { return @"regexp/syntax".EmptyOp(0x0) }
+	func (@"regexp".iÂ·2 *@"regexp".inputReader "esc:0x1") @"regexp".hasPrefix (@"regexp".reÂ·3 *@"regexp".Regexp "esc:0x1") (? bool) { return false }
+	func (@"regexp".iÂ·2 *@"regexp".inputReader "esc:0x1") @"regexp".index (@"regexp".reÂ·3 *@"regexp".Regexp "esc:0x1", @"regexp".posÂ·4 int) (? int) { return -0x1 }
+	func (@"regexp".iÂ·3 *@"regexp".inputReader "esc:0x9") @"regexp".step (@"regexp".posÂ·4 int) (? rune, ? int)
+	type @"regexp".machine struct { @"regexp".re *@"regexp".Regexp; @"regexp".p *@"regexp/syntax".Prog; @"regexp".op *@"regexp".onePassProg; @"regexp".maxBitStateLen int; @"regexp".b *@"regexp".bitState; @"regexp".q0 @"regexp".queue; @"regexp".q1 @"regexp".queue; @"regexp".pool []*@"regexp".thread; @"regexp".matched bool; @"regexp".matchcap []int; @"regexp".inputBytes @"regexp".inputBytes; @"regexp".inputString @"regexp".inputString; @"regexp".inputReader @"regexp".inputReader }
+	func (@"regexp".mÂ·2 *@"regexp".machine "esc:0x3a") @"regexp".add (@"regexp".qÂ·3 *@"regexp".queue "esc:0x1", @"regexp".pcÂ·4 uint32, @"regexp".posÂ·5 int, @"regexp".capÂ·6 []int "esc:0x9", @"regexp".condÂ·7 @"regexp/syntax".EmptyOp, @"regexp".tÂ·8 *@"regexp".thread) (? *@"regexp".thread)
+	func (@"regexp".mÂ·2 *@"regexp".machine "esc:0x32") @"regexp".alloc (@"regexp".iÂ·3 *@"regexp/syntax".Inst) (? *@"regexp".thread) { var @"regexp".tÂ·4 *@"regexp".thread; ; var @"regexp".nÂ·5 int; ; @"regexp".nÂ·5 = len(@"regexp".mÂ·2.@"regexp".pool); if @"regexp".nÂ·5 > 0x0 { @"regexp".tÂ·4 = @"regexp".mÂ·2.@"regexp".pool[@"regexp".nÂ·5 - 0x1]; @"regexp".mÂ·2.@"regexp".pool = @"regexp".mÂ·2.@"regexp".pool[:@"regexp".nÂ·5 - 0x1] } else { @"regexp".tÂ·4 = new(@"regexp".thread); @"regexp".tÂ·4.@"regexp".cap = make([]int, len(@"regexp".mÂ·2.@"regexp".matchcap), cap(@"regexp".mÂ·2.@"regexp".matchcap)) }; @"regexp".tÂ·4.@"regexp".inst = @"regexp".iÂ·3; return @"regexp".tÂ·4 }
+	func (@"regexp".mÂ·2 *@"regexp".machine "esc:0x9") @"regexp".backtrack (@"regexp".iÂ·3 @"regexp".input, @"regexp".posÂ·4 int, @"regexp".endÂ·5 int, @"regexp".ncapÂ·6 int) (? bool)
+	func (@"regexp".mÂ·1 *@"regexp".machine "esc:0x9") @"regexp".clear (@"regexp".qÂ·2 *@"regexp".queue "esc:0x9")
+	func (@"regexp".mÂ·1 *@"regexp".machine "esc:0x9") @"regexp".free (@"regexp".tÂ·2 *@"regexp".thread) { @"regexp".mÂ·1.@"regexp".inputBytes.@"regexp".str = nil; @"regexp".mÂ·1.@"regexp".inputString.@"regexp".str = ""; @"regexp".mÂ·1.@"regexp".inputReader.@"regexp".r = nil; @"regexp".mÂ·1.@"regexp".pool = append(@"regexp".mÂ·1.@"regexp".pool, @"regexp".tÂ·2) }
+	func (@"regexp".mÂ·1 *@"regexp".machine "esc:0x1") @"regexp".init (@"regexp".ncapÂ·2 int)
+	func (@"regexp".mÂ·2 *@"regexp".machine "esc:0x9") @"regexp".match (@"regexp".iÂ·3 @"regexp".input, @"regexp".posÂ·4 int) (? bool)
+	func (@"regexp".mÂ·2 *@"regexp".machine "esc:0x12") @"regexp".newInputBytes (@"regexp".bÂ·3 []byte) (? @"regexp".input) { @"regexp".mÂ·2.@"regexp".inputBytes.@"regexp".str = @"regexp".bÂ·3; return &@"regexp".mÂ·2.@"regexp".inputBytes }
+	func (@"regexp".mÂ·2 *@"regexp".machine "esc:0x12") @"regexp".newInputReader (@"regexp".rÂ·3 @"io".RuneReader) (? @"regexp".input) { @"regexp".mÂ·2.@"regexp".inputReader.@"regexp".r = @"regexp".rÂ·3; @"regexp".mÂ·2.@"regexp".inputReader.@"regexp".atEOT = false; @"regexp".mÂ·2.@"regexp".inputReader.@"regexp".pos = 0x0; return &@"regexp".mÂ·2.@"regexp".inputReader }
+	func (@"regexp".mÂ·2 *@"regexp".machine "esc:0x12") @"regexp".newInputString (@"regexp".sÂ·3 string) (? @"regexp".input) { @"regexp".mÂ·2.@"regexp".inputString.@"regexp".str = @"regexp".sÂ·3; return &@"regexp".mÂ·2.@"regexp".inputString }
+	func (@"regexp".mÂ·2 *@"regexp".machine "esc:0x9") @"regexp".onepass (@"regexp".iÂ·3 @"regexp".input, @"regexp".posÂ·4 int) (? bool)
+	func (@"regexp".mÂ·1 *@"regexp".machine "esc:0x9") @"regexp".step (@"regexp".runqÂ·2 *@"regexp".queue "esc:0x9", @"regexp".nextqÂ·3 *@"regexp".queue "esc:0x1", @"regexp".posÂ·4 int, @"regexp".nextPosÂ·5 int, @"regexp".cÂ·6 rune, @"regexp".nextCondÂ·7 @"regexp/syntax".EmptyOp)
+	func (@"regexp".mÂ·2 *@"regexp".machine "esc:0x1") @"regexp".tryBacktrack (@"regexp".bÂ·3 *@"regexp".bitState "esc:0x9", @"regexp".iÂ·4 @"regexp".input, @"regexp".pcÂ·5 uint32, @"regexp".posÂ·6 int) (? bool)
+	type @"regexp".Regexp struct { @"regexp".expr string; @"regexp".prog *@"regexp/syntax".Prog; @"regexp".onepass *@"regexp".onePassProg; @"regexp".prefix string; @"regexp".prefixBytes []byte; @"regexp".prefixComplete bool; @"regexp".prefixRune rune; @"regexp".prefixEnd uint32; @"regexp".cond @"regexp/syntax".EmptyOp; @"regexp".numSubexp int; @"regexp".subexpNames []string; @"regexp".longest bool; @"regexp".mu @"sync".Mutex; @"regexp".machine []*@"regexp".machine }
+	func (@"regexp".reÂ·2 *@"regexp".Regexp "esc:0x1") Expand (@"regexp".dstÂ·3 []byte "esc:0x1a", @"regexp".templateÂ·4 []byte "esc:0x1", @"regexp".srcÂ·5 []byte "esc:0x9", @"regexp".matchÂ·6 []int "esc:0x1") (? []byte)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp "esc:0x1") ExpandString (@"regexp".dstÂ·3 []byte "esc:0x1a", @"regexp".templateÂ·4 string, @"regexp".srcÂ·5 string "esc:0x9", @"regexp".matchÂ·6 []int "esc:0x1") (? []byte)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) Find (@"regexp".bÂ·3 []byte) (? []byte)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindAll (@"regexp".bÂ·3 []byte, @"regexp".nÂ·4 int) (? [][]byte)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindAllIndex (@"regexp".bÂ·3 []byte, @"regexp".nÂ·4 int) (? [][]int)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindAllString (@"regexp".sÂ·3 string, @"regexp".nÂ·4 int) (? []string)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindAllStringIndex (@"regexp".sÂ·3 string, @"regexp".nÂ·4 int) (? [][]int)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindAllStringSubmatch (@"regexp".sÂ·3 string, @"regexp".nÂ·4 int) (? [][]string)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindAllStringSubmatchIndex (@"regexp".sÂ·3 string, @"regexp".nÂ·4 int) (? [][]int)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindAllSubmatch (@"regexp".bÂ·3 []byte, @"regexp".nÂ·4 int) (? [][][]byte)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindAllSubmatchIndex (@"regexp".bÂ·3 []byte, @"regexp".nÂ·4 int) (? [][]int)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindIndex (@"regexp".bÂ·3 []byte) (@"regexp".locÂ·1 []int)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindReaderIndex (@"regexp".rÂ·3 @"io".RuneReader) (@"regexp".locÂ·1 []int)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindReaderSubmatchIndex (@"regexp".rÂ·3 @"io".RuneReader) (? []int)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindString (@"regexp".sÂ·3 string) (? string)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindStringIndex (@"regexp".sÂ·3 string) (@"regexp".locÂ·1 []int)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindStringSubmatch (@"regexp".sÂ·3 string) (? []string)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindStringSubmatchIndex (@"regexp".sÂ·3 string) (? []int)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindSubmatch (@"regexp".bÂ·3 []byte) (? [][]byte)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) FindSubmatchIndex (@"regexp".bÂ·3 []byte) (? []int)
+	func (@"regexp".reÂ·3 *@"regexp".Regexp "esc:0x22") LiteralPrefix () (@"regexp".prefixÂ·1 string, @"regexp".completeÂ·2 bool) { return @"regexp".reÂ·3.@"regexp".prefix, @"regexp".reÂ·3.@"regexp".prefixComplete }
+	func (@"regexp".reÂ·1 *@"regexp".Regexp "esc:0x1") Longest () { @"regexp".reÂ·1.@"regexp".longest = true }
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) Match (@"regexp".bÂ·3 []byte) (? bool)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) MatchReader (@"regexp".rÂ·3 @"io".RuneReader) (? bool)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) MatchString (@"regexp".sÂ·3 string) (? bool)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp "esc:0x1") NumSubexp () (? int) { return @"regexp".reÂ·2.@"regexp".numSubexp }
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) ReplaceAll (@"regexp".srcÂ·3 []byte, @"regexp".replÂ·4 []byte "esc:0x1") (? []byte)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) ReplaceAllFunc (@"regexp".srcÂ·3 []byte, @"regexp".replÂ·4 func(? []byte) (? []byte) "esc:0x1") (? []byte)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) ReplaceAllLiteral (@"regexp".srcÂ·3 []byte, @"regexp".replÂ·4 []byte "esc:0x9") (? []byte)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) ReplaceAllLiteralString (@"regexp".srcÂ·3 string, @"regexp".replÂ·4 string "esc:0x9") (? string)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) ReplaceAllString (@"regexp".srcÂ·3 string, @"regexp".replÂ·4 string) (? string)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) ReplaceAllStringFunc (@"regexp".srcÂ·3 string, @"regexp".replÂ·4 func(? string) (? string) "esc:0x1") (? string)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) Split (@"regexp".sÂ·3 string, @"regexp".nÂ·4 int) (? []string)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp "esc:0x22") String () (? string) { return @"regexp".reÂ·2.@"regexp".expr }
+	func (@"regexp".reÂ·2 *@"regexp".Regexp "esc:0x22") SubexpNames () (? []string) { return @"regexp".reÂ·2.@"regexp".subexpNames }
+	func (@"regexp".reÂ·1 *@"regexp".Regexp) @"regexp".allMatches (@"regexp".sÂ·2 string, @"regexp".bÂ·3 []byte, @"regexp".nÂ·4 int, @"regexp".deliverÂ·5 func(? []int) "esc:0x1")
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) @"regexp".doExecute (@"regexp".rÂ·3 @"io".RuneReader, @"regexp".bÂ·4 []byte, @"regexp".sÂ·5 string, @"regexp".posÂ·6 int, @"regexp".ncapÂ·7 int) (? []int)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp "esc:0x1") @"regexp".expand (@"regexp".dstÂ·3 []byte "esc:0x1a", @"regexp".templateÂ·4 string, @"regexp".bsrcÂ·5 []byte "esc:0x9", @"regexp".srcÂ·6 string "esc:0x9", @"regexp".matchÂ·7 []int "esc:0x1") (? []byte)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) @"regexp".get () (? *@"regexp".machine)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp "esc:0x1") @"regexp".pad (@"regexp".aÂ·3 []int "esc:0x1a") (? []int)
+	func (@"regexp".reÂ·1 *@"regexp".Regexp) @"regexp".put (@"regexp".zÂ·2 *@"regexp".machine)
+	func (@"regexp".reÂ·2 *@"regexp".Regexp) @"regexp".replaceAll (@"regexp".bsrcÂ·3 []byte, @"regexp".srcÂ·4 string, @"regexp".nmatchÂ·5 int, @"regexp".replÂ·6 func(@"regexp".dst []byte, @"regexp".m []int) (? []byte) "esc:0x1") (? []byte)
+	type @"".Index struct { @"".data []byte; @"".sa []int }
+	func (@"".xÂ·2 *@"".Index "esc:0x22") Bytes () (? []byte) { return @"".xÂ·2.@"".data }
+	func (@"".xÂ·2 *@"".Index "esc:0x9") FindAllIndex (@"".rÂ·3 *@"regexp".Regexp, @"".nÂ·4 int) (@"".resultÂ·1 [][]int)
+	func (@"".xÂ·2 *@"".Index "esc:0x9") Lookup (@"".sÂ·3 []byte "esc:0x1", @"".nÂ·4 int) (@"".resultÂ·1 []int)
+	func (@"".xÂ·2 *@"".Index "esc:0x9") Read (@"".rÂ·3 @"io".Reader) (? error)
+	func (@"".xÂ·2 *@"".Index "esc:0x9") Write (@"".wÂ·3 @"io".Writer) (? error)
+	func (@"".xÂ·2 *@"".Index "esc:0x22") @"".at (@"".iÂ·3 int) (? []byte) { return @"".xÂ·2.@"".data[@"".xÂ·2.@"".sa[@"".iÂ·3]:] }
+	func (@"".xÂ·2 *@"".Index "esc:0x22") @"".lookupAll (@"".sÂ·3 []byte "esc:0x1") (? []int)
+	func @"".New (@"".dataÂ·2 []byte) (? *@"".Index)
+	func @"".init ()
+	var @"regexp/syntax".instOpNames []string
+	import strings "strings" // indirect
+	func @"strings".HasPrefix (@"strings".sÂ·2 string "esc:0x1", @"strings".prefixÂ·3 string "esc:0x1") (? bool) { return len(@"strings".sÂ·2) >= len(@"strings".prefixÂ·3) && @"strings".sÂ·2[0x0:len(@"strings".prefixÂ·3)] == @"strings".prefixÂ·3 }
+
+$$
+_go_.o          0           0     0     644     85617     `
+go object darwin amd64 go1.5.1 X:none
+
+!
+  go13ldsort.abytes.a"encoding/binary.aio.aregexp.a ş"".qsufsort  À  ¶eH‹%    HD$H;A†y  Hìğ   H‹œ$ğ   H‰$è    1ÛH‰œ$  H‰œ$  H‰œ$   H‹œ$ø   H‰$H‹œ$   H‰\$H‹œ$  H‰\$è    H‹l$H‹L$ H‹T$(Hƒù}=H‰¬$¨   H‰¬$  H‰Œ$°   H‰Œ$  H‰”$¸   H‰”$   è    HÄğ   ÃH‰¬$¨   H‰,$H‰Œ$°   H‰L$H‰”$¸   H‰T$H‹œ$ø   H‰\$H‹œ$   H‰\$ H‹œ$  H‰\$(è    H‹T$0H‹L$8H‹D$@H‰”$À   H‰Œ$È   H‰„$Ğ   H    H‰$è    H‹D$H‰„$   H‰$HÇD$P   è    H‹¼$   H‰ùHƒÿ „  1ÀHƒÇğè    H‰$è    H‹œ$   H‹¬$°   H‰kH‹¬$¸   H‰kH‹¬$¨   €=     …ª  H‰+H‹œ$   H‰$Hƒ$è    H‹œ$   H‹¬$È   H‰k H‹¬$Ğ   H‰k(H‹¬$À   €=     …E  H‰kH‹œ$   H‰$Hƒ$0è    H‹Œ$   H‹„$°   HÇA0   H‰Œ$ˆ   H‰„$€   H‹œ$¨   Hƒø †a  H‰$è    H‹¼$¨   H‹”$°   Hƒú †Ç  H‹H‹¬$€   H÷İH9ëw  1À1öH‰t$HH9Ğ}dH‰D$`H9ĞƒT  HÇH‰$è    H‹¼$¨   H‹D$`H‹t$HH‹”$°   H9Ğƒ  HÇH‹H‰L$PHƒù Ú   H)ÈHÎH‰t$HH9Ğ|œHƒş tDHğH‰D$xH9Ğƒ¬   HÇH‰$è    H‹œ$¨   H‹l$xL‹„$°   L9Ås~HëH‹l$HH‰+H‹œ$ˆ   H‰$Hƒ$0è    H‹„$ˆ   H‹h0H‰l$xH‰$Hƒ$0è    H‹„$°   H‹œ$ˆ   H‹l$xHÑåH‰k0H‰„$€   H‹œ$¨   Hƒø ‡Ÿşÿÿè    è    è    Hƒş tVHğH‰D$pH9Ğƒ  HÇH‰$è    H‹L$PH‹œ$¨   H‹l$pL‹„$°   L9ÅƒØ  HëH‹l$HH‰+HÇD$H    H‹œ$À   L‹„$È   L9Áƒ£  HËH‰$è    H‹œ$À   H‹l$PL‹„$È   L9Åƒq  HëH‹+HÿÅH‹\$`H‰l$XL‹„$¸   L9Å‡E  H9ë‡<  L‹Œ$¨   H)İI)ØIƒø tMÙH‰¬$à   L‰„$è   L‰Œ$Ø   H‹œ$ˆ   H‰$è    H‹œ$ˆ   H‹¬$à   H‰kH‹¬$è   H‰kH‹¬$Ø   €=     …³   H‰+H‹œ$ˆ   H‰œ$   H‹    1íH9èt`H‹Œ$   H‰„$˜   H‰$H‰Œ$    H‰L$è    H‹œ$ˆ   H‰$H‹\$`H‰\$è    H‹t$HH‹¼$¨   H‹”$°   H‹D$XéıÿÿH    H‰$H    H‰\$H    H‰\$è    H‹D$énÿÿÿH‰$H‰l$è    é=ÿÿÿè    è    è    è    è    è    è    1ÀH‰T$xH‹l$xH9èÔ   H‰„$€   H‹œ$À   H‰D$hL‹„$È   L9Àƒ÷   HÃH‰$è    H‹œ$À   H‹l$hL‹„$È   L9ÅƒÅ   HëH‹+H‹œ$¨   L‹„$°   L9Åƒ   HëH‰$è    H‹D$hH‹¼$¨   H‹”$°   H‹œ$À   L‹„$È   L9Às`HÃH‹+H9ÕsMHïH‰H‹„$€   HÿÀH‹l$xH9èŒ,ÿÿÿH‰¼$  H‰”$  H‹œ$¸   H‰œ$   è    HÄğ   Ãè    è    è    è    è    è    LCL‰$H‰l$è    é¨úÿÿH‰$H‰l$è    éFúÿÿ‰éóùÿÿè    éeøÿÿj
+      X
+  *runtime.racefuncenter   â
+  ("".sortedByFirstByte   ö
+  (runtime.racefuncexit   ª
+  "".initGroups   †  ,type."".suffixSortable   ˜
+  "runtime.newobject   Ö
+  ,runtime.racewriterange   –
+Ü  runtime.duffzero   ¨
+  "runtime.racewrite   „ 6runtime.writeBarrierEnabled   Ä
+  "runtime.racewrite     6runtime.writeBarrierEnabled   â
+  "runtime.racewrite   è	
+   runtime.raceread   œ
+   runtime.raceread   ö
+  "runtime.racewrite   î
+   runtime.raceread   ¬
+  "runtime.racewrite   ¢
+  $runtime.panicindex   °
+  $runtime.panicindex   ¾
+  $runtime.panicindex   Š
+  "runtime.racewrite   Æ
+   runtime.raceread   à
+  "runtime.racewrite   ¼ 6runtime.writeBarrierEnabled   ş  Rgo.itab.*"".suffixSortable.sort.Interface   Ø
+  sort.Sort   
+  B"".(*suffixSortable).updateGroups   Ú  .type.*"".suffixSortable   ğ  &type.sort.Interface   ˆ  Rgo.itab.*"".suffixSortable.sort.Interface   œ
+   runtime.typ2Itab   Ì
+  .runtime.writebarrierptr   à
+  $runtime.panicslice   î
+  $runtime.panicindex   ü
+  $runtime.panicindex   Š
+  $runtime.panicindex   ˜
+  $runtime.panicindex   ¦
+  $runtime.panicindex   ´
+  $runtime.panicindex   È
+   runtime.raceread   Ş
+  "runtime.racewrite   Ô
+  (runtime.racefuncexit   î
+  $runtime.panicindex   ü
+  $runtime.panicindex   Š
+  $runtime.panicindex   ˜
+  $runtime.panicindex   ¦
+  $runtime.panicindex   ´
+  $runtime.panicindex   Ü
+  .runtime.writebarrierptr   ‚
+  .runtime.writebarrierptr   ¤
+  0runtime.morestack_noctxt   `à  2"".autotmp_0015  type.int "".autotmp_0014  type.int "".autotmp_0013  type.int "".autotmp_0011  type.int "".autotmp_0010 ¿.type.*"".suffixSortable "".autotmp_0009  type.int "".autotmp_0008  .type.*"".suffixSortable "".autotmp_0007  type.[]int "".autotmp_0006  type.int "".autotmp_0005 ÿtype.int "".autotmp_0004 ïtype.int "".autotmp_0003  type.int "".autotmp_0002  type.[]int "".autotmp_0001 ßtype.int "".autotmp_0000 /type.[]int "".i type.int 
+"".pk ¯type.int "".s ¿type.int 
+"".sl Ïtype.int 
+"".pi Ÿtype.int "".sufSortable Ï.type.*"".suffixSortable "".inv _type.[]int 
+"".sa type.[]int "".~r1 0type.[]int "".data  type.[]uint8 (à§ßàîßàj   Ä<VU:0NMy•TT DQ/!*M	ND02	,³-#71 T +Z7‰İ	4
+ë|b
+	tÆ73 TgclocalsÂ·097544c997b941cb246e5f380c2e23a2 TgclocalsÂ·80aba4d13b10726284fc7e7e147429c7   rprebuilts/go/darwin-x86/src/index/suffixarray/qsufsort.goş("".sortedByFirstByte  à  ÆeH‹%    H„$ğ÷ÿÿH;A†ş  Hì  H‹œ$  H‰$è    1ÛH‰œ$°  H‰œ$¸  H‰œ$À  H|$X1ÀHÇÁ   óH«H‹”$˜  H‹„$   H‹œ$¨  H‰œ$ˆ  1ÉH‰„$€  H‰D$@H‰”$x  H‰ĞH‰L$HH‹l$@H9é}aH‰„$X  H‰$è    H‹”$X  ¶*H‰èH\$X@¶íHëH‹H\$X¶èHëH‰ÍHÿÅH‰+H‰ĞHÿÀH‹L$HHÿÁH‰L$HH‹l$@H9é|Ÿ1É1ÀHÇÇ   H9ø}>H\$XH=   ƒé  HÃH‹3HÎH\$XH=   ƒÇ  HÃH‰H‰ñHÿÀH9ø|ÂH‹„$   H    H‰$H‰D$H‰D$è    H‹t$H‹T$ H‹D$(H‰´$`  H‰”$h  H‰„$p  H‹¬$˜  H‹„$   H‹œ$¨  H‰œ$ˆ  1ÉH‰„$€  H‰D$PH‰¬$x  H‰èH‰L$@H‹l$PH9éä   H‰„$X  H‰$è    H‹œ$X  ¶+H‹\$@H‰\$8H\$X@ˆl$7@¶íHëH‹+H‹œ$`  L‹„$h  L9ÅƒÄ   HëH‰$è    H‹´$`  H‹”$h  ¶D$7H\$X¶èHëH‹+H9Õƒƒ   HîH‹l$8H‰+H\$X¶èHëH‹H\$X¶èHëH‰ÍHÿÅH‰+H‹„$X  HÿÀH‹L$@HÿÁH‰L$@H‹l$PH9éŒÿÿÿH‰´$°  H‰”$¸  H‹œ$p  H‰œ$À  è    HÄ  Ãè    è    è    è    è    éİüÿÿ
+      ^
+  *runtime.racefuncenter   è
+   runtime.raceread   Â  type.[]int   è
+  "runtime.makeslice   ò
+   runtime.raceread   ’	
+  "runtime.racewrite   â
+  (runtime.racefuncexit   ü
+  $runtime.panicindex   Š
+  $runtime.panicindex   ˜
+  $runtime.panicindex   ¦
+  $runtime.panicindex   ´
+  0runtime.morestack_noctxt   ` "  *"".autotmp_0034  type.uint8 "".autotmp_0033  type.*uint8 "".autotmp_0032  type.int "".autotmp_0031  type.int "".autotmp_0030  type.int "".autotmp_0029  type.int "".autotmp_0028  type.int "".autotmp_0026 otype.*uint8 "".autotmp_0025 Ÿ!type.int "".autotmp_0024 !type.int "".autotmp_0023  type.int "".autotmp_0022  type.[]uint8 "".autotmp_0020  type.int "".autotmp_0019 ÿ type.int "".autotmp_0018 /type.[]uint8 "".b ±!type.uint8 "".i ¯!type.int 
+"".sa _type.[]int "".count ï type.[256]int "".~r1 0type.[]int "".data  type.[]uint8 " "ÚŸ" "3 ° T˜""!h%6Ist$&-	 & .…À…ø3 TgclocalsÂ·c90732fb32a7ce452761105e8d7958f3 TgclocalsÂ·f7f8ba5c7a0c127dd1cfa57531cff94f   rprebuilts/go/darwin-x86/src/index/suffixarray/qsufsort.goş"".initGroups  À#  ª#eH‹%    HD$ğH;A†³  Hì   H‹œ$   H‰$è    1ÛH‰œ$È   H‰œ$Ğ   H‰œ$Ø   H‹„$¸   H    H‰$H‰D$H‰D$è    H‹´$    H‹T$H‹L$ H‹D$(H‰T$xH‰Œ$€   H‰„$ˆ   H‰ğHÿÈH‹œ$˜   H‰D$@H9ğƒ  HÃH‰$è    H‹œ$˜   H‹l$@L‹„$    L9ÅƒŞ  HëH‹+H‹œ$°   L‹„$¸   L9Åƒ·  H+H‰$è    H‹”$˜   H‹Œ$    H‹l$@H9Íƒ…  HêH‹+H‹œ$°   L‹„$¸   L9Åƒ^  H+¶+@ˆl$6H‰ÈHÿÈHƒø Œ  H‰D$PH9Èƒ-  HÂH‰$è    H‹œ$˜   H‹l$PL‹„$    L9Åƒû  HëH‹+H‹œ$°   L‹„$¸   L9ÅƒÔ  H+H‰$è    H‹”$    H‹Œ$˜   H‹D$PH9Ğƒ¢  HÁH‹+H‹œ$°   L‹„$¸   L9Åƒ{  H+¶+H‰îH‰ë@ˆl$7¶l$6@8ëskH‰ÃHÿÃH‹l$@H9ëuQHÿÀH‰D$pH9Ğƒ7  HÁH‰$è    ¶t$7H‹”$    H‹Œ$˜   H‹D$PH‹l$pH9Õƒû  HéHÇÿÿÿÿ@ˆt$6H‰D$@H9ĞƒÖ  HÁH‰$è    H‹œ$˜   H‹l$PL‹„$    L9Åƒ¤  HëH‹+H‹\$xL‹„$€   L9Åƒ€  HëH‰$è    H‹D$@H‹”$˜   H‹Œ$    H‹l$PH9ÍƒI  HêH‹+H‹\$xL‹„$€   L9Åƒ%  HëH‰Hƒø u4Hƒù †  H‰$è    H‹”$˜   H‹Œ$    Hƒù †İ  HÇÿÿÿÿH‹D$PHÿÈHƒø äıÿÿH‹œ$¸   H‰\$pHÿËH‹¬$°   L‹„$¸   L9Ãƒ”  Hl H‰,$è    H‹”$˜   H‹„$    H‹\$pHÿËH‹¬$°   L‹„$¸   L9ÃƒN  Hl ¶] ˆ\$5HÇD$8ÿÿÿÿ1ÉH‰D$`H‹l$`H9é4  H‰L$pH‰L$HH9Áƒ	  HÊH‰$è    H‹L$HH‹”$˜   H‹„$    H9Áƒ×  HÊH‹Hƒû Œˆ  H9Áƒ¶  HÊH‰$è    H‹œ$˜   H‹l$HL‹„$    L9Åƒ„  HëH‹+H‹œ$°   L‹„$¸   L9Åƒ]  H+H‰$è    H‹”$˜   H‹Œ$    H‹D$HH9Èƒ+  H,ÂL‹E H‹œ$°   H‹¬$¸   I9èƒ  J¶¶l$5@8ëuH‹\$8HƒûÿuH‰D$8H‰L$hH9ÈƒÍ  HÂH‰$è    H‹L$HH‹”$˜   H‹„$    H9Áƒ›  HÊH‹H‹l$hHÿÍH9ë…v  H9Áƒf  HÊH‰$è    H‹”$    H‹Œ$˜   H‹D$HH9Ğƒ4  HÁH‹+H‰l$XH9Ğƒ  HÁH‰$è    H‹œ$˜   H‹l$8L‹„$    L9Åƒæ  HëH‰$è    H‹T$8H‹Œ$    H‹„$˜   H‹l$HH9Íƒ¯  HèH9Êƒ›  H,ĞL‹E L‰H9Êƒ€  HĞH‰$è    H‹”$    H‹Œ$˜   H‹D$8H9ĞƒN  HÁH‹l$XH‰+H9Ğƒ2  HÁH‰$è    H‹œ$˜   H‹l$8L‹„$    L9Åƒ   HëH‹+H‹\$xL‹„$€   L9ÅƒÜ   HëH‰$è    H‹”$    H‹Œ$˜   H‹D$8H9Ğƒª   HÁH‹+H‹\$xL‹„$€   L9Åƒ†   HëH‰H9ĞssHÁH‰$è    H‹œ$˜   H‹l$8L‹„$    L9ÅsEHëHÇÿÿÿÿH‹\$xH‰œ$È   H‹œ$€   H‰œ$Ğ   H‹œ$ˆ   H‰œ$Ø   è    HÄ   Ãè    è    è    è    è    è    è    è    è    è    è    è    è    è    è    H‹L$pHÿÁéüÿÿè    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    è    é+÷ÿÿ
+      X
+  *runtime.racefuncenter   ª  type.[]int   Ğ
+  "runtime.makeslice   ú
+   runtime.raceread   
+   runtime.raceread   ú
+   runtime.raceread   
+   runtime.raceread    	
+  "runtime.racewrite   Æ
+
+   runtime.raceread   Ö
+  "runtime.racewrite   –
+  "runtime.racewrite   ê
+   runtime.raceread   â
+   runtime.raceread   ì
+   runtime.raceread   ‚
+   runtime.raceread   ø
+   runtime.raceread   
+   runtime.raceread   
+  "runtime.racewrite   æ
+   runtime.raceread   ˆ
+  "runtime.racewrite   ˆ
+   runtime.raceread   ˜
+  "runtime.racewrite   À
+  "runtime.racewrite   î
+  (runtime.racefuncexit   ˆ
+  $runtime.panicindex   –
+  $runtime.panicindex   ¤
+  $runtime.panicindex   ²
+  $runtime.panicindex   À
+  $runtime.panicindex   Î
+  $runtime.panicindex   Ü
+  $runtime.panicindex   ê
+  $runtime.panicindex   ø
+  $runtime.panicindex   †
+  $runtime.panicindex   ”
+  $runtime.panicindex   ¢
+  $runtime.panicindex   °
+  $runtime.panicindex   ¾
+  $runtime.panicindex   Ì
+  $runtime.panicindex   ô
+  $runtime.panicindex   ‚ 
+  $runtime.panicindex    
+  $runtime.panicindex    
+  $runtime.panicindex   ¬ 
+  $runtime.panicindex   º 
+  $runtime.panicindex   È 
+  $runtime.panicindex   Ö 
+  $runtime.panicindex   ä 
+  $runtime.panicindex   ò 
+  $runtime.panicindex   €!
+  $runtime.panicindex   !
+  $runtime.panicindex   œ!
+  $runtime.panicindex   ª!
+  $runtime.panicindex   ¸!
+  $runtime.panicindex   Æ!
+  $runtime.panicindex   Ô!
+  $runtime.panicindex   â!
+  $runtime.panicindex   ğ!
+  $runtime.panicindex   ş!
+  $runtime.panicindex   Œ"
+  $runtime.panicindex   š"
+  $runtime.panicindex   ¨"
+  $runtime.panicindex   ¶"
+  $runtime.panicindex   Ä"
+  $runtime.panicindex   Ò"
+  $runtime.panicindex   à"
+  $runtime.panicindex   î"
+  $runtime.panicindex   ü"
+  $runtime.panicindex   Š#
+  $runtime.panicindex   ˜#
+  0runtime.morestack_noctxt      *"".autotmp_0045 otype.int "".autotmp_0044 _type.int "".autotmp_0043  type.int "".autotmp_0042  type.int "".autotmp_0041 Otype.int "".autotmp_0040  type.int "".autotmp_0039  type.int "".autotmp_0038  type.int "".autotmp_0037  type.int "".autotmp_0035 ?type.int "".i type.int "".s ¯type.int "".lastByte µtype.uint8 "".b ±type.uint8 "".i type.int "".groupByte ³type.uint8 "".prevGroup Ÿtype.int "".inv /type.[]int "".~r2 `type.[]int "".data 0type.[]uint8 
+"".sa  type.[]int  ãŸ İ à ´ÀHGN¸ÀQ¥4 u	J¼Qü 7
+:	#8
+##	##  +‘ºİ TgclocalsÂ·898f75077cb3b54d25daffb066f078bb TgclocalsÂ·ad3d78e88c381598810f2e82f373ef66   rprebuilts/go/darwin-x86/src/index/suffixarray/qsufsort.goş0"".(*suffixSortable).Len     œeH‹%    H;av8HƒìH‹\$H‰$è    H‹\$H‰$è    H‹\$H‹kH‰l$è    HƒÄÃè    ë²
+
+      :
+  *runtime.racefuncenter   V
+   runtime.raceread   |
+  (runtime.racefuncexit   
+  0runtime.morestack_noctxt      "".~r0 type.int "".x  .type.*"".suffixSortable 3	 P œP 
+ 4 TgclocalsÂ·3f5c1f818fa7055d0400cecd34057162 TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   rprebuilts/go/darwin-x86/src/index/suffixarray/qsufsort.goş2"".(*suffixSortable).Less     eH‹%    H;a†ª  Hƒì H‹\$ H‰$è    H‹\$(H‰$Hƒ$è    H‹\$(H‰$è    H‹\$(H‹H‹CH‹kH‰l$H‰L$H‹l$0H‰D$H9ÅƒC  HéH‰$è    H‹\$(H‰$Hƒ$0è    H‹T$(H‹
+H‹BH‹jH‹l$0H9Åƒş  HéH‹H‹j0HèH‰ÓH‹RH‹K H‹k(H‰l$H‰T$H‰L$H9ÈƒÂ  HÂH‰$è    H‹\$(H‰$Hƒ$è    H‹\$(H‰$è    H‹\$(H‹H‹CH‹kH‰l$H‰L$H‹l$8H‰D$H9Åƒ`  HéH‰$è    H‹\$(H‰$Hƒ$0è    H‹T$(H‹
+H‹BH‹jH‹l$8H9Åƒ  HéH‹H‹j0HèH‰ÓH‹RH‹K H‹k(H‰l$H‰T$H‰L$H9Èƒß   HÂH‰$è    H‹D$(Hƒø „¼   H‹H‹HL‹@L‹D$0I9Èƒœ   J,ÂH‹M L‹@0LÁH‹pH‹P H‹h(H9ÑsuHÎH‹H‹H‹HL‹HL‹L$8I9ÉsRNÊI‹L‹H0LÉH‰ÅH‹PH‹@ L‹E(L‰D$H‰T$H‰D$H9ÁsH,ÊH‹m H9ëœD$@è    HƒÄ Ãè    è    è    è    ‰ é=ÿÿÿè    è    è    è    è    è    è    é9ıÿÿ0
+      B
+  *runtime.racefuncenter   h
+   runtime.raceread   „
+   runtime.raceread   ø
+   runtime.raceread   
+   runtime.raceread   Ş
+   runtime.raceread   „
+   runtime.raceread    
+   runtime.raceread   ”
+   runtime.raceread   º
+   runtime.raceread   ú
+   runtime.raceread   Î	
+  (runtime.racefuncexit   â	
+  $runtime.panicindex   ğ	
+  $runtime.panicindex   ş	
+  $runtime.panicindex   Œ
+
+  $runtime.panicindex   ¨
+
+  $runtime.panicindex   ¶
+
+  $runtime.panicindex   Ä
+
+  $runtime.panicindex   Ò
+
+  $runtime.panicindex   à
+
+  $runtime.panicindex   î
+
+  $runtime.panicindex   ü
+
+  0runtime.morestack_noctxt   @@  "".~r2 0type.bool "".j  type.int "".i type.int "".x  .type.*"".suffixSortable @Ø?@` Ğ 
+Ğ   ° TgclocalsÂ·2fccd208efe70893f9ac8d682812ae72 TgclocalsÂ·790e5cc5051fc0affc980ade09e929ec   rprebuilts/go/darwin-x86/src/index/suffixarray/qsufsort.goş2"".(*suffixSortable).Swap  à	  Ê	eH‹%    H;a†H  Hƒì@H‹\$@H‰$è    H‹\$HH‰$è    H‹D$HHƒø „  H‹(H‰l$(H‹hH‰l$0H‹hH‰l$8H‰$è    H‹\$HH‹H‹CH‹kH‰l$ H‰L$H‹l$PH‰D$H9Åƒ»  HéH‰$è    H‹T$HHƒú „˜  H‹
+H‹BH‹jH‰l$ H‰L$H‹l$PH‰D$H9Åƒi  HéH‹+H‰l$H‰$è    H‹\$HH‹H‹CH‹kH‰l$ H‰L$H‹l$PH‰D$H9Åƒ   HéH‰$è    H‹\$HH‰$è    H‹\$HH‹H‹CH‹kH‰l$ H‰L$H‹l$XH‰D$H9ÅƒÑ   HéH‰$è    H‹t$HH‹T$XHƒş „©   H‹H‹FH‹nH‹l$PH9Åƒ‰   HéH‹H‹FL‹FL‰D$ H‰L$H‰D$H9Âs_H,ÑL‹E L‰H‹\$(L‹D$0L9Âs>HÓH‰$è    H‹\$(H‹l$XL‹D$0L9ÅsHëH‹l$H‰+è    HƒÄ@Ãè    è    è    è    ‰éPÿÿÿè    è    è    ‰éaşÿÿè    ‰ éçıÿÿè    é›ıÿÿ(
+      B
+  *runtime.racefuncenter   ^
+   runtime.raceread   Â
+   runtime.raceread   ¶
+   runtime.raceread   Î
+   runtime.raceread   Â
+  "runtime.racewrite   Ş
+   runtime.raceread   Ò
+   runtime.raceread   À
+  "runtime.racewrite   Š
+  (runtime.racefuncexit   
+  $runtime.panicindex   ¬
+  $runtime.panicindex   º
+  $runtime.panicindex   È
+  $runtime.panicindex   ä
+  $runtime.panicindex   ò
+  $runtime.panicindex   €	
+  $runtime.panicindex   œ	
+  $runtime.panicindex   ¸	
+  0runtime.morestack_noctxt   0€  
+"".autotmp_0062 otype.int "".autotmp_0061 /type.[]int "".j  type.int "".i type.int "".x  .type.*"".suffixSortable €ö€b ğ 
+ ğ   @¤l TgclocalsÂ·41a13ac73c712c01973b8fe23f62d694 TgclocalsÂ·4d7e2f2b65aabfd0a399848e4ebdd633   rprebuilts/go/darwin-x86/src/index/suffixarray/qsufsort.goşB"".(*suffixSortable).updateGroups   %  ˆ%eH‹%    HD$°H;A†"	  HìĞ   H‹œ$Ğ   H‰$è    H‹œ$Ø   H‰$Hƒ$8è    H‹„$Ø   H‹hHL‹@8HÇ„$       H‰¬$˜   L‰„$ˆ   H‰$Hƒ$è    H‹œ$Ø   H‰$è    H‹œ$Ø   H‹H‹CH‹kH‰¬$È   H‰Œ$¸   Hƒø H‰„$À   †m  H‰$è    H‹œ$Ø   H‰$Hƒ$0è    H‹”$Ø   H‹
+H‹BH‹jHƒø †*  H‹H‹j0HèH‰ÓH‹RH‹K H‹k(H‰¬$È   H‰”$¸   H‰Œ$À   H9Èƒé  HÂH‰$è    H‹„$Ø   Hƒø „Ã  H‹H‹HH‹hHƒù †§  H‹
+H‹h0HéH‹pH‹P H‹h(H‰¬$È   H‰´$¸   H‰”$À   H9Ñƒi  HÎH‹+H‰l$XHÇD$H   H‰$è    H‹Œ$Ø   H‹iH‹\$HH9ë©  H‰$Hƒ$è    H‹œ$Ø   H‰$è    H‹œ$Ø   H‹H‹CH‹kH‰¬$È   H‰Œ$¸   H‹l$HH‰„$À   H9ÅƒJ  HéH‰$è    H‹œ$Ø   H‰$Hƒ$0è    H‹”$Ø   H‹
+H‹BH‹jH‹l$HH9Åƒÿ  HéH‹H‹j0HèH‰ÓH‹RH‹K H‹k(H‰¬$È   H‰”$¸   H‰Œ$À   H9Èƒº  HÂH‰$è    H‹t$HH‹„$Ø   Hƒø „  H‹H‹HH‹hH9Îƒt  HòH‹H‹h0HéH‹xH‹P H‹h(H‰¬$È   H‰¼$¸   H‰”$À   H9Ñƒ2  HÏH‹H‰\$`H‹l$XH9ë  H‹”$ˆ   H‹„$   H‹Œ$˜   H‰ËH)ÃHƒû}QH    H‰$H‰”$¸   H‰T$H‰D$H‰Œ$È   H‰L$H‰ÃH‰„$À   HÿÃH‰\$ è    H‹T$(H‹D$0H‹L$8H‰ÃHÿÃH‰Œ$È   H9Ë‡…   H‰œ$À   H‰”$¸   H‰D$pHÂH‰$è    H‹Œ$¸   H‹t$HH‹„$Ø   H‹l$pHéH‰3H‰Œ$ˆ   H‹œ$À   H‰œ$   H‹œ$È   H‰œ$˜   H‹\$`H‰\$XH‰óHÿÃH‰\$Héeıÿÿè    è    è    ‰ éjşÿÿè    è    è    H‰$è    H‹œ$Ø   H‹kH‰l$xH‹”$ˆ   H‹„$   H‹Œ$˜   H‰ËH)ÃHƒû}QH    H‰$H‰”$¸   H‰T$H‰D$H‰Œ$È   H‰L$H‰ÃH‰„$À   HÿÃH‰\$ è    H‹T$(H‹D$0H‹L$8H‰ÃHÿÃH‰Œ$È   H9Ë‡Û  H‰œ$À   H‰”$¸   H‰D$pHÂH‰$è    H‹„$¸   H‹l$pHèH‹l$xH‰+H‰„$ˆ   H‹œ$À   H‰œ$   H‹œ$È   H‰œ$˜   H‹œ$Ø   H‰$Hƒ$8è    H‹œ$Ø   H‹¬$   H‰k@H‹¬$˜   H‰kHH‹¬$ˆ   €=     …  H‰k8HÇD$@    H‹”$ˆ   H‹„$   H‹œ$˜   H‰œ$È   1ÉH‰„$À   H‰D$pH‰”$¸   H‰ĞH‰L$xH‹l$pH9és  H‰„$€   H‰$è    H‹”$Ø   H‹œ$€   H‹3H‹D$@H‰D$PH‰t$hH9ğ\  H‰$Hƒ$è    H‹œ$Ø   H‰$è    H‹œ$Ø   H‹H‹CH‹kH‰¬$°   H‰Œ$    H‹l$PH‰„$¨   H9Åƒ!  HéH‰$è    H‹”$Ø   H‹
+H‹BH‹jH‹l$PH9Åƒì  HéH‹H‰ÓH‹RH‹K H‹k(H‰¬$°   H‰”$    H‰Œ$¨   H9Èƒ®  HÂH‰$è    L‹L$PH‹t$hH‹”$Ø   Hƒú „~  H‹
+H‹BH‹jI9Áƒc  JÉH‹H‹zH‹J H‹j(H‰¬$°   H‰¼$    H‰Œ$¨   H9Èƒ(  HÇH‹¬$à   HõHÿÍH‰+L‰ÈHÿÀH‰D$PH‰t$hH9ğŒ¤şÿÿH‹l$@H‰óH)ëHƒû…š   H‰$è    H‹œ$Ø   H‹H‹CH‹kH‰¬$°   H‰Œ$    H‹l$@H‰„$¨   H9Åƒœ   HéH‰$è    H‹t$hH‹œ$Ø   Hƒû txH‹H‹CH‹kH‰¬$°   H‰Œ$    H‹l$@H‰„$¨   H9ÅsDHéHÇÿÿÿÿH‰t$@H‹„$€   H‹L$xHƒÀHÿÁH‰L$xH‹l$pH9éŒıÿÿè    HÄĞ   Ãè    ‰ë„è    è    è    ‰é{şÿÿè    è    è    LC8L‰$H‰l$è    é×üÿÿè    è    è    ‰ é6øÿÿè    è    è    è    é¼öÿÿh
+      X
+  *runtime.racefuncenter   „
+   runtime.raceread   ø
+   runtime.raceread   š
+   runtime.raceread   –
+   runtime.raceread   Â
+   runtime.raceread   Š
+   runtime.raceread   ‚
+   runtime.raceread   Ò
+   runtime.raceread   ô
+   runtime.raceread   €	
+   runtime.raceread   ¬	
+   runtime.raceread   „
+   runtime.raceread   Ú  type.[]int   Ğ
+  "runtime.growslice   à
+  "runtime.racewrite   °
+  $runtime.panicslice   ¾
+  $runtime.panicindex   Ì
+  $runtime.panicindex   è
+  $runtime.panicindex   ö
+  $runtime.panicindex   „
+  $runtime.panicindex   š
+   runtime.raceread   ’  type.[]int   ˆ
+  "runtime.growslice   ˜
+  "runtime.racewrite   Æ
+  "runtime.racewrite   ¢ 6runtime.writeBarrierEnabled   †
+   runtime.raceread   ø
+   runtime.raceread   š
+   runtime.raceread   ¦
+   runtime.raceread   ğ
+  "runtime.racewrite   Ğ
+   runtime.raceread   Ü 
+  "runtime.racewrite   Ô"
+  (runtime.racefuncexit   î"
+  $runtime.panicindex   „#
+  $runtime.panicindex   ’#
+  $runtime.panicindex    #
+  $runtime.panicindex   ¼#
+  $runtime.panicindex   Ê#
+  $runtime.panicindex   Ø#
+  $runtime.panicindex   €$
+  .runtime.writebarrierptr   ”$
+  $runtime.panicslice   ¢$
+  $runtime.panicindex   °$
+  $runtime.panicindex   Ì$
+  $runtime.panicindex   Ú$
+  $runtime.panicindex   è$
+  $runtime.panicindex   ö$
+  0runtime.morestack_noctxt       *"".autotmp_0080 Ÿtype.*int "".autotmp_0079  type.int "".autotmp_0078  type.int "".autotmp_0077  type.int "".autotmp_0076  type.[]int "".autotmp_0075  type.int "".autotmp_0074  type.[]int "".autotmp_0073  type.int "".autotmp_0072  type.[]int "".autotmp_0071  type.int "".autotmp_0070  type.int "".autotmp_0069  type.int "".i ÿtype.int "".b Ïtype.int "".prev Ÿtype.int "".g ßtype.int "".i type.int "".group ïtype.int "".bounds type.[]int "".offset type.int "".x  .type.*"".suffixSortable  –Ÿ š Ğ ˆ¤BÁ,ç÷
+*
+‰O	qÃš,** @ +P¬Hh5wHW çV
+G TgclocalsÂ·a8402fb913afde093f7818dc5c2d5fd9 TgclocalsÂ·60ceac1471402b697d1b0fe63a5b6afc   rprebuilts/go/darwin-x86/src/index/suffixarray/qsufsort.goş"".New  à  ÜeH‹%    H;a†  HƒìPH‹\$PH‰$è    H‹\$XH‰$H‹\$`H‰\$H‹\$hH‰\$è    H‹\$H‰\$8H‹\$ H‰\$@H‹\$(H‰\$HH    H‰$è    H‹D$H‰D$0H‰$è    H‹\$0H‹l$`H‰kH‹l$hH‰kH‹l$X€=     ugH‰+H‹\$0H‰$Hƒ$è    H‹\$0H‹l$@H‰k H‹l$HH‰k(H‹l$8€=     uH‰kH‹\$0H‰\$pè    HƒÄPÃLCL‰$H‰l$è    ëØH‰$H‰l$è    ëŒè    éÒşÿÿ
+      B
+  *runtime.racefuncenter   †
+  "".qsufsort   Ğ  type."".Index   â
+  "runtime.newobject   ˆ
+  "runtime.racewrite   Ì 6runtime.writeBarrierEnabled   ş
+  "runtime.racewrite   Â 6runtime.writeBarrierEnabled   î
+  (runtime.racefuncexit   œ
+  .runtime.writebarrierptr   ¼
+  .runtime.writebarrierptr   Ê
+  0runtime.morestack_noctxt   @   "".autotmp_0106 ?type.*"".Index "".autotmp_0105 /type.[]int "".~r1 0type.*"".Index "".data  type.[]uint8  èŸ 0 ° H%Ñ)   Ps TgclocalsÂ·54ff167eef3fff137a02137a3c415ca8 TgclocalsÂ·85b708e0eb749713cb73a30a27c2999c   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş"".writeInt  €  îeH‹%    H;a†Ú   Hƒì`H‹\$`H‰$è    1ÛH‰œ$˜   H‰œ$    H‹\$xH‰$H‹œ$€   H‰\$H‹œ$ˆ   H‰\$H‹œ$   H‰\$è    H‹œ$ˆ   Hƒû
+rlH‹l$xHÇÂ
+   H‰l$HH‰l$H‰T$PH‰T$H‰\$XH‰\$H‹\$pH‰$H‹\$hH‹[ ÿÓH‹L$(H‹D$0H‰L$8H‰Œ$˜   H‰D$@H‰„$    è    HƒÄ`Ãè    è    é	ÿÿÿ
+      B
+  *runtime.racefuncenter   Ğ
+  2encoding/binary.PutVarint   ì       º
+  (runtime.racefuncexit   Î
+  $runtime.panicslice   Ü
+  0runtime.morestack_noctxt   €À  "".autotmp_0107 /type.[]uint8 "".err Otype.error "".~r3 `type.error "".x Ptype.int "".buf  type.[]uint8 "".w  type.io.Writer ÀÎ¿À € "R5V$   ¼
+ TgclocalsÂ·d2fd9951e910becfd07ba7f8ff7b525a TgclocalsÂ·98a935522f11e180b06d5a082b7d09c1   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş"".readInt  À  ¤eH‹%    H;a†õ   HƒìhH‹\$hH‰$è    1ÛH‰œ$    H‰œ$¨   H‹œ$   Hƒû
+‚¸   H‹¬$€   HÇÂ
+   H‰ÙH‹\$pH‰$H‹\$xH‰\$H‰l$PH‰l$H‰T$XH‰T$H‰L$`H‰L$ è    H‹L$0H‹D$8H‰L$@H‰D$HH‹œ$€   H‰$H‹œ$ˆ   H‰\$H‹œ$   H‰\$è    H‹\$H‰œ$˜   H‹\$@H‰œ$    H‹\$HH‰œ$¨   è    HƒÄhÃè    è    éîşÿÿ
+      B
+  *runtime.racefuncenter   š
+  io.ReadFull   ˜
+  ,encoding/binary.Varint   ğ
+  (runtime.racefuncexit   „
+  $runtime.panicslice   ’
+  0runtime.morestack_noctxt   €Ğ  "".autotmp_0109 /type.[]uint8 "".err Otype.error "".~r3 `type.error "".~r2 Ptype.int "".buf  type.[]uint8 "".r  type.io.Reader ĞéÏĞ   "`n0,   «,
+ TgclocalsÂ·e36305944813a816e7fbf8df92997170 TgclocalsÂ·0a8e3a7f71deedbd60c8b6584164e6e5   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş"".writeSlice  À  ¬eH‹%    H;a†ù  Hƒì`H‹\$`H‰$è    H‹¼$˜   H‹´$€   1Û1ÛH‰œ$°   H‰œ$¸   1ÉHÇÀ
+   H‰Œ$¨   H9ùö   H‰ÃHƒÃ
+H9óæ   H‰D$@L‹„$ˆ   H‰õH9ğ‡y  L‹L$xH)ÅI)ÀIƒø tMH‰l$PL‰D$XL‰L$HH‹œ$   H9ùƒ=  HËH‰$è    H‹\$HH‰$H‹\$PH‰\$H‹\$XH‰\$H‹œ$   H‹¬$¨   L‹„$˜   L9Åƒë   HëH‹+H‰l$è    H‹¼$˜   H‹´$€   H‹D$ H‹\$@HÃH‰ØH‹Œ$¨   HÿÁH‰Œ$¨   H9ùŒ
+ÿÿÿH‹\$xH‰$H‰t$H‹œ$ˆ   H‰\$H‰D$8H‰D$è    H‹\$8H‹¬$ˆ   H9ëw[L‹D$xL‰D$HL‰D$H‰\$PH‰\$H‰l$XH‰l$H‹\$pH‰$H‹\$hH‹[ ÿÓH‹L$(H‹D$0H‰Œ$°   H‰„$¸   è    HƒÄ`Ãè    è    è    è    è    éêıÿÿ
+      B
+  *runtime.racefuncenter   ”
+   runtime.raceread   ²
+  4encoding/binary.PutUvarint   ş
+  2encoding/binary.PutVarint   ”       Î
+  (runtime.racefuncexit   â
+  $runtime.panicslice   ğ
+  $runtime.panicindex   ş
+  $runtime.panicindex   Œ
+  $runtime.panicslice   š
+  0runtime.morestack_noctxt   °À  "".autotmp_0118  type.[]uint8 "".autotmp_0115 /type.[]uint8 "".autotmp_0114 ?type.int "".autotmp_0112  type.int "".p Otype.int "".err type.error "".n €type.int "".data Ptype.[]int "".buf  type.[]uint8 "".w  type.io.Writer ÀØ¿À0   8p!Ê
+*c
+   ©OÎ
+0 TgclocalsÂ·8076dc23cf0ef12ac27519222ea6e1b2 TgclocalsÂ·ad3d78e88c381598810f2e82f373ef66   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş"".readSlice   
+  ˜
+eH‹%    H;a†o  HƒìxH‹\$xH‰$è    1Û1ÛH‰œ$È   H‰œ$Ğ   HÇ„$À       H‹œ$€   H‰$H‹œ$ˆ   H‰\$H‹œ$   H‰\$H‹œ$˜   H‰\$H‹œ$    H‰\$ è    H‹T$(H‹L$0H‹D$8H‰„$Ğ   H‰Œ$È   Hƒù t
+è    HƒÄxÃH‰ÓH‰T$PH‹¬$    H9ê‡©  Hƒú
+‚Ÿ  L‹„$   Hƒë
+Hƒí
+Hƒı tIƒÀ
+H‰ÚH‹œ$€   H‰$H‹œ$ˆ   H‰\$L‰D$`L‰D$H‰T$hH‰T$H‰l$pH‰l$ è    H‹L$0H‹D$8H‰„$Ğ   H‰Œ$È   Hƒù t
+è    HƒÄxÃHÇÀ
+   H‹l$PH9èè   H‰D$XH‹¬$˜   L‹„$    H9è‡â   L‹Œ$   H)ÅI)ÀIƒø tML‰L$`L‰$H‰l$hH‰l$L‰D$pL‰D$è    H‹D$H‹L$ H‰D$@H‰L$HH‹œ$¨   H‹¬$À   L‹„$°   L9ÅspHëH‰$è    H‹Œ$À   H‹œ$¨   L‹„$°   L9Ás?HËH‹l$@H‰+H‹D$XH‹l$HHèH‰ËHÿÃH‰œ$À   H‹l$PH9èŒÿÿÿè    HƒÄxÃè    è    è    è    è    étıÿÿ
+      B
+  *runtime.racefuncenter   Œ
+  "".readInt   à
+  (runtime.racefuncexit   â
+  io.ReadFull   ¬
+  (runtime.racefuncexit   
+  .encoding/binary.Uvarint   Œ
+  "runtime.racewrite   º	
+  (runtime.racefuncexit   Î	
+  $runtime.panicindex   Ü	
+  $runtime.panicindex   ê	
+  $runtime.panicslice   ø	
+  $runtime.panicslice   †
+
+  0runtime.morestack_noctxt   °ğ  "".autotmp_0128  type.int "".autotmp_0127  type.int "".autotmp_0126  type.int "".autotmp_0124  type.[]uint8 "".autotmp_0123  type.error "".autotmp_0122 /type.[]uint8 "".w _type.int "".x otype.uint64 "".p ?type.int "".size Otype.int "".err type.error "".n €type.int "".data Ptype.[]int "".buf  type.[]uint8 "".r  type.io.Reader 6ğ¡ïğ¥ïğ†ïğ*  V’(' \ œlS
+    %‘* TgclocalsÂ·7da491bed879ae28a38cf74b3979e6d0 TgclocalsÂ·f56b2291fa344104975cb6587be42b9b   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş "".(*Index).Read  à  ĞeH‹%    HD$H;A†  Hìğ   H‹œ$ğ   H‰$è    1ÛH‰œ$  H‰œ$  H    H‰$HÇD$ @  HÇD$ @  è    H‹T$H‹L$ H‹D$(H‹œ$   H‰$H‹œ$  H‰\$H‰”$¨   H‰T$H‰Œ$°   H‰L$H‰„$¸   H‰D$ è    H‹T$(H‹D$0H‹L$8H‰T$XH‰L$xH‰D$pHƒø tH‰„$  H‰Œ$  è    HÄğ   ÃH‹œ$ø   H‰$è    H‹”$ø   H‹L$XH‹jH‰ËHÑãH9ëŒ¥  H‰$è    H‹”$ø   H‹L$XH‹ZH9ËŒ‚  H‰$è    H‹œ$ø   H‰$è    H‹„$ø   H‹l$XL‹@L9Å‡G  H‰hH‰$Hƒ$è    H‹œ$ø   H‰$Hƒ$è    H‹œ$ø   H‹l$XL‹C(L9Å‡ş  H‰k H‹œ$ø   H‰$è    H‹œ$   H‰$H‹œ$  H‰\$H‹´$ø   H|$H‹H‰H‹NH‰OH‹NH‰Oè    H‹D$0H‹L$8H‰L$hH‰D$`Hƒø tH‰„$  H‰Œ$  è    HÄğ   ÃH‹œ$ø   H‰$Hƒ$è    H‹œ$ø   Hƒû „B  H‹sH‰´$   H‹C H‹S(H‰”$    H‰„$˜   Hƒø î   H‹œ$   H‰$H‹œ$  H‰\$H‹œ$¨   H‰\$H‹œ$°   H‰\$H‹œ$¸   H‰\$ H‰t$(H‰D$0H‰T$8è    H‹D$@H‹T$HH‹L$PH‰Œ$ˆ   H‰”$€   Hƒú tH‰”$  H‰Œ$  è    HÄğ   ÃH‹¬$˜   L‹„$    H9èwbL‹Œ$   H)ÅI)ÀIƒø tMÁH‰èL‰ÂL‰„$    L‰ÎL‰Œ$   H‰„$˜   Hƒø ÿÿÿ1ÛH‰œ$  H‰œ$  è    HÄğ   Ãè    ‰é·şÿÿè    è    H    H‰$H‰L$H‰L$è    H‹\$H‰œ$Ø   H‹\$ H‰œ$à   H‹\$(H‰œ$è   H‹œ$ø   H‰$è    H‹œ$ø   H‹¬$à   H‰kH‹¬$è   H‰kH‹¬$Ø   €=     …µ   H‰+H    H‰$H‹\$XH‰\$H‹\$XH‰\$è    H‹\$H‰œ$À   H‹\$ H‰œ$È   H‹\$(H‰œ$Ğ   H‹œ$ø   H‰$Hƒ$è    H‹œ$ø   H‹¬$È   H‰k H‹¬$Ğ   H‰k(H‹¬$À   €=     u	H‰kéÓüÿÿLCL‰$H‰l$è    é¼üÿÿH‰$H‰l$è    é;ÿÿÿè    éØúÿÿB
+      X
+  *runtime.racefuncenter   Š  type.[]uint8   À
+  "runtime.makeslice   è
+  "".readInt   Ú
+  (runtime.racefuncexit   Œ
+   runtime.raceread   Ş
+   runtime.raceread   ¤
+  "runtime.racewrite   Æ
+   runtime.raceread   
+  "runtime.racewrite   Ê
+   runtime.raceread   ¨
+   runtime.raceread   ª
+  io.ReadFull   ˆ	
+  (runtime.racefuncexit   Ä	
+   runtime.raceread   ì
+  "".readSlice   à
+  (runtime.racefuncexit   Î
+  (runtime.racefuncexit   è
+  $runtime.panicslice   „
+  $runtime.panicslice   ’
+  $runtime.panicslice   ¤  type.[]uint8   Ê
+  "runtime.makeslice   º
+  "runtime.racewrite   – 6runtime.writeBarrierEnabled   ¸  type.[]int   ò
+  "runtime.makeslice   ì
+  "runtime.racewrite   È 6runtime.writeBarrierEnabled   „
+  .runtime.writebarrierptr   ª
+  .runtime.writebarrierptr   ¾
+  0runtime.morestack_noctxt   Pà  """.autotmp_0139  type.error "".autotmp_0138  type.int "".autotmp_0137  type.int "".autotmp_0136  type.error "".autotmp_0135 _type.[]int "".autotmp_0134  type.[]uint8 "".autotmp_0132  type.int "".autotmp_0129 /type.[]uint8 "".err ßtype.error 
+"".sa ¿type.[]int "".err Ÿtype.error "".err ÿtype.error "".n ¯type.int "".buf type.[]uint8 "".~r1 0type.error "".r type.io.Reader "".x  type.*"".Index DàÙßàÖßàëßàvßàı °
+ œÆFE1^87T8BlVkF		Š– F +ˆ9¾”:„18\=L/ TgclocalsÂ·7b2969cfd8757edd42005f830036b96e TgclocalsÂ·0bd70126730c10b7c886c7a75b7e86eb   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş""".(*Index).Write  à  ÌeH‹%    HD$ÈH;A†  Hì¸   H‹œ$¸   H‰$è    1ÛH‰œ$Ø   H‰œ$à   H    H‰$HÇD$ @  HÇD$ @  è    H‹T$H‹L$ H‹D$(H‰”$    H‰Œ$¨   H‰„$°   H‹œ$À   H‰$è    H‹œ$À   H‹kH‹œ$È   H‰$H‹œ$Ğ   H‰\$H‹œ$    H‰\$H‹œ$¨   H‰\$H‹œ$°   H‰\$ H‰l$(è    H‹D$0H‹L$8H‰L$`H‰D$XHƒø tH‰„$Ø   H‰Œ$à   è    HÄ¸   ÃH‹œ$À   H‰$è    H‹´$À   H|$H‹H‰H‹NH‰OH‹NH‰OH‹œ$Ğ   H‰$H‹œ$È   H‹[ ÿÓH‹D$(H‹L$0H‰L$pH‰D$hHƒø tH‰„$Ø   H‰Œ$à   è    HÄ¸   ÃH‹œ$À   H‰$Hƒ$è    H‹œ$À   Hƒû „?  H‹sH‰´$ˆ   H‹C H‹S(H‰”$˜   H‰„$   Hƒø ë   H‹œ$È   H‰$H‹œ$Ğ   H‰\$H‹œ$    H‰\$H‹œ$¨   H‰\$H‹œ$°   H‰\$ H‰t$(H‰D$0H‰T$8è    H‹D$@H‹T$HH‹L$PH‰Œ$€   H‰T$xHƒú tH‰”$Ø   H‰Œ$à   è    HÄ¸   ÃH‹¬$   L‹„$˜   H9èwbL‹Œ$ˆ   H)ÅI)ÀIƒø tMÁH‰èL‰ÂL‰„$˜   L‰ÎL‰Œ$ˆ   H‰„$   Hƒø ÿÿÿ1ÛH‰œ$Ø   H‰œ$à   è    HÄ¸   Ãè    ‰éºşÿÿè    éÚüÿÿ 
+      X
+  *runtime.racefuncenter   Š  type.[]uint8   À
+  "runtime.makeslice   °
+   runtime.raceread   Ü
+  "".writeInt   º
+  (runtime.racefuncexit   ì
+   runtime.raceread   ê       Ä
+  (runtime.racefuncexit   €
+   runtime.raceread   ¨	
+  "".writeSlice   –
+
+  (runtime.racefuncexit   „
+  (runtime.racefuncexit   
+  $runtime.panicslice   º
+  0runtime.morestack_noctxt   Pğ  "".autotmp_0146  type.error "".autotmp_0144  type.int "".autotmp_0143  type.error "".err type.error 
+"".sa _type.[]int "".err Ÿtype.error "".err ¿type.error "".buf /type.[]uint8 "".~r1 0type.error "".w type.io.Writer "".x  type.*"".Index Bğ‰ïğ„ïğèïğvïğ" ° f”,+I hVkF		 0 +l…l”7„" TgclocalsÂ·d8767409aac2af1777d6b6ce57947138 TgclocalsÂ·0fd490cfd4eedad0805335b9926e99c4   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş""".(*Index).Bytes  €  ôeH‹%    H;avdHƒìH‹\$H‰$è    1ÛH‰\$H‰\$ H‰\$(H‹\$H‰$è    H‹\$Hƒû t$H‹+H‰l$H‹kH‰l$ H‹kH‰l$(è    HƒÄÃ‰ëØè    ë†
+
+      :
+  *runtime.racefuncenter   x
+   runtime.raceread   Ì
+  (runtime.racefuncexit   è
+  0runtime.morestack_noctxt   @  "".~r0 type.[]uint8 "".x  type.*"".Index [ € ÌA  I TgclocalsÂ·2b53cab6ed88a45a0ffa0fc99b8ff7b1 TgclocalsÂ·69c1753bd5f81501d95132d08af04464   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş"".(*Index).at     ŠeH‹%    H;a†(  Hƒì@H‹\$@H‰$è    1ÛH‰\$XH‰\$`H‰\$hH‹\$HH‰$Hƒ$è    H‹\$HH‹KH‹C H‹k(H‰l$ H‰L$H‹l$PH‰D$H9Åƒ½   HéH‰$è    H‹T$HHƒú „š   H‹JH‹B H‹j(H‰l$ H‰L$H‹l$PH‰D$H9ÅsnHéH‹+H‰l$H‰$è    H‹\$HH‹l$L‹CL‹KL9Åw;L‹I)èI)éIƒù tM*L‰T$(L‰T$XL‰D$0L‰D$`L‰L$8L‰L$hè    HƒÄ@Ãè    è    ‰é_ÿÿÿè    è    é»şÿÿ
+      B
+  *runtime.racefuncenter   Š
+   runtime.raceread   €
+   runtime.raceread   ’
+   runtime.raceread   ¬
+  (runtime.racefuncexit   À
+  $runtime.panicslice   Î
+  $runtime.panicindex   ê
+  $runtime.panicindex   ø
+  0runtime.morestack_noctxt   P€  
+"".autotmp_0148 /type.[]uint8 "".autotmp_0147 otype.int "".~r1  type.[]uint8 "".i type.int "".x  type.*"".Index €‡€1 Ğ Ô6ß!   õ
+1 TgclocalsÂ·21012e18a2c9288476efc55b2fa11dc8 TgclocalsÂ·ae0a20890c9ac6bfbea3383f34532bab   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş*"".(*Index).lookupAll  €
+  €
+eH‹%    HD$ĞH;A†^  Hì°   H‹œ$°   H‰$è    1ÛH‰œ$Ø   H‰œ$à   H‰œ$è   H‹œ$¸   H‰$Hƒ$è    H‹„$¸   H‹h H‰l$(HD$XH‰D$8H‰$è    H‹D$8H-    H‰(H‰$Hƒ$è    H‹D$8H‹¬$¸   H‰hH‰$Hƒ$è    H‹D$8H‹¬$À   H‰hH‹¬$È   H‰hH‹¬$Ğ   H‰h H‹\$(H‰$H‰D$è    H‹\$H‰\$ H‹œ$¸   H‰$Hƒ$è    H‹„$¸   H‹h H‰l$(H„$€   H‰D$0H‰$è    H‹D$0H-    H‰(H‰$Hƒ$è    H‹D$0H‹¬$¸   H‰hH‰$Hƒ$è    H‹D$0H‹l$ H‰hH‰$Hƒ$è    H‹D$0H‹¬$À   H‰hH‹¬$È   H‰h H‹¬$Ğ   H‰h(H‹\$(H‹l$ H)ëH‰$H‰D$è    H‹D$H‹\$ HÃH‰\$H‹œ$¸   H‰$Hƒ$è    H‹œ$¸   H‹l$ L‹D$L‹K(M9ÈwML9ÅwHL‹SI)èI)éIƒù tMêL‰T$@L‰”$Ø   L‰D$HL‰„$à   L‰L$PL‰Œ$è   è    HÄ°   Ãè    è    é€ıÿÿ&
+      X
+  *runtime.racefuncenter   ¸
+   runtime.raceread   €
+  "runtime.racewrite   ˜  6"".(*Index).lookupAll.func1   º
+  "runtime.racewrite   ø
+  "runtime.racewrite   ğ
+  sort.Search   °
+   runtime.raceread   ş
+  "runtime.racewrite   –  6"".(*Index).lookupAll.func2   ¸
+  "runtime.racewrite   ö
+  "runtime.racewrite   ®
+  "runtime.racewrite   ¶
+  sort.Search   †
+   runtime.raceread   Æ	
+  (runtime.racefuncexit   à	
+  $runtime.panicslice   î	
+  0runtime.morestack_noctxt   pà  "".autotmp_0159 ÿrtype.*struct { F uintptr; x *"".Index; i int; s []uint8 } "".autotmp_0158 ïdtype.*struct { F uintptr; x *"".Index; s []uint8 } "".autotmp_0157 ßtype.[]int "".autotmp_0156  type.int "".autotmp_0155 _ptype.struct { F uintptr; x *"".Index; i int; s []uint8 } "".autotmp_0154  type.int "".autotmp_0152 ¯btype.struct { F uintptr; x *"".Index; s []uint8 } "".autotmp_0151 type.int "".j ¯type.int "".i Ÿtype.int "".~r1 @type.[]int "".s type.[]uint8 "".x  type.*"".Index àÏßà € $àJ¼ëq
+ , +Tx 'œ(`
+	 TgclocalsÂ·da65bcf9f79ff617a50a1d54dba5dd07 TgclocalsÂ·5f2546e3af3cdbd9ea2966ba2753ea22   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş$"".(*Index).Lookup  à  ÜeH‹%    H;a†Q  HƒìXH‹\$XH‰$è    H‹L$p1Û1ÛH‰œ$ˆ   H‰œ$   H‰œ$˜   Hƒù   H‹œ$€   Hƒû „   H‹\$`H‰$H‹\$hH‰\$H‰L$H‹\$xH‰\$è    H‹„$€   H‹l$ H‹T$(H‹L$0H‰l$@H‰L$PHƒø Œ¡   H‰T$HH9ÂŒ“   H‰„$€   Hƒø ~{H    H‰$H‰D$H‰D$è    H‹T$H‹L$ H‹D$(H‰”$ˆ   H‰$H‰Œ$   H‰L$H‰„$˜   H‰D$H‹\$@H‰\$H‹\$HH‰\$ H‹\$PH‰\$(HÇD$0   è    è    HƒÄXÃH‰T$HH‰Ğé`ÿÿÿëçè    é’şÿÿ
+      B
+  *runtime.racefuncenter   Š
+  *"".(*Index).lookupAll   ¦  type.[]int   Ì
+  "runtime.makeslice   
+  "runtime.slicecopy   ˜
+  (runtime.racefuncexit   Ê
+  0runtime.morestack_noctxt   €°  "".autotmp_0164  type.[]int "".matches /type.[]int "".result Ptype.[]int "".n @type.int "".s type.[]uint8 "".x  type.*"".Index °½¯° ğ <şH)R
+
+   daa* TgclocalsÂ·f7d8c02721832014d6c6e58d5e8ee8db TgclocalsÂ·6a4444e4a85012543d2e518ab4547038   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş0"".(*Index).FindAllIndex  à1  Ş1eH‹%    H„$ˆşÿÿH;A†J  Hìø  H‹œ$ø  H‰$è    1Û1ÛH‰œ$  H‰œ$   H‰œ$(  H‹„$  1ÛH‰œ$ğ   H‰œ$ø   H‰„$È   H‰$Hƒ$Hè    H‹„$È   ¶hH@ˆl$GH‰$Hƒ$ è    H‹„$È   Hƒø „®  H‹P H‹h(¶D$GH‰”$ğ   H‰¬$ø   H‰”$  H‰¬$  ˆD$FHœ$¨   H‰$H‰”$   H‰T$H‰¬$  H‰l$è    H‹\$H‰œ$P  H‹\$ H‰œ$X  H‹\$(H‰œ$`  H‹œ$  Hƒû …   H‹œ$   H‰$è    H‹œ$  H‰$H‹´$   H|$H‹H‰H‹NH‰OH‹NH‰OH‹œ$  H‰\$ è    H‹T$(H‹L$0H‹D$8H‰”$à  H‰”$  H‰Œ$è  H‰Œ$   H‰„$ğ  H‰„$(  è    HÄø  Ã€|$F „š  H‹„$  H‹œ$   H‰$H‹œ$P  H‰\$H‹œ$X  H‰\$H‹œ$`  H‰\$H‰D$`H‰D$ è    H‹l$(H‹D$0H‹T$8H‰¬$h  H‰”$x  H‰„$p  Hƒø uè    HÄø  ÃH‰,$H‰D$H‰T$è    H‹„$p  HÑàH    H‰$H‰D$H‰D$è    H‹T$H‹L$ H‹D$(H‰”$   H‰Œ$(  H‰„$0  H‹„$p  H    H‰$H‰D$H‰D$è    H‹T$H‹L$ H‹D$(H‰”$  H‰Œ$   H‰„$(  1ÉH‰Œ$€   HÇD$H    H‹¬$h  H‹„$p  H‹œ$x  H‰œ$Ø  1ÒH‰„$Ğ  H‰„$   H‰¬$È  H‰èH‰”$˜   H‹¬$   H9ê}5H‰„$Ø   H‰$è    H‹Œ$€   H‹œ$Ø   H‹H‹¬$  H9é…   H‹¬$(  H9éwzH‹¬$  H‰ÊH9é}5H‹œ$p  H‹l$`H9ëu#H‹L$`H‰”$   H‹„$  H)ĞHÑàHÈéğıÿÿH‰”$   Hƒú u1ÛH‰œ$  H‰œ$   H‰œ$(  è    HÄø  Ãè    H‹\$HH‰D$pH9ÃÖ  H‰ÈHÑàH‰D$hH‹œ$   HƒÀ H‰„$    L‹„$(  L9Àƒü  HÃH‰$è    H‹”$   H‹Œ$(  H‹¬$    H9ÍƒÇ  HêH‹l$pH‰+H‹œ$X  H‰œ$    H‹D$hHÿÀH‰„$ˆ   H9Èƒ‹  HÂH‰$è    H‹”$   H‹L$hH‹¬$ˆ   L‹„$(  L9ÅƒQ  HêH‹l$pL‹„$    LÅH‰+L‹„$0  H‰ÍHƒÅL9Å‡  H9é‡  H)ÍI)ÈI‰ÑIƒø tMÉH‰¬$¸  L‰„$À  L‰Œ$°  H‹œ$  H‹¬$€   L‹„$   L9Åƒ¿   HkíHëH‰$è    H‹œ$  H‹¬$€   L‹„$   L9Åƒ‡   HkíHëH‹¬$¸  H‰kH‹¬$À  H‰kH‹¬$°  €=     uGH‰+H‹Œ$€   HÿÁH‰Œ$€   H‹„$X  H‹\$pHÃH‰\$HH‹„$Ø   H‹”$˜   HƒÀHÿÂé#ıÿÿH‰$H‰l$è    ë¬è    è    è    è    è    è    è    H‹„$  1ÛH‰œ$à   H‰œ$è   H‰„$Ğ   H‰$è    H‹œ$Ğ   Hƒû „’  H‹H‹kHÇ$    H    H‰\$HÇD$   H‰Œ$à   H‰L$H‰¬$è   H‰l$ è    H\$(H‹H‰$H‹KH‰L$è    H‹\$H‰œ$  H‹„$  H‹œ$   H‰$H‹œ$P  H‰\$H‹œ$X  H‰\$H‹œ$`  H‰\$H‰D$XH‰D$ è    H‹l$(H‹D$0H‹T$8H‰¬$€  H‰”$  H‰„$ˆ  Hƒø uè    HÄø  ÃH‰,$H‰D$H‰T$è    H‹œ$(  HÇ„$       HÇD$P    H‹”$€  H‹„$ˆ  H‹œ$  H‰œ$Ø  1ÉH‰„$Ğ  H‰„$    H‰”$È  H‰ĞH‰Œ$˜   H‹¬$    H9é}:H‰„$Ø   H‰$è    H‹œ$Ø   H‹+H‰l$xH‹œ$   H‹¬$  H9ë…‚   H‹œ$   H‹¬$  H9ë}8H‹œ$ˆ  H‹l$XH9ëu&H‹D$XH‹Œ$   H‹œ$  H)ËHÑãHÃH‰Øé{şÿÿH‹œ$   Hƒû u1ÛH‰œ$  H‰œ$   H‰œ$(  è    HÄø  ÃH‹œ$   H‰$è    H‹œ$   H‹l$xL‹CL‹KL9Å‡0  L‹I)èI)éIƒù tM*H‹œ$  H‰$L‰”$˜  L‰T$L‰„$   L‰D$L‰Œ$¨  L‰L$è    H‹D$ H‹T$(H‹L$0H‰”$@  H‰Œ$H  H‰„$8  Hƒø „F  H‹\$PH‹l$xH9ë3  Hƒú †  H‰$è    H‹Œ$8  H‹„$@  Hƒø †f  H‹l$xH‰)H‰ËHƒø†J  HƒÃH‰$è    H‹Œ$8  H‹„$@  H‰ËHƒø†  HƒÃH‹+H‰¬$   H‰ËHƒø†ö  HƒÃH‰$è    H‹œ$8  Hƒ¼$@  †Ë  H‹¬$   L‹D$xHƒÃLÅH‰+H‹”$  H‹„$   H‹Œ$(  H‰ËH)ÃHƒû}QH    H‰$H‰”$à  H‰T$H‰D$H‰Œ$ğ  H‰L$H‰ÃH‰„$è  HÿÃH‰\$ è    H‹T$(H‹D$0H‹L$8H‰ÃHÿÃH‰Œ$ğ  H9Ë‡!  H‰œ$è  H‰ÓH‰”$à  H‰ÅH‰„$ˆ   HkíHëH‰$è    H‹œ$à  H‹¬$ˆ   HkíHëH‹¬$@  H‰kH‹¬$H  H‰kH‹¬$8  €=     …œ   H‰+H‹œ$à  H‰œ$  H‹œ$è  H‰œ$   H‹œ$ğ  H‰œ$(  H‹œ$8  Hƒ¼$@  vOHƒÃH‰$è    H‹œ$8  Hƒ¼$@  v(HƒÃH‹+H‰l$PH‹„$Ø   H‹Œ$˜   HƒÀHÿÁé"üÿÿè    è    H‰$H‰l$è    éTÿÿÿè    è    è    è    è    è    è    è    ‰égúÿÿ‰ éKôÿÿè    é‘óÿÿz
+      ^
+  *runtime.racefuncenter   ö
+   runtime.raceread   ´
+   runtime.raceread   
+  2runtime.stringtoslicebyte   ¤
+   runtime.raceread   ¦
+  :regexp.(*Regexp).FindAllIndex   ®
+  (runtime.racefuncexit   è
+  $"".(*Index).Lookup   Ì	
+  (runtime.racefuncexit   ‚
+
+  sort.Ints   ¦
+  type.[]int   Ì
+
+  "runtime.makeslice   ¸  type.[][]int   Ş
+  "runtime.makeslice   ˜
+   runtime.raceread   Ş
+  (runtime.racefuncexit   ø
+  $runtime.panicslice   œ
+  "runtime.racewrite   â
+  "runtime.racewrite   Ö
+  "runtime.racewrite   ò 6runtime.writeBarrierEnabled   ¢
+  .runtime.writebarrierptr   °
+  $runtime.panicindex   ¾
+  $runtime.panicindex   Ì
+  $runtime.panicslice   Ú
+  $runtime.panicindex   è
+  $runtime.panicindex   ö
+  $runtime.panicindex   „
+  $runtime.panicindex   Ş
+   runtime.raceread   ®  go.string."^"   ˆ
+  *runtime.concatstring2   ¼
+  $regexp.MustCompile   ê
+  $"".(*Index).Lookup   Î
+  (runtime.racefuncexit   „
+  sort.Ints   „!
+   runtime.raceread   Ê#
+  (runtime.racefuncexit   ü#
+   runtime.raceread   Î%
+  4regexp.(*Regexp).FindIndex   ü&
+  "runtime.racewrite   ô'
+   runtime.raceread   €)
+  "runtime.racewrite   ²*  type.[][]int   ¨+
+  "runtime.growslice   Ğ,
+  "runtime.racewrite   Ê- 6runtime.writeBarrierEnabled   ş.
+   runtime.raceread   ş/
+  $runtime.panicindex   Œ0
+  $runtime.panicindex   ¬0
+  .runtime.writebarrierptr   À0
+  $runtime.panicslice   Î0
+  $runtime.panicindex   Ü0
+  $runtime.panicindex   ê0
+  $runtime.panicindex   ø0
+  $runtime.panicindex   †1
+  $runtime.panicindex   ”1
+  $runtime.panicindex   ¢1
+  $runtime.panicslice   Ì1
+  0runtime.morestack_noctxt   `ğ  "".autotmp_0213  type.int "".autotmp_0212  type.[][]int "".autotmp_0211  type.int "".autotmp_0210  type.*int "".autotmp_0209  type.int "".autotmp_0208  type.int "".autotmp_0207  type.int "".autotmp_0206 ßtype.int "".autotmp_0205  type.int "".autotmp_0204  type.int "".autotmp_0203 ¿type.*int "".autotmp_0202  type.int "".autotmp_0201  type.int "".autotmp_0200  type.int "".autotmp_0199 Ïtype.int "".autotmp_0198 Ÿtype.[32]uint8 "".autotmp_0197 Ïtype.string "".autotmp_0196 átype.bool "".autotmp_0195  type.int "".autotmp_0194  type.int "".autotmp_0193  type.int "".autotmp_0192  type.int "".autotmp_0191  type.int "".autotmp_0190  type.int "".autotmp_0189  type.[]int "".autotmp_0188 ¿type.[]uint8 "".autotmp_0187  type.int "".autotmp_0186  type.[]int "".autotmp_0185  type.int "".autotmp_0184  type.[]int "".autotmp_0182  type.int "".autotmp_0181 ¿type.int "".autotmp_0180 ¯type.int "".autotmp_0179  type.int "".autotmp_0178  type.int "".autotmp_0177  type.int "".autotmp_0176  type.int "".autotmp_0175 type.[]int "".autotmp_0174  type.int "".autotmp_0173  type.int "".autotmp_0172  type.[]int "".autotmp_0171  type.[][]int "".autotmp_0170  type.int "".autotmp_0169  type.[]int "".autotmp_0168  type.int "".autotmp_0167  type.int "".autotmp_0166 _type.[]int "".autotmp_0165 /type.[][]int "".~r0 ¯type.string regexp.reÂ·2 Ï&type.*regexp.Regexp  regexp.prefixÂ·1 type.string regexp.reÂ·3 ß&type.*regexp.Regexp "".m ÿtype.[]int "".i ÿtype.int "".prev Ïtype.int "".indices ïtype.[]int 
+"".n1 ¿type.int "".j Ÿtype.int "".i type.int "".prev ßtype.int "".count ïtype.int "".pairs ¯type.[]int "".indices Ÿtype.[]int 
+"".n1 ¯type.int "".lit Ïtype.[]uint8 "".complete ãtype.bool "".prefix ïtype.string "".result 0type.[][]int "".n  type.int "".r &type.*regexp.Regexp "".x  type.*"".Index T"ğÀïğïğÈïğ÷ïğ½ïğÿ ğ Öª"¼»’R‘¬«
+aLI
+	v1<TOdsÑ0§a85	s')!4#™%5±?s – .LJ…]2n£R¦WU	£€£À–T—@
+Q TgclocalsÂ·07646620225c7c896189cf50eafcc499 TgclocalsÂ·74fa18bfa8c61fe9e4d09a58bc8c7738   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş6"".(*Index).lookupAll.func1     šeH‹%    HD$øH;A†«  Hìˆ   H‹œ$ˆ   H‰$è    H‹BHZH‰\$PH‹œ$   H‰\$81ÛH‰\$XH‰\$`H‰\$hH‰D$HH‰$Hƒ$è    H‹\$HH‹KH‹C H‹k(H‰¬$€   H‰L$pH‹l$8H‰D$xH9Åƒ  HéH‰$è    H‹T$HHƒú „ú   H‹JH‹B H‹j(H‰¬$€   H‰L$pH‹l$8H‰D$xH9ÅƒÇ   HéH‹+H‰l$@H‰$è    H‹\$HH‹l$@L‹CL‹KL9Å‡   L‹I)èI)éIƒù tM*L‰T$XL‰D$`L‰L$hH‹\$PH‰$è    H‹\$XH‰$H‹\$`H‰\$H‹\$hH‰\$H‹t$PH|$H‹H‰H‹NH‰OH‹NH‰Oè    H‹\$0Hƒû „$˜   è    HÄˆ   Ãè    è    ‰éÿşÿÿè    è    é3şÿÿ
+      X
+  *runtime.racefuncenter   Ô
+   runtime.raceread   Ğ
+   runtime.raceread   ğ
+   runtime.raceread   †
+   runtime.raceread   Š
+  bytes.Compare   ¶
+  (runtime.racefuncexit   Ğ
+  $runtime.panicslice   Ş
+  $runtime.panicindex   ú
+  $runtime.panicindex   ˆ
+  "runtime.morestack      "".autotmp_0216  type.int "".autotmp_0214 type.int 
+"".&s otype.*[]uint8 "".~r1 _type.[]uint8 "".i Ÿtype.int "".x type.*"".Index "".~r1 type.bool "".i  type.int ‡) Ğ 
+æĞ  +>ÙBL TgclocalsÂ·8edb5632446ada37b0a930d010725cc5 TgclocalsÂ·34002cdc822f0f78e921f91762c2ece3   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş6"".(*Index).lookupAll.func2  À  ¬eH‹%    HD$øH;A†´  Hìˆ   H‹œ$ˆ   H‰$è    H‹JH‹BHZH‰\$PH‹œ$   HÃH‰\$81ÛH‰\$XH‰\$`H‰\$hH‰L$HH‰$Hƒ$è    H‹\$HH‹KH‹C H‹k(H‰¬$€   H‰L$pH‹l$8H‰D$xH9Åƒ  HéH‰$è    H‹T$HHƒú „ü   H‹JH‹B H‹j(H‰¬$€   H‰L$pH‹l$8H‰D$xH9ÅƒÉ   HéH‹+H‰l$@H‰$è    H‹\$HH‹l$@L‹CL‹KL9Å‡’   L‹I)èI)éIƒù tM*L‰T$XL‰D$`L‰L$hH‹\$PH‰$è    H‹\$XH‰$H‹\$`H‰\$H‹\$hH‰\$H‹t$PH|$H‹H‰H‹NH‰OH‹NH‰Oè    ¶\$0H‰ØHƒğˆ„$˜   è    HÄˆ   Ãè    è    ‰éışÿÿè    è    é*şÿÿ
+      X
+  *runtime.racefuncenter   â
+   runtime.raceread   Ş
+   runtime.raceread   ş
+   runtime.raceread   ”
+   runtime.raceread   ˜
+  bytes.HasPrefix   È
+  (runtime.racefuncexit   â
+  $runtime.panicslice   ğ
+  $runtime.panicindex   Œ
+  $runtime.panicindex   š
+  "runtime.morestack      "".autotmp_0222 type.int "".autotmp_0219  type.int 
+"".&s otype.*[]uint8 "".~r1 _type.[]uint8 "".i Ÿtype.int "".x type.*"".Index "".~r1 type.bool "".j  type.int 0 à 
+êà  +EÙBU TgclocalsÂ·8edb5632446ada37b0a930d010725cc5 TgclocalsÂ·34002cdc822f0f78e921f91762c2ece3   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş"".init     ˆeH‹%    H;a†§   HƒìH‹\$H‰$è    H    H‰$è    ¶    €û t-H    H‰$è    ¶    €ûu
+è    HƒÄÃè    H    H‰$è    Æ    è    è    è    è    H    H‰$è    Æ    è    HƒÄÃè    é<ÿÿÿ,
+      B
+  *runtime.racefuncenter   P  "".initdoneÂ·   b
+   runtime.raceread   p  "".initdoneÂ·   ˆ  "".initdoneÂ·   š
+   runtime.raceread   ¨  "".initdoneÂ·   ¼
+  (runtime.racefuncexit   Ğ
+  "runtime.throwinit   â  "".initdoneÂ·   ô
+  "runtime.racewrite   € "".initdoneÂ·   Œ
+  bytes.init   –
+  (encoding/binary.init    
+  io.init   ª
+  regexp.init   ¸  "".initdoneÂ·   Ê
+  "runtime.racewrite   Ö "".initdoneÂ·   â
+  (runtime.racefuncexit   ö
+  0runtime.morestack_noctxt       OR Ğ 
+èĞ   ° TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb TgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb   xprebuilts/go/darwin-x86/src/index/suffixarray/suffixarray.goş0Rgo.itab.*"".suffixSortable.sort.Interface     şTgclocalsÂ·80aba4d13b10726284fc7e7e147429c7 P  P                    ’   ‘   ‘  “    şTgclocalsÂ·097544c997b941cb246e5f380c2e23a2 P  P         	                      şTgclocalsÂ·f7f8ba5c7a0c127dd1cfa57531cff94f 0  0                     şTgclocalsÂ·c90732fb32a7ce452761105e8d7958f3 0  0               	    şTgclocalsÂ·ad3d78e88c381598810f2e82f373ef66 (  (                  şTgclocalsÂ·898f75077cb3b54d25daffb066f078bb (  (   	   	   	   I    şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·3f5c1f818fa7055d0400cecd34057162             şTgclocalsÂ·790e5cc5051fc0affc980ade09e929ec              şTgclocalsÂ·2fccd208efe70893f9ac8d682812ae72             şTgclocalsÂ·4d7e2f2b65aabfd0a399848e4ebdd633                   şTgclocalsÂ·41a13ac73c712c01973b8fe23f62d694                  şTgclocalsÂ·60ceac1471402b697d1b0fe63a5b6afc 0  0   
+          €       şTgclocalsÂ·a8402fb913afde093f7818dc5c2d5fd9 0  0                   şTgclocalsÂ·85b708e0eb749713cb73a30a27c2999c 8  8                        şTgclocalsÂ·54ff167eef3fff137a02137a3c415ca8 8  8                  	    şTgclocalsÂ·98a935522f11e180b06d5a082b7d09c1                    şTgclocalsÂ·d2fd9951e910becfd07ba7f8ff7b525a              Ç    şTgclocalsÂ·0a8e3a7f71deedbd60c8b6584164e6e5 (  (                  şTgclocalsÂ·e36305944813a816e7fbf8df92997170 (  (            Ç    şTgclocalsÂ·ad3d78e88c381598810f2e82f373ef66 (  (                  şTgclocalsÂ·8076dc23cf0ef12ac27519222ea6e1b2 (  (      '   '   '   şTgclocalsÂ·f56b2291fa344104975cb6587be42b9b                    şTgclocalsÂ·7da491bed879ae28a38cf74b3979e6d0           '   '   şTgclocalsÂ·0bd70126730c10b7c886c7a75b7e86eb @  @                  ‚     @   şTgclocalsÂ·7b2969cfd8757edd42005f830036b96e @  @                         şTgclocalsÂ·0fd490cfd4eedad0805335b9926e99c4 0  0                 @   şTgclocalsÂ·d8767409aac2af1777d6b6ce57947138 0  0                   şTgclocalsÂ·69c1753bd5f81501d95132d08af04464           şTgclocalsÂ·2b53cab6ed88a45a0ffa0fc99b8ff7b1                  şTgclocalsÂ·ae0a20890c9ac6bfbea3383f34532bab                    şTgclocalsÂ·21012e18a2c9288476efc55b2fa11dc8                  şTgclocalsÂ·5f2546e3af3cdbd9ea2966ba2753ea22 @  @          Â   À   (   (       şTgclocalsÂ·da65bcf9f79ff617a50a1d54dba5dd07 @  @                         şTgclocalsÂ·6a4444e4a85012543d2e518ab4547038 (  (                  şTgclocalsÂ·f7d8c02721832014d6c6e58d5e8ee8db (  (         #       ş"go.string.hdr."^"                       go.string."^"   şgo.string."^"   ^  şTgclocalsÂ·74fa18bfa8c61fe9e4d09a58bc8c7738 €  €   &                  €                                                     ‚      ‚     @‚     @‚     @‚     şTgclocalsÂ·07646620225c7c896189cf50eafcc499 ˆ  ˆ                                                    şTgclocalsÂ·34002cdc822f0f78e921f91762c2ece3 (  (                 şTgclocalsÂ·8edb5632446ada37b0a930d010725cc5 (  (                   şTgclocalsÂ·34002cdc822f0f78e921f91762c2ece3 (  (                 şTgclocalsÂ·8edb5632446ada37b0a930d010725cc5 (  (                   şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           şTgclocalsÂ·33cdeccccebe80329f1fdbee7f5874cb           ş0"".initdoneÂ·  type.uint8   ş"".qsufsortÂ·f              "".qsufsort   ş."".sortedByFirstByteÂ·f              ("".sortedByFirstByte   ş "".initGroupsÂ·f              "".initGroups   ş6"".(*suffixSortable).LenÂ·f              0"".(*suffixSortable).Len   ş8"".(*suffixSortable).LessÂ·f              2"".(*suffixSortable).Less   ş8"".(*suffixSortable).SwapÂ·f              2"".(*suffixSortable).Swap   şH"".(*suffixSortable).updateGroupsÂ·f              B"".(*suffixSortable).updateGroups   ş"".NewÂ·f              "".New   ş"".writeIntÂ·f              "".writeInt   ş"".readIntÂ·f              "".readInt   ş "".writeSliceÂ·f              "".writeSlice   ş"".readSliceÂ·f              "".readSlice   ş&"".(*Index).ReadÂ·f               "".(*Index).Read   ş("".(*Index).WriteÂ·f              """.(*Index).Write   ş("".(*Index).BytesÂ·f              """.(*Index).Bytes   ş""".(*Index).atÂ·f              "".(*Index).at   ş0"".(*Index).lookupAllÂ·f              *"".(*Index).lookupAll   ş*"".(*Index).LookupÂ·f              $"".(*Index).Lookup   ş6"".(*Index).FindAllIndexÂ·f              0"".(*Index).FindAllIndex   ş<"".(*Index).lookupAll.func1Â·f              6"".(*Index).lookupAll.func1   ş<"".(*Index).lookupAll.func2Â·f              6"".(*Index).lookupAll.func2   ş"".initÂ·f              "".init   ş"runtime.gcbits.01    ş*go.string.hdr."[]int"                       "go.string."[]int"   ş"go.string."[]int"   []int  ştype.[]int                   fù                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  *go.string.hdr."[]int"   p  &go.weak.type.*[]int   €  "runtime.zerovalue     type.int   ş.go.typelink.[]int	[]int              type.[]int   şVgo.string.hdr."*suffixarray.suffixSortable"                       Ngo.string."*suffixarray.suffixSortable"   şNgo.string."*suffixarray.suffixSortable" @  8*suffixarray.suffixSortable  şjgo.string.hdr."func(*suffixarray.suffixSortable) int"             %          bgo.string."func(*suffixarray.suffixSortable) int"   şbgo.string."func(*suffixarray.suffixSortable) int" P  Lfunc(*suffixarray.suffixSortable) int  şBtype.func(*"".suffixSortable) int                   3ı˜Ä 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  jgo.string.hdr."func(*suffixarray.suffixSortable) int"   p  Tgo.weak.type.*func(*"".suffixSortable) int   €  "runtime.zerovalue    € Btype.func(*"".suffixSortable) int   Ğ Btype.func(*"".suffixSortable) int   €  .type.*"".suffixSortable     type.int   şœgo.typelink.func(*suffixarray.suffixSortable) int	func(*"".suffixSortable) int              Btype.func(*"".suffixSortable) int   ş€go.string.hdr."func(*suffixarray.suffixSortable, int, int) bool"             0          xgo.string."func(*suffixarray.suffixSortable, int, int) bool"   şxgo.string."func(*suffixarray.suffixSortable, int, int) bool" p  bfunc(*suffixarray.suffixSortable, int, int) bool  şXtype.func(*"".suffixSortable, int, int) bool À  À              Ù³›a 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  €go.string.hdr."func(*suffixarray.suffixSortable, int, int) bool"   p  jgo.weak.type.*func(*"".suffixSortable, int, int) bool   €  "runtime.zerovalue    € Xtype.func(*"".suffixSortable, int, int) bool   Ğ° Xtype.func(*"".suffixSortable, int, int) bool   €  .type.*"".suffixSortable     type.int      type.int   °  type.bool   şÈgo.typelink.func(*suffixarray.suffixSortable, int, int) bool	func(*"".suffixSortable, int, int) bool              Xtype.func(*"".suffixSortable, int, int) bool   şvgo.string.hdr."func(*suffixarray.suffixSortable, int, int)"             +          ngo.string."func(*suffixarray.suffixSortable, int, int)"   şngo.string."func(*suffixarray.suffixSortable, int, int)" `  Xfunc(*suffixarray.suffixSortable, int, int)  şNtype.func(*"".suffixSortable, int, int) °  °              )ğœ 3                                                                                                                              0€  runtime.algarray   @  "runtime.gcbits.01   P  vgo.string.hdr."func(*suffixarray.suffixSortable, int, int)"   p  `go.weak.type.*func(*"".suffixSortable, int, int)   €  "runtime.zerovalue    € Ntype.func(*"".suffixSortable, int, int)   Ğ° Ntype.func(*"".suffixSortable, int, int)   €  .type.*"".suffixSortable     type.int      type.int   ş´go.typelink.func(*suffixarray.suffixSortable, int, int)	func(*"".suffixSortable, int, int)              Ntype.func(*"".suffixSortable, int, int)   şlgo.string.hdr."func(*suffixarray.suffixSortable, int)"             &          dgo.string."func(*suffixarray.suffixSortable, int)"   şdgo.string."func(*suffixarray.suffixSortable, int)" P  Nfunc(*suffixarray.suffixSortable, int)  şDtype.func(*"".suffixSortable, int)                   ëš- 3                                                                                                                      0€  runtime.algarray   @  "runtime.gcbits.01   P  lgo.string.hdr."func(*suffixarray.suffixSortable, int)"   p  Vgo.weak.type.*func(*"".suffixSortable, int)   €  "runtime.zerovalue    € Dtype.func(*"".suffixSortable, int)   Ğ  Dtype.func(*"".suffixSortable, int)   €  .type.*"".suffixSortable     type.int   ş go.typelink.func(*suffixarray.suffixSortable, int)	func(*"".suffixSortable, int)              Dtype.func(*"".suffixSortable, int)   ş&go.string.hdr."Len"                       go.string."Len"   şgo.string."Len"   Len  ş4go.string.hdr."func() int"             
+          ,go.string."func() int"   ş,go.string."func() int"    func() int  ştype.func() int                 å†9à 3                                                                                                              0€  runtime.algarray   @  "runtime.gcbits.01   P  4go.string.hdr."func() int"   p  0go.weak.type.*func() int   €  "runtime.zerovalue    € type.func() int   Ğ€ type.func() int   €  type.int   şBgo.typelink.func() int	func() int              type.func() int   ş(go.string.hdr."Less"                        go.string."Less"   ş go.string."Less"   
+Less  şFgo.string.hdr."func(int, int) bool"                       >go.string."func(int, int) bool"   ş>go.string."func(int, int) bool" 0  (func(int, int) bool  ş0type.func(int, int) bool °  °              ¢" 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  Fgo.string.hdr."func(int, int) bool"   p  Bgo.weak.type.*func(int, int) bool   €  "runtime.zerovalue    € 0type.func(int, int) bool   Ğ  0type.func(int, int) bool   €  type.int     type.int      type.bool   şfgo.typelink.func(int, int) bool	func(int, int) bool              0type.func(int, int) bool   ş(go.string.hdr."Swap"                        go.string."Swap"   ş go.string."Swap"   
+Swap  ş<go.string.hdr."func(int, int)"                       4go.string."func(int, int)"   ş4go.string."func(int, int)"    func(int, int)  ş&type.func(int, int)                   %Ç„ 3                                                                                                                      0€  runtime.algarray   @  "runtime.gcbits.01   P  <go.string.hdr."func(int, int)"   p  8go.weak.type.*func(int, int)   €  "runtime.zerovalue    € &type.func(int, int)   Ğ  &type.func(int, int)   €  type.int     type.int   şRgo.typelink.func(int, int)	func(int, int)              &type.func(int, int)   ş8go.string.hdr."updateGroups"                       0go.string."updateGroups"   ş0go.string."updateGroups"    updateGroups  şBgo.string.hdr."index/suffixarray"                       :go.string."index/suffixarray"   ş:go.string."index/suffixarray" 0  $index/suffixarray  ş"go.importpath."".                       :go.string."index/suffixarray"   ş2go.string.hdr."func(int)"             	          *go.string."func(int)"   ş*go.string."func(int)"    func(int)  ştype.func(int)                 „æñ 3                                                                                                              0€  runtime.algarray   @  "runtime.gcbits.01   P  2go.string.hdr."func(int)"   p  .go.weak.type.*func(int)   €  "runtime.zerovalue    € type.func(int)   Ğ type.func(int)   €  type.int   ş>go.typelink.func(int)	func(int)              type.func(int)   ş.type.*"".suffixSortable  ğ  ğ              Ê±- 6                                                                                                                                                                                                                                                                                              :0   runtime.algarray   @  "runtime.gcbits.01   P  Vgo.string.hdr."*suffixarray.suffixSortable"   p  @go.weak.type.**"".suffixSortable   €  "runtime.zerovalue     ,type."".suffixSortable   `  .type.*"".suffixSortable   Àğ .type.*"".suffixSortable   ğ  &go.string.hdr."Len"     type.func() int      Btype.func(*"".suffixSortable) int   °  0"".(*suffixSortable).Len   À  0"".(*suffixSortable).Len   Ğ  (go.string.hdr."Less"   ğ  0type.func(int, int) bool   €  Xtype.func(*"".suffixSortable, int, int) bool     2"".(*suffixSortable).Less      2"".(*suffixSortable).Less   °  (go.string.hdr."Swap"   Ğ  &type.func(int, int)   à  Ntype.func(*"".suffixSortable, int, int)   ğ  2"".(*suffixSortable).Swap   €  2"".(*suffixSortable).Swap     8go.string.hdr."updateGroups"      "go.importpath."".   °  type.func(int)   À  Dtype.func(*"".suffixSortable, int)   Ğ  B"".(*suffixSortable).updateGroups   à  B"".(*suffixSortable).updateGroups   ş"runtime.gcbits.89   ‰ şTgo.string.hdr."suffixarray.suffixSortable"                       Lgo.string."suffixarray.suffixSortable"   şLgo.string."suffixarray.suffixSortable" @  6suffixarray.suffixSortable  ş$go.string.hdr."sa"                       go.string."sa"   şgo.string."sa"   sa  ş&go.string.hdr."inv"                       go.string."inv"   şgo.string."inv"   inv  ş"go.string.hdr."h"                       go.string."h"   şgo.string."h"   h  ş&go.string.hdr."buf"                       go.string."buf"   şgo.string."buf"   buf  ş<go.string.hdr."suffixSortable"                       4go.string."suffixSortable"   ş4go.string."suffixSortable"    suffixSortable  ş,type."".suffixSortable  Ğ  ĞP       @       ë@4¶                                                                                                                                                                                      0                                       8                                               ,0à  runtime.algarray   @  "runtime.gcbits.89   P  Tgo.string.hdr."suffixarray.suffixSortable"   p  .type.*"".suffixSortable   €  "runtime.zerovalue   À ,type."".suffixSortable   À  $go.string.hdr."sa"   Ğ  "go.importpath."".   à  type.[]int     &go.string.hdr."inv"      "go.importpath."".   °  type.[]int   à  "go.string.hdr."h"   ğ  "go.importpath."".   €  type.int   °  &go.string.hdr."buf"   À  "go.importpath."".   Ğ  type.[]int   `€ ,type."".suffixSortable   €  <go.string.hdr."suffixSortable"     "go.importpath."".    Ğ ,type."".suffixSortable   ş.go.string.hdr."[]uint8"                       &go.string."[]uint8"   ş&go.string."[]uint8"   []uint8  ştype.[]uint8                   ß~.8                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  .go.string.hdr."[]uint8"   p  *go.weak.type.*[]uint8   €  "runtime.zerovalue     type.uint8   ş6go.typelink.[]uint8	[]uint8              type.[]uint8   ş$type..hashfunc2048                       ,runtime.memhash_varlen   ş type..eqfunc2048                       .runtime.memequal_varlen   ştype..alg2048                        $type..hashfunc2048      type..eqfunc2048   şruntime.gcbits.      ş0go.string.hdr."[256]int"                       (go.string."[256]int"   ş(go.string."[256]int"    [256]int  ştype.[256]int À  À               ¯æß ‘                                                                       0  type..alg2048   @  runtime.gcbits.   P  0go.string.hdr."[256]int"   p  ,go.weak.type.*[256]int   €  "runtime.zerovalue     type.int      type.[]int   ş:go.typelink.[256]int	[256]int              type.[256]int   şDgo.string.hdr."*suffixarray.Index"                       <go.string."*suffixarray.Index"   ş<go.string."*suffixarray.Index" 0  &*suffixarray.Index  ş`go.string.hdr."func(*suffixarray.Index) []uint8"                        Xgo.string."func(*suffixarray.Index) []uint8"   şXgo.string."func(*suffixarray.Index) []uint8" P  Bfunc(*suffixarray.Index) []uint8  ş8type.func(*"".Index) []uint8                   ¹lLÛ 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  `go.string.hdr."func(*suffixarray.Index) []uint8"   p  Jgo.weak.type.*func(*"".Index) []uint8   €  "runtime.zerovalue    € 8type.func(*"".Index) []uint8   Ğ 8type.func(*"".Index) []uint8   €  type.*"".Index     type.[]uint8   şˆgo.typelink.func(*suffixarray.Index) []uint8	func(*"".Index) []uint8              8type.func(*"".Index) []uint8   ş.go.string.hdr."[][]int"                       &go.string."[][]int"   ş&go.string."[][]int"   [][]int  ştype.[][]int                   >qã"                                                         0   runtime.algarray   @  "runtime.gcbits.01   P  .go.string.hdr."[][]int"   p  *go.weak.type.*[][]int   €  "runtime.zerovalue     type.[]int   ş6go.typelink.[][]int	[][]int              type.[][]int   şŠgo.string.hdr."func(*suffixarray.Index, *regexp.Regexp, int) [][]int"             5          ‚go.string."func(*suffixarray.Index, *regexp.Regexp, int) [][]int"   ş‚go.string."func(*suffixarray.Index, *regexp.Regexp, int) [][]int" p  lfunc(*suffixarray.Index, *regexp.Regexp, int) [][]int  şbtype.func(*"".Index, *regexp.Regexp, int) [][]int À  À              Y 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Šgo.string.hdr."func(*suffixarray.Index, *regexp.Regexp, int) [][]int"   p  tgo.weak.type.*func(*"".Index, *regexp.Regexp, int) [][]int   €  "runtime.zerovalue    € btype.func(*"".Index, *regexp.Regexp, int) [][]int   Ğ° btype.func(*"".Index, *regexp.Regexp, int) [][]int   €  type.*"".Index     &type.*regexp.Regexp      type.int   °  type.[][]int   şÜgo.typelink.func(*suffixarray.Index, *regexp.Regexp, int) [][]int	func(*"".Index, *regexp.Regexp, int) [][]int              btype.func(*"".Index, *regexp.Regexp, int) [][]int   şxgo.string.hdr."func(*suffixarray.Index, []uint8, int) []int"             ,          pgo.string."func(*suffixarray.Index, []uint8, int) []int"   şpgo.string."func(*suffixarray.Index, []uint8, int) []int" `  Zfunc(*suffixarray.Index, []uint8, int) []int  şPtype.func(*"".Index, []uint8, int) []int À  À              ï‹·# 3                                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  xgo.string.hdr."func(*suffixarray.Index, []uint8, int) []int"   p  bgo.weak.type.*func(*"".Index, []uint8, int) []int   €  "runtime.zerovalue    € Ptype.func(*"".Index, []uint8, int) []int   Ğ° Ptype.func(*"".Index, []uint8, int) []int   €  type.*"".Index     type.[]uint8      type.int   °  type.[]int   ş¸go.typelink.func(*suffixarray.Index, []uint8, int) []int	func(*"".Index, []uint8, int) []int              Ptype.func(*"".Index, []uint8, int) []int   şrgo.string.hdr."func(*suffixarray.Index, io.Reader) error"             )          jgo.string."func(*suffixarray.Index, io.Reader) error"   şjgo.string."func(*suffixarray.Index, io.Reader) error" `  Tfunc(*suffixarray.Index, io.Reader) error  şJtype.func(*"".Index, io.Reader) error °  °              H+. 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  rgo.string.hdr."func(*suffixarray.Index, io.Reader) error"   p  \go.weak.type.*func(*"".Index, io.Reader) error   €  "runtime.zerovalue    € Jtype.func(*"".Index, io.Reader) error   Ğ  Jtype.func(*"".Index, io.Reader) error   €  type.*"".Index     type.io.Reader      type.error   ş¬go.typelink.func(*suffixarray.Index, io.Reader) error	func(*"".Index, io.Reader) error              Jtype.func(*"".Index, io.Reader) error   şrgo.string.hdr."func(*suffixarray.Index, io.Writer) error"             )          jgo.string."func(*suffixarray.Index, io.Writer) error"   şjgo.string."func(*suffixarray.Index, io.Writer) error" `  Tfunc(*suffixarray.Index, io.Writer) error  şJtype.func(*"".Index, io.Writer) error °  °              ÚÂXf 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  rgo.string.hdr."func(*suffixarray.Index, io.Writer) error"   p  \go.weak.type.*func(*"".Index, io.Writer) error   €  "runtime.zerovalue    € Jtype.func(*"".Index, io.Writer) error   Ğ  Jtype.func(*"".Index, io.Writer) error   €  type.*"".Index     type.io.Writer      type.error   ş¬go.typelink.func(*suffixarray.Index, io.Writer) error	func(*"".Index, io.Writer) error              Jtype.func(*"".Index, io.Writer) error   şjgo.string.hdr."func(*suffixarray.Index, int) []uint8"             %          bgo.string."func(*suffixarray.Index, int) []uint8"   şbgo.string."func(*suffixarray.Index, int) []uint8" P  Lfunc(*suffixarray.Index, int) []uint8  şBtype.func(*"".Index, int) []uint8 °  °              ‹¾rs 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  jgo.string.hdr."func(*suffixarray.Index, int) []uint8"   p  Tgo.weak.type.*func(*"".Index, int) []uint8   €  "runtime.zerovalue    € Btype.func(*"".Index, int) []uint8   Ğ  Btype.func(*"".Index, int) []uint8   €  type.*"".Index     type.int      type.[]uint8   şœgo.typelink.func(*suffixarray.Index, int) []uint8	func(*"".Index, int) []uint8              Btype.func(*"".Index, int) []uint8   şngo.string.hdr."func(*suffixarray.Index, []uint8) []int"             '          fgo.string."func(*suffixarray.Index, []uint8) []int"   şfgo.string."func(*suffixarray.Index, []uint8) []int" P  Pfunc(*suffixarray.Index, []uint8) []int  şFtype.func(*"".Index, []uint8) []int °  °              Œ&Q 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  ngo.string.hdr."func(*suffixarray.Index, []uint8) []int"   p  Xgo.weak.type.*func(*"".Index, []uint8) []int   €  "runtime.zerovalue    € Ftype.func(*"".Index, []uint8) []int   Ğ  Ftype.func(*"".Index, []uint8) []int   €  type.*"".Index     type.[]uint8      type.[]int   ş¤go.typelink.func(*suffixarray.Index, []uint8) []int	func(*"".Index, []uint8) []int              Ftype.func(*"".Index, []uint8) []int   ş*go.string.hdr."Bytes"                       "go.string."Bytes"   ş"go.string."Bytes"   Bytes  ş<go.string.hdr."func() []uint8"                       4go.string."func() []uint8"   ş4go.string."func() []uint8"    func() []uint8  ş&type.func() []uint8                 Şio% 3                                                                                                              0€  runtime.algarray   @  "runtime.gcbits.01   P  <go.string.hdr."func() []uint8"   p  8go.weak.type.*func() []uint8   €  "runtime.zerovalue    € &type.func() []uint8   Ğ€ &type.func() []uint8   €  type.[]uint8   şRgo.typelink.func() []uint8	func() []uint8              &type.func() []uint8   ş8go.string.hdr."FindAllIndex"                       0go.string."FindAllIndex"   ş0go.string."FindAllIndex"    FindAllIndex  şbgo.string.hdr."func(*regexp.Regexp, int) [][]int"             !          Zgo.string."func(*regexp.Regexp, int) [][]int"   şZgo.string."func(*regexp.Regexp, int) [][]int" P  Dfunc(*regexp.Regexp, int) [][]int  şLtype.func(*regexp.Regexp, int) [][]int °  °              ‚–¹ 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  bgo.string.hdr."func(*regexp.Regexp, int) [][]int"   p  ^go.weak.type.*func(*regexp.Regexp, int) [][]int   €  "runtime.zerovalue    € Ltype.func(*regexp.Regexp, int) [][]int   Ğ  Ltype.func(*regexp.Regexp, int) [][]int   €  &type.*regexp.Regexp     type.int      type.[][]int   şgo.typelink.func(*regexp.Regexp, int) [][]int	func(*regexp.Regexp, int) [][]int              Ltype.func(*regexp.Regexp, int) [][]int   ş,go.string.hdr."Lookup"                       $go.string."Lookup"   ş$go.string."Lookup"   Lookup  şPgo.string.hdr."func([]uint8, int) []int"                       Hgo.string."func([]uint8, int) []int"   şHgo.string."func([]uint8, int) []int" @  2func([]uint8, int) []int  ş:type.func([]uint8, int) []int °  °              bR»ˆ 3                                                                                                                            0€  runtime.algarray   @  "runtime.gcbits.01   P  Pgo.string.hdr."func([]uint8, int) []int"   p  Lgo.weak.type.*func([]uint8, int) []int   €  "runtime.zerovalue    € :type.func([]uint8, int) []int   Ğ  :type.func([]uint8, int) []int   €  type.[]uint8     type.int      type.[]int   şzgo.typelink.func([]uint8, int) []int	func([]uint8, int) []int              :type.func([]uint8, int) []int   ş(go.string.hdr."Read"                        go.string."Read"   ş go.string."Read"   
+Read  şJgo.string.hdr."func(io.Reader) error"                       Bgo.string."func(io.Reader) error"   şBgo.string."func(io.Reader) error" 0  ,func(io.Reader) error  ş4type.func(io.Reader) error                   û&ë 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Jgo.string.hdr."func(io.Reader) error"   p  Fgo.weak.type.*func(io.Reader) error   €  "runtime.zerovalue    € 4type.func(io.Reader) error   Ğ 4type.func(io.Reader) error   €  type.io.Reader     type.error   şngo.typelink.func(io.Reader) error	func(io.Reader) error              4type.func(io.Reader) error   ş*go.string.hdr."Write"                       "go.string."Write"   ş"go.string."Write"   Write  şJgo.string.hdr."func(io.Writer) error"                       Bgo.string."func(io.Writer) error"   şBgo.string."func(io.Writer) error" 0  ,func(io.Writer) error  ş4type.func(io.Writer) error                   £ã_9 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Jgo.string.hdr."func(io.Writer) error"   p  Fgo.weak.type.*func(io.Writer) error   €  "runtime.zerovalue    € 4type.func(io.Writer) error   Ğ 4type.func(io.Writer) error   €  type.io.Writer     type.error   şngo.typelink.func(io.Writer) error	func(io.Writer) error              4type.func(io.Writer) error   ş$go.string.hdr."at"                       go.string."at"   şgo.string."at"   at  şBgo.string.hdr."func(int) []uint8"                       :go.string."func(int) []uint8"   ş:go.string."func(int) []uint8" 0  $func(int) []uint8  ş,type.func(int) []uint8                   ız~: 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Bgo.string.hdr."func(int) []uint8"   p  >go.weak.type.*func(int) []uint8   €  "runtime.zerovalue    € ,type.func(int) []uint8   Ğ ,type.func(int) []uint8   €  type.int     type.[]uint8   ş^go.typelink.func(int) []uint8	func(int) []uint8              ,type.func(int) []uint8   ş2go.string.hdr."lookupAll"             	          *go.string."lookupAll"   ş*go.string."lookupAll"    lookupAll  şFgo.string.hdr."func([]uint8) []int"                       >go.string."func([]uint8) []int"   ş>go.string."func([]uint8) []int" 0  (func([]uint8) []int  ş0type.func([]uint8) []int                   ó¥~ 3                                                                                                                    0€  runtime.algarray   @  "runtime.gcbits.01   P  Fgo.string.hdr."func([]uint8) []int"   p  Bgo.weak.type.*func([]uint8) []int   €  "runtime.zerovalue    € 0type.func([]uint8) []int   Ğ 0type.func([]uint8) []int   €  type.[]uint8     type.[]int   şfgo.typelink.func([]uint8) []int	func([]uint8) []int              0type.func([]uint8) []int   ştype.*"".Index                  ÿÓè 6                                                                                                                                                                                                                                                                                                                                                                                                                                              Z0   runtime.algarray   @  "runtime.gcbits.01   P  Dgo.string.hdr."*suffixarray.Index"   p  .go.weak.type.**"".Index   €  "runtime.zerovalue     type."".Index   `  type.*"".Index   Àğ type.*"".Index   ğ  *go.string.hdr."Bytes"     &type.func() []uint8      8type.func(*"".Index) []uint8   °  """.(*Index).Bytes   À  """.(*Index).Bytes   Ğ  8go.string.hdr."FindAllIndex"   ğ  Ltype.func(*regexp.Regexp, int) [][]int   €  btype.func(*"".Index, *regexp.Regexp, int) [][]int     0"".(*Index).FindAllIndex      0"".(*Index).FindAllIndex   °  ,go.string.hdr."Lookup"   Ğ  :type.func([]uint8, int) []int   à  Ptype.func(*"".Index, []uint8, int) []int   ğ  $"".(*Index).Lookup   €  $"".(*Index).Lookup     (go.string.hdr."Read"   °  4type.func(io.Reader) error   À  Jtype.func(*"".Index, io.Reader) error   Ğ   "".(*Index).Read   à   "".(*Index).Read   ğ  *go.string.hdr."Write"     4type.func(io.Writer) error      Jtype.func(*"".Index, io.Writer) error   °  """.(*Index).Write   À  """.(*Index).Write   Ğ  $go.string.hdr."at"   à  "go.importpath."".   ğ  ,type.func(int) []uint8   €  Btype.func(*"".Index, int) []uint8     "".(*Index).at      "".(*Index).at   °  2go.string.hdr."lookupAll"   À  "go.importpath."".   Ğ  0type.func([]uint8) []int   à  Ftype.func(*"".Index, []uint8) []int   ğ  *"".(*Index).lookupAll   €  *"".(*Index).lookupAll   ş"runtime.gcbits.09   	 şBgo.string.hdr."suffixarray.Index"                       :go.string."suffixarray.Index"   ş:go.string."suffixarray.Index" 0  $suffixarray.Index  ş(go.string.hdr."data"                        go.string."data"   ş go.string."data"   
+data  ş*go.string.hdr."Index"                       "go.string."Index"   ş"go.string."Index"   Index  ştype."".Index  °  °0               Şò£x                                                                                                                                                                                               0à  runtime.algarray   @  "runtime.gcbits.09   P  Bgo.string.hdr."suffixarray.Index"   p  type.*"".Index   €  "runtime.zerovalue   À type."".Index   À  (go.string.hdr."data"   Ğ  "go.importpath."".   à  type.[]uint8     $go.string.hdr."sa"      "go.importpath."".   °  type.[]int   `à type."".Index   à  *go.string.hdr."Index"   ğ  "go.importpath."".   €° type."".Index   ş"runtime.gcbits.06    şŠgo.string.hdr."struct { F uintptr; x *suffixarray.Index; s []uint8 }"             5          ‚go.string."struct { F uintptr; x *suffixarray.Index; s []uint8 }"   ş‚go.string."struct { F uintptr; x *suffixarray.Index; s []uint8 }" p  lstruct { F uintptr; x *suffixarray.Index; s []uint8 }  ş$go.string.hdr.".F"                       go.string.".F"   şgo.string.".F"   .F  ş"go.string.hdr."x"                       go.string."x"   şgo.string."x"   x  ş"go.string.hdr."s"                       go.string."s"   şgo.string."s"   s  şbtype.struct { F uintptr; x *"".Index; s []uint8 } °  °(              ß”Â¨                                                                                                                                                                                             0à  runtime.algarray   @  "runtime.gcbits.06   P  Šgo.string.hdr."struct { F uintptr; x *suffixarray.Index; s []uint8 }"   p  tgo.weak.type.*struct { F uintptr; x *"".Index; s []uint8 }   €  "runtime.zerovalue   À btype.struct { F uintptr; x *"".Index; s []uint8 }   À  $go.string.hdr.".F"   Ğ  "go.importpath."".   à  type.uintptr     "go.string.hdr."x"      "go.importpath."".   °  type.*"".Index   à  "go.string.hdr."s"   ğ  "go.importpath."".   €  type.[]uint8   ş"runtime.gcbits.0a   
+ ş˜go.string.hdr."struct { F uintptr; x *suffixarray.Index; i int; s []uint8 }"             <          go.string."struct { F uintptr; x *suffixarray.Index; i int; s []uint8 }"   şgo.string."struct { F uintptr; x *suffixarray.Index; i int; s []uint8 }" €  zstruct { F uintptr; x *suffixarray.Index; i int; s []uint8 }  ş"go.string.hdr."i"                       go.string."i"   şgo.string."i"   i  şptype.struct { F uintptr; x *"".Index; i int; s []uint8 } €  €0               Ë­•                                                                                                                                                                                                                                    $0à  runtime.algarray   @  "runtime.gcbits.0a   P  ˜go.string.hdr."struct { F uintptr; x *suffixarray.Index; i int; s []uint8 }"   p  ‚go.weak.type.*struct { F uintptr; x *"".Index; i int; s []uint8 }   €  "runtime.zerovalue   À ptype.struct { F uintptr; x *"".Index; i int; s []uint8 }   À  $go.string.hdr.".F"   Ğ  "go.importpath."".   à  type.uintptr     "go.string.hdr."x"      "go.importpath."".   °  type.*"".Index   à  "go.string.hdr."i"   ğ  "go.importpath."".   €  type.int   °  "go.string.hdr."s"   À  "go.importpath."".   Ğ  type.[]uint8   şŒgo.string.hdr."*struct { F uintptr; x *suffixarray.Index; s []uint8 }"             6          „go.string."*struct { F uintptr; x *suffixarray.Index; s []uint8 }"   ş„go.string."*struct { F uintptr; x *suffixarray.Index; s []uint8 }" p  n*struct { F uintptr; x *suffixarray.Index; s []uint8 }  şdtype.*struct { F uintptr; x *"".Index; s []uint8 }                   S£²± 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  Œgo.string.hdr."*struct { F uintptr; x *suffixarray.Index; s []uint8 }"   p  vgo.weak.type.**struct { F uintptr; x *"".Index; s []uint8 }   €  "runtime.zerovalue     btype.struct { F uintptr; x *"".Index; s []uint8 }   şšgo.string.hdr."*struct { F uintptr; x *suffixarray.Index; i int; s []uint8 }"             =          ’go.string."*struct { F uintptr; x *suffixarray.Index; i int; s []uint8 }"   ş’go.string."*struct { F uintptr; x *suffixarray.Index; i int; s []uint8 }" €  |*struct { F uintptr; x *suffixarray.Index; i int; s []uint8 }  şrtype.*struct { F uintptr; x *"".Index; i int; s []uint8 }                   )d—Â 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  šgo.string.hdr."*struct { F uintptr; x *suffixarray.Index; i int; s []uint8 }"   p  „go.weak.type.**struct { F uintptr; x *"".Index; i int; s []uint8 }   €  "runtime.zerovalue     ptype.struct { F uintptr; x *"".Index; i int; s []uint8 }   ş type..hashfunc32                        ,runtime.memhash_varlen   ştype..eqfunc32                        .runtime.memequal_varlen   ştype..alg32                         type..hashfunc32     type..eqfunc32   ş2go.string.hdr."[32]uint8"             	          *go.string."[32]uint8"   ş*go.string."[32]uint8"    [32]uint8  ştype.[32]uint8 À  À                œYÿ¨ ‘                                                                        0  type..alg32   @  runtime.gcbits.   P  2go.string.hdr."[32]uint8"   p  .go.weak.type.*[32]uint8   €  "runtime.zerovalue     type.uint8      type.[]uint8   ş>go.typelink.[32]uint8	[32]uint8              type.[32]uint8   ş0go.string.hdr."*[]uint8"                       (go.string."*[]uint8"   ş(go.string."*[]uint8"    *[]uint8  ştype.*[]uint8                   ¥Ği 6                                                        0   runtime.algarray   @  "runtime.gcbits.01   P  0go.string.hdr."*[]uint8"   p  ,go.weak.type.**[]uint8   €  "runtime.zerovalue     type.[]uint8   ş.go.string.hdr."runtime"                       &go.string."runtime"   ş&go.string."runtime"   runtime  ş,go.importpath.runtime.                       &go.string."runtime"   ş(go.string.hdr."sort"                        go.string."sort"   ş go.string."sort"   
+sort  ş&go.importpath.sort.                        go.string."sort"   ş*go.string.hdr."bytes"                       "go.string."bytes"   ş"go.string."bytes"   bytes  ş(go.importpath.bytes.                       "go.string."bytes"   ş$go.string.hdr."io"                       go.string."io"   şgo.string."io"   io  ş"go.importpath.io.                       go.string."io"   ş>go.string.hdr."encoding/binary"                       6go.string."encoding/binary"   ş6go.string."encoding/binary"     encoding/binary  ş<go.importpath.encoding/binary.                       6go.string."encoding/binary"   ş,go.string.hdr."regexp"                       $go.string."regexp"   ş$go.string."regexp"   regexp  ş*go.importpath.regexp.                       $go.string."regexp"   ş"runtime.zerovalue      ÿÿgo13ld 
