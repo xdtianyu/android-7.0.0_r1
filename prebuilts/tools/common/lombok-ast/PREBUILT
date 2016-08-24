@@ -1,0 +1,21 @@
+The source code for the classes in this prebuilt can
+be found in the src.zip in this directory.
+
+The objects in this prebuilt directory can also be
+rebuilt using the source archive hosted at
+
+http://projectlombok.org/
+
+Specifically, changeset 3c4f94d418b58d55d0facebf2bfbb362d4bf3bdd
+from
+https://github.com/rzwitserloot/lombok.ast
+
+NOTE 1: The 0.2.1 bits were patched by this CL:
+https://github.com/tnorbye/lombok.ast
+which basically adds an extra field to the nodes to track
+the original source AST node. The lombok-ast-0.2.1-src.zip
+includes these diffs.
+
+NOTE 2: Some additional fixes were applied on top of 0.2.1
+to create 0.2.2 (where we support ECJ 4.2). The patch
+to apply is provided in lombok-ast-0.2.2-patch.diff .

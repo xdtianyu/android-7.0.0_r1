@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.google.gradle</groupId>
+  <artifactId>osdetector-gradle-plugin</artifactId>
+  <version>1.2.1</version>
+  <name>com.google.gradle:osdetector-gradle-plugin</name>
+  <description>A Gradle plugin that detects the OS name and architecture, providing a uniform classifier to be used in the names of native artifacts.</description>
+  <url>https://github.com/google/osdetector-gradle-plugin</url>
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <url>http://opensource.org/licenses/Apache-2.0</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Kun Zhang</name>
+      <email>zhangkun@google.com</email>
+      <url>https://github.com/google/osdetector-gradle-plugin</url>
+      <organization>Google, Inc.</organization>
+      <organizationUrl>https://www.google.com</organizationUrl>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:svn:https://github.com/google/osdetector-gradle-plugin.git</connection>
+    <developerConnection>scm:svn:git@github.com:google/osdetector-gradle-plugin.git</developerConnection>
+    <url>https://github.com/google/osdetector-gradle-plugin</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>kr.motd.maven</groupId>
+      <artifactId>os-maven-plugin</artifactId>
+      <version>1.2.3.Final</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>

@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.sun.xml.dtd-parser</groupId>
+	<artifactId>dtd-parser</artifactId>
+	<version>1.1</version>
+	<packaging>jar</packaging>
+	<name>DTD Parser</name>
+	<description>SAX-like API for parsing XML DTDs.</description>
+	<url>http://dtd-parser.dev.java.net/</url>
+
+	<scm>
+		<connection>scm:cvs:pserver:guest@cvs.dev.java.net:/cvs:dtd-parser/dtd-parser</connection>
+		<developerConnection>scm:cvs:username:lexi@cvs.dev.java.net:/cvs:dtd-parser/dtd-parser</developerConnection>
+		<url>https://dtd-parser.dev.java.net/source/browse/dtd-parser/dtd-parser</url>
+	</scm>
+
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>3</version>
+	</parent>
+
+	<licenses> 
+		<license> 
+			<name>Berkeley Software Distribution (BSD) License</name> 
+			<url>http://www.opensource.org/licenses/bsd-license.php</url> 
+			<distribution>repo</distribution> 
+		</license> 
+	</licenses> 
+
+	<developers>
+		<developer>
+			<id>kohsuke</id>
+			<name>Kohsuke Kawaguchi</name>
+			<email>kohsuke.kawaguchi@sun.com</email>
+		</developer>
+		<developer>
+			<id>lexi</id>
+			<name>Aleksei Valikov</name>
+			<email>valikov@gmx.net</email>
+		</developer>
+	</developers>
+
+	<inceptionYear>2005</inceptionYear>
+
+	<organization>
+		<name>Sun Microsystems</name>
+		<url>http://www.sun.com/</url>
+	</organization>
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<includes>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.3</source>
+					<target>1.3</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<artifactId>maven-changes-plugin</artifactId>
+				<configuration>
+					<xmlPath>${basedir}/xdocs/changes.xml</xmlPath>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+</project>

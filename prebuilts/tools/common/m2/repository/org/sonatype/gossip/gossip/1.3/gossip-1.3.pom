@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2009 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.forge</groupId>
+        <artifactId>forge-parent</artifactId>
+        <version>5</version>
+    </parent>
+
+    <groupId>org.sonatype.gossip</groupId>
+    <artifactId>gossip</artifactId>
+    <name>Gossip</name>
+    <version>1.3</version>
+    
+    <description>
+        Gossip is a plugin for SLF4j which has simple and flexible configuration.
+    </description>
+
+    <organization>
+        <name>Sonatype</name>
+        <url>http://sonatype.org</url>
+    </organization>
+    
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/jdillon/gossip.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jdillon/gossip.git</developerConnection>
+        <url>http://github.com/jdillon/gossip</url>
+    </scm>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>jansi</id>
+            <url>http://jansi.fusesource.org/repo/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.10</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>1.1</version>
+            <optional>true</optional>
+        </dependency>
+        
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.7</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>1.7.0</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>jline</groupId>
+                    <artifactId>jline</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.ant</groupId>
+                    <artifactId>ant</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.ant</groupId>
+                    <artifactId>ant-launcher</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <defaultGoal>install</defaultGoal>
+
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+
+            <resource>
+                <directory>${project.basedir}/src/main/filtered-resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/src/test/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+
+            <testResource>
+                <directory>${project.basedir}/src/test/filtered-resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <forkMode>once</forkMode>
+                    <argLine>-ea</argLine>
+                    <failIfNoTests>false</failIfNoTests>
+                    <workingDirectory>${project.build.directory}</workingDirectory>
+                    <excludes>
+                        <exclude>**/Abstract*.java</exclude>
+                        <exclude>**/Test*.java</exclude>
+                    </excludes>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <properties>
+                        <org.sonatype.gossip.Log.level>TRACE</org.sonatype.gossip.Log.level>
+                        <org.sonatype.gossip.Log.internal.level>TRACE</org.sonatype.gossip.Log.internal.level>
+                    </properties>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.2</version>
+                <configuration>
+                    <providerSelection>1.7</providerSelection>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <goal>generateTestStubs</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.modello</groupId>
+                <artifactId>modello-maven-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <useJava5>true</useJava5>
+                    <models>
+                        <model>src/main/mdo/gossip.mdo</model>
+                    </models>
+                    <version>1.0.0</version>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                            <goal>xsd</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.0.1</version>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                        <configuration>
+                            <instructions>
+                                <Import-Package>!org.sonatype.gossip*,!org.slf4j.impl*,org.fusesource.jansi*;resolution:=optional,com.sun.jna;resolution:=optional,sun.reflect;resolution:=optional,*</Import-Package>
+                                <DynamicImport-Package>*</DynamicImport-Package>
+                            </instructions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.0-beta-9</version>
+                <configuration>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <goals>deploy</goals>
+                    <arguments>-B -Prelease</arguments>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>1.2</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>retro</id>
+            <activation>
+                <property>
+                    <name>retro</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>retrotranslator-maven-plugin</artifactId>
+                        <version>1.0-alpha-4</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>translate-project</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>jdk14</classifier>
+                                    <attach>true</attach>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>macos</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                </os>
+            </activation>
+            <properties>
+                <java-runtime>${java.home}/../Classes/classes.jar</java-runtime>
+                <java-cryptography-extension>${java.home}/../Classes/jce.jar</java-cryptography-extension>
+            </properties>
+        </profile>
+        <profile>
+            <id>non-macos</id>
+            <activation>
+                <os>
+                    <name>!mac os x</name>
+                </os>
+            </activation>
+            <properties>
+                <java-runtime>${java.home}/lib/rt.jar</java-runtime>
+                <java-cryptography-extension>${java.home}/lib/jce.jar</java-cryptography-extension>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>shrink</id>
+            <activation>
+                <property>
+                    <name>shrink</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.3</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>net.sf.proguard</groupId>
+                                <artifactId>proguard</artifactId>
+                                <version>4.4</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <taskdef resource="proguard/ant/task.properties" />
+                                        <proguard><![CDATA[
+                                            -basedirectory ${project.build.directory}
+                                            -injars ${project.build.finalName}.${project.packaging}
+                                            -outjars ${project.build.finalName}-shrunk.${project.packaging}
+
+                                            -libraryjars ${java-runtime}
+                                            -libraryjars dependency
+
+                                            -target 1.5
+                                            -printmapping proguard.map
+                                            -forceprocessing
+                                            -optimizationpasses 3
+
+                                            
+                                            -renamesourcefileattribute SourceFile
+                                            -keepattributes *Annotation*,Exceptions,InnerClasses,Signature
+
+                                            -keepclassmembers enum * {
+                                                public static **[] values();
+                                                public static ** valueOf(java.lang.String);
+                                            }
+
+                                            -keepclassmembernames class * {
+                                                java.lang.Class class$(java.lang.String);
+                                                java.lang.Class class$(java.lang.String, boolean);
+                                            }
+
+                                            -keep public class * extends java.lang.Exception {
+                                                public <methods>;
+                                                public <fields>;
+                                            }
+                                            
+                                            -keep public class org.slf4j.impl.* {
+                                                public static <fields>;
+                                                public <methods>;
+                                            }
+
+                                            -keep public class
+                                                org.sonatype.gossip.Gossip,
+                                                org.sonatype.gossip.Log
+                                            {
+                                                public <methods>;
+                                            }
+
+                                            -keep public class org.sonatype.gossip.Level {
+                                                public static <fields>;
+                                                public <methods>;
+                                            }
+
+                                            -keep public class
+                                                org.sonatype.gossip.source.*,
+                                                org.sonatype.gossip.trigger.*,
+                                                org.sonatype.gossip.listener.*,
+                                                org.sonatype.gossip.render.*
+                                            {
+                                                public void set*(***);
+                                            }
+                                        ]]></proguard>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>attach-artifacts</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attach-artifact</goal>
+                                </goals>
+                                <configuration>
+                                    <artifacts>
+                                        <artifact>
+                                            <file>${project.build.directory}/proguard.map</file>
+                                            <type>map</type>
+                                            <classifier>shrunk</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${project.build.directory}/${project.build.finalName}-shrunk.${project.packaging}</file>
+                                            <type>jar</type>
+                                            <classifier>shrunk</classifier>
+                                        </artifact>
+                                    </artifacts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    
+</project>

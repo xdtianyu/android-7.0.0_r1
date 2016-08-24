@@ -1,0 +1,66 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.cenqua.clover</groupId>
+    <artifactId>clover</artifactId>
+    <version>3.1.12</version>
+    <name>Clover Ant</name>
+    <description>
+        Clover is an award winning code coverage and testing tool for Java.
+        It integrates easily with Maven (1, 2 and 3), Ant, Eclipse and IntelliJ-IDEA.
+    </description>
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+    <url>http://atlassian.com/software/clover</url>
+    <packaging>jar</packaging>
+    <organization>
+        <name>Atlassian Pty Ltd</name>
+        <url>http://www.atlassian.com/</url>
+    </organization>
+    <issueManagement>
+        <system>jira</system>
+        <url>http://jira.atlassian.com/browse/CLOV</url>
+    </issueManagement>
+    <licenses>
+        <license>
+            <name>Atlassian End User Agreement</name>
+            <url>http://www.atlassian.com/end-user-agreement</url>
+            <distribution>repo</distribution>
+            <comments>See also http://www.atlassian.com/licensing/clover</comments>
+        </license>
+    </licenses>
+    <scm>
+        <connection/>
+        <url/>
+    </scm>
+    <developers>
+        <developer>
+            <id>mparfianowicz</id>
+            <name>Marek Parfianowicz</name>
+            <email>mparfianowicz@atlassian.com</email>
+        </developer>
+        <developer>
+            <id>jjaroczynski</id>
+            <name>Jacek Jaroczynski</name>
+            <email>jjaroczynski@atlassian.com</email>
+        </developer>
+        <developer>
+            <id>mstudman</id>
+            <name>Michael Studman</name>
+            <email>mstudman@atlassian.com</email>
+        </developer>
+    </developers>
+    <build>
+        <testSourceDirectory>test</testSourceDirectory>
+        <sourceDirectory>src</sourceDirectory>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
+        </extensions>
+    </build>
+</project>

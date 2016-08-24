@@ -1,0 +1,620 @@
+#!/bin/bash
+#
+# Copyright (C) 2015 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Version: 1.3-a8
+#
+set -o nounset
+BASE_UMASK=$(umask)
+umask 077
+
+#
+# Settings
+#
+JACK_HOME="${JACK_HOME:=$HOME/.jack-server}"
+CLIENT_SETTING="${CLIENT_SETTING:=$HOME/.jack-settings}"
+TMPDIR=${TMPDIR:=/tmp}
+JACK_SERVER_VM_ARGUMENTS="${JACK_SERVER_VM_ARGUMENTS:=-Dfile.encoding=UTF-8 -XX:+TieredCompilation}"
+JACK_EXTRA_CURL_OPTIONS=${JACK_EXTRA_CURL_OPTIONS:=}
+
+LAUNCHER_JAR="$JACK_HOME/launcher.jar"
+LAUNCHER_NAME=com.android.jack.launcher.ServerLauncher
+CURRENT_CHARSET=$(locale charmap)
+if [ -z "$CURRENT_CHARSET" ]; then
+  CHARSET_ARGUMENT=
+else
+  CHARSET_ARGUMENT=";charset=$CURRENT_CHARSET"
+fi
+
+JACK_LOGS_DIR="$JACK_HOME"/logs
+JACK_OUT_ERR="$JACK_LOGS_DIR"/outputs.txt
+JACK_CONNECTION_TIMEOUT=300
+
+#
+# Load client settings
+#
+if [ -f "$CLIENT_SETTING" ]; then
+  source "$CLIENT_SETTING"
+fi
+
+#
+# Create or update client settings if needed
+#
+if [[ ! -f "$CLIENT_SETTING" || $SETTING_VERSION -lt 4 ]]; then
+  echo "Writing client settings in" $CLIENT_SETTING
+  cat >"$CLIENT_SETTING.$$" <<-EOT
+	# Server settings
+	SERVER_HOST=${SERVER_HOST:=127.0.0.1}
+	SERVER_PORT_SERVICE=${SERVER_PORT_SERVICE:=8076}
+	SERVER_PORT_ADMIN=${SERVER_PORT_ADMIN:=8077}
+
+	# Internal, do not touch
+	SETTING_VERSION=4
+EOT
+  ln -f "$CLIENT_SETTING.$$" "$CLIENT_SETTING"
+  rm "$CLIENT_SETTING.$$"
+  source "$CLIENT_SETTING"
+fi
+
+usage () {
+  echo "Usage : $0 [ install-server <launcher.jar> <server.jar> | uninstall-server | list <program> | update <program> <program.jar> | start-server | stop-server | kill-server | list-server | server-stat | server-log | server-gc | cleanup-server | dump-report]"
+}
+
+abort () { exit 255; }
+
+#
+# $1: curl command status
+# $2: HTTP status
+#
+handleHttpErrors() {
+  if [ $1 -eq 0 ]; then
+    # No problem, let's go
+    return 0;
+  elif [ $1 -eq 7 ]; then
+    echo "No Jack server running. Try 'jack-admin start-server'" >&2
+    abort
+  elif [ $1 -eq 35 ]; then
+    echo "SSL error when connecting to the Jack server. Try 'jack-diagnose'" >&2
+    abort
+  elif [ $1 -eq 58 ]; then
+    echo "Failed to contact Jack server: Problem reading ${JACK_HOME}/client.pem. Try 'jack-diagnose'" >&2
+    abort
+  elif [ $1 -eq 60 ]; then
+    echo "Failed to authenticate Jack server certificate. Try 'jack-diagnose'" >&2
+    abort
+   elif [ $1 -eq 77 ]; then
+    echo "Failed to contact Jack server: Problem reading ${JACK_HOME}/server.pem. Try 'jack-diagnose'" >&2
+    abort
+  elif  [ $1 -eq 22 ]; then
+    # Http code not OK, let's decode and abort
+    if [ $2 -eq 400 ]; then
+      # 400: Bad request
+      echo "Bad request, see Jack server log" >&2
+      abort
+    else
+      # Other
+      echo "Internal unknown error ($2), try 'jack-diagnose' or see Jack server log" >&2
+      abort
+    fi
+  else
+    echo "Communication error with Jack server $1. Try 'jack-diagnose'" >&2
+    abort
+  fi
+}
+
+checkCurlVersion () {
+  curl --version | grep -q "SecureTransport"
+  if [ "$?" -eq 0 ]; then
+    echo "Unsupported curl, please use a curl not based on SecureTransport" >&2
+    abort
+  fi
+}
+
+#
+# $1: program name
+# $2: jar of the program
+#
+updateProgram () {
+  HTTP_CODE=$(curl -f $JACK_EXTRA_CURL_OPTIONS \
+       --cert "${JACK_HOME}/client.pem" \
+       --cacert "${JACK_HOME}/server.pem" \
+       --output /dev/null \
+       --no-buffer --write-out '%{http_code}' --silent --connect-timeout $JACK_CONNECTION_TIMEOUT \
+       -X PUT \
+       -F "jar=@$2;type=application/octet-stream" \
+       -F "force=$FORCE_INSTALLATION;type=text/plain$CHARSET_ARGUMENT" \
+       --noproxy ${SERVER_HOST} \
+       https://${SERVER_HOST}:$SERVER_PORT_ADMIN/$1 \
+       )
+  handleHttpErrors $? $HTTP_CODE
+
+  if [ "$1" == server ]; then
+    echo "Server updated, waiting for restart"
+    waitServerStarted
+  fi
+}
+
+isServerRunning () {
+  RETRY_SESSION=3
+  DONE=1
+  let DATE_TIMEOUT=$(date +%s)+$JACK_CONNECTION_TIMEOUT
+  while [ "$DONE" -ne 0 ]; do
+    HTTP_CODE=$(curl -f $JACK_EXTRA_CURL_OPTIONS \
+         --cert "${JACK_HOME}/client.pem" \
+         --cacert "${JACK_HOME}/server.pem" \
+         --output /dev/null \
+         --no-buffer --write-out '%{http_code}' --silent --connect-timeout $JACK_CONNECTION_TIMEOUT \
+         -X GET \
+         -H "Accept: text/plain$CHARSET_ARGUMENT" \
+         --noproxy ${SERVER_HOST} \
+         https://${SERVER_HOST}:$SERVER_PORT_ADMIN/server \
+         )
+    CURL_CODE=$?
+    if [ $CURL_CODE -eq 0 ]; then
+      # No problem, let's go
+      return 0;
+    elif [ $CURL_CODE -eq 7 ]; then
+      return 1
+    else
+      # In case of partial, timeout, empty response, network error, let's retry
+      if [ $RETRY_SESSION -eq 0 ]; then
+        echo "Communication error with Jack server ($CURL_CODE), try 'jack-diagnose' or see Jack server log"  >&2
+        abort
+      else
+        if [ $(date +%s) -lt $DATE_TIMEOUT ]; then
+          let RETRY_SESSION=RETRY_SESSION-1
+        else
+          echo "Communication error with Jack server ($CURL_CODE), try 'jack-diagnose' or see Jack server log"  >&2
+          abort
+        fi
+      fi
+    fi
+  done
+}
+
+waitServerStarted () {
+  DONE=1
+  let DATE_TIMEOUT=$(date +%s)+$JACK_CONNECTION_TIMEOUT
+  while [ "$DONE" -ne 0 ]; do
+    HTTP_CODE=$(curl -f $JACK_EXTRA_CURL_OPTIONS \
+         --cert "${JACK_HOME}/client.pem" \
+         --cacert "${JACK_HOME}/server.pem" \
+         --output /dev/null \
+         --no-buffer --write-out '%{http_code}' --silent --connect-timeout $JACK_CONNECTION_TIMEOUT \
+         -X GET \
+         -H "Accept: text/plain$CHARSET_ARGUMENT" \
+         --noproxy ${SERVER_HOST} \
+         https://${SERVER_HOST}:$SERVER_PORT_ADMIN/server \
+         )
+    CURL_CODE=$?
+    if [ $CURL_CODE -eq 7 ] || [ $CURL_CODE -eq 35 ] || [ $CURL_CODE -eq 58 ] || [ $CURL_CODE -eq 60 ] || [ $CURL_CODE -eq 77 ]; then
+      if [ $(date +%s) -ge $DATE_TIMEOUT ]; then
+        echo "Jack server failed to (re)start, try 'jack-diagnose' or see Jack server log" >&2
+        abort
+      else
+        sleep 1
+      fi
+    else
+      # A connection was opened, no need to know if it went well
+      DONE=0;
+    fi
+  done
+}
+
+#
+# $1: program name
+#
+listProgramVersion () {
+  exec 3>&1
+  HTTP_CODE=$(curl -f $JACK_EXTRA_CURL_OPTIONS \
+       --cert "${JACK_HOME}/client.pem" \
+       --cacert "${JACK_HOME}/server.pem" \
+       --output >(tr -d '\015' >&3) \
+       --no-buffer --write-out '%{http_code}' --silent --connect-timeout $JACK_CONNECTION_TIMEOUT \
+       -X GET \
+       -H "Accept: text/plain$CHARSET_ARGUMENT" \
+       --noproxy ${SERVER_HOST} \
+       https://${SERVER_HOST}:$SERVER_PORT_ADMIN/$1 \
+       )
+  handleHttpErrors $? $HTTP_CODE
+  exec 3>&-
+}
+
+#
+# Decoding argument
+#
+if [ $# -eq 0 ]
+then
+  usage
+  abort
+fi
+
+set +o errexit
+
+FORCE_INSTALLATION=false
+case $1 in
+  force-update)
+    FORCE_INSTALLATION=true
+    COMMAND=update;;
+  *)
+    COMMAND=$1;;
+esac
+
+case $COMMAND in
+  install-server)
+    if [ $# -ne 3 ]; then
+      usage
+      abort
+    fi
+    if [ ! -r "$2" ]; then
+      echo "Jack server launcher jar \"$2\" is not readable" >&2
+      abort
+    fi
+     if [ ! -r "$3" ]; then
+      echo "Jack server jar \"$3\" is not readable" >&2
+      abort
+    fi
+
+    checkCurlVersion
+
+    if [ ! -d "$JACK_HOME" ]; then
+      echo Installing jack server in \"$JACK_HOME\"
+      mkdir -p "$JACK_HOME"
+      cp $2 "$LAUNCHER_JAR"
+      cp $3 "$JACK_HOME/server-1.jar"
+      mkdir "$JACK_LOGS_DIR"
+      keytool -genkeypair -validity 3650 -alias server -keyalg RSA -keysize 2048 -keypass Jack-Server -storepass Jack-Server -dname "CN=$SERVER_HOST" -keystore "$JACK_HOME/server.jks"
+      keytool -genkeypair -validity 3650 -alias client -keyalg RSA -keysize 2048 -keypass Jack-Server -storepass Jack-Server -dname "CN=$(id -un)@$(uname -n)" -keystore "$JACK_HOME/client.jks"
+    else
+      echo "Jack server already installed in \"$JACK_HOME\"" >&2
+      abort
+    fi
+    exit 0 ;;
+
+
+  uninstall-server)
+    if [ ! -d "$JACK_HOME" ]; then
+      echo "Jack server in \"$JACK_HOME\" not found" >&2
+      abort
+    else
+      echo "Removing jack server from \"$JACK_HOME\""
+      rm -rf "$JACK_HOME"
+    fi
+    exit 0 ;;
+
+
+  list)
+    if [ $# -ne 2 ]
+    then
+      usage
+      abort
+    fi
+
+    listProgramVersion $2 ;;
+
+
+  update)
+    if [ $# -lt 3 ]; then
+      usage
+      abort
+    fi
+
+    if [ $# -gt 4 ]; then
+      usage
+      abort
+    fi
+
+    if [ ! -r "$3" ]; then
+      echo "Failed to update $2 of Jack server: \"$3\" is not readable" >&2
+      abort
+    fi
+
+    checkCurlVersion
+
+    if [ $FORCE_INSTALLATION = true ]; then
+      updateProgram $2 $3
+    else
+      if [ $# -eq 4 ]; then
+        HTTP_CODE=$(curl -f $JACK_EXTRA_CURL_OPTIONS \
+             --cert "${JACK_HOME}/client.pem" \
+             --cacert "${JACK_HOME}/server.pem" \
+             --output /dev/null \
+             --no-buffer --write-out '%{http_code}' --silent --connect-timeout $JACK_CONNECTION_TIMEOUT \
+             -X HEAD \
+             --data "$4" \
+             -H "Content-Type:application/vnd.jack.select-exact;version=1" \
+             --noproxy ${SERVER_HOST} \
+             https://${SERVER_HOST}:$SERVER_PORT_ADMIN/$2 \
+             )
+        CURL_CODE=$?
+        if [ $CURL_CODE -eq 22 ]; then
+          if [ $HTTP_CODE -eq 404 ]; then
+            # version not found, proceed to installation
+            updateProgram $2 $3
+            exit 0
+          fi
+        fi
+        handleHttpErrors $CURL_CODE $HTTP_CODE
+      else
+        # No version provided, proceed directly without testing
+        updateProgram $2 $3
+      fi
+    fi
+    exit 0;;
+
+
+  stop-server)
+    echo "Stopping background server"
+
+    HTTP_CODE=$(curl -f $JACK_EXTRA_CURL_OPTIONS \
+         --cert "${JACK_HOME}/client.pem" \
+         --cacert "${JACK_HOME}/server.pem" \
+         --output /dev/null \
+         --no-buffer --write-out '%{http_code}' --silent --connect-timeout $JACK_CONNECTION_TIMEOUT \
+         -X POST \
+         --noproxy ${SERVER_HOST} \
+         https://${SERVER_HOST}:$SERVER_PORT_ADMIN/server/stop \
+         )
+    handleHttpErrors $? $HTTP_CODE ;;
+
+
+  server-stat)
+    echo "Getting statistic from background server"
+
+    exec 3>&1
+    HTTP_CODE=$(curl -f $JACK_EXTRA_CURL_OPTIONS \
+         --cert "${JACK_HOME}/client.pem" \
+         --cacert "${JACK_HOME}/server.pem" \
+         --output >(tr -d '\015' >&3) \
+         --no-buffer --write-out '%{http_code}' --silent --connect-timeout $JACK_CONNECTION_TIMEOUT \
+         -X GET \
+         -H "Accept: text/plain$CHARSET_ARGUMENT" \
+         --noproxy ${SERVER_HOST} \
+         https://${SERVER_HOST}:$SERVER_PORT_ADMIN/stat \
+         )
+    handleHttpErrors $? $HTTP_CODE
+    exec 3>&- ;;
+
+
+  server-log)
+    exec 3>&1
+    HTTP_CODE=$(curl -f $JACK_EXTRA_CURL_OPTIONS \
+         --cert "${JACK_HOME}/client.pem" \
+         --cacert "${JACK_HOME}/server.pem" \
+         --output >(tr -d '\015' >&3) \
+         --no-buffer --write-out '%{http_code}' --silent --connect-timeout $JACK_CONNECTION_TIMEOUT \
+         -X GET \
+         -H "Accept: text/plain$CHARSET_ARGUMENT" \
+        --noproxy ${SERVER_HOST} \
+         https://${SERVER_HOST}:$SERVER_PORT_ADMIN/launcher/log \
+         )
+    handleHttpErrors $? $HTTP_CODE
+    exec 3>&- ;;
+
+
+  kill-server)
+    echo "Killing background server"
+    SERVERS_PID=$(ps -A -o "pid args" -u `id -u -n` | grep $LAUNCHER_NAME | grep -v grep | awk '{print $1}')
+    if [ -z "$SERVERS_PID" ]; then
+      echo "No Jack server to kill" >&2
+      exit 2
+    fi
+
+    for PID in $SERVERS_PID; do
+      kill $PID 2>/dev/null
+      TIMEOUT=30
+      while [ "$TIMEOUT" -ne 0 ]; do
+        kill -0 $PID 2>/dev/null
+        if [ $? -ne 0 ]; then
+          continue 2
+        fi
+        sleep 1
+        let TIMEOUT=TIMEOUT-1
+      done
+      kill -KILL $PID 2>/dev/null
+      DONE=$?
+      while [ $DONE -eq 0 ]; do
+        kill -0 $PID 2>/dev/null
+        DONE=$?
+        sleep 1
+      done
+    done
+
+    exit 0 ;;
+
+
+  list-server)
+    ps -A -o "user pid args" | grep $LAUNCHER_NAME | grep -v grep
+    exit $? ;;
+
+
+  start-server)
+    if [ ! -d "$JACK_HOME" ]; then
+      echo "Jack server installation not found" >&2
+      abort
+    fi
+
+    isServerRunning
+    RUNNING=$?
+    if [ "$RUNNING" = 0 ]; then
+      echo "Server is already running"
+    else
+      JACK_SERVER_COMMAND="java -XX:MaxJavaStackTraceDepth=-1 -Djava.io.tmpdir=$TMPDIR $JACK_SERVER_VM_ARGUMENTS -cp $LAUNCHER_JAR $LAUNCHER_NAME"
+      echo "Launching Jack server" $JACK_SERVER_COMMAND
+      (
+        trap "" SIGHUP
+        for i in $(seq 3 255); do
+          eval exec "$i"'>&-'
+        done
+        cd "$JACK_HOME"
+        umask $BASE_UMASK
+        exec $JACK_SERVER_COMMAND
+        abort
+      ) >"$JACK_OUT_ERR" 2>&1 &
+    fi
+
+    waitServerStarted
+    exit 0 ;;
+
+
+  server-log-level)
+    if [ $# -eq 4 ]
+    then
+      LIMIT=$3
+      COUNT=$4
+    elif [ $# -eq 2 ]
+    then
+      COUNT=5
+      if [ \( "$2" = "ERROR" \) -o \( "$2" = "WARNING" \) ]
+      then
+        LIMIT=1048576
+      else
+        LIMIT=10485760
+      fi
+    else
+      usage
+      abort
+    fi
+
+    echo "Setting logging parameters of background server"
+
+    HTTP_CODE=$(curl --fail $JACK_EXTRA_CURL_OPTIONS \
+         --cert "${JACK_HOME}/client.pem" \
+         --cacert "${JACK_HOME}/server.pem" \
+         --output /dev/null \
+         --no-buffer --write-out '%{http_code}' --silent --connect-timeout $JACK_CONNECTION_TIMEOUT \
+         --request PUT \
+         --form "level=$2;type=text/plain$CHARSET_ARGUMENT" \
+         --form "limit=$LIMIT;type=text/plain$CHARSET_ARGUMENT" \
+         --form "count=$COUNT;type=text/plain$CHARSET_ARGUMENT" \
+         --noproxy ${SERVER_HOST} \
+         https://${SERVER_HOST}:$SERVER_PORT_ADMIN/launcher/log/level \
+         )
+    handleHttpErrors $? $HTTP_CODE ;;
+
+
+  server-gc)
+    echo "Requesting a garbage collection to the background server"
+
+    HTTP_CODE=$(curl -f $JACK_EXTRA_CURL_OPTIONS \
+         --cert "${JACK_HOME}/client.pem" \
+         --cacert "${JACK_HOME}/server.pem" \
+         --output /dev/null \
+         --no-buffer --write-out '%{http_code}' --silent --connect-timeout $JACK_CONNECTION_TIMEOUT \
+         -X POST \
+         --noproxy ${SERVER_HOST} \
+         https://${SERVER_HOST}:$SERVER_PORT_ADMIN/gc \
+         )
+    handleHttpErrors $? $HTTP_CODE ;;
+
+
+#
+# Should be run when server is off. Allows to clean files that could be forgotten on disk in case of
+# server VM crash after an update.
+#
+  cleanup-server)
+    shopt -s nullglob
+    for file in $JACK_HOME/jack/*.deleted; do
+      rm "${file%.deleted}"
+      rm "$file"
+    done
+    exit 0 ;;
+
+
+  dump-report)
+    if [ ! -d "$JACK_HOME" ]; then
+      echo "Failed to locate Jack server installation" >&2
+      abort
+    fi
+
+    echo "Creating report..."
+    REPORT="jack-report.$$.zip"
+    REPORT_PATH="$(pwd)/$REPORT"
+    REPORT_INFO="$JACK_HOME/report.$$.txt"
+
+    if [ -e "$REPORT" ]; then
+      echo "Failed to create Jack server report '$REPORT', file already exists" >&2
+      abort
+    fi
+
+    trap 'rm -f "$REPORT_INFO" 2>/dev/null;' EXIT
+
+    date >>"$REPORT_INFO" 2>&1
+
+    echo "Dumping Jack server stacks..."
+    echo >>"$REPORT_INFO"
+    echo "\$ ps -A -o \"pid args\" | grep $LAUNCHER_NAME | grep -v grep | awk '{print $1}' |  xargs kill -3" >>"$REPORT_INFO"
+            (ps -A -o  "pid args"  | grep $LAUNCHER_NAME | grep -v grep | awk '{print $1}' |  xargs kill -3) >>"$REPORT_INFO" 2>&1
+
+    echo "Getting current user id..."
+    echo >>"$REPORT_INFO"
+    echo "\$ id -u" >>"$REPORT_INFO"
+             id -u  >>"$REPORT_INFO"
+
+    echo "Listing Jack server process..."
+    echo >>"$REPORT_INFO"
+    echo "\$ ps -A -o \"uid pid args\" | grep $LAUNCHER_NAME | grep -v grep" >>"$REPORT_INFO"
+            (ps -A -o  "uid pid args"  | grep $LAUNCHER_NAME | grep -v grep) >>"$REPORT_INFO" 2>&1
+
+    echo "Listing process using Jack server service port $SERVER_PORT_SERVICE..."
+    echo >>"$REPORT_INFO"
+    echo "\$ lsof -i TCP:$SERVER_PORT_SERVICE -l" >>"$REPORT_INFO"
+             lsof -i TCP:$SERVER_PORT_SERVICE -l  >>"$REPORT_INFO" 2>&1
+
+    echo "Listing process using Jack server admin port $SERVER_PORT_ADMIN..."
+    echo >>"$REPORT_INFO"
+    echo "\$ lsof -i TCP:$SERVER_PORT_ADMIN -l" >>"$REPORT_INFO"
+             lsof -i TCP:$SERVER_PORT_ADMIN -l  >>"$REPORT_INFO" 2>&1
+
+    echo "Collecting Jack client configuration..."
+    echo >>"$REPORT_INFO"
+    echo "\$ cat \"\$CLIENT_SETTING\"" >>"$REPORT_INFO"
+             cat   "$CLIENT_SETTING"   >>"$REPORT_INFO" 2>&1
+
+    echo "Listing Jack server installation dir..."
+    echo >>"$REPORT_INFO"
+    echo "\$ cd \"\$JACK_HOME\"; ls -l -R -n ." >>"$REPORT_INFO"
+            (cd   "$JACK_HOME" ; ls -l -R -n .  >>"$REPORT_INFO" 2>&1)
+
+    echo "Collecting curl version..."
+    echo >>"$REPORT_INFO"
+    echo "\$ curl --version" >>"$REPORT_INFO"
+             curl --version  >>"$REPORT_INFO" 2>&1
+
+    echo "Collecting curl connection info..."
+    echo >>"$REPORT_INFO"
+    echo "\$ JACK_EXTRA_CURL_OPTIONS=-v jack-admin list server" >>"$REPORT_INFO"
+             JACK_EXTRA_CURL_OPTIONS=-v "$0"       list server  >>"$REPORT_INFO" 2>&1
+
+    echo "Collecting Jack server stats..."
+    echo >>"$REPORT_INFO"
+    echo "\$ jack-admin server-stat" >>"$REPORT_INFO"
+             "$0"       server-stat  >>"$REPORT_INFO" 2>&1
+
+    echo "Zipping Jack server installation dir except keys and certificates..."
+    (cd "$JACK_HOME"; zip --exclude \*.pem \*.jks --recurse-paths "$REPORT_PATH" .) >/dev/null
+    echo "Jack server report saved in '$REPORT'. Consider reviewing content before publishing."
+    exit 0 ;;
+
+
+  *)
+    usage
+    abort ;;
+esac
+
+
+# Exit
+
+exit 0

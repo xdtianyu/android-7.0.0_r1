@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.google.protobuf</groupId>
+  <artifactId>protobuf-gradle-plugin</artifactId>
+  <version>0.7.5</version>
+  <name>protobuf-gradle-plugin</name>
+  <description>Gradle build plugin to handle Protocol Buffers automated code generation and compilation</description>
+  <url>https://github.com/google/protobuf-gradle-plugin</url>
+  <licenses>
+    <license>
+      <name>BSD 3-Clause</name>
+      <url>http://opensource.org/licenses/BSD-3-Clause</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>zhangkun83</id>
+      <name>Kun Zhang</name>
+      <email>zhangkun@google.com</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git://github.com/google/protobuf-gradle-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:google/protobuf-gradle-plugin.git</developerConnection>
+    <url>https://github.com/google/protobuf-gradle-plugin</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gradle</groupId>
+      <artifactId>osdetector-gradle-plugin</artifactId>
+      <version>1.2.1</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>

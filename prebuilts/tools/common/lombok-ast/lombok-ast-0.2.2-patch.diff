@@ -1,0 +1,235 @@
+From 3f580c8bf7bc692f640accb8f6edad0165768519 Mon Sep 17 00:00:00 2001
+From: Tor Norbye <tnorbye@google.com>
+Date: Wed, 1 Jan 2014 19:28:00 -0800
+Subject: [PATCH] Add support for ecj 4.2, and update version to 0.2.2
+
+This changeset updates Lombok AST's ECJ converter to work with ECJ 4.2
+(it was using 3.6.2), and in particular it no longer aborts when it
+encounters a multi-catch statement. (Note that it doesn't actually
+support the Java 7 syntax; for that, the Lombok AST API itself will
+have to be enhanced (and the other parsers and parse tree converters
+updated as well). It does however mean that rather than abort with a
+fatal error encountering an unknown ECJ AST node, it will simply use
+the first multi catch type reference instead.
+
+Also updates the version number to Lombok AST 0.2.2, and stores native
+nodes from ECJ on the Node native field.
+
+Finally, some build script tweaks used in the Android version of
+Lombok AST are included, to basically strip out the bundled (and
+repackaged) parboiled (and thereby ASM 3.3) bits, as well as the
+command line reader and the repackaged Guava r09 version. Clients
+using these portions of Lombok should add these libraries on their
+own, which lint already does.
+---
+ .gitignore                                              |  2 ++
+ build.xml                                               |  6 +++---
+ buildScripts/ivy-repo/org.eclipse.custom-ecj-3.6.2.xml  | 14 --------------
+ buildScripts/ivy.xml                                    |  4 ++--
+ src/ecjTransformer/lombok/ast/ecj/EcjTreeBuilder.java   | 14 ++++++--------
+ src/ecjTransformer/lombok/ast/ecj/EcjTreeConverter.java | 16 ++++++++++++++++
+ src/ecjTransformer/lombok/ast/ecj/EcjTreeVisitor.java   | 10 +++++++++-
+ src/main/lombok/ast/Version.java                        |  2 +-
+ 8 files changed, 39 insertions(+), 29 deletions(-)
+ delete mode 100644 buildScripts/ivy-repo/org.eclipse.custom-ecj-3.6.2.xml
+
+diff --git a/.gitignore b/.gitignore
+index 486c70c..679717f 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -2,6 +2,8 @@
+ /.project
+ /.classpath
+ /.factorypath
++/.idea
++/*.iml
+ /bin
+ /build
+ /dist
+diff --git a/build.xml b/build.xml
+index c1fd965..24c13d0 100644
+--- a/build.xml
++++ b/build.xml
+@@ -241,6 +241,9 @@
+ 		<unjar dest="build/lombok.ast">
+ 			<path refid="runtime.path" />
+ 		</unjar>
++                <delete dir="build/lombok.ast/com/google" />
++                <delete dir="build/lombok.ast/org/parboiled" />
++                <delete dir="build/lombok.ast/com/zwitserloot" />
+ 	</target>
+ 	
+ 	<target name="dist" depends="compile, version, unpackLibs" description="Creates distributable.">
+@@ -250,9 +253,6 @@
+ 			<fileset dir="build/lombok.ast" />
+ 			<fileset dir="." includes="LICENSE" />
+ 			<fileset dir="." includes="AUTHORS" />
+-			<rule pattern="com.google.common.**" result="lombok.ast.libs.com.google.common.@1" />
+-			<rule pattern="org.parboiled.**" result="lombok.ast.libs.org.parboiled.@1" />
+-			<rule pattern="com.zwitserloot.cmdreader.**" result="lombok.ast.libs.com.zwitserloot.cmdreader.@1" />
+ 			<manifest>
+ 				<attribute name="Main-Class" value="lombok.ast.app.Main" />
+ 				<attribute name="Lombok-Ast-Version" value="${lombok.ast.version}" />
+diff --git a/buildScripts/ivy-repo/org.eclipse.custom-ecj-3.6.2.xml b/buildScripts/ivy-repo/org.eclipse.custom-ecj-3.6.2.xml
+deleted file mode 100644
+index fc9fa66..0000000
+--- a/buildScripts/ivy-repo/org.eclipse.custom-ecj-3.6.2.xml
++++ /dev/null
+@@ -1,14 +0,0 @@
+-<ivy-module version="2.0">
+-	<info organisation="org.eclipse.custom" module="ecj" revision="3.6.2" publication="20110401190400">
+-		<license name="Eclipse Public Licence v1.0" url="http://www.eclipse.org/org/documents/epl-v10.php" />
+-		<description homepage="http://www.eclipse.org/eclipse/" />
+-	</info>
+-	<configurations>
+-		<conf name="default" />
+-		<conf name="sources" />
+-	</configurations>
+-	<publications>
+-		<artifact conf="default" url="http://projectlombok.org/ivyrepo/eclipse/ecj-3.6.2.jar" />
+-		<artifact type="zip" conf="sources" url="http://projectlombok.org/ivyrepo/eclipse/ecjsrc-3.6.2.zip" />
+-	</publications>
+-</ivy-module>
+diff --git a/buildScripts/ivy.xml b/buildScripts/ivy.xml
+index d95fd1c..5865aa2 100644
+--- a/buildScripts/ivy.xml
++++ b/buildScripts/ivy.xml
+@@ -11,10 +11,10 @@
+ 		<dependency org="org.projectlombok" name="lombok" rev="0.10.8" conf="build->default" />
+ 		<dependency org="org.projectlombok" name="lombok-utils" rev="0.10.8" conf="runtime->default" />
+ 		<dependency org="com.github.parboiled.custom" name="parboiled" rev="0.9.7.2" conf="build; runtime; contrib->sources" />
+-		<dependency org="com.google.guava" name="guava" rev="r09" conf="runtime->default; build->default; contrib->sources" />
++		<dependency org="com.google.guava" name="guava" rev="15.0" conf="runtime->default; build->default; contrib->sources" />
+ 		<dependency org="junit" name="junit" rev="4.8.2" conf="test->default" />
+ 		<dependency org="net.java.openjdk.custom" name="javac6" rev="1.6.0.18" conf="build->default; contrib->sources" />
+-		<dependency org="org.eclipse.custom" name="ecj" rev="3.6.2" conf="build->default; contrib->sources" />
++                <dependency org="org.eclipse.jdt.core.compiler" name="ecj" rev="4.2.2" conf="build->default; contrib->sources" />
+ 		<dependency org="net.sourceforge.cobertura" name="cobertura" rev="1.9.4.1" conf="test->runtime" />
+ 		<dependency org="net.sourceforge.cobertura" name="cobertura-runtime" rev="1.9.4.1" conf="test->runtime" />
+ 		<dependency org="com.googlecode.jarjar" name="jarjar" rev="1.1" conf="build->default" />
+diff --git a/src/ecjTransformer/lombok/ast/ecj/EcjTreeBuilder.java b/src/ecjTransformer/lombok/ast/ecj/EcjTreeBuilder.java
+index 5d0ce70..8df0205 100644
+--- a/src/ecjTransformer/lombok/ast/ecj/EcjTreeBuilder.java
++++ b/src/ecjTransformer/lombok/ast/ecj/EcjTreeBuilder.java
+@@ -1117,15 +1117,13 @@ public class EcjTreeBuilder {
+ 				if (node.astOperand() instanceof lombok.ast.IntegralLiteral && node.astOperand().getParens() == 0) {
+ 					lombok.ast.IntegralLiteral lit = (lombok.ast.IntegralLiteral)node.astOperand();
+ 					if (!lit.astMarkedAsLong() && lit.astIntValue() == Integer.MIN_VALUE) {
+-						IntLiteralMinValue minLiteral = new IntLiteralMinValue();
+-						minLiteral.sourceStart = start(node);
+-						minLiteral.sourceEnd = end(node);
++						IntLiteralMinValue minLiteral = new IntLiteralMinValue(
++							lit.rawValue().toCharArray(), null, start(node), end(node));
+ 						return set(node, minLiteral);
+ 					}
+ 					if (lit.astMarkedAsLong() && lit.astLongValue() == Long.MIN_VALUE) {
+-						LongLiteralMinValue minLiteral = new LongLiteralMinValue();
+-						minLiteral.sourceStart = start(node);
+-						minLiteral.sourceEnd = end(node);
++						LongLiteralMinValue minLiteral = new LongLiteralMinValue(
++							lit.rawValue().toCharArray(), null, start(node), end(node));
+ 						return set(node, minLiteral);
+ 					}
+ 				}
+@@ -1419,9 +1417,9 @@ public class EcjTreeBuilder {
+ 		@Override
+ 		public boolean visitIntegralLiteral(lombok.ast.IntegralLiteral node) {
+ 			if (node.astMarkedAsLong()) {
+-				return set(node, new LongLiteral(node.rawValue().toCharArray(), start(node), end(node)));
++				return set(node, LongLiteral.buildLongLiteral(node.rawValue().toCharArray(), start(node), end(node)));
+ 			}
+-			return set(node, new IntLiteral(node.rawValue().toCharArray(), start(node), end(node)));
++			return set(node, IntLiteral.buildIntLiteral(node.rawValue().toCharArray(), start(node), end(node)));
+ 		}
+ 		
+ 		@Override
+diff --git a/src/ecjTransformer/lombok/ast/ecj/EcjTreeConverter.java b/src/ecjTransformer/lombok/ast/ecj/EcjTreeConverter.java
+index b825771..b0f6e88 100644
+--- a/src/ecjTransformer/lombok/ast/ecj/EcjTreeConverter.java
++++ b/src/ecjTransformer/lombok/ast/ecj/EcjTreeConverter.java
+@@ -128,6 +128,7 @@ import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration;
+ import org.eclipse.jdt.internal.compiler.ast.TypeParameter;
+ import org.eclipse.jdt.internal.compiler.ast.TypeReference;
+ import org.eclipse.jdt.internal.compiler.ast.UnaryExpression;
++import org.eclipse.jdt.internal.compiler.ast.UnionTypeReference;
+ import org.eclipse.jdt.internal.compiler.ast.WhileStatement;
+ import org.eclipse.jdt.internal.compiler.ast.Wildcard;
+ import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
+@@ -208,6 +209,7 @@ public class EcjTreeConverter {
+ 		List<Node> result = Lists.newArrayList();
+ 		if (value != null) result.add(value);
+ 		this.result = result;
++		if (value != null) value.setNativeNode(node);
+ 	}
+ 	
+ 	@SuppressWarnings("unused")
+@@ -216,6 +218,9 @@ public class EcjTreeConverter {
+ 		
+ 		if (result != null) throw new IllegalStateException("result is already set");
+ 		this.result = values;
++		for (Node value : values) {
++			value.setNativeNode(node);
++		}
+ 	}
+ 	
+ 	private Node toTree(ASTNode node, FlagKey... keys) {
+@@ -1306,6 +1311,17 @@ public class EcjTreeConverter {
+ 			set(node, setPosition(node, element));
+ 		}
+ 		
++		@Override public void visitUnionTypeReference(UnionTypeReference node) {
++			// For now, just use the FIRST type reference; we need the Lombok AST API
++			// enhanced in order to properly hold all these
++			if (node.typeReferences.length > 0) {
++				TypeReference ref = node.typeReferences[0];
++				if (ref != null) {
++					visitEcjNode(ref);
++				}
++			}
++		}
++		
+ 		@Override public void visitJavadoc(Javadoc node) {
+ 			if (node == null) {
+ 				set(node, (Node)null);
+diff --git a/src/ecjTransformer/lombok/ast/ecj/EcjTreeVisitor.java b/src/ecjTransformer/lombok/ast/ecj/EcjTreeVisitor.java
+index 1504543..361b4b6 100644
+--- a/src/ecjTransformer/lombok/ast/ecj/EcjTreeVisitor.java
++++ b/src/ecjTransformer/lombok/ast/ecj/EcjTreeVisitor.java
+@@ -356,6 +356,10 @@ public abstract class EcjTreeVisitor {
+ 			visitJavadoc((Javadoc) node);
+ 			return;
+ 		}
++		if (clazz == UnionTypeReference.class) {
++			visitUnionTypeReference((UnionTypeReference) node);
++			return;
++		}
+ 		
+ 		visitOther(node);
+ 	}
+@@ -695,4 +699,8 @@ public abstract class EcjTreeVisitor {
+ 	public void visitJavadoc(Javadoc node) {
+ 		visitAny(node);
+ 	}
+-}
+\ No newline at end of file
++	
++	public void visitUnionTypeReference(UnionTypeReference node) {
++		visitAny(node);
++	}
++}
+diff --git a/src/main/lombok/ast/Version.java b/src/main/lombok/ast/Version.java
+index e188bd3..88f51c0 100644
+--- a/src/main/lombok/ast/Version.java
++++ b/src/main/lombok/ast/Version.java
+@@ -28,7 +28,7 @@ public class Version {
+ 	// ** CAREFUL ** - this class must always compile with 0 dependencies (it must not refer to any other sources or libraries).
+ 	// Note: In 'X.Y.Z', if Z is odd, its a snapshot build built from the repository, so many different 0.10.3 versions can exist, for example.
+ 	// Official builds always end in an even number.
+-	private static final String VERSION = "0.2.1";
++	private static final String VERSION = "0.2.2";
+ 	
+ 	private Version() {
+ 		//Prevent instantiation
+-- 
+1.8.4.3
+

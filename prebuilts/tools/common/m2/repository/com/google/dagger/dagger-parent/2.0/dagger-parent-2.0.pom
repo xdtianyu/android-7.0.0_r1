@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (C) 2012 Square, Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
+  <groupId>com.google.dagger</groupId>
+  <artifactId>dagger-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>2.0</version>
+  <name>Dagger (Parent)</name>
+  <description>A fast dependency injector for Android and Java.</description>
+  <url>https://github.com/square/dagger</url>
+
+  <modules>
+    <module>compiler</module>
+    <module>core</module>
+    <!-- examples are handled in a default profile (see below) -->
+    <module>producers</module>
+  </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Compilation -->
+    <java.version>1.7</java.version>
+    <javax.inject.version>1</javax.inject.version>
+    <javawriter.version>2.5.0</javawriter.version>
+    <auto.common.version>0.4</auto.common.version>
+    <auto.service.version>1.0-rc2</auto.service.version>
+    <auto.value.version>1.0</auto.value.version>
+    <guava.version>18.0</guava.version>
+
+    <!-- Test Dependencies -->
+    <compile-testing.version>0.7</compile-testing.version>
+    <junit.version>4.11</junit.version>
+    <mockito.version>1.9.5</mockito.version>
+    <truth.version>0.25</truth.version>
+  </properties>
+
+  <scm>
+    <url>http://github.com/google/dagger/</url>
+    <connection>scm:git:git://github.com/google/dagger.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/google/dagger.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>http://github.com/google/dagger/issues</url>
+  </issueManagement>
+
+  <licenses>
+    <license>
+      <name>Apache 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <organization>
+    <name>Google, Inc.</name>
+    <url>http://www.google.com</url>
+  </organization>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>${javax.inject.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.squareup</groupId>
+        <artifactId>javawriter</artifactId>
+        <version>${javawriter.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava-testlib</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.auto</groupId>
+        <artifactId>auto-common</artifactId>
+        <version>${auto.common.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.auto.service</groupId>
+        <artifactId>auto-service</artifactId>
+        <version>${auto.service.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.auto.value</groupId>
+        <artifactId>auto-value</artifactId>
+        <version>${auto.value.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.testing.compile</groupId>
+        <artifactId>compile-testing</artifactId>
+        <version>${compile-testing.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.truth</groupId>
+        <artifactId>truth</artifactId>
+        <version>${truth.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-invoker-plugin</artifactId>
+          <version>1.7</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.5</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <compilerArgument>-Xlint:all</compilerArgument>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.3.2</version><!--$NO-MVN-MAN-VER$-->
+        <configuration>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <doctitle>Dagger Dependency Injection ${project.version} API</doctitle>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.10</version>
+        <configuration>
+          <failsOnError>false</failsOnError>
+          <consoleOutput>true</consoleOutput>
+          <configLocation>checkstyle.xml</configLocation>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>checkstyle</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!--
+    A profile which when switched off excludes example modules.  By default the profile
+    is on and invokes examples.  However, when processing javadocs, it is switched off
+    omitting the example code from the javadoc.
+  -->
+  <profiles>
+    <profile>
+      <id>examples</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>core</module>
+        <module>compiler</module>
+        <module>examples</module>
+        <module>producers</module>
+      </modules>
+    </profile>
+  </profiles>
+</project>

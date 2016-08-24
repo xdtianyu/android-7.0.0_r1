@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.gebish</groupId>
+  <artifactId>geb-core</artifactId>
+  <version>0.9.3</version>
+  <name>Geb Core</name>
+  <description>Geb (pronounced "jeb") is a browser automation solution. It brings together the power of WebDriver, the elegance of jQuery content selection, the robustness of Page Object modelling and the expressiveness of the Groovy language.</description>
+  <url>http://www.gebish.org</url>
+  <inceptionYear>2010</inceptionYear>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>ldaley</id>
+      <name>Luke Daley</name>
+      <roles>
+        <role>Lead</role>
+        <role>Founder</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>erdi</id>
+      <name>Marcin Erdmann</name>
+      <roles>
+        <role>Committer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>robfletcher</id>
+      <name>Rob Fletcher</name>
+      <roles>
+        <role>Founder</role>
+      </roles>
+    </developer>
+  </developers>
+  <scm>
+    <url>https://github.com/geb/geb/</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>org.gebish</groupId>
+      <artifactId>geb-ast</artifactId>
+      <version>0.9.3</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-support</artifactId>
+      <version>2.41.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.gebish</groupId>
+      <artifactId>geb-waiting</artifactId>
+      <version>0.9.3</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-api</artifactId>
+      <version>2.41.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+</project>

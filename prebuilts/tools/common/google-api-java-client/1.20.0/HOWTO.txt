@@ -1,0 +1,95 @@
+How to recreate this JAR
+
+=========================================================
+
+Download the latest google-api-java-client library from 
+https://developers.google.com/api-client-library/java/google-api-java-client/download
+
+Download jarjar from 
+https://code.google.com/p/jarjar/
+
+Install Apache Ant (if not already installed)
+
+=========================================================
+
+Create the following directory structure
+
+base/
+ |-- jars/
+ |-- lib/
+ \-- build.xml
+
+=========================================================
+
+Put the jarjar-<version>.jar in base/lib
+
+Extract and place the .jar files from the client lib you want in base/jars
+for 1.20.0 we
+
+INCLUDED
++ commons-logging-1.1.1.jar
++ google-api-client-1.20.0.jar
++ google-api-client-jackson2-1.20.0.jar
++ google-api-client-java6-1.20.0.jar
++ google-http-client-1.20.0.jar
++ google-http-client-jackson2-1.20.0.jar
++ google-oauth-client-1.20.0.jar
++ google-oauth-client-java6-1.20.0.jar
++ google-oauth-client-jetty-1.20.0.jar
++ httpclient-4.0.1.jar
++ httpcore-4.0.1.jar
++ jackson-core-2.1.3.jar
++ jetty-6.1.26.jar
++ jetty-util-6.1.26.jar
++ jsr305-1.3.9.jar
+
+and EXCLUDED
+- google-api-client-android-1.20.0.jar
+- google-api-client-appengine-1.20.0.jar
+- google-api-client-gson-1.20.0.jar
+- google-api-client-protobuf-1.20.0.jar
+- google-api-client-servlet-1.20.0.jar
+- google-api-client-xml-1.20.0.jar
+- google-http-client-android-1.20.0.jar
+- google-http-client-appengine-1.20.0.jar
+- google-http-client-gson-1.20.0.jar
+- google-http-client-jackson-1.20.0.jar
+- google-http-client-jdo-1.20.0.jar
+- google-http-client-protobuf-1.20.0.jar
+- google-http-client-xml-1.20.0.jar
+- google-oauth-client-appengine-1.20.0.jar
+- google-oauth-client-servlet-1.20.0.jar
+- guava-jdk5-13.0.jar
+- gson-2.1.jar
+- jackson-core-asl-1.9.11.jar
+- jdo2-api-2.3-eb.jar
+- protobuf-java-2.4.1.jar
+- transaction-api-1.1.jar
+- xpp3-1.1.4c.jar
+
+=========================================================
+
+create a build.xml 
+
+<project name="gapiRepackage">
+    <target name="jar">
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="lib/jarjar-1.4.jar"/>
+        <jarjar jarfile="dist/google-api-java-client-min-repackaged-1.20.0.jar">
+            <zipgroupfileset dir="jars" includes="*.jar"/>
+            <rule pattern="org.apache.**" result="com.google.api.client.repackaged.@0"/>
+            <rule pattern="com.google.gson.**" result="com.google.api.client.repackaged.@0"/>
+            <rule pattern="com.google.protobuf.**" result="com.google.api.client.repackaged.@0"/>
+            <rule pattern="com.fasterxml.**" result="com.google.api.client.repackaged.@0"/>
+            <rule pattern="org.codehaus.**" result="com.google.api.client.repackaged.@0"/>
+            <rule pattern="org.mortbay.**" result="com.google.api.client.repackaged.@0"/>
+            <rule pattern="org.xmlpull.**" result="com.google.api.client.repackaged.@0"/>
+            <rule pattern="javax.annotation.**" result="com.google.api.client.repackaged.@0"/>
+            <rule pattern="javax.xml.**" result="com.google.api.client.repackaged.@0"/>
+        </jarjar>
+    </target>
+</project>
+
+=========================================================
+
+run "ant jar" to create a combined, reduced, repackaged jar.
+it will be found as base/dist/google-api-java-client-min-repackaged-1.20.0.jar

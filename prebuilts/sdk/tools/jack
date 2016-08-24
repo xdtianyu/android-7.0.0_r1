@@ -1,0 +1,177 @@
+#!/bin/bash
+#
+# Copyright (C) 2015 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Version: 1.3-a8
+#
+set -o nounset
+umask 077
+
+#
+# Settings
+#
+JACK_VERSION=${JACK_VERSION:=3.36.CANDIDATE}
+JACK_HOME="${JACK_HOME:=$HOME/.jack-server}"
+CLIENT_SETTING="${CLIENT_SETTING:=$HOME/.jack-settings}"
+TMPDIR=${TMPDIR:=/tmp}
+CLIENT_TMP_DIR=$TMPDIR/jack-$USER
+JACK_CONNECTION_TIMEOUT=300
+JACK_EXTRA_CURL_OPTIONS=${JACK_EXTRA_CURL_OPTIONS:=}
+
+#
+# Load client settings
+#
+if [ -f "$CLIENT_SETTING" ]; then
+  source "$CLIENT_SETTING"
+fi
+
+#
+# Create or update client settings if needed
+#
+if [[ ! -f "$CLIENT_SETTING" || $SETTING_VERSION -lt 4 ]]; then
+  echo "Writing client settings in" $CLIENT_SETTING
+  cat >"$CLIENT_SETTING.$$" <<-EOT
+	# Server settings
+	SERVER_HOST=${SERVER_HOST:=127.0.0.1}
+	SERVER_PORT_SERVICE=${SERVER_PORT_SERVICE:=8076}
+	SERVER_PORT_ADMIN=${SERVER_PORT_ADMIN:=8077}
+
+	# Internal, do not touch
+	SETTING_VERSION=4
+EOT
+  ln -f "$CLIENT_SETTING.$$" "$CLIENT_SETTING"
+  rm "$CLIENT_SETTING.$$"
+  source "$CLIENT_SETTING"
+fi
+
+
+abort () { exit 255; }
+
+JACK_SERVER=${JACK_SERVER:=true}
+JACK_MAIN_COMMAND=${JACK_MAIN_COMMAND:="java -Djava.io.tmpdir=$TMPDIR -Dfile.encoding=UTF-8 -XX:+TieredCompilation"}
+JACK_REPOSITORY=${JACK_REPOSITORY:=}
+
+
+#
+# If not in server mode, exec jack
+#
+if [ "$JACK_SERVER" != "true" ]; then
+  if [ -z "$JACK_REPOSITORY" ]; then
+    echo "Running Jack without Jack server requires definition of JACK_REPOSITORY" >&2
+    abort
+  fi
+  JACK_JAR=$JACK_REPOSITORY/jack-$JACK_VERSION.jar
+  if [ ! -r "$JACK_JAR" ]; then
+    echo "Jack jar \"$JACK_JAR\" is not readable" >&2
+    abort
+  fi
+
+
+  exec $JACK_MAIN_COMMAND -jar $JACK_JAR "$@"
+  echo "Cannot succeed to launch Jack without Jack server" >&2
+  abort
+fi
+
+
+#
+# Prepare compilation
+#
+JACK_PWD="$PWD"
+JACK_DIR="$CLIENT_TMP_DIR/jack-task-$$/"
+JACK_EXIT="$JACK_DIR/exit"
+
+# Cleanup
+trap 'rm -f "$JACK_EXIT" 2>/dev/null; rmdir "$JACK_DIR";' EXIT
+
+mkdir "$CLIENT_TMP_DIR" 2>/dev/null || (exit 0)
+set -o errexit
+mkdir "$JACK_DIR"
+
+#
+# Launch the compilation
+#
+
+set +o errexit
+trap ERR
+
+# put arguments in a non array variable
+ARGS=""
+for i in "$@"; do
+  ARGS="$ARGS $i"
+done
+
+
+CURRENT_CHARSET=$(locale charmap)
+if [ -z "$CURRENT_CHARSET" ]; then
+  CHARSET_ARGUMENT=
+else
+  CHARSET_ARGUMENT=";charset=$CURRENT_CHARSET"
+fi
+
+# Launch compilation
+exec 3>&1
+exec 4>&2
+HTTP_CODE=$(curl -f $JACK_EXTRA_CURL_OPTIONS \
+     --cert "${JACK_HOME}/client.pem" \
+     --cacert "${JACK_HOME}/server.pem" \
+     --output >(tee >(sed -n -e 's/^E|\(.*\)$/\1/p' >&4 ) | tee >(sed -n -e 's/^X|\(.*\)$/\1/p' >$JACK_EXIT) | sed -n -e 's/^O|\(.*\)$/\1/p' >&3) \
+     --no-buffer --write-out '%{http_code}' --silent --connect-timeout $JACK_CONNECTION_TIMEOUT \
+     -X POST \
+     -H "Accept: application/vnd.jack.command-out;version=1;charset=$CURRENT_CHARSET" \
+     -F "cli=$ARGS;type=text/plain;charset=$CURRENT_CHARSET" \
+     -F "version=$JACK_VERSION;type=application/vnd.jack.select-exact;version=1" \
+     -F "pwd=$JACK_PWD;type=text/plain$CHARSET_ARGUMENT" \
+     --noproxy ${SERVER_HOST} \
+     https://${SERVER_HOST}:$SERVER_PORT_SERVICE/jack \
+     )
+
+CURL_CODE=$?
+exec 3>&-
+exec 4>&-
+JACK_CODE=$(cat "$JACK_EXIT")
+if [ $CURL_CODE -eq 0 ]; then
+  # No problem, let's go
+  exit $JACK_CODE
+elif [ $CURL_CODE -eq 7 ]; then
+  # Failed to connect
+  echo "No Jack server running. Try 'jack-admin start-server'" >&2
+  abort
+elif [ $CURL_CODE -eq 35 ]; then
+  echo "SSL error when connecting to the Jack server. Try 'jack-diagnose'" >&2
+  abort
+elif [ $CURL_CODE -eq 58 ]; then
+  echo "Failed to contact Jack server: Problem reading ${JACK_HOME}/client.pem. Try 'jack-diagnose'" >&2
+  abort
+elif [ $CURL_CODE -eq 60 ]; then
+  echo "Failed to authenticate Jack server certificate. Try 'jack-diagnose'" >&2
+  abort
+ elif [ $CURL_CODE -eq 77 ]; then
+  echo "Failed to contact Jack server: Problem reading ${JACK_HOME}/server.pem. Try 'jack-diagnose'" >&2
+  abort
+elif  [ $CURL_CODE -eq 22 ]; then
+  # Http code not OK, let's decode and abort
+  if [ $HTTP_CODE -eq 400 ]; then
+    # 400: Bad request
+    echo "Bad request, see server log" >&2
+    abort
+  else
+    # Other
+    echo "Internal unknown error ($HTTP_CODE), try 'jack-diagnose' or see Jack server log" >&2
+    abort
+  fi
+else
+  echo "Communication error with Jack server ($CURL_CODE). Try 'jack-diagnose'" >&2
+  abort
+fi

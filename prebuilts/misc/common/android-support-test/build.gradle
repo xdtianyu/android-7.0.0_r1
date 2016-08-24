@@ -1,0 +1,35 @@
+/*
+ * WARNING: This file is deprecated! it’s here for legacy purposes only.
+ * All Android Testing Libraries should be used from the Android Maven repository,
+ * the same way you would use the Support Libraries.
+ *
+ * If you're compiling against current and the prerelease versions of the Support Libraries
+ * (using Jars in "prebuilts/sdk/current/support") then you should explicitly exclude your
+ * "support-annotations" dependency.
+ *
+ * An example of how to configure your project can be found here:
+ * go/config-atsl-deps (https://bit.googleplex.com/#/nkorsote/5894271450218496)
+ */
+
+// To use the test runner and test rules add the following dependency:
+//     compile project(":android-support-test")
+// where "android-support-test" is the name you defined in your settings.gradle file
+if (!configurations.findByName("default")) {
+    configurations.create("default")
+}
+artifacts.add("default", file("runner/runner-0.5-release.jar"))
+artifacts.add("default", file("rules/rules-0.5-release.jar"))
+
+// To use the "android-support-test.jar" and the "esspresso-core.jar" add the following dependency:
+//     compile project(path: ":android-support-test", configuration: "espresso-core")
+if (!configurations.findByName("espresso-core")) {
+    configurations.create("espresso-core")
+}
+artifacts.add("espresso-core", file("espresso/espresso-core-2.2.2-release.jar"))
+
+// To use the "runner-no-dep.jar", add the following dependency:
+//     compile project(path: ":android-support-test", configuration: "runner-no-dep")
+if (!configurations.findByName("runner-no-dep")) {
+    configurations.create("runner-no-dep")
+}
+artifacts.add("runner-no-dep", file("runner/runner-0.5-release-no-dep.jar"))
