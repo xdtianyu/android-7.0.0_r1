@@ -1,0 +1,11 @@
+allow bluetooth sysfs:file rw_file_perms;
+allow bluetooth sysfs_usb:file w_file_perms;
+
+allow bluetooth ttyHS0_device:chr_file rw_file_perms;
+allow bluetooth start_hci_filter:unix_stream_socket connectto;
+
+set_prop(bluetooth, wc_transport_prop)
+
+# read /persist/bdaddr.txt
+allow bluetooth persist_file:dir search;
+allow bluetooth persist_file:file r_file_perms;

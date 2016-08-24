@@ -1,0 +1,576 @@
+page.title=Viewing Battery Use Data
+@jd:body
+
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<div id="qv-wrapper">
+  <div id="qv">
+    <h2>In this document</h2>
+    <ol id="auto-toc">
+   </ol>
+  </div>
+</div>
+
+  <p>The <code>dumpsys batterystats</code> command generates interesting
+  statistical data about battery usage on a device, organized by unique user
+  ID (UID). The statistics include the following:</p>
+
+  <ul>
+    <li>History of battery-related events</li>
+
+    <li>Global statistics for the device</li>
+
+    <li>Approximate power use per UID and system component</li>
+
+    <li>Per-app mobile milliseconds per packet</li>
+
+    <li>System UID aggregated statistics</li>
+
+    <li>App UID aggregated statistics</li>
+  </ul>
+
+  <p>Use the <a href="https://github.com/google/battery-historian">Battery
+  Historian</a> tool on the output of the dumpsys command to generate an HTML
+  visualization of power-related events from the logs. This information makes it
+  easier to understand and diagnose battery-related issues.</p>
+
+  <h2 id="command-line_options">Command input</h2>
+  <p>The basic <code>batterystats</code> command is:</p>
+  <pre class="prettyprint">
+$ adb shell dumpsys batterystats</pre>
+  <p>Supported options:</p>
+  <ul>
+  <li><code>--help</code> displays additional options for tailoring the output.
+  </li>
+  <li><code>--checkin</code> exports results in machine-readable csv format.
+  </li>
+  </ul>
+  <p>For example, to print battery usage statistics in csv format for all apps
+  since the device was last charged, run the command:</p>
+  <pre class="prettyprint">
+$ adb shell dumpsys batterystats --charged --checkin</pre>
+  <p>You can also specify a package name to get statistics for a single app. For
+  example, to print battery usage statistics for a given app package
+  since the device was last charged, run the command:</p>
+  <pre class="prettyprint">
+$ adb shell dumpsys batterystats --charged &lt;package-name&gt;</pre>
+
+  <h2 id="output">Command output</h2>
+
+  <p>The <code>batterystats</code> command generates aggregated observations
+  about battery use on the device since it was last charged. Observations may be
+  per-UID or system-level; data is selected for inclusion based on its
+  usefulness in analyzing battery performance. Output includes one (1) entry
+  per observation, and each entry consists of a comma-separated list of values
+  in the format:
+  <em>int</em>,<em>uid</em>,<em>mode</em>,<em>section</em>,<em>fields</em>
+  (one or more).</p>
+
+  <p>The first four values correspond to the following:</p>
+
+  <ul>
+    <li>Dummy integer</li>
+
+    <li>UID</li>
+
+    <li>Aggregation mode
+
+      <ul>
+        <li>"i" for information not tied to charged/uncharged status.</li>
+        <li>"l" for --charged (usage since last charge).</li>
+        <li>"u" for --unplugged (usage since last unplugged). Deprecated in
+        Android 5.1.1.</li>
+      </ul>
+    </li>
+
+    <li><a href="#interpreting_the_output">Section identifier</a>, which
+    determines how to interpret subsequent values in the line.</li>
+  </ul>
+
+<p>Sample output:</p>
+
+  <pre class="no-pretty-print">
+  9,0,i,vers,11,116,K,L 9,0,i,uid,1000,android
+  9,0,i,uid,1000,com.android.providers.settings
+  9,0,i,uid,1000,com.android.inputdevices
+  9,0,i,uid,1000,com.android.server.telecom
+  9,0,i,uid,1000,com.android.keychain 9,0,i,uid,1000,com.android.settings
+  9,0,i,uid,1000,com.android.location.fused
+  9,0,i,uid,1001,com.android.providers.telephony
+  9,0,i,uid,1001,com.android.mms.service 9,0,i,uid,1001,com.android.stk
+  9,0,i,uid,1001,com.android.phone 9,0,i,uid,1027,com.android.nfc
+  9,0,i,uid,2000,com.android.shell
+  9,0,i,uid,10002,com.android.providers.calendar
+  9,0,i,uid,10003,com.android.cellbroadcastreceiver
+  9,0,i,uid,10004,com.android.providers.userdictionary
+  9,0,i,uid,10004,com.android.providers.contacts
+  9,0,i,uid,10005,com.google.android.apps.enterprise.dmagent
+  9,0,i,uid,10006,com.android.defcontainer
+  9,0,i,uid,10007,com.android.providers.media
+  9,0,i,uid,10007,com.android.providers.downloads
+  9,0,i,uid,10007,com.android.providers.downloads.ui
+  9,0,i,uid,10008,com.android.externalstorage
+  9,0,i,uid,10009,com.google.android.syncadapters.contacts
+  9,0,i,uid,10009,com.google.android.gms
+  9,0,i,uid,10009,com.google.android.gsf
+  9,0,i,uid,10009,com.google.android.gsf.login
+  9,0,i,uid,10009,com.google.android.backuptransport
+  9,0,i,uid,10011,com.google.android.dialer
+  9,0,i,uid,10013,com.google.android.onetimeinitializer
+  9,0,i,uid,10014,com.google.android.partnersetup
+  9,0,i,uid,10015,com.android.launcher
+  9,0,i,uid,10016,com.android.managedprovisioning
+  9,0,i,uid,10017,com.android.mms 9,0,i,uid,10018,com.android.musicfx
+  9,0,i,uid,10019,com.android.vending
+  9,0,i,uid,10022,com.android.sharedstoragebackup
+  9,0,i,uid,10023,com.android.systemui
+  9,0,i,uid,10025,com.google.android.googlequicksearchbox
+  9,0,i,uid,10027,com.google.android.apps.walletnfcrel
+  9,0,i,uid,10029,com.google.android.marvin.talkback
+  9,0,i,uid,10031,com.google.android.apps.books
+  9,0,i,uid,10034,com.google.android.calendar
+  9,0,i,uid,10037,com.android.chrome
+  9,0,i,uid,10039,com.google.android.configupdater
+  9,0,i,uid,10040,com.google.android.deskclock
+  9,0,i,uid,10041,com.android.documentsui
+  9,0,i,uid,10042,com.google.android.apps.docs
+  9,0,i,uid,10047,com.google.android.ears
+  9,0,i,uid,10054,com.google.android.talk
+  9,0,i,uid,10057,com.google.android.inputmethod.latin
+  9,0,i,uid,10061,com.google.android.music
+  9,0,i,uid,10064,com.android.packageinstaller
+  9,0,i,uid,10068,com.google.android.apps.plus
+  9,0,i,uid,10069,com.google.android.gm
+  9,0,i,uid,10070,com.google.android.keep
+  9,0,i,uid,10071,com.google.android.apps.genie.geniewidget
+  9,0,i,uid,10072,com.android.printspooler
+  9,0,i,uid,10076,com.google.android.videos
+  9,0,i,uid,10079,com.google.android.youtube
+  9,0,i,uid,10084,com.google.android.apps.magazines
+  9,0,i,dsd,1820451,97,s-,p- 9,0,i,dsd,3517481,98,s-,p-
+  9,0,l,bt,0,8548446,1000983,8566645,1019182,1418672206045,8541652,994188
+  9,0,l,gn,0,0,666932,495312,0,0,2104,1444
+  9,0,l,m,6794,0,8548446,8548446,0,0,0,666932,495312,0,697728,0,0,0,5797,0,0
+  9,0,l,br,9,0,6785,0,0 9,0,l,sgt,8548446,0,0,0,0 9,0,l,sst,9000
+  9,0,l,sgc,0,0,0,0,0 9,0,l,dct,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+  9,0,l,dcc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 9,0,l,wst,0,0,0,0,0,0,0,0
+  9,0,l,wsc,0,0,0,0,0,0,0,0 9,0,l,wsst,0,0,0,0,0,0,0,52,0,0,8548394,0,0
+  9,0,l,wssc,0,0,0,0,0,0,0,2,0,0,2,0,0 9,0,l,wsgt,0,0,0,3016,8545430
+  9,0,l,wsgc,0,0,0,2,1 9,0,l,bst,0,0,0,0 9,0,l,bsc,0,0,0,0 9,0,l,dc,2,3,0,3
+  9,0,l,kwl,msm_ipc_read00000001:00000001,0,0
+  9,0,l,kwl,rpm_regulator_tcxo,0,0 9,0,l,kwl,wlan,25423,32
+  9,0,l,kwl,event4-648,0,0 9,0,l,kwl,qcril,187,2 9,0,l,kwl,ssr(dsps),0,0
+  9,0,l,kwl,bq51051b_wireless_chip,0,0 9,0,l,kwl,qmi0,0,0
+  9,0,l,kwl,event5-648,7755,1231
+  9,0,l,kwl,PowerManagerService.WakeLocks,680435,3908
+  9,0,l,kwl,msm_hsic_host,66258,35 9,0,l,kwl,qcom_sap_wakelock,0,0
+  9,0,l,kwl,sns_async_ev_wakelock,91954,1244 9,0,l,kwl,qmuxd_port_wl_12,0,0
+  9,0,l,kwl,pil-wcnss,0,0 9,0,l,kwl,event0-648,11364,1212
+  9,0,l,kwl,dofstrim,0,0 9,0,l,kwl,ssr(lpass),0,0
+  9,0,l,kwl,qmuxd_port_wl_11,0,0 9,0,l,kwl,event2-648,0,0
+  9,0,l,kwl,pil-vidc,0,0 9,0,l,kwl,mmc0,0,0
+  9,0,l,kwl,tabla_gpio_irq_resend,0,0 9,0,l,kwl,pil-q6,0,0
+  9,0,l,kwl,radio-interface,0,0 9,0,l,kwl,msm_ipc_read00000001:00000002,0,0
+  9,0,l,kwl,event3-648,8143,1231 9,0,l,kwl,ssr(wcnss),0,0
+  9,0,l,kwl,ssr(gss),0,0 9,0,l,kwl,KeyEvents,98,1263
+  9,0,l,kwl,unknown_wakeups,0,0 9,0,l,kwl,qmuxd_port_wl_10,0,0
+  9,0,l,kwl,pil-gss,0,0 9,0,l,kwl,qcom_rx_wakelock,161828,3205
+  9,0,l,kwl,ssr(external_modem),0,0 9,0,l,kwl,power-supply,228,23
+  9,0,l,kwl,pil-dsps,0,0 9,0,l,kwl,wcnss,0,0 9,0,l,kwl,msm_otg,0,0
+  9,0,l,kwl,pm8921_eoc,0,0 9,0,l,kwl,slimport_wake_lock,0,0
+  9,0,l,kwl,smsm_snapshot,0,0 9,0,l,kwl,suspend_backoff,239760,24
+  9,0,l,kwl,event1-648,9331,1212 9,0,l,kwl,main,429,0
+  9,0,l,kwl,alarm,2892,270 9,0,l,kwl,PowerManagerService.Display,432,1
+  9,0,l,kwl,qmi1,0,0 9,0,l,kwl,kickstart,211,1
+  9,0,l,kwl,qmuxd_port_wl_9,9,102 9,0,l,kwl,ear_hook,0,0
+  9,0,l,kwl,mmc0_detect,52,1232 9,0,l,kwl,deleted_wake_locks,0,0
+  9,0,l,kwl,PowerManagerService.Broadcasts,7331,0 9,0,l,kwl,qmi2,0,0
+  9,0,l,kwl,smd_sns_dsps,456,1340 9,0,l,kwl,alarm_rtc,36084,122
+  9,0,l,pws,2100,64.4,42.0,63.0 9,10009,l,pwi,uid,20.6 9,0,l,pwi,cell,18.5
+  9,0,l,pwi,idle,8.73 9,0,l,pwi,uid,5.46 9,1000,l,pwi,uid,5.11
+  9,0,l,pwi,wifi,3.28 9,10019,l,pwi,uid,0.847 9,10069,l,pwi,uid,0.408
+  9,0,l,pwi,scrn,0.385 9,10034,l,pwi,uid,0.322 9,10025,l,pwi,uid,0.185
+  9,0,l,pwi,blue,0.0273
+  9,0,l,pwi,cell,14.0
+  9,10002,l,pwi,uid,0.180 9,10023,l,pwi,uid,0.168 9,1001,l,pwi,uid,0.0297
+  9,10068,l,pwi,uid,0.0296 9,10057,l,pwi,uid,0.0234 9,1027,l,pwi,uid,0.0157
+  9,10079,l,pwi,uid,0.00905 9,10054,l,pwi,uid,0.00527
+  9,10005,l,pwi,uid,0.00341 9,10004,l,pwi,uid,0.00204
+  9,2000,l,pwi,uid,0.00192 9,10070,l,pwi,uid,0.00144
+  9,10061,l,pwi,uid,0.000860 9,10014,l,pwi,uid,0.000495
+  9,10040,l,pwi,uid,0.000286 9,1014,l,pwi,uid,0.00000157 9,0,l,pwi,over,1.36
+  9,0,l,nt,0,0,127699,11159,0,0,975,163,0,0
+  9,0,l,pr,file-storage,0,140,0,0,0,0 9,0,l,pr,TX_Thread,0,440,0,0,0,0
+  9,0,l,pr,flush-179:0,0,850,0,0,0,0 9,0,l,pr,sync_supers,10,0,0,0,0,0
+  9,0,l,pr,dhcpcd,0,30,0,0,0,0 9,0,l,pr,kauditd,50,10,0,0,0,0
+  9,0,l,pr,sdcard,20,110,0,0,0,0 9,0,l,pr,flush-0:18,40,100,0,0,0,0
+  9,0,l,pr,zygote,250,90,0,0,0,0 9,0,l,pr,bdi-default,0,610,0,0,0,0
+  9,0,l,pr,ueventd,940,2630,0,0,0,0 9,0,l,pr,kswapd0,0,180,0,0,0,0
+  9,0,l,pr,debuggerd,180,610,0,0,0,0 9,0,l,pr,jbd2/mmcblk0p20,0,50,0,0,0,0
+  9,0,l,pr,jbd2/mmcblk0p21,0,250,0,0,0,0
+  9,0,l,pr,jbd2/mmcblk0p22,0,90,0,0,0,0
+  9,0,l,pr,jbd2/mmcblk0p23,0,1150,0,0,0,0 9,0,l,pr,MC_Thread,0,1270,0,0,0,0
+  9,0,l,pr,adbd,10,40,0,0,0,0 9,0,l,pr,lmkd,360,990,0,0,0,0
+  9,0,l,pr,logd,1550,1670,0,0,0,0 9,0,l,pr,netd,80,330,0,0,0,0
+  9,0,l,pr,rild,160,0,0,0,0,0 9,0,l,pr,vold,50,100,0,0,0,0
+  9,0,l,pr,/init,0,70,0,0,0,0 9,0,l,pr,mpdecision,1400,7820,0,0,0,0
+  9,0,l,pr,khubd,0,10,0,0,0,0 9,0,l,pr,kthreadd,0,600,0,0,0,0
+  9,0,l,pr,kworker/0:0,0,3520,0,0,0,0 9,0,l,pr,sensors.qcom,380,720,0,0,0,0
+  9,0,l,pr,healthd,20,190,0,0,0,0 9,0,l,pr,thermald,60,360,0,0,0,0
+  9,0,l,pr,mmcqd/0,0,8700,0,0,0,0 9,0,l,pr,qseecomd,0,90,0,0,0,0
+  9,0,l,pr,ksoftirqd/0,0,420,0,0,0,0 9,0,l,pr,wpa_supplicant,170,160,0,0,0,0
+  9,0,l,pr,migration/0,0,1630,0,0,0,0 9,0,l,pr,migration/1,20,0,0,0,0,0
+  9,0,l,pr,RX_Thread,0,790,0,0,0,0 9,0,l,pr,netmgrd,40,20,0,0,0,0
+  9,1000,l,nt,0,0,11054,11216,0,0,26,29,0,0 9,1000,l,ua,2,0,0
+  9,1000,l,sr,5,6813,1 9,1000,l,wl,*alarm*,0,f,0,23856,p,151,0,w,0
+  9,1000,l,st,8548446,8548446,8548446 9,1000,l,pr,system,83310,35060,0,0,0,0
+  9,1000,l,pr,surfaceflinger,6620,9330,0,0,0,0 9,1000,l,pr,ks,0,60,0,0,0,0
+  9,1000,l,pr,qcks,0,90,0,0,0,0 9,1000,l,pr,efsks,0,50,0,0,0,0
+  9,1000,l,pr,com.android.server.telecom,110,100,0,0,0,0
+  9,1000,l,pr,servicemanager,40,110,0,0,0,0
+  9,1001,l,st,8548446,8548446,8548446 9,1001,l,pr,qmuxd,0,30,0,0,0,0
+  9,1001,l,pr,com.android.phone,450,300,0,0,0,0
+  9,1014,l,nt,0,0,3410,3370,0,0,10,10,0,0 9,1027,l,st,8548446,8548446,8548446
+  9,1027,l,pr,com.android.nfc,250,160,0,0,0,0
+  9,10002,l,apk,15,com.android.providers.calendar,com.android.providers.calendar.CalendarProviderIntentService,2383,15,15
+  9,10005,l,nt,0,0,1241,2488,0,0,6,10,0,0
+  9,10009,l,nt,0,0,232255,258511,0,0,472,600,0,0
+  9,10009,l,wfl,7689000,9814000,0
+  9,10009,l,jb,com.google.android.gms/.gcm.nts.TaskExecutionService,81,3
+  9,10009,l,sr,0,43643,46 9,10025,l,nt,0,0,152461,42850,0,0,267,243,0,0
+  9,10025,l,wfl,1593000,629000,0 9,10034,l,nt,0,0,77657,40093,0,0,172,170,0,0
+  9,10068,l,nt,0,0,11929,8383,0,0,50,47,0,0
+  9,10069,l,nt,0,0,41553,22886,0,0,85,91,0,0</pre>
+
+  <h2 id="interpreting_the_output">Section identifiers</h2>
+
+  <p>Command output for <code>batterystats</code> supports the following
+  sections:</p>
+
+  <table id="batterystats-section-ids">
+
+    <tr>
+      <th width="10%">Section Identifier</th>
+      <th width="20%">Description</th>
+      <th width="70%">Remaining Fields</th>
+    </tr>
+
+    <tr>
+      <td><p>vers</p></td>
+      <td><p>Version</p></td>
+      <td><p>checkin version, parcel version, start platform version, end
+        platform version</p></td>
+    </tr>
+
+    <tr>
+      <td><p>uid</p></td>
+      <td><p>UID</p></td>
+      <td><p>uid, package name</p></td>
+    </tr>
+
+    <tr>
+      <td><p>apk</p></td>
+      <td><p>APK</p></td>
+      <td><p>wakeups, APK, service, start time, starts, launches</p></td>
+    </tr>
+
+    <tr>
+      <td><p>pr</p></td>
+      <td><p>Process</p></td>
+      <td><p>process, user, system, foreground, starts</p></td>
+    </tr>
+
+    <tr>
+      <td><p>sr</p></td>
+      <td><p>Sensor</p></td>
+      <td><p>sensor number, time, count</p></td>
+    </tr>
+
+    <tr>
+      <td><p>vib</p></td>
+      <td><p>Vibrator</p></td>
+      <td><p>time, count</p></td>
+    </tr>
+
+    <tr>
+      <td><p>fg</p></td>
+      <td><p>Foreground</p></td>
+      <td><p>time, count</p></td>
+    </tr>
+
+    <tr>
+      <td><p>st</p></td>
+      <td><p>State Time</p></td>
+      <td><p>foreground, active, running</p></td>
+    </tr>
+
+    <tr>
+      <td><p>wl</p></td>
+      <td><p>Wake lock</p></td>
+      <td><p>wake lock, full time, 'f', full count, partial time, 'p', partial
+        count, window time, 'w', window count</p></td>
+    </tr>
+
+    <tr>
+      <td><p>sy</p></td>
+      <td><p>Sync</p></td>
+      <td><p>sync, time, count</p></td>
+    </tr>
+
+    <tr>
+      <td><p>jb</p></td>
+      <td><p>Job</p></td>
+      <td><p>job, time, count</p></td>
+    </tr>
+
+    <tr>
+      <td><p>kwl</p></td>
+      <td><p>Kernel Wake Lock</p></td>
+      <td><p>kernel wake lock, time, count</p></td>
+    </tr>
+
+    <tr>
+      <td><p>wr</p></td>
+      <td><p>Wakeup Reason</p></td>
+      <td><p>wakeup reason, time, count</p></td>
+    </tr>
+
+    <tr>
+      <td><p>nt</p></td>
+      <td><p>Network</p></td>
+      <td><p>mobile bytes RX, mobile bytes TX, Wi-Fi bytes RX, Wi-Fi bytes TX,
+        mobile packets RX, mobile packets TX, Wi-Fi packets RX, Wi-Fi packets
+        TX, mobile active time, mobile active count</p></td>
+    </tr>
+
+    <tr>
+      <td><p>ua</p></td>
+      <td><p>User Activity</p></td>
+      <td><p>other, button, touch</p></td>
+    </tr>
+
+    <tr>
+      <td><p>bt</p></td>
+      <td><p>Battery</p></td>
+      <td><p>start count, battery realtime, battery uptime, total realtime,
+        total uptime, start clock time, battery screen off realtime, battery
+        screen off uptime</p></td>
+    </tr>
+
+    <tr>
+      <td><p>dc</p></td>
+      <td><p>Battery Discharge</p></td>
+      <td><p>low, high, screen on, screen off</p></td>
+    </tr>
+
+    <tr>
+      <td><p>lv</p></td>
+      <td><p>Battery Level</p></td>
+      <td><p>start level, current level</p></td>
+    </tr>
+
+    <tr>
+      <td><p>wfl</p></td>
+      <td><p>Wi-Fi</p></td>
+      <td><p>full Wi-Fi lock on time, Wi-Fi scan time, Wi-Fi running time, Wi-Fi
+        scan count, Wi-Fi idle time, Wi-Fi receive time, Wi-Fi transmit time</p>
+      </td>
+    </tr>
+
+    <tr>
+      <td><p>gwfl</p></td>
+      <td><p>Global Wi-Fi</p></td>
+      <td><p>Wi-Fi on time, Wi-Fi running time, Wi-Fi idle time, Wi-Fi receive
+      time, Wi-Fi transmit time, Wi-Fi power (mAh)</p></td>
+    </tr>
+
+    <tr>
+      <td><p>gble</p></td>
+      <td><p>Global Bluetooth</p></td>
+      <td><p>BT idle time, BT receive time, BT transmit time, BT power (mAh)</p>
+      </td>
+    </tr>
+
+    <tr>
+      <td><p>m</p></td>
+      <td><p>Misc</p></td>
+      <td><p>screen on time, phone on time, full wakelock time total, partial
+        wakelock time total, mobile radio active time, mobile radio active
+        adjusted time, interactive time, power save mode enabled time,
+        connectivity changes, device idle mode enabled time, device idle mode
+        enabled count, device idling time, device idling count, mobile radio
+        active count, mobile radio active unknown time</p></td>
+    </tr>
+
+    <tr>
+      <td><p>gn</p></td>
+      <td><p>Global Network</p></td>
+      <td><p>mobile RX total bytes, mobile TX total bytes, Wi-Fi RX total
+        bytes, Wi-Fi TX total bytes, mobile RX total packets, mobile TX total
+        packets, Wi-Fi RX total packets, Wi-Fi TX total packets</p></td>
+    </tr>
+
+    <tr>
+      <td><p>br</p></td>
+      <td><p>Screen Brightness</p></td>
+      <td><p>dark, dim, medium, light, bright</p></td>
+    </tr>
+
+    <tr>
+      <td><p>sst</p></td>
+      <td><p>Signal Scanning Time</p></td>
+      <td><p>signal scanning time</p></td>
+    </tr>
+
+    <tr>
+      <td><p>sgt</p></td>
+      <td><p>Signal Strength Time</p></td>
+      <td><p>none, poor, moderate, good, great</p></td>
+    </tr>
+
+    <tr>
+      <td><p>sgc</p></td>
+      <td><p>Signal Strength Count</p></td>
+      <td><p>none, poor, moderate, good, great</p></td>
+    </tr>
+
+    <tr>
+      <td><p>dct</p></td>
+      <td><p>Data Connection Time</p></td>
+      <td><p>none, GPRS, EDGE, UMTS, CDMA, EVDO_0, EVDO_A, 1xRTT, HSDPA, HSUPA,
+        HSPA, IDEN, EVDO_B, LTE, EHRPD, HSPAP, other</p></td>
+    </tr>
+
+    <tr>
+      <td><p>dcc</p></td>
+      <td><p>Data Connection Count</p></td>
+      <td><p>none, GPRS, EDGE, UMTS, CDMA, EVDO_0, EVDO_A, 1xRTT, HSDPA, HSUPA,
+        HSPA, IDEN, EVDO_B, LTE, EHRPD, HSPAP, other</p></td>
+    </tr>
+
+    <tr>
+      <td><p>wst</p></td>
+      <td><p>Wi-Fi State Time</p></td>
+      <td><p>off, off scanning, on no networks, on disconnected, on connected
+        STA, on connected P2P, on connected STA P2P, soft AP</p></td>
+    </tr>
+
+    <tr>
+      <td><p>wsc</p></td>
+      <td><p>Wi-Fi State Count</p></td>
+      <td><p>off, off scanning, on no networks, on disconnected, on connected
+        STA, on connected P2P, on connected STA P2P, soft AP</p></td>
+    </tr>
+
+    <tr>
+      <td><p>wsst</p></td>
+      <td><p>Wi-Fi Supplicant State Time</p></td>
+      <td><p>invalid, disconnected, interface disabled, inactive, scanning,
+        authenticating, associating, associated, four-way handshake, group
+        handshake, completed, dormant, uninitialized</p></td>
+    </tr>
+
+    <tr>
+      <td><p>wssc</p></td>
+      <td><p>Wi-Fi Supplicant State Count</p></td>
+      <td><p>invalid, disconnected, interface disabled, inactive, scanning,
+        authenticating, associating, associated, four-way handshake, group
+        handshake, completed, dormant, uninitialized</p></td>
+    </tr>
+
+    <tr>
+      <td><p>wsgt</p></td>
+      <td><p>Wi-Fi Signal Strength Time</p></td>
+      <td><p>none, poor, moderate, good, great</p></td>
+    </tr>
+
+    <tr>
+      <td><p>wsgc</p></td>
+      <td><p>Wi-Fi Signal Strength Count</p></td>
+      <td><p>none, poor, moderate, good, great</p></td>
+    </tr>
+
+    <tr>
+      <td><p>bst</p></td>
+      <td><p>Bluetooth State Time</p></td>
+      <td><p>inactive, low, med, high</p></td>
+      </tr>
+
+    <tr>
+      <td><p>bsc</p></td>
+      <td><p>Bluetooth State Count</p></td>
+      <td><p>inactive, low, med, high</p></td>
+    </tr>
+
+    <tr>
+      <td><p>pws</p></td>
+      <td><p>Power Use Summary</p></td>
+      <td><p>battery capacity, computed power, minimum drained power, maximum
+        drained power</p></td>
+    </tr>
+
+    <tr>
+      <td><p>pwi</p></td>
+      <td><p>Power Use Item</p></td>
+      <td><p>label, mAh</p></td>
+    </tr>
+
+    <tr>
+      <td><p>dsd</p></td>
+      <td><p>Discharge Step</p></td>
+      <td><p>duration, level, screen, power-save</p></td>
+    </tr>
+
+    <tr>
+      <td><p>csd</p></td>
+      <td><p>Charge Step</p></td>
+      <td><p>duration, level, screen, power-save</p></td>
+    </tr>
+
+    <tr>
+      <td><p>dtr</p></td>
+      <td><p>Discharge Time Remaining</p></td>
+      <td><p>battery time remaining</p></td>
+    </tr>
+
+    <tr>
+      <td><p>ctr</p></td>
+      <td><p>Charge Time Remaining</p></td>
+      <td><p>charge time remaining</p></td>
+    </tr>
+
+  </table>
+
+<h2 id="wifi-reqs">Bluetooth, cellular, and Wi-Fi usage</h2>
+
+<p>Support for battery usage data on Bluetooth, cellular, and Wi-Fi data
+requires the device Bluetooth, cellular, and Wif-Fi chipsets implement radio
+support and the chipset firmware passes usage data to the framework. OEMs must
+work with their chipset providers to facilitate in-field firmware updates on
+existing chipsets and compatible firmware on new chipsets.</p>
+
+<p>Additionally, OEMs must continue to configure and submit the power profile
+for their devices. However, when the platform detects that Wi-Fi and Bluetooth
+radio power data is available from the chipset, it uses chipset data instead of
+power profile data (cell radio power data is not yet used). For details, see
+<a href="{@docRoot}devices/tech/power/values.html#chipset-data">Devices with
+Bluetooth and Wi-Fi controllers</a>.</p>
+
+<p class="note"><strong>Note</strong>: Prior to Android 6.0, power use for Wi-Fi
+radio, Bluetooth radio, and cellular radio was tracked in the <em>m</em> (Misc)
+section category. In Android 6.0 and higher, power use for these components is
+tracked in the <em>pwi</em> (Power Use Item) section with individual labels
+(<em>wifi</em>, <em>blue</em>, <em>cell</em>) for each component.</p>

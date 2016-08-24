@@ -1,0 +1,140 @@
+page.title=Viewing Network Usage Data
+@jd:body
+
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<p>Using the command <code>adb shell dumpsys netstats detail</code> provides
+network usage statistics collected since the device booted up.</p>
+
+<h2 id=input>Input</h2>
+
+
+<p>To view network usage statistics, run the following command:</p>
+
+<pre class=prettyprint>
+$ adb shell dumpsys netstats detail
+</pre>
+
+
+<h2 id=output>Output</h2>
+
+
+<p>The set of information reported varies depending on the version of Android but
+consists of several sections: </p>
+
+<ul>
+  <li> Active interfaces
+  <li> Active UID interfaces
+  <li> Dev statistics
+  <li> Xt statistics
+  <li> UID statistics (sometimes also called "Detailed UID statistics")
+  <li> UID tag statistics
+</ul>
+
+<h3 id=active_interfaces_active_uid_interfaces>Active interfaces/Active UID interfaces</h3>
+
+<p>Here is sample output for the active interfaces and active UID interfaces
+sections:</p>
+
+<pre>
+Active interfaces:
+  iface=wlan0 ident=[{type=WIFI, subType=COMBINED, networkId="GoogleGuest"}]
+Active UID interfaces:
+  iface=wlan0 ident=[{type=WIFI, subType=COMBINED, networkId="GoogleGuest"}]
+</pre>
+
+
+<p>This shows network statistics for the whole device. In most cases, the
+information in these two section is the same.</p>
+
+<h3 id=dev_stats_xt_stats>Dev statistics/Xt statistics</h3>
+
+
+<p>Here is sample output for the Dev statistics section:</p>
+
+<pre>
+Dev stats:
+  Pending bytes: 170775
+  Complete history:
+  ident=[[type=MOBILE_HIPRI, subType=COMBINED, subscriberId=311111...]] uid=-1 set=ALL tag=0x0
+    NetworkStatsHistory: bucketDuration=3600000
+      bucketStart=1406138400000 activeTime=3603995 rxBytes=19467 rxPackets=53 txBytes=7500 txPackets=61 operations=0
+      bucketStart=1406142000000 activeTime=20730 rxBytes=25403 rxPackets=66 txBytes=9140 txPackets=74 operations=0
+      bucketStart=1406145600000 activeTime=29161 rxBytes=9263 rxPackets=37 txBytes=5180 txPackets=38 operations=0
+      bucketStart=1406149200000 activeTime=9054 rxBytes=12387 rxPackets=31 txBytes=4052 txPackets=35 operations=0
+  ident=[[type=WIFI, subType=COMBINED, networkId="MySSID"]] uid=-1 set=ALL tag=0x0
+    NetworkStatsHistory: bucketDuration=3600000
+      bucketStart=1406138400000 activeTime=4811082 rxBytes=335913292 rxPackets=265144 txBytes=9729261 txPackets=117220 operations=0
+      bucketStart=1406142000000 activeTime=3513477 rxBytes=1193606876 rxPackets=956855 txBytes=29450792 txPackets=306634 operations=0
+      bucketStart=1406145600000 activeTime=3297986 rxBytes=729381849 rxPackets=586396 txBytes=24247211 txPackets=237438 operations=0
+      bucketStart=1406149200000 activeTime=3580941 rxBytes=57168575 rxPackets=51610 txBytes=5291167 txPackets=29260 operations=0
+  ident=[[type=WIFI, subType=COMBINED, networkId="MySecondSSID"]] uid=-1 set=ALL tag=0x0
+    NetworkStatsHistory: bucketDuration=3600000
+</pre>
+
+<h3 id=uid_stats>UID stats</h3>
+
+<pre>
+UID stats:
+  Pending bytes: 744
+  Complete history:
+  ident=[[type=MOBILE_SUPL, subType=COMBINED, subscriberId=311111...], [type=MOBILE, subType=COMBINED, subscriberId=311111...]] uid=10007 set=DEFAULT tag=0x0
+    NetworkStatsHistory: bucketDuration=7200000
+      bucketStart=1406167200000 activeTime=7200000 rxBytes=4666 rxPackets=7 txBytes=1597 txPackets=10 operations=0
+  ident=[[type=WIFI, subType=COMBINED, networkId="MySSID"]] uid=10007 set=DEFAULT tag=0x0
+    NetworkStatsHistory: bucketDuration=7200000
+      bucketStart=1406138400000 activeTime=7200000 rxBytes=17086802 rxPackets=15387 txBytes=1214969 txPackets=8036 operations=28
+      bucketStart=1406145600000 activeTime=7200000 rxBytes=2396424 rxPackets=2946 txBytes=464372 txPackets=2609 operations=70
+      bucketStart=1406152800000 activeTime=7200000 rxBytes=200907 rxPackets=606 txBytes=187418 txPackets=739 operations=0
+      bucketStart=1406160000000 activeTime=7200000 rxBytes=826017 rxPackets=1126 txBytes=267342 txPackets=1175 operations=35
+</pre>
+
+
+<h3 id=interpreting_the_results>Interpreting the results</h3>
+
+
+<p>To find the UID for your application, you can run this command:
+<code>adb shell dumpsys package &lt;your package name&gt;</code>.
+Then look for the line labeled <code>userId</code>.</p>
+
+<p>In our example, suppose we are trying to find network usage for our app
+“com.example.myapp”. We would run the following command:</p>
+
+<pre>
+$ adb shell dumpsys package com.example.myapp | grep userId
+
+    userId=10007 gids=[3003, 1028, 1015]
+</pre>
+
+<p>Looking at the dump above, we look for lines that have uid=10007. Two such
+lines exist, the first indicating a mobile connection, and the second a Wi-Fi
+connection. Underneath each line, the number of bytes and packets sent and
+received can be seen, bucketed into two-hour windows. </p>
+
+<p>A bit more explanation:</p>
+
+<ul>
+  <li> <code>set=DEFAULT</code> indicates foreground
+  network usage, while <code>set=BACKGROUND</code> indicates
+background usage. <code>set=ALL</code> implies both.
+  <li> <code>tag=0x0</code> indicates the socket tag associated with the traffic.
+  <li> <code>rxBytes</code> and <code>rxPackets</code> represent received bytes and received packets in the
+corresponding time interval.
+  <li> <code>txBytes</code> and <code>txPackets</code> represent sent (transmitted) bytes and sent packets in
+the corresponding time interval.
+</ul>
+

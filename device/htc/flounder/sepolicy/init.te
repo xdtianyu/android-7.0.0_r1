@@ -1,0 +1,4 @@
+allow init tmpfs:lnk_file create_file_perms;
+
+# init writes to /sys/devices/system/cpu/cpufreq/interactive/rt_priority
+allow init self:capability sys_nice;

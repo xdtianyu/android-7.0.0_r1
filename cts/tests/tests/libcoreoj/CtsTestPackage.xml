@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestPackage name="CtsLibcoreOj" appPackageName="android.libcore.oj" version="1.0" testType="testNGDeviceTest" jarPath="CtsLibcoreOj.jar">
+  <TestSuite name="org">
+    <TestSuite name="openjdk">
+      <TestSuite name="tests">
+        <TestSuite name="java">
+          <TestSuite name="util">
+            <TestSuite name="stream">
+              <TestCase name="CollectionAndMapModifyStreamTest">
+                <Test name="testCollectionSizeRemove" />
+                <Test name="testMapEntriesSizeRemove" />
+                <Test name="testMapKeysSizeRemove" />
+                <Test name="testMapValuesSizeRemove" />
+              </TestCase>
+              <TestCase name="ConcatOpTest">
+                <Test name="testDoubleSize" />
+                <Test name="testIntSize" />
+                <Test name="testLongSize" />
+                <Test name="testOps" />
+                <Test name="testSize" />
+              </TestCase>
+              <TestCase name="ConcatTest">
+                <Test name="testDoubleConcat" />
+                <Test name="testDoubleConcat" />
+                <Test name="testDoubleConcat" />
+                <Test name="testDoubleConcat" />
+                <Test name="testDoubleConcat" />
+                <Test name="testDoubleConcat" />
+                <Test name="testDoubleConcat" />
+                <Test name="testDoubleConcat" />
+                <Test name="testDoubleConcat" />
+                <Test name="testDoubleConcat" />
+                <Test name="testDoubleConcat" />
+                <Test name="testDoubleConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testIntConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testLongConcat" />
+                <Test name="testRefConcat" />
+                <Test name="testRefConcat" />
+                <Test name="testRefConcat" />
+                <Test name="testRefConcat" />
+                <Test name="testRefConcat" />
+                <Test name="testRefConcat" />
+                <Test name="testRefConcat" />
+                <Test name="testRefConcat" />
+                <Test name="testRefConcat" />
+                <Test name="testRefConcat" />
+                <Test name="testRefConcat" />
+                <Test name="testRefConcat" />
+              </TestCase>
+              <TestCase name="CountLargeTest">
+                <Test name="testDoubleLarge" />
+                <Test name="testIntLarge" />
+                <Test name="testLongLarge" />
+                <Test name="testRefLarge" />
+              </TestCase>
+              <TestCase name="CountTest">
+                <Test name="testOps" />
+                <Test name="testOps" />
+                <Test name="testOps" />
+                <Test name="testOps" />
+              </TestCase>
+              <TestCase name="DistinctOpTest">
+                <Test name="testDistinctDistinct" />
+                <Test name="testDistinctSorted" />
+                <Test name="testOp" />
+                <Test name="testOpWithNull" />
+                <Test name="testOpWithNullSorted" />
+                <Test name="testSortedDistinct" />
+                <Test name="testStable" />
+                <Test name="testUniqOp" />
+                <Test name="testWithUnorderedInfiniteStream" />
+              </TestCase>
+              <TestCase name="DoublePrimitiveOpsTests">
+                <Test name="testLimit" />
+                <Test name="testSort" />
+                <Test name="testSortSort" />
+                <Test name="testToArray" />
+                <Test name="testUnBox" />
+              </TestCase>
+              <TestCase name="ExplodeOpTest">
+                <Test name="testDoubleOps" />
+                <Test name="testFlatMap" />
+                <Test name="testIntOps" />
+                <Test name="testLongOps" />
+                <Test name="testOps" />
+              </TestCase>
+              <TestCase name="FilterOpTest">
+                <Test name="testFilter" />
+                <Test name="testOps" />
+                <Test name="testOps" />
+                <Test name="testOps" />
+                <Test name="testOps" />
+              </TestCase>
+              <TestCase name="FindAnyOpTest">
+                <Test name="testDoubleStream" />
+                <Test name="testFindAny" />
+                <Test name="testFindAnyParallel" />
+                <Test name="testIntStream" />
+                <Test name="testLongStream" />
+                <Test name="testStream" />
+              </TestCase>
+              <TestCase name="FindFirstOpTest">
+                <Test name="testDoubleStream" />
+                <Test name="testFindFirst" />
+                <Test name="testIntStream" />
+                <Test name="testLongStream" />
+                <Test name="testStream" />
+              </TestCase>
+              <TestCase name="ForEachOpTest">
+                <Test name="testDoubleForEachOrdered" />
+                <Test name="testDoubleOps" />
+                <Test name="testForEach" />
+                <Test name="testForEach" />
+                <Test name="testForEachOrdered" />
+                <Test name="testIntForEach" />
+                <Test name="testIntForEachOrdered" />
+                <Test name="testLongForEachOrdered" />
+                <Test name="testLongOps" />
+              </TestCase>
+              <TestCase name="GroupByOpTest">
+                <Test name="testBypassCollect" />
+                <Test name="testGroupBy" />
+                <Test name="testOps" />
+              </TestCase>
+              <TestCase name="InfiniteStreamWithLimitOpTest">
+                <Test name="testDoubleSubsizedWithRange" />
+                <Test name="testDoubleUnorderedFinite" />
+                <Test name="testDoubleUnorderedGenerator" />
+                <Test name="testDoubleUnorderedIteration" />
+                <Test name="testDoubleUnorderedSizedNotSubsizedFinite" />
+                <Test name="testIntSubsizedWithRange" />
+                <Test name="testIntUnorderedFinite" />
+                <Test name="testIntUnorderedGenerator" />
+                <Test name="testIntUnorderedIteration" />
+                <Test name="testIntUnorderedSizedNotSubsizedFinite" />
+                <Test name="testLongSubsizedWithRange" />
+                <Test name="testLongUnorderedFinite" />
+                <Test name="testLongUnorderedGenerator" />
+                <Test name="testLongUnorderedIteration" />
+                <Test name="testLongUnorderedSizedNotSubsizedFinite" />
+                <Test name="testSubsizedWithRange" />
+                <Test name="testUnorderedFinite" />
+                <Test name="testUnorderedGenerator" />
+                <Test name="testUnorderedIteration" />
+                <Test name="testUnorderedSizedNotSubsizedFinite" />
+              </TestCase>
+              <TestCase name="IntPrimitiveOpsTests">
+                <Test name="testBox" />
+                <Test name="testForEach" />
+                <Test name="testLimit" />
+                <Test name="testMap" />
+                <Test name="testParForEach" />
+                <Test name="testParSum" />
+                <Test name="testSequential" />
+                <Test name="testSort" />
+                <Test name="testSortSort" />
+                <Test name="testSum" />
+                <Test name="testTee" />
+                <Test name="testToArray" />
+                <Test name="testUnBox" />
+              </TestCase>
+              <TestCase name="IntReduceTest">
+                <Test name="testOps" />
+                <Test name="testReduce" />
+              </TestCase>
+              <TestCase name="IntSliceOpTest">
+                <Test name="testLimit" />
+                <Test name="testLimitOps" />
+                <Test name="testLimitParallel" />
+                <Test name="testLimitShortCircuit" />
+                <Test name="testLimitSort" />
+                <Test name="testSkip" />
+                <Test name="testSkipLimit" />
+                <Test name="testSkipLimitOps" />
+                <Test name="testSkipOps" />
+                <Test name="testSkipParallel" />
+              </TestCase>
+              <TestCase name="IntUniqOpTest">
+                <Test name="testOp" />
+                <Test name="testOpSorted" />
+                <Test name="testUniqOp" />
+              </TestCase>
+              <TestCase name="LongPrimitiveOpsTests">
+                <Test name="testBox" />
+                <Test name="testForEach" />
+                <Test name="testLimit" />
+                <Test name="testMap" />
+                <Test name="testParForEach" />
+                <Test name="testParSum" />
+                <Test name="testSequential" />
+                <Test name="testSort" />
+                <Test name="testSortSort" />
+                <Test name="testSum" />
+                <Test name="testTee" />
+                <Test name="testToArray" />
+                <Test name="testUnBox" />
+              </TestCase>
+              <TestCase name="MapOpTest">
+                <Test name="testDoubleOps" />
+                <Test name="testEveryMapShape" />
+                <Test name="testIntOps" />
+                <Test name="testLongOps" />
+                <Test name="testMap" />
+                <Test name="testOps" />
+              </TestCase>
+              <TestCase name="MatchOpTest">
+                <Test name="testDoubleInfinite" />
+                <Test name="testDoubleStream" />
+                <Test name="testDoubleStreamMatches" />
+                <Test name="testInfinite" />
+                <Test name="testIntInfinite" />
+                <Test name="testIntStream" />
+                <Test name="testIntStreamMatches" />
+                <Test name="testLongInfinite" />
+                <Test name="testLongStream" />
+                <Test name="testLongStreamMatches" />
+                <Test name="testStream" />
+                <Test name="testStreamMatches" />
+              </TestCase>
+              <TestCase name="MinMaxTest">
+                <Test name="testDoubleMinMax" />
+                <Test name="testDoubleOps" />
+                <Test name="testIntMinMax" />
+                <Test name="testIntOps" />
+                <Test name="testLongMinMax" />
+                <Test name="testLongOps" />
+                <Test name="testMinMax" />
+                <Test name="testOps" />
+              </TestCase>
+              <TestCase name="PrimitiveAverageOpTest">
+                <Test name="testOps" />
+                <Test name="testOps" />
+                <Test name="testOps" />
+              </TestCase>
+              <TestCase name="PrimitiveSumTest">
+                <Test name="testOps" />
+                <Test name="testOps" />
+                <Test name="testOps" />
+              </TestCase>
+              <TestCase name="RangeTest">
+                <Test name="tesIntRangeReduce" />
+                <Test name="testInfiniteRangeFindFirst" />
+                <Test name="testIntInfiniteRangeFindFirst" />
+                <Test name="testIntInfiniteRangeLimit" />
+                <Test name="testIntRange" />
+                <Test name="testLongInfiniteRangeFindFirst" />
+                <Test name="testLongInfiniteRangeLimit" />
+                <Test name="testLongLongRange" />
+                <Test name="testLongLongRangeClosed" />
+                <Test name="testLongRange" />
+                <Test name="testLongRangeReduce" />
+              </TestCase>
+              <TestCase name="ReduceByOpTest">
+                <Test name="testOps" />
+              </TestCase>
+              <TestCase name="ReduceTest">
+                <Test name="testOps" />
+                <Test name="testReduce" />
+              </TestCase>
+              <TestCase name="SequentialOpTest">
+                <Test name="testLazy" />
+                <Test name="testMixedSeqPar" />
+              </TestCase>
+              <TestCase name="SliceOpTest">
+                <Test name="testLimit" />
+                <Test name="testLimitOps" />
+                <Test name="testLimitShortCircuit" />
+                <Test name="testLimitSort" />
+                <Test name="testSkip" />
+                <Test name="testSkipLimit" />
+                <Test name="testSkipLimitOps" />
+                <Test name="testSkipLimitOpsWithNonSplittingSpliterator" />
+                <Test name="testSkipOps" />
+                <Test name="testSlice" />
+              </TestCase>
+              <TestCase name="SortedOpTest">
+                <Test name="testDoubleOps" />
+                <Test name="testDoubleSequentialShortCircuitTerminal" />
+                <Test name="testDoubleSortSort" />
+                <Test name="testDoubleStreamTooLarge" />
+                <Test name="testIntOps" />
+                <Test name="testIntSequentialShortCircuitTerminal" />
+                <Test name="testIntSortSort" />
+                <Test name="testIntStreamTooLarge" />
+                <Test name="testLongOps" />
+                <Test name="testLongSequentialShortCircuitTerminal" />
+                <Test name="testLongSortSort" />
+                <Test name="testLongStreamTooLarge" />
+                <Test name="testOps" />
+                <Test name="testRefStreamTooLarge" />
+                <Test name="testSequentialShortCircuitTerminal" />
+                <Test name="testSortSort" />
+                <Test name="testSorted" />
+              </TestCase>
+              <TestCase name="SpliteratorTest">
+                <Test name="testDoubleSpliterator" />
+                <Test name="testIntSpliterator" />
+                <Test name="testLongSpliterator" />
+                <Test name="testSpliterator" />
+              </TestCase>
+              <TestCase name="StreamBuilderTest">
+                <Test name="testAfterBuilding" />
+                <Test name="testDoubleAfterBuilding" />
+                <Test name="testDoubleSingleton" />
+                <Test name="testDoubleStreamBuilder" />
+                <Test name="testIntAfterBuilding" />
+                <Test name="testIntSingleton" />
+                <Test name="testIntStreamBuilder" />
+                <Test name="testLongAfterBuilding" />
+                <Test name="testLongSingleton" />
+                <Test name="testLongStreamBuilder" />
+                <Test name="testSingleton" />
+                <Test name="testStreamBuilder" />
+              </TestCase>
+              <TestCase name="StreamCloseTest">
+                <Test name="testCascadedExceptions" />
+                <Test name="testEmptyCloseHandler" />
+                <Test name="testOneCloseHandler" />
+                <Test name="testTwoCloseHandlers" />
+              </TestCase>
+              <TestCase name="StreamLinkTest">
+                <Test name="testDoubleManyStreams" />
+                <Test name="testIntManyStreams" />
+                <Test name="testLongManyStreams" />
+                <Test name="testManyStreams" />
+              </TestCase>
+              <TestCase name="StreamParSeqTest">
+                <Test name="testParSeq" />
+              </TestCase>
+              <TestCase name="StreamSpliteratorTest">
+                <Test name="testDoubleParSpliterators" />
+                <Test name="testDoubleSpliterators" />
+                <Test name="testDoubleSplitting" />
+                <Test name="testDoubleStreamSpliterators" />
+                <Test name="testIntParSpliterators" />
+                <Test name="testIntSpliterators" />
+                <Test name="testIntSplitting" />
+                <Test name="testIntStreamSpliterators" />
+                <Test name="testLongParSpliterators" />
+                <Test name="testLongSpliterators" />
+                <Test name="testLongSplitting" />
+                <Test name="testLongStreamSpliterators" />
+                <Test name="testParSpliterators" />
+                <Test name="testSpliterators" />
+                <Test name="testSplitting" />
+                <Test name="testStreamSpliterators" />
+              </TestCase>
+              <TestCase name="SummaryStatisticsTest">
+                <Test name="testDoubleStatistics" />
+                <Test name="testIntStatistics" />
+                <Test name="testLongStatistics" />
+              </TestCase>
+              <TestCase name="TabulatorsTest">
+                <Test name="testComposeFinisher" />
+                <Test name="testGroupedReduce" />
+                <Test name="testJoin" />
+                <Test name="testReduce" />
+                <Test name="testSimpleGroupBy" />
+                <Test name="testSimplePartition" />
+                <Test name="testSimpleToMap" />
+                <Test name="testTwoLevelGroupBy" />
+                <Test name="testTwoLevelPartition" />
+              </TestCase>
+              <TestCase name="TeeOpTest">
+                <Test name="testDoubleOps" />
+                <Test name="testIntOps" />
+                <Test name="testLongOps" />
+                <Test name="testOps" />
+                <Test name="testTee" />
+              </TestCase>
+              <TestCase name="ToArrayOpTest">
+                <Test name="testAsArrayWithType" />
+                <Test name="testDistinctAndSortedPermutations" />
+                <Test name="testDoubleDistinctAndSortedPermutations" />
+                <Test name="testDoubleOps" />
+                <Test name="testDoubleOpsWithFilter" />
+                <Test name="testDoubleOpsWithFlatMap" />
+                <Test name="testDoubleOpsWithMap" />
+                <Test name="testDoubleOpsWithSorted" />
+                <Test name="testDoubleStatefulOpPermutations" />
+                <Test name="testIntDistinctAndSortedPermutations" />
+                <Test name="testIntOps" />
+                <Test name="testIntOpsWithFilter" />
+                <Test name="testIntOpsWithFlatMap" />
+                <Test name="testIntOpsWithMap" />
+                <Test name="testIntOpsWithSorted" />
+                <Test name="testIntStatefulOpPermutations" />
+                <Test name="testLongDistinctAndSortedPermutations" />
+                <Test name="testLongOps" />
+                <Test name="testLongOpsWithFilter" />
+                <Test name="testLongOpsWithFlatMap" />
+                <Test name="testLongOpsWithMap" />
+                <Test name="testLongOpsWithSorted" />
+                <Test name="testLongStatefulOpPermutations" />
+                <Test name="testOps" />
+                <Test name="testOpsWithFilter" />
+                <Test name="testOpsWithFlatMap" />
+                <Test name="testOpsWithMap" />
+                <Test name="testOpsWithSorted" />
+                <Test name="testStatefulOpPermutations" />
+                <Test name="testToArray" />
+              </TestCase>
+            </TestSuite>
+            <TestCase name="FillableStringTest">
+              <Test name="testStringBuffer" />
+              <Test name="testStringBuilder" />
+              <Test name="testStringJoiner" />
+            </TestCase>
+            <TestCase name="MapTest">
+              <Test name="testForEach" />
+              <Test name="testReplaceAll" />
+            </TestCase>
+          </TestSuite>
+        </TestSuite>
+      </TestSuite>
+    </TestSuite>
+  </TestSuite>
+</TestPackage>

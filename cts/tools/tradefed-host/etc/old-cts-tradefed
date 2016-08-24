@@ -1,0 +1,101 @@
+#!/bin/bash
+
+# Copyright (C) 2011 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# launcher script for old-cts-tradefed harness
+# can be used from an Android build environment, or a standalone cts zip
+
+checkFile() {
+    if [ ! -f "$1" ]; then
+        echo "Unable to locate $1"
+        exit
+    fi;
+}
+
+checkPath() {
+    if ! type -P $1 &> /dev/null; then
+        echo "Unable to find $1 in path."
+        exit
+    fi;
+}
+
+checkPath adb
+checkPath java
+
+# check java version
+JAVA_VERSION=$(java -version 2>&1 | head -n 2 | grep '[ "]1\.[678][\. "$$]')
+if [ "${JAVA_VERSION}" == "" ]; then
+    echo "Wrong java version. 1.6, 1.7 or 1.8 is required."
+    exit
+fi
+
+# check debug flag and set up remote debugging
+if [ -n "${TF_DEBUG}" ]; then
+  if [ -z "${TF_DEBUG_PORT}" ]; then
+    TF_DEBUG_PORT=10088
+  fi
+  RDBG_FLAG=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=${TF_DEBUG_PORT}
+fi
+
+# get OS
+HOST=`uname`
+if [ "$HOST" == "Linux" ]; then
+    OS="linux-x86"
+elif [ "$HOST" == "Darwin" ]; then
+    OS="darwin-x86"
+else
+    echo "Unrecognized OS"
+    exit
+fi
+
+# check if in Android build env
+if [ ! -z "${ANDROID_BUILD_TOP}" ]; then
+    if [ ! -z "${ANDROID_HOST_OUT}" ]; then
+      OLD_CTS_ROOT=${ANDROID_HOST_OUT}/old-cts
+    else
+      OLD_CTS_ROOT=${ANDROID_BUILD_TOP}/${OUT_DIR:-out}/host/${OS}/old-cts
+    fi
+    if [ ! -d ${OLD_CTS_ROOT} ]; then
+        echo "Could not find $OLD_CTS_ROOT in Android build environment. Try 'make old-cts'"
+        exit
+    fi;
+fi;
+
+if [ -z ${OLD_CTS_ROOT} ]; then
+    # assume we're in an extracted cts install
+    OLD_CTS_ROOT="$(dirname $0)/../.."
+fi;
+
+JAR_DIR=${OLD_CTS_ROOT}/old-android-cts/tools
+JARS="tradefed-prebuilt.jar hosttestlib.jar old-cts-tradefed.jar"
+
+for JAR in $JARS; do
+    checkFile ${JAR_DIR}/${JAR}
+    JAR_PATH=${JAR_PATH}:${JAR_DIR}/${JAR}
+done
+
+# load any shared libraries for host-side executables
+LIB_DIR=${OLD_CTS_ROOT}/old-android-cts/lib
+if [ "$HOST" == "Linux" ]; then
+    LD_LIBRARY_PATH=${LIB_DIR}:${LIB_DIR}64:${LD_LIBRARY_PATH}
+    export LD_LIBRARY_PATH
+elif [ "$HOST" == "Darwin" ]; then
+    DYLD_LIBRARY_PATH=${LIB_DIR}:${LIB_DIR}64:${DYLD_LIBRARY_PATH}
+    export DYLD_LIBRARY_PATH
+fi
+
+java $RDBG_FLAG \
+  -cp ${JAR_PATH} -DCTS_ROOT=${OLD_CTS_ROOT} com.android.cts.tradefed.command.CtsConsole "$@"
+

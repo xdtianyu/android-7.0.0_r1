@@ -1,0 +1,17 @@
+type mmi_touch_sh, domain, domain_deprecated;
+type mmi_touch_sh_exec, exec_type, file_type;
+
+# Started by init
+init_daemon_domain(mmi_touch_sh)
+
+# shell scripts need to execute /system/bin/sh and toolbox
+allow mmi_touch_sh shell_exec:file rx_file_perms;
+allow mmi_touch_sh toolbox_exec:file rx_file_perms;
+
+# Logs to /dev/kmsg
+allow mmi_touch_sh kmsg_device:chr_file w_file_perms;
+
+# Write to /sys/path/to/firmware/forcereflash
+# Read from /sys/path/to/firmware/poweron (and others)
+allow mmi_touch_sh sysfs_mmi_touch:file rw_file_perms;
+allow mmi_touch_sh sysfs_mmi_touch:dir search;

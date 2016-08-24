@@ -1,0 +1,79 @@
+* Copyright (C) 2015 The Android Open Source Project
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+
+INTRODUCTION
+
+The Android theme tests ensure that the Holo and Material themes have not been
+modified. They consist of API-specific sets of reference images representing
+specific themes and widgets that must be identical across devices. To pass the
+theme tests, a device must be able to generate images that are identical to the
+reference images.
+
+NOTE: Reference images should only be updated by the CTS test maintainers. Any
+      modifications to the reference images will invalidate the test results.
+
+
+INSTRUCTIONS
+
+I. Generating reference images (CTS maintainers only)
+
+Reference images are typically only generated for new API revisions. To
+generate a new set of reference images, do the following:
+
+  1. Connect one device for each DPI bucket (ldpi, xxxhdpi, etc.) that you wish
+     to generate references images for. Confirm that all devices are connected
+     with:
+
+     adb devices
+
+  2. Image generation occurs on all devices in parallel. Resulting sets of
+     reference images are saved in assets/<api>/<dpi>.zip and will overwrite
+     any existing sets. Image generation may be started using:
+
+     ./cts/hostsidetests/theme/generate_images.sh
+
+A complete collection of reference images for a given API revision must include
+a set for each possible DPI bucket (tvdpi, xxhdpi, etc.) that may be tested.
+
+For a list of devices and their DPI buckets, see Device Metrics:
+
+    https://design.google.com/devices/
+
+
+II. Building theme tests
+
+1. If you have not already built the CTS tests, run an initial make:
+
+   make cts -j32
+
+2. Subsequent changes to the theme tests, including changes to the reference
+   images, may be built using mmm:
+
+   mmm cts/hostsidetests/theme -j32
+
+
+III. Running theme tests
+
+1. Connect the device that you wish to test. Confirm that is is connected with:
+
+   adb devices
+
+2. Run the theme tests using cts-tradefed:
+
+   cts-tradefed run singleCommand cts --skip-device-info --skip-preconditions \
+       --skip-connectivity-check --module CtsThemeHostTestCases \
+       --test android.theme.cts.ThemeHostTest
+
+3. Wait for the tests to complete. This should take less than five minutes.

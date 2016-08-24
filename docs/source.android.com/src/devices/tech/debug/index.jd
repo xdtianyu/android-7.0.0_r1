@@ -1,0 +1,195 @@
+page.title=Debugging Native Android Platform Code
+@jd:body
+
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<div id="qv-wrapper">
+  <div id="qv">
+    <h2>In this document</h2>
+    <ol id="auto-toc"></ol>
+  </div>
+</div>
+
+<p>This page contains a summary of useful tools and related commands for
+debugging, tracing, and profiling native Android platform code. The pages
+within this section contain detailed information on other debugging tools for
+use during development of platform-level features.</p>
+
+<p>For example, you may learn how to explore system services with <a
+href="dumpsys.html">Dumpsys</a> and evaluate <a
+href="netstats.html">network</a> and <a href="procstats.html">RAM</a> use. See
+the subpages for tools and methods not described below.</p>
+
+<h2 id=debuggerd>debuggerd</h2>
+
+<p>When a dynamically-linked executable starts, several signal handlers are
+registered that connect to <code>debuggerd</code> (or <code>debuggerd64)</code> in the event that signal
+is sent to the process. The <code>debuggerd</code> process dumps registers and unwinds the
+stack. Here is example output (with timestamps and extraneous information removed): </p>
+
+<pre>
+*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+Build fingerprint: 'Android/aosp_flounder/flounder:5.1.51/AOSP/enh08201009:eng/test-keys'
+Revision: '0'
+ABI: 'arm'
+pid: 1656, tid: 1656, name: crasher  &gt;&gt;&gt; crasher &lt;&lt;&lt;
+signal 6 (SIGABRT), code -6 (SI_TKILL), fault addr --------
+Abort message: 'some_file.c:123: some_function: assertion "false" failed'
+    r0 00000000  r1 00000678  r2 00000006  r3 f70b6dc8
+    r4 f70b6dd0  r5 f70b6d80  r6 00000002  r7 0000010c
+    r8 ffffffed  r9 00000000  sl 00000000  fp ff96ae1c
+    ip 00000006  sp ff96ad18  lr f700ced5  pc f700dc98  cpsr 400b0010
+backtrace:
+    #00 pc 00042c98  /system/lib/libc.so (tgkill+12)
+    #01 pc 00041ed1  /system/lib/libc.so (pthread_kill+32)
+    #02 pc 0001bb87  /system/lib/libc.so (raise+10)
+    #03 pc 00018cad  /system/lib/libc.so (__libc_android_abort+34)
+    #04 pc 000168e8  /system/lib/libc.so (abort+4)
+    #05 pc 0001a78f  /system/lib/libc.so (__libc_fatal+16)
+    #06 pc 00018d35  /system/lib/libc.so (__assert2+20)
+    #07 pc 00000f21  /system/xbin/crasher
+    #08 pc 00016795  /system/lib/libc.so (__libc_init+44)
+    #09 pc 00000abc  /system/xbin/crasher
+Tombstone written to: /data/tombstones/tombstone_06
+</pre>
+
+<p>This can be pasted into <code>development/scripts/stack</code> to get a more detailed unwind
+with line number information (assuming the unstripped binaries can be found).</p>
+
+<p>Some libraries on the system are built with <code>LOCAL_STRIP_MODULE :=
+keep_symbols</code> to provide usable backtraces directly from debuggerd. This makes
+your library or executable slightly larger, but not nearly as large as an
+unstripped version.</p>
+
+<p>Note also the last line of <code>debuggerd</code> output --- in addition to dumping a
+summary to the log, <code>debuggerd</code> writes a full “tombstone” to disk. This contains
+a lot of extra information that can be helpful in debugging a crash, in
+particular the stack traces for all the threads in the crashing process (not
+just the thread that caught the signal) and a full memory map.</p>
+
+<h2 id=native>Native Debugging with GDB</h2>
+
+<h3 id=running>Debugging a running app</h3>
+
+<p>To connect to an already-running app or native daemon, use <code>gdbclient</code>.</p>
+
+<p>Current versions of gdbclient just require the process ID (PID). So to debug a process with
+PID 1234, simply run:</p>
+<pre>
+$ gdbclient 1234
+</pre>
+<p>The script will set up port forwarding, start the appropriate
+<code>gdbserver</code> on the device, start the appropriate <code>gdb</code> on
+the host, configure <code>gdb</code> to find symbols, and connect
+<code>gdb</code> to the remote <code>gdbserver</code>.</p>
+
+<h3 id=starts>Debugging a native process as it starts</h3>
+
+<p>If you want to debug a process as it starts, you’ll need to use <code>gdbserver</code>
+manually, but that’s easy too:</p>
+
+<pre>
+$ adb shell gdbserver :5039 /system/bin/<em>my_test_app</em>
+Process my_test_app created; pid = 3460
+Listening on port 5039
+</pre>
+
+<p>Identify the app’s PID from the <code>gdbserver</code> output, and then in
+another window:</p>
+
+<pre>
+$ gdbclient <em>&lt;app pid&gt;</em>
+</pre>
+
+<p>Then enter <strong>continue</strong> at the <code>gdb</code> prompt.</p>
+
+<h3 id=crash>Debugging processes that crash</h3>
+
+<p>If you want <code>debuggerd</code> to suspend crashed processes so you can
+attach <code>gdb</code>, set the appropriate property:</p>
+
+<pre>
+$ adb shell setprop debug.db.uid 999999                 # &lt;= M
+$ adb shell setprop debug.debuggerd.wait_for_gdb true   # &gt; M
+</pre>
+
+<p>At the end of the usual crash output, <code>debuggerd</code> will give you
+instructions on how to connect <code>gdb</code> using the typical command:
+<pre>
+$ gdbclient &lt;pid&gt;
+</pre>
+
+<h3 id=symbols>Debugging without symbols</h3>
+
+<p>If you don’t have symbols, sometimes <code>gdb</code> will get confused about the
+instruction set it is disassembling (ARM or Thumb). The instruction set that is
+chosen as the default when symbol information is missing can be switched
+between ARM or Thumb like so:</p>
+
+<pre>
+$ set arm fallback-mode arm   # or 'thumb'
+</pre>
+
+<h2 id=symbols>Other tools</h2>
+
+<h3 id=valgrind>Valgrind</h3>
+
+<p>The following steps show you how to use <a
+href="http://valgrind.org/">Valgrind</a> on Android. This tool suite contains a
+number of tools including Memcheck for detecting memory-related errors in C and
+C++.</p>
+
+<ol>
+  <li>To install Valgrind, run:
+<pre>
+$ mmm -j6 external/valgrind
+</pre>
+  <li>Push Valgrind to the device:
+    <br>
+<pre>
+$ adb remount
+$ adb sync
+</pre>
+  <li>Set up the temporary directory:
+<pre>
+$ adb shell mkdir /data/local/tmp
+$ adb shell chmod 777 /data/local/tmp
+</pre>
+  <li>Run the system server with Valgrind:
+<pre>
+$ adb root
+$ adb shell setprop wrap.system_server "logwrapper valgrind"
+$ adb shell stop && adb shell start
+</pre>
+  <li>For debug symbols, push unstripped libraries to <code>/data/local/symbols</code>:
+<pre>
+$ adb shell mkdir /data/local/symbols
+$ adb push $OUT/symbols /data/local/symbols
+</pre>
+  <li>To use Valgrind during boot up, edit <code>out/target/product/XXXX/root/init.rc</code> and
+change:<br>
+<code>service example /system/bin/foo --arg1 --arg2</code><br>
+to:<br>
+<code>service example /system/bin/logwrapper /system/bin/valgrind /system/bin/foo --arg1 --arg2</code><br>
+To see the effects, you need to create a <code>boot.img</code> and reflash the device.
+</ol>
+
+<h3 id=systrace>Systrace</h3>
+
+<p>See <a
+href="https://developer.android.com/tools/help/systrace.html">Systrace on
+developer.android.com</a> for deriving execution times of applications and
+other Android system processes.</p>

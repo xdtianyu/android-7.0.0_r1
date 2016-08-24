@@ -1,0 +1,248 @@
+page.title= Security updates and resources
+@jd:body
+
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<div id="qv-wrapper">
+  <div id="qv">
+    <h2>In this document</h2>
+    <ol id="auto-toc"></ol>
+  </div>
+</div>
+
+<h2 id=android_security_bug_lifecycle>Android security bug lifecycle</h2>
+
+<p>The Android security team is responsible for managing security vulnerabilities
+discovered in the Android platform and many of the core Android apps bundled
+with Android devices.</p>
+
+<p>The Android security team finds security vulnerabilities through internal
+research and also responds to bugs reported by third parties. Sources of
+external bugs include issues reported through the Android Open Source
+Project (AOSP) <a
+href="https://code.google.com/p/android/issues/entry?template=Security%20bug%20report">Security
+bug report</a> template, published and pre-published academic research,
+upstream open source project maintainers, notifications from our device
+manufacturer partners, and publicly disclosed issues posted on blogs or social
+media.</p>
+
+<h2 id=report-issues>Reporting security issues</h2>
+
+<p>Any developer, Android user, or security researcher can notify the Android
+security team of potential security issues through the AOSP bug tracker <a
+href="https://code.google.com/p/android/issues/entry?template=Security%20bug%20report">Security
+bug report</a> template.</p>
+
+<p>Bugs marked as security issues are not externally visible, but they may
+eventually be made visible after the issue is evaluated or resolved. If you
+plan to submit a patch or Compatibility Test Suite (CTS) test to resolve a
+security issue, please attach it to the bug report and wait for a response
+before uploading the code to AOSP.</p>
+
+<h2 id=triaging_bugs>Triaging bugs</h2>
+
+<p>The first task in handling a security vulnerability is to identify the severity
+of the bug and which component of Android is affected. The severity determines
+how the issue is prioritized, and the component determines who fixes the bug,
+who is notified, and how the fix gets deployed to users.</p>
+
+<h3 id=severity>Severity</h3>
+
+<p>The severity of a bug generally reflects the potential harm that could occur if
+a bug was successfully exploited. Use the following criteria to determine the
+severity:</p>
+<p class="table-caption" id="severity-criteria">
+  <strong>Table 1.</strong> Severity ratings and associated consequences</p>
+<table>
+ <tr>
+    <th>Rating</th>
+    <th>Consequence of successful exploitation</th>
+ </tr>
+ <tr>
+    <td><strong>Critical</strong></td>
+    <td>
+<ul>
+<li>Remote privileged code execution (execution at a privilege level that
+third-party apps cannot obtain)
+<li>Local permanent device compromise (device cannot be repaired without
+re-flashing the entire operating system, such as a  verified boot or Trusted
+Execution Environment/TEE compromise)
+<li>Remote permanent denial of service (inoperability, either completely permanent
+or requiring re-flashing the device)
+</ul>
+</td>
+ </tr>
+ <tr>
+    <td><strong>High</strong></td>
+    <td>
+<ul>
+<li>Remote unprivileged code execution (execution at a privilege level that
+third-party apps can obtain through installation)
+<li>Local access to system/signature-level permission data or capabilities without
+permission
+<li>Local permanent denial-of-service (inoperability, either completely permanent
+or requiring re-flashing the device)
+<li>Remote temporary denial-of-service (remote hang or reboot)
+</ul>
+</td>
+ </tr>
+ <tr>
+    <td><strong>Moderate</strong></td>
+    <td>
+<ul>
+<li>Access to "<a
+href="http://developer.android.com/guide/topics/manifest/permission-element.html#plevel">dangerous</a>"
+level permission data or capabilities without permission with an app installed
+on the device
+<li>Local temporary denial-of-service (can be resolved only through a factory
+reset)
+</ul>
+</td>
+ </tr>
+ <tr>
+    <td><strong>Low</strong></td>
+    <td>
+<ul>
+<li>Access to "<a
+href="http://developer.android.com/guide/topics/manifest/permission-element.html#plevel">normal</a>"
+level permission capabilities without permission with an app installed on the
+device
+<li>Local temporary denial-of-service (can be resolved by booting the device into
+Safe Mode and removing the problem application)
+</ul>
+</td>
+ </tr>
+</table>
+
+<p>Though there are many types of software bugs outside of the security
+vulnerabilities detailed above, bugs reported are evaluated on a
+case-by-base basis to determine what security impact they have.</p>
+
+<p>The Android security team may also adjust the severity of a vulnerability if it
+is determined the risk to users is higher or lower than the guidelines suggest.
+For example, if a certain piece of data is available only to apps with "system"
+level access but the data itself is not sensitive, the Android security
+team may consider it only a low-severity vulnerability.</p>
+
+<h4 id=local_vs_remote>Local vs. remote</h4>
+
+<p>A remote attack vector indicates the bug could be exploited without installing
+an app or without physical access to the device. This includes bugs that could
+be triggered by browsing to a web page, reading an email, receiving an SMS
+message, or connecting to a hostile network. For the purpose of our severity
+ratings, the Android security team also considers "proximal" attack vectors as
+remote. These include bugs that can be exploited only by an attacker who is
+physically near the target device, for example a bug that requires sending
+malformed Wi-Fi or Bluetooth packets.</p>
+
+<p>Local attacks require the victim to install an app. For the purpose of severity
+ratings, the Android security team also considers physical attack vectors as
+local. These include bugs that can be exploited only by an attacker who has
+physical access to the device, for example a bug in a lock screen or one that
+requires plugging in a USB cable. The Android security team also considers
+NFC-based attacks as local.</p>
+
+<h4 id=high_privilege_levels>Severity of vulnerabilities that affect high privilege levels</h4>
+
+<p>The Android security team will usually drop the severity rating for a bug that
+already requires executing code at a high privilege level. For example, a bug
+in a kernel driver accessible only from a privileged service that
+requires first compromising the service. In this case, the Android security
+team may drop the severity from "high" to "moderate."</p>
+
+<h4 id=severity_of_kernel_compromises>Severity of kernel compromises</h4>
+
+<p>Whether a vulnerability that compromises the kernel is considered "high" or
+"critical" depends on the device and the version of Android. On devices with a
+TEE (or TrustZone) and <a
+href="{@docRoot}security/verifiedboot/index.html">verified
+boot</a>, a kernel compromise is considered "high" because exploiting it won't
+allow permanently affecting the operation of the device unless a vulnerability is
+discovered in the TEE or verified boot implementation. In general, if the
+result of a compromise can be remediated with a factory reset, it's "high" or
+lower.</p>
+
+<p>However, on older devices without verified boot, a kernel compromise can result
+in permanent device compromise if SELinux is disabled and the system partition
+is modified. On that device, a kernel compromise is considered "critical"
+because remediation requires re-flashing the device's firmware image.</p>
+
+<h3 id=affected_component>Affected component</h3>
+
+<p>The development team responsible for fixing the bug depends on which component
+the bug is in. It could be a core component of the Android platform, a kernel
+driver supplied by an original equipment manufacturer (OEM), or one of the
+pre-loaded apps on Nexus devices.</p>
+
+<p>Bugs in AOSP code are fixed by the Android engineering team. Low-severity bugs,
+bugs in certain components, or bugs that are already publicly known may be
+fixed directly in the publicly available AOSP master branch; otherwise they're
+fixed in our internal repositories first.</p>
+
+<p>The component is also a factor in how users get updates. A bug in the framework
+or kernel will require an over-the-air (OTA) firmware update that each OEM will
+need to push. A bug in an app or library published in Google Play (e.g., Gmail,
+Google Play Services, WebView in Lollipop and later versions) can be sent to
+Android users as an update from Google Play. </p>
+
+<h2 id=notifying_partners>Notifying partners</h2>
+
+<p>When a moderate or higher severity security vulnerability in AOSP is fixed,
+we'll notify <a href="http://www.openhandsetalliance.com/">Open Handset
+Alliance</a> members with the details of the issue and provide patches for the
+most recent three Android releases. The Android security team currently
+provides patches for Android versions 4.4 (KitKat), 5.0 (Lollipop), and 5.1
+(Lollipop MR1). This list of backport-supported versions changes with each new
+Android release.</p>
+
+<h2 id=releasing_code_to_aosp>Releasing code to AOSP</h2>
+
+<p>If the security bug is in an AOSP component, the fix will be pushed out to AOSP
+after the OTA is released to users. Fixes for low-severity issues may be
+submitted directly to the AOSP master branch before a fix is available.</p>
+
+<h2 id=android_updates>Receiving Android updates</h2>
+
+<p>Updates to the Android system are generally delivered to devices through
+OTA update packages. These updates may come from the OEM who
+produced the device or the carrier who provides service to the device. Google
+Nexus device updates come from the Google Nexus team after going through a
+carrier technical acceptance (TA) testing procedure. Google also publishes <a
+href="https://developers.google.com/android/nexus/images">Nexus factory
+images</a> that can be side-loaded to devices.</p>
+
+<h2 id=updating_google_services>Updating Google services</h2>
+
+<p>In addition to providing patches for security bugs, the Android security team
+also review security bugs to determine if there are other ways to protect
+users. For example, Google Play scans all applications and will remove any
+application that attempts to exploit a security bug. For applications installed
+from outside of Google Play, devices with Google Play Services may also use the
+<a href="https://support.google.com/accounts/answer/2812853">Verify Apps</a>
+feature to warn users about applications that may be potentially harmful.</p>
+
+<h2 id=other_resources>Other resources</h2>
+
+<p>Information for Android application developers: <a
+href="https://developer.android.com">https://developer.android.com</a></p>
+
+<p>Security information exists throughout the Android Open Source and Developer
+sites. Good places to start:<br>
+<a href="https://source.android.com/security/index.html">https://source.android.com/security/index.html</a><br>
+<a href="https://developer.android.com/training/articles/security-tips.html">https://developer.android.com/training/articles/security-tips.html</a></p>
+
+<p>Community resource for discussion about Android security: <a
+href="https://groups.google.com/forum/?fromgroups#!forum/android-security-discuss">https://groups.google.com/forum/?fromgroups#!forum/android-security-discuss</a></p>

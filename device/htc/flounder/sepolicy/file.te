@@ -1,0 +1,21 @@
+# Qualcomm Mdm9k file type
+type qmuxd_socket, file_type;
+type ril_db_file, file_type, data_file_type;
+
+# Kickstart device used by QC qcks
+type kickstart_data_file, file_type, data_file_type;
+type efs_data_file, file_type, data_file_type;
+type ramdump_data_file, file_type, data_file_type;
+
+#Didim file used by surfaceflinger
+type sysfs_didim, sysfs_type, fs_type;
+
+# host1x graphics files
+type sysfs_gpu, sysfs_type, fs_type;
+
+type sysfs_swap, sysfs_type, fs_type;
+type sysfs_socinfo, sysfs_type, fs_type;
+
+type sysfs_tegra_fuse, sysfs_type, fs_type;
+
+type debugfs_nvmap, debugfs_type, fs_type;

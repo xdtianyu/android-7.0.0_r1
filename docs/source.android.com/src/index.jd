@@ -1,0 +1,138 @@
+fullpage=true
+no_footer_links=true
+landing.page=true
+page.metaDescription=The official site for the Android Open Source Project.
+header.hide=1
+@jd:body
+
+<!--
+    Copyright 2016 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<div class="wrap">
+
+  <div class="landing-banner">
+      <h1 itemprop="name" style="margin-bottom:0;">Welcome to the Android Open Source Project!</h1>
+
+<p>
+Android is an open source software stack for a wide range of mobile devices and
+a corresponding open source project led by Google. This site offers the
+information and source code you need to create custom variants of the Android
+stack, port devices and accessories to the Android platform, and ensure your
+devices meet compatibility requirements.
+</p>
+
+<h2 align="center">Android 6.0 Updates Available &mdash; see details below</h2>
+  </div>
+
+</div>
+
+<div class="wrap">
+
+  <div class="landing-docs">
+    <div class="col-8">
+    <h3>What's New</h3>
+<a href="{@docRoot}source/build-numbers.html">
+        <h4>Lollipop and Marshmallow Build Numbers</h4></a>
+        <p>New <strong><a
+        href="{@docRoot}source/build-numbers.html#source-code-tags-and-builds">Build
+        Numbers</a></strong> have been published for Lollipop on Nexus 10 and
+        Marshmallow on Nexus 5, Nexus 5X, Nexus 6, Nexus 6P, Nexus 7 (flo/deb), Nexus 9
+        (volantis/volantisg), Nexus Player, and Pixel C.</p>
+
+<a href="{@docRoot}compatibility/downloads.html">
+        <h4>Android 6.0, 5.1, and 5.0 CTS Downloads</h4></a>
+        <p>Android 6.0 R3, 5.1 R5, and 5.0 R4 Compatibility Test Suite (CTS)
+        and CTS Verifier are available for <strong><a
+        href="{@docRoot}compatibility/downloads.html">Download</a></strong>.</p>
+
+<a href="{@docRoot}source/initializing.html">
+        <h4>JDK 8 for Latest Platform Development</h4></a>
+        <p>The master branch of Android now requires JDK 8 to build. See <strong><a
+        href="{@docRoot}source/requirements.html">Requirements</a></strong>
+        for a summary of Java versions by Android release. See <strong><a
+        href="{@docRoot}source/initializing.html#installing-the-jdk">Setting up
+        a Linux build environment</a></strong> or <strong><a
+        href="{@docRoot}source/initializing.html#installing-the-mac-jdk">Setting up a
+        Mac OS build environment</a></strong> for update instructions by operating system.</p>
+
+<a href="{@docRoot}source/read-bug-reports.html">
+        <h4>Reading Bug Reports</h4></a>
+        <p>Android Engineering has written a detailed guide for <strong><a
+        href="{@docRoot}source/read-bug-reports.html">understanding
+        device-generated bug reports</a></strong>. This guide describes and
+        provides examples of common errors and their associated causes, such as
+        <strong><a href="{@docRoot}source/read-bug-reports.html#memory">low
+        memory</a></strong>. It even explains how to establish a <strong><a
+        href="{@docRoot}source/read-bug-reports.html#narrative">narrative</a></strong>
+        of the issue by syncing timelines across logs.</p>
+
+<a href="{@docRoot}compatibility/cts/rotation-vector.html">
+        <h4>Rotation Vector CV Crosscheck</h4></a>
+        <p>Instructions now exist for the CTS Verifier <strong><a
+        href="{@docRoot}compatibility/cts/rotation-vector.html">Rotation Vector
+        CV Crosscheck</a></strong> used to properly test the compatibility of rotation
+        vector sensor implementations.</p>
+
+<a href="{@docRoot}security/bulletin/index.html">
+        <h4>Security Bulletins</h4></a>
+        <p>The Android security team now publishes monthly <strong><a
+        href="{@docRoot}security/bulletin/index.html">Nexus Security
+        Bulletins</a></strong> describing key vulnerabilities fixed in AOSP
+        with links to associated changes.</p>
+    </div>
+
+    <div class="col-8">
+      <h3>Getting Started</h3>
+      <a href="{@docRoot}source/index.html">
+        <h4>Explore the Source</h4></a>
+        <p>Get the complete Android platform and modify and build it to suit your needs. You can
+        also <strong><a
+        href="https://android-review.googlesource.com/#/q/status:open">contribute
+        to</a></strong> the <strong><a
+        href="https://android.googlesource.com/">Android Open Source Project (AOSP)
+        repository</a></strong> to make your changes available to everyone else
+        in the Android ecosystem.</p>
+<a href="{@docRoot}source/index.html"><img border="0" src="images/android_framework_small.png" alt="Android framework summary" style="display:inline;float:right;margin:5px 10px;width:42%;height:42%"></a>
+      <a href="{@docRoot}devices/index.html">
+        <h4>Port Android to Devices</h4></a>
+        <p>Port the latest Android platform and
+        create compelling devices that your customers want.</p>
+
+      <a href="{@docRoot}security/index.html">
+        <h4>Make Secure</h4></a>
+	<p>Follow these examples and instructions to harden your Android
+          devices against malicious attacks. Find out how the Android security program
+          works and learn to implement the latest features.</p>
+
+      <a href="{@docRoot}compatibility/index.html">
+        <h4>Get Compatible</h4></a>
+        <p>Being Android-compatible lets you offer custom features but still give users and developers a consistent
+          and standard experience across all Android-powered devices. Android provides guidance
+          and a test suite to verify your Android compatibility.</p>
+
+      <a href="https://android.googlesource.com/platform/docs/source.android.com/">
+        <h4>Help this Site</h4></a>
+        <p>Use the <strong>Site Feedback</strong> button at the bottom of any
+        page to request improvements to the content or identify errors. In addition,
+        source.android.com is maintained in the Android Open Source Project. See the
+        <strong><a
+        href="https://android.googlesource.com/platform/docs/source.android.com/+log/master">docs/source.android.com
+        project log in AOSP</a></strong> for the complete list of changes to this site.
+        Contribute your own updates to that same project and help maintain source.android.com.</p>
+    </div>
+
+  </div>
+
+</div>

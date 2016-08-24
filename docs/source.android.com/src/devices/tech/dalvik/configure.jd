@@ -1,0 +1,427 @@
+page.title=Configuring ART
+@jd:body
+
+<!--
+    Copyright 2014 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+
+<div id="qv-wrapper">
+<div id="qv">
+  <h2 id="Contents">In this document</h2>
+  <ol id="auto-toc">
+  </ol>
+</div>
+</div>
+
+<h2 id=introduction>Introduction</h2>
+
+<p>This document is intended to discuss how to configure ART and its compilation
+options. Topics addressed here include configuration of pre-compilation of the
+system image, dex2oat compilation options at first boot (and post-OTA), and how
+to trade off system partition space, data partition space, and performance.</p>
+
+<p>See <a href="http://source.android.com/devices/tech/dalvik/index.html">ART
+and Dalvik</a>, the <a
+href="http://source.android.com/devices/tech/dalvik/dex-format.html">Dalvik
+Executable format</a>, and the remaining pages on source.android.com to work
+with ART. See <a
+href="http://developer.android.com/guide/practices/verifying-apps-art.html">Verifying
+App Behavior on the Android Runtime (ART)</a> to ensure your apps work
+properly.</p>
+
+<h2 id=how_art_works>How ART works</h2>
+
+<p>ART is the new Android runtime for the Android 5.0 (Lollipop or L) release and
+beyond. Dalvik is no longer available. </p>
+
+<p>Please note, this section merely summarizes ART’s configuration. For an
+in-depth description, see the <a
+href="https://www.google.com/events/io/io14videos/b750c8da-aebe-e311-b297-00155d5066d7">Android
+runtime</a> presentation conducted at Google I/O 2014. </p>
+
+<p>ART uses ahead-of-time (AOT) compilation. This means that, at installation, dex
+code is compiled to native code in OAT files, which replace Dalvik’s odex
+files. This has several implications:</p>
+
+<ul>
+  <li> Performance is improved over Dalvik. There is also a commensurate improvement
+in power consumption measured in the lab.
+  <li> There is no runtime code cache. The OAT files are mapped to memory (and are
+thus page-able). The RAM memory footprint for OAT files might seem larger in
+terms of Proportional Set Size (PSS, or the memory shared across processes
+divided evenly between the processes). But because they are pageable we have
+found the system impact is improved in terms of real memory pressure effects as
+the Dalvik JIT cache was not pageable.
+  <li> Similar to preloaded classes in the zygote, ART attempts to pre-initialize a
+set of classes at compile time. This creates a ‘boot.art’ file that comprises
+an image of the compacted heap of pre-initialized classes and related objects.
+This file is mapped into memory upon zygote startup. While this consumes
+additional storage (typically 10MB), it speeds zygote startup and creates
+opportunities for the system to swap out some preloaded classes under memory
+pressure. This also contributes to improved <a
+href="http://source.android.com/devices/tech/config/low-ram.html">low-RAM</a> performance
+for ART, since in Dalvik much of this class information would have
+been stored in dirty pages in the linear alloc space.
+  <li> Dex file compilation uses a tool called dex2oat and takes more time than
+dexopt. The increase in time varies, but 2-3x increases in compile time are not
+unusual. For example, apps that typically take a second to install using dexopt
+might take 2-3 seconds.
+  <li> OAT files are larger than odex files if full compilation is enabled. We discuss
+options to mitigate this cost later in this document.
+</ul>
+
+<h2 id=compilation_options>Compilation options</h2>
+
+<p>Dex file compilation takes more time than dexopt, which can be noticeable when
+all of a user’s apps must be compiled during first boot (after factory reset or
+after receiving an OTA). To reduce the amount of compilation needed, ART
+supports the option of pre-optimizing libraries and applications in the system
+partition. Including the pre-optimized dex files takes space in the system
+image, so these options trade first boot time for system image size. Note that
+OTAs are relatively infrequent and subsequent boot times should be the same
+with or without pre-optimization.</p>
+
+<h3 id=undefined>WITH_DEXPREOPT</h3>
+
+<p>Pre-optimization is controlled by the build option
+<code>WITH_DEXPREOPT</code>. Before the L release, this was enabled by default
+in “user” builds. Starting in L, this option is opt-in and needs to be enabled
+in the product configuration such as a device’s BoardConfig.mk file.</p>
+
+<p>Enabling <code>WITH_DEXPREOPT</code> causes everything in the system image to be
+pre-optimized. If this makes the system image too large, additional options can
+be specified to reduce the amount of pre-optimization. Note that all the
+following build options with “PREOPT” in the name must have <code>WITH_DEXPREOPT</code>
+enabled to work.</p>
+
+<p>Example usage (in product’s BoardConfig.mk):</p>
+
+<pre><code>WITH_DEXPREOPT := true</code></pre>
+
+<h3 id=dont_dexpreopt_prebuilts>DONT_DEXPREOPT_PREBUILTS</h3>
+
+<p>Enabling <code>DONT_DEXPREOPT_PREBUILTS</code> prevents the prebuilts from being
+pre-optimized. These are apps that have <code>include $(BUILD_PREBUILT)</code> specified
+in their Android.mk, such as Gmail. Skipping pre-optimization of prebuilt apps
+that are likely to be updated via Google Play saves /system space but does add
+to first boot time.</p>
+
+<p>Example usage (in product’s BoardConfig.mk):</p>
+
+<pre><code>WITH_DEXPREOPT := true
+DONT_DEXPREOPT_PREBUILTS := true</code></pre>
+
+<h3 id=with_dexpreopt_boot_img_only>WITH_DEXPREOPT_BOOT_IMG_ONLY</h3>
+
+<p>Enabling <code>WITH_DEXPREOPT_BOOT_IMG_ONLY</code> only pre-optimizes the
+boot image, which consists of boot.art with the image classes and boot.oat with
+code for the boot classpath. Enabling this saves significant /system space but
+means all apps will be optimized at first boot. Typically it is better to
+selectively disable app pre-optimization via
+<code>DONT_DEXPREOPT_PREBUILTS</code> or add-product-dex-preopt-module-config.</p>
+
+<p>Example usage (in product’s BoardConfig.mk):</p>
+
+<pre><code>WITH_DEXPREOPT := true
+WITH_DEXPREOPT_BOOT_IMG_ONLY := true</code></pre>
+
+<h3 id=local_dex_preopt>LOCAL_DEX_PREOPT</h3>
+
+<p>Pre-optimization can also be enabled or disabled on an individual app basis by
+specifying the <code>LOCAL_DEX_PREOPT</code> option in the module definition.
+This can be useful for disabling pre-optimization of apps that may immediately
+receive Google Play updates since the updates would render the pre-optimized
+code in the system image obsolete. This is also useful to save space on major
+version upgrade OTAs since users may already have newer versions of apps in the
+data partition.</p>
+
+<p><code>LOCAL_DEX_PREOPT</code> supports the values ‘true’ or ‘false’ to
+enable or disable pre-optimization respectively. In addition, ‘nostripping’ can
+be specified if pre-optimization should not strip the classes.dex file from the
+apk or jar file. Normally this file is stripped since it’s no longer needed
+after pre-optimization, but this last option is necessary to allow third-party
+APK signatures to remain valid.</p>
+
+<p>Example usage (in app’s Android.mk):</p>
+
+<pre><code>LOCAL_DEX_PREOPT := false</code></pre>
+
+<h3 id=product_dex_preopt_*>PRODUCT_DEX_PREOPT_*</h3>
+
+<p>Beginning post-L release in the Android Open Source Project (AOSP), a number of
+flags have been added that give further control to how pre-optimization is
+done. <code>PRODUCT_DEX_PREOPT_BOOT_FLAGS</code> passes options to dex2oat to control how
+the boot image is compiled. It can be used to specify customized image classes
+lists, compiled classes lists, and compiler filters, all of which are described
+in later sections. Similarly, <code>PRODUCT_DEX_PREOPT_DEFAULT_FLAGS</code>
+controls default flags to pass to dex2oat for compilation of everything besides
+the boot image, namely jar and apk files.</p>
+
+<p><code>PRODUCT_DEX_PREOPT_MODULE_CONFIGS</code> provides the ability to pass
+dex2oat options for a particular module and product configuration. It is set in
+a product’s device.mk file by <code>$(call
+add-product-dex-preopt-module-config,&lt;modules&gt;,&lt;option&gt;)</code>
+where &lt;modules&gt; is a list of <code>LOCAL_MODULE</code> and
+<code>LOCAL_PACKAGE</code> names for jar and apk files respectively. Through
+this flag, it is possible to have fine-grained control of pre-optimization for
+each dex file and a specific device. Such tuning allows /system space to be
+maximally used to improve first boot time.</p>
+
+<p>Example usage (in product’s device.mk):</p>
+
+<pre><code>PRODUCT_DEX_PREOPT_DEFAULT_FLAGS := --compiler-filter=interpret-only
+$(call add-product-dex-preopt-module-config,services,--compiler-filter=space)</code></pre>
+
+<p>These flags can also be used to selectively disable pre-optimization of a
+particular module or package by specifying <code>$(call
+add-product-dex-preopt-module-config,&lt;modules&gt;,disable)</code> in a
+product's device.mk file.</p>
+
+<p>Example usage (in product’s device.mk):</p>
+
+<pre><code>$(call add-product-dex-preopt-module-config,Calculator,disable)</code></pre>
+
+<h2 id=preloaded_classes_list>Preloaded Classes List</h2>
+
+<p>The preloaded classes list is a list of classes the zygote will initialize on
+startup. This saves each app from having to run these class initializers
+separately, allowing them to start up faster and share pages in memory. The
+preloaded classes list file is located at frameworks/base/preloaded-classes by
+default, and it contains a list that is tuned for typical phone use. This may
+be different for other devices, such as wearables, and should be tuned
+accordingly. Be careful when tuning this since adding too many classes wastes
+memory loading unused classes; meanwhile, adding too few forces each app to
+have to have its own copy, again wasting memory.</p>
+
+<p>Example usage (in product’s device.mk):</p>
+
+<pre><code>PRODUCT_COPY_FILES += &lt;filename&gt;:system/etc/preloaded-classes</code></pre>
+
+<p class="note"><strong>Note:</strong> This line must be placed before
+inheriting any product configuration makefiles that get the default one from
+build/target/product/base.mk.</p>
+
+<h2 id=image_classes_list>Image Classes List</h2>
+
+<p>The image classes list is a list of classes that dex2oat initializes ahead of
+time and stores in the boot.art file. This allows the zygote to load these
+results out of the boot.art file on startup instead of running the initializers
+for these classes itself during preloading. A key feature of this is that the
+pages loaded from the image and shared between processes can be clean, allowing
+them to be swapped out easily in low-memory situations. In L, by default the
+image classes list uses the same list as the preloaded classes list. Beginning
+post-L in AOSP, a custom image classes list can be specified using
+<code>PRODUCT_DEX_PREOPT_BOOT_FLAGS</code>.</p>
+
+<p>Example usage (in product’s device.mk):</p>
+
+<pre><code>PRODUCT_DEX_PREOPT_BOOT_FLAGS += --image-classes=&lt;filename&gt;</code></pre>
+
+<h2 id=compiled_classes_list>Compiled Classes List</h2>
+
+<p>In post-L AOSP, a subset of classes from the boot classpath can be specified to
+be compiled during pre-optimization using the compiled classes list. This can
+be a useful option for devices that are very tight on space and can’t fit the
+entire pre-optimized boot image. However, note classes not specified by this
+list will not be compiled - not even on the device - and must be interpreted,
+potentially affecting runtime performance. By default, dex2oat will look for a
+compiled classes list in $OUT/system/etc/compiled-classes, so a custom one can
+be copied to that location by the device.mk. A particular file location can
+also be specified using <code>PRODUCT_DEX_PREOPT_BOOT_FLAGS</code>.</p>
+
+<p>Example usage (in product’s device.mk):</p>
+
+<pre><code>PRODUCT_COPY_FILES += &lt;filename&gt;:system/etc/compiled-classes</code></pre>
+
+<p class="note"><strong>Note:</strong> This line must be placed before
+inheriting any product configuration makefiles that get the default one from
+build/target/product/base.mk.</p>
+
+<h2 id=compiler_filters>Compiler Filters</h2>
+
+<p>In L, dex2oat takes a variety of --compiler-filter options to control how it
+compiles. Passing in a compiler filter flag for a particular app specifies how
+it’s pre-optimized. Here’s a description of each available option:</p>
+
+<ul>
+  <li><em>everything</em> - compiles almost everything, excluding class initializers and some rare
+methods that are too large to be represented by the compiler’s internal
+representation.
+  <li><em>speed</em> - compiles most methods and maximizes runtime performance, which is the
+default option.
+  <li><em>balanced</em> - attempts to get the best performance return on compilation investment.
+  <li><em>space</em> - compiles a limited number of methods, prioritizing storage space.
+  <li><em>interpret-only</em> - skips all compilation and relies on the interpreter to run code.
+  <li><em>verify-none</em> - special option that skips verification and compilation, should be used only
+for trusted system code.
+</ul>
+
+<h2 id=with_dexpreopt_pic>WITH_DEXPREOPT_PIC</h2>
+
+<p>In post-L AOSP, <code>WITH_DEXPREOPT_PIC</code> can be specified to enable
+position-independent code (PIC). With this, compiled code from the image
+doesn’t have to be relocated from /system into /data/dalvik-cache, saving space
+in the data partition. However, there is a slight runtime impact because it
+disables an optimization that takes advantage of position-dependent code.
+Typically, devices wanting to save space in /data should enable PIC
+compilation.</p>
+
+<p>Example usage (in product’s device.mk):</p>
+
+<pre><code>WITH_DEXPREOPT := true
+WITH_DEXPREOPT_PIC := true</code></pre>
+
+<h2 id=with_art_small_mode>WITH_ART_SMALL_MODE</h2>
+
+<p>For devices with very limited space, <code>WITH_ART_SMALL_MODE</code> can be
+enabled. This option compiles the boot classpath and nothing else, greatly
+reducing first boot time since most compilation is skipped. It also saves on
+storage because there is no compiled code for apps. However, this impacts
+runtime performance since app code has to be interpreted. The impact is limited
+since most performance sensitive code in the framework is still compiled, but
+regressions may appear in benchmarking.</p>
+
+<p>Example usage (in product’s device.mk):</p>
+
+<pre><code>WITH_ART_SMALL_MODE := true</code></pre>
+
+<p>In future releases, this build option will be removed since it can be done with
+this (in product’s device.mk):</p>
+
+<pre><code>PRODUCT_PROPERTY_OVERRIDES += \
+     dalvik.vm.dex2oat-filter=interpret-only \
+     dalvik.vm.image-dex2oat-filter=speed</code></pre>
+
+<h2 id=dalvik_vm_properties>dalvik.vm Properties</h2>
+
+<p>Most dalvik.vm properties in ART are similar to Dalvik, but there are a few
+additional ones as described below. Note that these options affect dex2oat
+during on-device compilation as well as during pre-optimization, whereas most
+of the options discussed above affect only pre-optimization.</p>
+
+<p>To control dex2oat while it’s compiling the boot image:</p>
+
+<ul>
+  <li>dalvik.vm.image-dex2oat-Xms: initial heap size
+  <li>dalvik.vm.image-dex2oat-Xmx: maximum heap size
+  <li>dalvik.vm.image-dex2oat-filter: compiler filter option
+</ul>
+
+<p>To control dex2oat while it’s compiling everything besides the boot image:</p>
+
+<ul>
+  <li> dalvik.vm.dex2oat-Xms: initial heap size
+  <li> dalvik.vm.dex2oat-Xmx: maximum heap size
+  <li> dalvik.vm.dex2oat-filter: compiler filter option
+</ul>
+
+<p>The options that control initial and maximum heap size for dex2oat should not
+be reduced since they could limit what applications can be compiled.</p>
+
+<h2 id=sample_usage>Sample Usage</h2>
+
+<p>The goal of these compiler options is to utilize available space in the system
+and data partition to reduce the amount of dex2oat that must be performed by
+the device. </p>
+
+<p>For devices with ample system and data space, enabling dex pre-optimization is
+all that is necessary.
+
+<p>BoardConfig.mk:</p>
+
+<pre><code>WITH_DEXPREOPT := true</code></pre>
+
+<p>If this causes the system image to become too large, the next thing to try is
+disabling pre-optimization of the prebuilts.
+
+<p>BoardConfig.mk:</p>
+
+<pre><code>WITH_DEXPREOPT := true
+DONT_DEXPREOPT_PREBUILTS := true</code></pre>
+
+<p>Again, if the system image is still too large, try pre-optimizing only the boot
+image.
+
+<p>BoardConfig.mk:</p>
+
+<pre><code>WITH_DEXPREOPT := true
+WITH_DEXPREOPT_BOOT_IMG_ONLY := true</code></pre>
+
+<p>However, limiting to pre-optimizing only the boot-image means all apps will
+have to be optimized on first boot. In order to avoid this, it is possible to
+combine these high level flags with more fine-grained controls to maximize the
+amount of pre-optimized apps.</p>
+
+<p>For instance, if disabling the pre-optimization of the prebuilts almost fits
+into the system partition, compiling the boot classpath with the ‘space’ option
+may make it fit. Note this compiles fewer methods in the boot classpath,
+potentially interpreting more code and impacting runtime performance.
+
+<p>BoardConfig.mk:</p>
+
+<pre><code>WITH_DEXPREOPT := true
+DONT_DEXPREOPT_PREBUILTS := true</code></pre>
+
+<p>device.mk:</p>
+
+<pre><code>PRODUCT_DEX_PREOPT_BOOT_FLAGS := --compiler-filter=space</code></pre>
+
+<p>If a device has very limited system partition space, it’s possible to compile a
+subset of classes in the boot classpath using the compiled classes list. Boot
+classpath methods that aren’t in this list will have to be interpreted, which
+could affect runtime performance.
+
+<p>BoardConfig.mk:</p>
+
+<pre><code>WITH_DEXPREOPT := true
+WITH_DEXPREOPT_BOOT_IMG_ONLY := true</code></pre>
+
+<p>device.mk:</p>
+
+<pre><code>PRODUCT_COPY_FILES += &lt;filename&gt;:system/etc/compiled-classes</code></pre>
+
+<p>If a device has both limited space in the system and data partitions, compiler
+filter flags can be used to disable compilation of certain apps. This will save
+space in both system and data, as there won’t be any compiled code, but these
+apps will have to be interpreted. This example configuration would pre-optimize
+the boot classpath but prevent compilation of other apps that are not
+prebuilts. However, to prevent noticeable performance degradation of
+system_server, the services.jar is still compiled but optimized for space. Note
+that user-installed applications will still use the default compiler filter of
+speed.
+
+<p>BoardConfig.mk:</p>
+
+<pre><code>WITH_DEXPREOPT := true
+DONT_DEXPREOPT_PREBUILTS := true</code></pre>
+
+<p>device.mk:</p>
+
+<pre><code>PRODUCT_DEX_PREOPT_DEFAULT_FLAGS := --compiler-filter=interpret-only
+$(call add-product-dex-preopt-module-config,services,--compiler-filter=space)</code></pre>
+
+<p>For a major version upgrade OTA, it can be useful to blacklist certain apps
+from being pre-optimized since they will likely be out of date. This can be
+done by specifying <code>LOCAL_DEX_PREOPT</code> (for all products) or with
+<code>PRODUCT_DEX_PREOPT_MODULE_CONFIGS</code> (for a particular product).
+
+<p>BoardConfig.mk:</p>
+
+<pre><code>WITH_DEXPREOPT := true</code></pre>
+
+<p>Android.mk (of blacklisted apps):</p>
+
+<pre><code>LOCAL_DEX_PREOPT := false</code></pre>

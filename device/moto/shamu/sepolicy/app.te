@@ -1,0 +1,3 @@
+# Only allow gpu ioctl commands that have been demonstrated to be necessary.
+allowxperm { appdomain -isolated_app } gpu_device:chr_file
+  ioctl { gpu_used_ioctls unpriv_tty_ioctls };

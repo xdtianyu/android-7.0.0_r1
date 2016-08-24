@@ -1,0 +1,6 @@
+#
+# Sensorservice uses the sensors HAL... which needs sysfs file and i2c device access.
+#
+
+allow sensorservice i2c_device:chr_file rw_file_perms;
+allow sensorservice sysfs:file w_file_perms;

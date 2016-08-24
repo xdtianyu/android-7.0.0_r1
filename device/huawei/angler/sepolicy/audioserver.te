@@ -1,0 +1,19 @@
+binder_call(audioserver, rild)
+
+userdebug_or_eng(`
+  allow audioserver diag_device:chr_file rw_file_perms;
+')
+
+# access for speaker calibration file
+allow audioserver persist_file:dir search;
+allow audioserver persist_audio_file:dir search;
+allow audioserver persist_audio_file:file r_file_perms;
+
+# allow communication w/perfd
+allow audioserver perfd_data_file:dir search;
+allow audioserver perfd_data_file:sock_file write;
+allow audioserver perfd:unix_dgram_socket sendto;
+allow audioserver perfd:unix_stream_socket connectto;
+
+# allow reading /sys/devices/soc0/hw_platform for acdb
+allow audioserver sysfs:file { getattr open read };

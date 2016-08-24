@@ -1,0 +1,3 @@
+/dev/block/by-name/system   /system      ext4    ro,barrier=1,discard                                wait,slotselect
+/dev/block/by-name/userdata /data        ext4    nosuid,nodev,barrier=1,noauto_da_alloc,discard      wait,check,encryptable=footer
+/dev/block/by-name/misc     /misc        emmc    defaults                                            defaults

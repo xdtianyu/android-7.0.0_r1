@@ -1,0 +1,44 @@
+page.title=Security Enhancements in Android 1.5 through 4.1
+@jd:body
+
+<p>
+Android provides a multi-layered security model described in the <a href="{@docRoot}security/index.html">Android
+Security Overview</a>. Each update to Android includes dozens of
+security enhancements to protect users.  The following are some of the security
+enhancements introduced in Android versions 1.5 through 4.1:</p>
+
+<dl>
+<dt><strong>Android 1.5</strong></dt>
+<dd><ul>
+<li>ProPolice to prevent stack buffer overruns (-fstack-protector)</li>
+<li>safe_iop to reduce integer overflows</li>
+<li>Extensions to OpenBSD dlmalloc to prevent double free() vulnerabilities and
+to prevent chunk consolidation attacks.  Chunk consolidation attacks are a
+common way to exploit heap corruption.</li>
+<li>OpenBSD calloc to prevent integer overflows during memory allocation</li>
+</ul>
+</dd>
+
+<dt><strong>Android 2.3</strong></dt>
+<dd><ul>
+<li>Format string vulnerability protections (-Wformat-security -Werror=format-security)</li>
+<li>Hardware-based No eXecute (NX) to prevent code execution on the stack and heap</li>
+<li>Linux mmap_min_addr to mitigate null pointer dereference privilege
+escalation (further enhanced in Android 4.1)</li>
+</ul>
+</dd>
+
+<dt><strong>Android 4.0</strong></dt>
+<dd>Address Space Layout Randomization (ASLR) to randomize key locations in memory
+</dd>
+
+<dt><strong>Android 4.1</strong></dt>
+<dd><ul>
+<li>PIE (Position Independent Executable) support</li>
+<li>Read-only relocations / immediate binding (-Wl,-z,relro -Wl,-z,now)</li>
+<li>dmesg_restrict enabled (avoid leaking kernel addresses)</li>
+<li>kptr_restrict enabled (avoid leaking kernel addresses)</li>
+</ul>
+</dd>
+
+</dl>

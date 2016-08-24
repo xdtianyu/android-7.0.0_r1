@@ -1,0 +1,4 @@
+allow init diag_device:chr_file unlink;
+allow init tmpfs:lnk_file create_file_perms;
+allow init userdata_block_device:blk_file rw_file_perms;
+allow init cache_block_device:blk_file rw_file_perms;

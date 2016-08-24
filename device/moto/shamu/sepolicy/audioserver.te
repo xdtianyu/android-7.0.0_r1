@@ -1,0 +1,20 @@
+# Grant access to Qualcomm MSM Interface (QMI) audio sockets to audioserver
+qmux_socket(audioserver)
+
+# Permit audioserver to create sockets with no specific SELinux class.
+# TODO: Investigate the specific type of socket.
+allow audioserver self:socket create_socket_perms;
+
+allow audioserver mpdecision_socket:dir r_dir_perms;
+unix_socket_send(audioserver, mpdecision, mpdecision)
+
+binder_call(audioserver, rild)
+
+unix_socket_connect(audioserver, adspd, adspd)
+allow audioserver audio_cutback_data_file:dir search;
+allow audioserver audio_cutback_data_file:sock_file write;
+
+# access files in /sys
+r_dir_file(audioserver, sysfs)
+# connect to rild for phone calls
+allow audioserver rild:unix_stream_socket connectto;

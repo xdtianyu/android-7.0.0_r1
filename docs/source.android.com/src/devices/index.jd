@@ -1,0 +1,207 @@
+page.title=Android Interfaces and Architecture
+@jd:body
+
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<div id="qv-wrapper">
+  <div id="qv">
+    <h2>In this document</h2>
+    <ol id="auto-toc">
+    </ol>
+  </div>
+</div>
+
+<p>
+Android gives you the freedom to implement your own device specifications and
+drivers. The hardware abstraction layer (HAL) provides a standard method for
+creating software hooks between the Android platform stack and your hardware.
+The Android operating system is also open source, so you can contribute your own
+interfaces and enhancements.
+</p>
+
+<p>
+To ensure devices maintain a high level of quality and offer a consistent user
+experience, each device must pass tests in the compatibility test suite (CTS).
+The CTS verifies devices meet a quality standard that ensures apps run reliably
+and users have a good experience. For details on the CTS, see
+<a href="{@docRoot}compatibility/index.html">Compatibility</a>.
+</p>
+
+<p>
+Before porting Android to your hardware, take a moment to understand the Android
+system architecture at a high level. Because your drivers and the HAL interact
+with Android, knowing how Android works can help you navigate the many layers of
+code in the Android Open Source Project (AOSP) source tree.
+</p>
+
+<img src="images/ape_fwk_all.png">
+
+<p class="img-caption"><strong>Figure 1.</strong> Android System Architecture</p>
+
+<h2 id="Application framework">Application framework</h2>
+<p>
+The application framework is used most often by application developers. As a
+hardware developer, you should be aware of developer APIs as many map directly
+to the underlying HAL interfaces and can provide helpful information about
+implementing drivers.
+</p>
+
+<h2 id="Binder IPC">Binder IPC</h2>
+<p>
+The Binder Inter-Process Communication (IPC) mechanism allows the application
+framework to cross process boundaries and call into the Android system services
+code. This enables high level framework APIs to interact with Android system
+services. At the application framework level, this communication is hidden from
+the developer and things appear to "just work."
+</p>
+
+<h2 id="System services">System services</h2>
+<p>
+Functionality exposed by application framework APIs communicates with system
+services to access the underlying hardware. Services are modular, focused
+components such as Window Manager, Search Service, or Notification Manager.
+Android includes two groups of services: <em>system</em> (services such as
+Window Manager and Notification Manager) and <em>media</em> (services involved
+in playing and recording media).
+</p>
+
+<h2 id="Hardware Abstraction Layer">Hardware abstraction layer (HAL)</h2>
+<p>
+The hardware abstraction layer (HAL) defines a standard interface for hardware
+vendors to implement and allows Android to be agnostic about lower-level driver
+implementations. The HAL allows you to implement functionality without
+affecting or modifying the higher level system. HAL implementations are
+packaged into modules (<code>.so</code>) file and loaded by the Android system
+at the appropriate time.
+</p>
+
+<img src="images/ape_fwk_hal.png">
+
+<p class="img-caption"><strong>Figure 2.</strong> Hardware abstraction layer
+(HAL) components</p>
+
+<p>
+You must implement the corresponding HAL (and driver) for the specific hardware
+your product provides. HAL implementations are typically built into shared
+library modules (<code>.so</code> files). Android does not mandate a standard
+interaction between your HAL implementation and your device drivers, so you have
+free reign to do what is best for your situation. However, to enable the Android
+system to correctly interact with your hardware, you <strong>must</strong> abide
+by the contract defined in each hardware-specific HAL interface.
+</p>
+
+<h3 id="structure">Standard HAL structure</h3>
+<p>
+  Each hardware-specific HAL interface has properties that are defined in
+  <code>hardware/libhardware/include/hardware/hardware.h</code>, which
+  guarantee that HALs have a predictable structure.
+  This interface allows the Android system to load the correct versions of your
+  HAL modules in a consistent way. There are two general components
+  that a HAL interface consists of: a module and a device.
+</p>
+<p>
+  A module represents your packaged HAL implementation, which is stored as a shared library (<code>.so file</code>). It contains
+  metadata such as the version, name, and author of the module, which helps Android find and load it correctly. The
+  <code>hardware/libhardware/include/hardware/hardware.h</code> header file defines a
+  struct, <code>hw_module_t</code>, that represents a module and contains information such as
+  the module version, author, and name.</p>
+
+  <p>In addition, the <code>hw_module_t</code> struct contains
+  a pointer to another struct, <code>hw_module_methods_t</code>, that contains a pointer to
+  an "open" function for the module. This open function is used to initiate communication with
+  the hardware that the HAL is serving as an abstraction for. Each hardware-specific HAL usually
+  extends the generic <code>hw_module_t</code> struct with additional information
+  for that specific piece of hardware. For example in the camera HAL, the <code>camera_module_t</code> struct
+  contains a <code>hw_module_t</code> struct along with other camera-specific function pointers:
+</p>
+
+<pre>
+typedef struct camera_module {
+    hw_module_t common;
+    int (*get_number_of_cameras)(void);
+    int (*get_camera_info)(int camera_id, struct camera_info *info);
+} camera_module_t;
+</pre>
+
+<p>When you implement a HAL and create the module struct, you must name it
+  <code>HAL_MODULE_INFO_SYM</code>. For instance, here is an example from the Nexus 9 audio HAL:</p>
+<pre>
+struct audio_module HAL_MODULE_INFO_SYM = {
+    .common = {
+        .tag = HARDWARE_MODULE_TAG,
+        .module_api_version = AUDIO_MODULE_API_VERSION_0_1,
+        .hal_api_version = HARDWARE_HAL_API_VERSION,
+        .id = AUDIO_HARDWARE_MODULE_ID,
+        .name = "NVIDIA Tegra Audio HAL",
+        .author = "The Android Open Source Project",
+        .methods = &hal_module_methods,
+    },
+};
+</pre>
+<p>
+  A device abstracts the actual hardware of your product. For example, an audio module can contain
+  a primary audio device, a USB audio device, or a Bluetooth A2DP audio device. A device
+  is represented by the <code>hw_device_t</code> struct. Like a module, each type of device
+  defines a more-detailed version of the generic <code>hw_device_t</code> that contains
+  function pointers for specific features of the hardware. For example, the
+  <code>audio_hw_device_t</code> struct type contains function pointers to audio device operations:
+</p>
+
+<pre>
+struct audio_hw_device {
+    struct hw_device_t common;
+
+    /**
+     * used by audio flinger to enumerate what devices are supported by
+     * each audio_hw_device implementation.
+     *
+     * Return value is a bitmask of 1 or more values of audio_devices_t
+     */
+    uint32_t (*get_supported_devices)(const struct audio_hw_device *dev);
+  ...
+};
+typedef struct audio_hw_device audio_hw_device_t;
+</pre>
+
+<p>
+  In addition to these standard properties, each hardware-specific HAL interface can define more of its
+  own features and requirements. See the <a href="{@docRoot}devices/halref/index.html">HAL reference documentation</a>
+  as well as the individual instructions for each HAL for more information on how to implement a specific interface.
+</p>
+
+<h3 id="modules">HAL modules</h3>
+<p>HAL implementations are built into modules (<code>.so</code>) files and are dynamically linked by Android when appropriate.
+  You can build your modules by creating <code>Android.mk</code> files for each of your HAL implementations
+  and pointing to your source files. In general, your shared libraries must be named in a certain format, so that
+  they can be found and loaded properly. The naming scheme varies slightly from module to module, but they follow
+  the general pattern of: <code>&lt;module_type&gt;.&lt;device_name&gt;</code>.</p>
+
+  <p>For more information about setting up the build for each HAL, see its respective documentation.</p>
+
+<h2 id="Linux kernel">Linux kernel</h2>
+<p>
+Developing your device drivers is similar to developing a typical Linux device
+driver. Android uses a version of the Linux kernel with a few special additions
+such as wake locks (a memory management system that is more aggressive in
+preserving memory), the Binder IPC driver, and other features important for a
+mobile embedded platform. These additions are primarily for system functionality
+and do not affect driver development.
+
+<p>
+You can use any version of the kernel as long as it supports the required
+features (such as the binder driver). However, we recommend using the latest
+version of the Android kernel. For details on the latest Android kernel, see <a href="{@docRoot}source/building-kernels.html" >Building Kernels</a>.
+</p>

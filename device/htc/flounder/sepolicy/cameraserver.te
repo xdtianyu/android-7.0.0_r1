@@ -1,0 +1,8 @@
+allow cameraserver power_service:service_manager find;
+allow cameraserver sensorservice_service:service_manager find;
+
+allow cameraserver gpu_device:chr_file rw_file_perms;
+allow cameraserver proc:lnk_file getattr;
+allow cameraserver { sysfs sysfs_gpu sysfs_socinfo }:file r_file_perms;
+
+allow cameraserver system_server:unix_stream_socket { read write };

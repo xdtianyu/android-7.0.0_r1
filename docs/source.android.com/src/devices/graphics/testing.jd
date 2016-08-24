@@ -1,0 +1,158 @@
+page.title=OpenGL ES testing
+@jd:body
+
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<div id="qv-wrapper">
+  <div id="qv">
+    <h2>In this document</h2>
+    <ol id="auto-toc">
+    </ol>
+  </div>
+</div>
+
+
+<p>This page provides an overview of the GPU testing suite
+called deqp (drawElements Quality Program).</p>
+
+<p>You can access the code for deqp in AOSP at the following location: <a href="https://android.googlesource.com/platform/external/deqp">https://android.googlesource.com/platform/external/deqp</a></p>
+
+<p>To work with the latest submitted code, use the <code>deqp-dev</code> branch. If you want the code that matches the Android 5.0 CTS release, use the <code>lollipop-release</code> branch. </p>
+
+<h2 id=deploying_deqp>Deploying deqp</h2>
+
+<p>To deploy the deqp test suite to a new environment, please review the deqp information regarding the following: </p>
+   
+<ul>
+  <li>Building test programs
+  <li>Porting the test framework (optional, depending on the target platform)
+  <li>Running the tests 
+  <li>Automating the tests 
+  <li>Using special test groups 
+  <li>Integrating with Android CTS
+</ul>
+
+<h2 id=source_layout>Source layout</h2>
+
+<p>The source code layout for the deqp test modules and supporting libraries is shown in the table below. The listing is not complete but highlights the most important directories.</p>
+
+<table>
+ <tr>
+   <th>Directory</th>
+   <th>Description</th>
+ </tr>
+ <tr>
+    <td><code>android</code></td>
+    <td><p>Android tester sources and build scripts</p></td>
+ </tr>
+ <tr>
+    <td><code>data</code></td>
+<td><p>Test data files</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>modules</code></td>
+<td><p>Test module sources</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+        modules/egl</code></td>
+<td><p>EGL module</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+        modules/gles2</code></td>
+<td><p>GLES2 module</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+        modules/gles3</code></td>
+<td><p>GLES3 module</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+        modules/gles31</code></td>
+<td><p>GLES3.1 module</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>targets</code></td>
+<td><p>Target-specific build configuration files</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>framework</code></td>
+<td><p>deqp test module framework and utilities</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+        framework/delibs</code></td>
+<td><p>Base portability and build libraries</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+        framework/platform</code></td>
+<td><p>Platform ports</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+        framework/qphelper</code></td>
+<td><p>Test program integration library (C)</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+        framework/common</code></td>
+<td><p>Deqp framework (C++)</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+        framework/opengl, framework/egl</code></td>
+<td><p>API-specific utilities</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+execserver</code></td>
+<td><p>Device-side ExecServer source</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+executor</code></td>
+<td><p>Host-side test executor shell tool and utilities</p>
+</td>
+ </tr>
+ <tr>
+    <td><code>
+external</code></td>
+<td><p>Build stub directory for external libs libpng and zlib</p>
+</td>
+ </tr>
+</table>
+
+<h3 id=open-source_components>Open Source components</h3>
+
+<p>The deqp uses <code>libpng</code> and <code>zlib</code>. They can be fetched from the web with the script <code>external/fetch_sources.py </code>or with git pulls from git repositories <code>platform/external/[libpng,zlib]</code>.</p>

@@ -1,0 +1,93 @@
+/*
+ * This file contains expectations that occur due to differences in the way that the CTSv2 runner
+ * works.
+ *
+ * In CTSv1 the list of tests to run is generated at build time. The tool that does that
+ * (cts/tools/utils/CollectAllTests.java) filters out a lot of tests that would cause
+ * initializationError failures if they were run. The tests that are silently (in that it doesn't
+ * break the build) filtered out are as follows:
+ * - Those that extend junit.framework.Test but do not extend junit.framework.TestCase. The runner
+ *   only requires that the class extend junit.framework.Test.
+ */
+[
+{
+  description: "Extends TestSuite but have no tests",
+  names: [
+    "org.w3c.domts.JUnitTestSuiteAdapter",
+    "org.w3c.domts.level1.core.TestBatik",
+    "org.w3c.domts.level1.core.TestCrimson",
+    "org.w3c.domts.level1.core.TestCrimsonAltConfig",
+    "org.w3c.domts.level1.core.TestDefaultLS",
+    "org.w3c.domts.level1.core.TestDefaultLSAltConfig",
+    "org.w3c.domts.level1.core.TestDefaultParser",
+    "org.w3c.domts.level1.core.TestDefaultParserAltConfig",
+    "org.w3c.domts.level1.core.TestDOM4J",
+    "org.w3c.domts.level1.core.TestGNUJAXP",
+    "org.w3c.domts.level1.core.TestGNUJAXPAltConfig",
+    "org.w3c.domts.level1.core.TestJTidy",
+    "org.w3c.domts.level1.core.TestOracle",
+    "org.w3c.domts.level1.core.TestOracleAltConfig",
+    "org.w3c.domts.level1.core.TestXerces",
+    "org.w3c.domts.level1.core.TestXercesAltConfig",
+    "org.w3c.domts.level1.html.TestDefaultLS",
+    "org.w3c.domts.level1.html.TestDefaultLSAltConfig",
+    "org.w3c.domts.level1.html.TestXercesHTML",
+    "org.w3c.domts.level2.core.TestBatik",
+    "org.w3c.domts.level2.core.TestCrimson",
+    "org.w3c.domts.level2.core.TestCrimsonAltConfig",
+    "org.w3c.domts.level2.core.TestDefaultLS",
+    "org.w3c.domts.level2.core.TestDefaultLSAltConfig",
+    "org.w3c.domts.level2.core.TestDefaultParser",
+    "org.w3c.domts.level2.core.TestDefaultParserAltConfig",
+    "org.w3c.domts.level2.core.TestDOM4J",
+    "org.w3c.domts.level2.core.TestGNUJAXP",
+    "org.w3c.domts.level2.core.TestGNUJAXPAltConfig",
+    "org.w3c.domts.level2.core.TestJTidy",
+    "org.w3c.domts.level2.core.TestOracle",
+    "org.w3c.domts.level2.core.TestOracleAltConfig",
+    "org.w3c.domts.level2.core.TestXerces",
+    "org.w3c.domts.level2.core.TestXercesAltConfig",
+    "org.w3c.domts.level2.events.TestBatik",
+    "org.w3c.domts.level2.events.TestDefaultLS",
+    "org.w3c.domts.level2.events.TestDefaultLSAltConfig",
+    "org.w3c.domts.level2.events.TestDefaultParser",
+    "org.w3c.domts.level2.events.TestDefaultParserAltConfig",
+    "org.w3c.domts.level2.events.TestOracle",
+    "org.w3c.domts.level2.events.TestOracleAltConfig",
+    "org.w3c.domts.level2.events.TestXerces",
+    "org.w3c.domts.level2.events.TestXercesAltConfig",
+    "org.w3c.domts.level2.html.TestDefaultLS",
+    "org.w3c.domts.level2.html.TestDefaultLSAltConfig",
+    "org.w3c.domts.level2.html.TestXercesHTML",
+    "org.w3c.domts.level3.core.TestBatik",
+    "org.w3c.domts.level3.core.TestDefaultLS",
+    "org.w3c.domts.level3.core.TestDefaultLSAltConfig",
+    "org.w3c.domts.level3.core.TestDefaultParser",
+    "org.w3c.domts.level3.core.TestDefaultParserAltConfig",
+    "org.w3c.domts.level3.core.TestOracle",
+    "org.w3c.domts.level3.core.TestOracleAltConfig",
+    "org.w3c.domts.level3.core.TestXerces",
+    "org.w3c.domts.level3.core.TestXercesAltConfig",
+    "org.w3c.domts.level3.ls.TestBatik",
+    "org.w3c.domts.level3.ls.TestDefaultLS",
+    "org.w3c.domts.level3.ls.TestDefaultParser",
+    "org.w3c.domts.level3.ls.TestOracle",
+    "org.w3c.domts.level3.ls.TestXerces",
+    "org.w3c.domts.level3.validation.TestBatik",
+    "org.w3c.domts.level3.validation.TestDefaultLS",
+    "org.w3c.domts.level3.validation.TestDefaultLSAltConfig",
+    "org.w3c.domts.level3.validation.TestDefaultParser",
+    "org.w3c.domts.level3.validation.TestDefaultParserAltConfig",
+    "org.w3c.domts.level3.validation.TestOracle",
+    "org.w3c.domts.level3.validation.TestOracleAltConfig",
+    "org.w3c.domts.level3.xpath.TestBatik",
+    "org.w3c.domts.level3.xpath.TestDefaultLS",
+    "org.w3c.domts.level3.xpath.TestDefaultLSAltConfig",
+    "org.w3c.domts.level3.xpath.TestDefaultParser",
+    "org.w3c.domts.level3.xpath.TestDefaultParserAltConfig",
+    "org.w3c.domts.level3.xpath.TestXalan",
+    "org.w3c.domts.level3.xpath.TestXalanAltConfig"
+  ],
+  bug: "1234"
+}
+]

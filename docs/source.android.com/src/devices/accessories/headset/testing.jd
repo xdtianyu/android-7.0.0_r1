@@ -1,0 +1,112 @@
+page.title=Testing
+@jd:body
+
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<div id="qv-wrapper">
+  <div id="qv">
+    <h2>In this document</h2>
+    <ol id="auto-toc">
+   </ol>
+  </div>
+</div>
+
+<h2 id=headset_insertion>Headset insertion</h2>
+
+<ol>
+  <li> Start with the Android device turned off.
+  <li> Plug in the headset.
+  <li> Turn the device on.
+  <li> Unlock.
+  <li> Open the <a
+       href="https://github.com/googlesamples/android-UniversalMusicPlayer">open
+       source</a> <a
+       href="https://android-developers.blogspot.com/2015/03/a-new-reference-app-for-multi-device.html">Universal
+       Music Player</a>.
+  <li> Press the DUT volume buttons to maximize media volume.
+  <li> Start playing music and verify audio comes out of the headset.
+  <li> While Music is playing, disconnect the headset and verify music stops.
+  <li> Reconnect the headset, start playing music again, and verify audio comes out of
+the headset.
+</ol>
+
+<h2 id=volume_buttons>Volume buttons</h2>
+
+<ol>
+  <li> Play music and ensure it is coming out of the headset.
+  <li> Press (“short press”) on the volume-down button. Then verify the volume panel
+displays the media volume decrease by one notch and the volume output is
+reduced as expected.
+  <li> Long press on the volume-down button. Then verify the volume panel shows media
+volume going all the way down and volume output is reduced gradually to muted.
+  <li> Press on the volume-up button. Then verify the volume panel displays the media
+volume go up one notch and the volume output is increased as expected.
+  <li> Long press on the volume-up button. Then verify the volume panel shows the
+media volume go all the way up to maximum and the volume output is increased as
+expected.
+</ol>
+
+<h2 id=play_pause_for_music>Play/pause for music</h2>
+
+<p>Press quickly on the play/pause button and verify music stops playing out of
+the headset. If music was not already playing, then it should start playing out
+of the headset.</p>
+
+<h2 id=play_pause_for_telephony>Play/pause for telephony</h2>
+
+<ol>
+  <li> Make a phone call.
+  <li> Press quickly on the play/pause button while in the call.
+  <li> Verify the microphone mutes. And if you press quickly again, the microphone
+should un-mute.
+  <li> While still in the call, long press on the play/pause button.
+  <li> Verify the long press ends the telephone call
+  <li> Receive a phone call on the Android device.
+  <li> Press quickly on the play/pause button while the phone is ringing and verify
+the call is accepted.
+  <li> Receive another phone call on the Android device.
+  <li> Long press on the play/pause button while the phone is ringing and verify the
+call is rejected.
+</ol>
+
+<h2 id=play_pause_for_voice_actions_microphone>Play/pause for voice actions + microphone</h2>
+
+<ol>
+  <li> Open the screen on your Android device, unlock it, and go to the home screen.
+  <li> Long press on the play/pause button.
+  <li> Verify:
+  <ol>
+    <li> you hear a beep after which you should be able to make a voice search query,
+such as “What time is it?”
+    <li> you hear a response, such as “The time is ...”
+  </ol>
+  </ol>
+
+<h2 id=voice_button_for_voice_actions_microphone>Voice button for voice actions + microphone</h2>
+
+<ol>
+  <li> Open the screen on your Android device, unlock it, and go to the home screen.
+  <li> Short press on the voice button.
+  <li> Verify:
+  <ol>
+    <li> you hear a beep after which you should be able to make a search query, such as
+“What time is it?”
+    <li> you hear a response, such as “The time is ...”
+  </ol>
+  </ol>
+
+<p><strong>Important</strong>: A press on the voice button can launch launch any search app, for example
+Google search.</p>

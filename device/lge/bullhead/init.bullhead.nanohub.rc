@@ -1,0 +1,10 @@
+on post-fs
+    ## ensure correct calibration file permissions
+    chown root system /persist/sensorcal.json
+    chmod 0640 /persist/sensorcal.json
+    ## Update Nanohub FW if needed
+    start flash-nanohub-fw
+
+service flash-nanohub-fw /system/bin/nanoapp_cmd download
+    oneshot
+    disabled

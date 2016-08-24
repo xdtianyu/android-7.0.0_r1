@@ -1,0 +1,93 @@
+page.title=Setting up Device Testing
+@jd:body
+
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<div id="qv-wrapper">
+  <div id="qv">
+    <h2>In this document</h2>
+    <ol id="auto-toc">
+    </ol>
+  </div>
+</div>
+
+<p>These are the essential elements that must exist for OEM devices to ensure
+minimal support for managed profiles:</p>
+
+<ul>
+  <li>Profile Owner as described in <a
+href="https://developer.android.com/training/enterprise/app-compatibility.html">Ensuring
+Compatibility with Managed Profiles</a>
+  <li>Device Owner
+  <li>Activation Code Provisioning
+  </ul>
+<p>See <a href="implement.html">Implementing Device Administration</a> for the complete list of requirements.</p>
+
+<h2 id=summary>Summary</h2>
+<p>To test your device administration features:</p>
+
+<ol>
+  <li>For device owner, use the  <a
+href="https://developer.android.com/samples/BasicManagedProfile/index.html">BasicManagedProfile.apk</a>
+test app.
+  <li>Consider working with other enterprise mobility management (EMM) providers
+directly.
+</ol>
+
+<h2 id=set_up_the_device_owner_for_testing>Set up the device owner for testing</h2>
+<ol>
+  <li>Device MUST be built with <strong>userdebug</strong> or <strong>eng</strong> build.
+  </li>
+  <li>Factory reset the target device (and continue with the next steps in the
+    meantime).
+  </li>
+      <li>Download <a
+        href="http://developer.android.com/downloads/samples/BasicManagedProfile.zip">BasicManagedProfile.zip</a>. (Also see the <a
+        href="http://developer.android.com/samples/BasicManagedProfile/index.html">BasicManagedProfile</a> documentation.)</li>
+      <li>Unzip the file.
+      <li>Navigate (<code>cd</code>) to the unzipped directory.</li>
+      <li>If you don't have it, download the <a href="http://developer.android.com/sdk/index.html#Other">Android SDK Tools</a> package.</li>
+      <li>Create a file with the name <code>local.properties</code> containing the following single
+        line:<br>
+        <code>sdk.dir=<em>&lt;path to your android SDK folder&gt;</em></code><br>
+      <li>On Linux and Mac OS, run:<br>
+        <code>./gradlew assembleDebug</code><br>
+        Or on windows run:<br>
+        <code>gradlew.bat assembleDebug</code></li>
+      <li>If the build is unsuccessful because you have an outdated android SDK, run:<br>
+        <code><em>&lt;your android sdk folder&gt;</em>/tools/android update sdk -u -a</code></li>
+      <li>Wait for factory reset to complete if it hasn’t yet.<br>
+	<p class="Caution"><strong>Caution</strong>: Stay on the first screen
+        after factory reset and do not finish the setup wizard.</li>
+      <li>Install the BasicManagedProfile app by running the following command:<br>
+        <code>adb install ./Application/build/outputs/apk/Application-debug.apk </code>
+      </li>
+  <li>Set this app as the device owner by running this command:<br><code>$ adb shell am start -a
+    com.android.managedprovisioning.ACTION_PROVISION_MANAGED_DEVICE --es
+    android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME
+    com.example.android.basicmanagedprofile</code>
+  </li>
+  <li>Go through device owner setup on the device (encrypt, select Wi-Fi, etc.)</li>
+</ol>
+
+<h2 id=verify_the_device_owner_was_correctly_setup>Verify the device owner was correctly setup</h2>
+<ol>
+  <li>Go to <em>Settings > Security > Device Administrators</em>.
+  </li>
+  <li>Confirm the BasicManagedProfile is in the list and verify it cannot be
+    disabled. (This signifies it is a device owner.)
+  </li>
+</ol>

@@ -1,0 +1,100 @@
+page.title=Rotation Vector CV Crosscheck
+@jd:body
+
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<div class="figure" style="width:214px">
+  <img src="images/acircles_pattern_reduced.png" alt="Test pattern thumbnail" height="166" />
+  <p class="img-caption">
+    <strong>Figure 1.</strong> Thumbnail of test pattern. Download the
+full-resolution image linked above.
+  </p>
+</div>
+<p>This page provides the steps to properly test the compatibility of your <a
+href="https://source.android.com/devices/sensors/sensor-types.html#rotation_vector">rotation
+vector sensor</a> implementation. This test should be run when the device declares
+the TYPE_ROTATION_VECTOR composite sensor feature.</p>
+
+<ol>
+  <li>Install OpenCV Manager on the Android device being tested. You may choose one
+the following options:
+    <ul>
+    <li>Install from <a
+href="https://play.google.com/store/apps/details?id=org.opencv.engine">Google
+Play</a>; search for <em>OpenCV Manager</em> in Google Play if this link is
+outdated.
+    <li>Install from OpenCV SDK from <a
+href="http://opencv.org/downloads.html">OpenCV.org</a>. Please choose
+<strong>OpenCV for Android</strong> with version 3.0.0. You will find the APK
+from the <code>apk</code> folder inside the downloaded archive. Please consult <a
+href="http://developer.android.com/tools/help/adb.html#move">installing an
+application</a> for the command to load APKs onto the Android device from
+computer.
+  </ul>
+  <li>Print out the linked <a href="images/acircles_pattern.png">test pattern</a>,
+disabling any scaling options when printing. The pattern should fit US
+Letter paper in landscape or anything bigger.
+<p class="note"><strong>Note:</strong> The inline picture above is low
+resolution and just for illustration. Please do not directly print it as your
+pattern.</p>
+  <li>Place the pattern on a horizontal surface.
+  <li>Start the <strong>Rotation Vector CV Crosscheck</strong> in the CTS Verifier
+app. Follow the guide to turn on airplane mode, turn off auto rotate, and
+adjust adaptive brightness and location if these changes have
+not been made.<br />
+  <img src="images/RVCVXCheck_start.png" alt="Test initiation" height="533" id="test-start" />
+  <p class="img-caption">
+    <strong>Figure 2.</strong> Initiating the test.
+  </p>
+  <li>When the video preview appears, place the phone three feet (or one meter) over
+the pattern so the main camera is facing the pattern with yellow marker on the
+screen and yellow marker on the pattern aligned at the same corner.<br />
+<img src="images/RVCVXCheck_down.png" alt="Test pattern placement" height="207" id="test-pattern-placement" />
+  <p class="img-caption">
+    <strong>Figure 3.</strong> Placing the test pattern.
+  </p>
+  <li>While keeping the pattern entirely in the camera view, rotate the Android
+device under test (DUT) around the pattern in three different directions, one
+by one (1, 2 and then 3 illustrated in picture below) as prompted by the
+rotation range indicator. Keep movement smooth and steady for the best result.<br />
+  <img src="images/RVCVXCheck_flow.png" alt="Device movement" height="426" id="device-movement" />
+  <p class="img-caption">
+    <strong>Figure 4.</strong> Manipulating the device under test.
+  </p>
+  <li>After the capture, the camera preview will disappear and the analysis process
+will start. Wait patiently for analysis to finish; it usually takes one to five
+minutes depending on the phone performance. The phone will sound and vibrate at
+analysis completion. A numerical result will be presented on screen if the
+analysis is successful.<br />
+  <img src="images/RVCVXCheck_next.png" alt="Test completion" height="533" id="test-complete"/>
+  <p class="img-caption">
+    <strong>Figure 5.</strong> Finishing the test.
+  </p>
+  <li>Click <strong>next</strong> to proceed to the pass/fail screen and review the result.<br />
+  <img src="images/RVCVXCheck_pass.png" alt="Test success" height="533" id="test-success" />
+  <p class="img-caption">
+    <strong>Figure 6.</strong> Passing the test.
+  </p>
+<li>Follow these tips for best results:
+  <ol>
+    <li>Since this is a manual test with complexity, you may want to try it a few times
+for the best results.
+    <li>Accelerometer, gyroscope, and magnetometer should be calibrated before testing
+for good results.
+    <li>See this <a href="https://www.youtube.com/watch?v=MsDVmsH1PaI">video
+tutorial</a> for additional details.
+  </ol>
+</ol>

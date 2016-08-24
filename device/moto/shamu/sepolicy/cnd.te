@@ -1,0 +1,13 @@
+#permissive cnd;
+type cnd, domain, domain_deprecated;
+type cnd_exec, exec_type, file_type;
+
+# cnd is started by init, type transit from init domain to cnd domain
+init_daemon_domain(cnd)
+# associate netdomain as an attribute of cnd domain
+net_domain(cnd)
+
+allow cnd self:capability { net_raw setuid setgid };
+
+allow cnd netmgrd:dir search;
+allow cnd netmgrd:file r_file_perms;

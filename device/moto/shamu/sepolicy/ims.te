@@ -1,0 +1,61 @@
+type ims, domain, domain_deprecated;
+type ims_exec, exec_type, file_type;
+
+# Started by init
+init_daemon_domain(ims)
+
+# Uses network sockets
+net_domain(ims)
+
+# Grant access to Qualcomm MSM Interface (QMI) radio sockets to ims daemon
+qmux_socket(ims)
+
+# Allow ims to communicate with netd.
+allow ims netd_socket:sock_file write;
+
+# Allow ims to communicate with cnd.
+allow ims cnd_socket:sock_file write;
+
+# Allow ims to communicate with cnd.
+allow ims cnd:unix_stream_socket connectto;
+
+# Needed to let ims daemon drop unneeded capabilities and to allow access to
+# net_bind
+allow ims self:capability { setpcap setuid net_bind_service };
+
+# Allow ims to create and use netlink sockets.
+allow ims self:netlink_socket create_socket_perms;
+
+# Allow access to smem log
+allow ims shared_log_device:chr_file rw_file_perms;
+
+# ims needs to parse through /proc to obtain pid of netmgrd
+r_dir_file(ims, netmgrd)
+
+# b/18352920 suppress denials until the procfs lookup is removed
+dontaudit ims domain:dir r_dir_perms;
+
+# Allow ims to create and use socket to communicate between ims processes.
+allow ims self:socket create_socket_perms;
+
+# Runs /system/bin/sh for executing ndc commands via popen
+allow ims shell_exec:file rx_file_perms;
+
+# Runs /system/bin/ndc
+allow ims system_file:file rx_file_perms;
+
+# XXX Run toolbox.  Might not be needed.
+allow ims toolbox_exec:file rx_file_perms;
+auditallow ims toolbox_exec:file rx_file_perms;
+
+# Allow ims to tell init to start the ims data service via property=sys.ims.QMI_DAEMON_STATUS
+set_prop(ims, qcom_ims_prop)
+allow ims qcom_ims_prop:property_service set;
+allow ims ims_socket:sock_file write;
+
+allow ims wpa_socket:sock_file create_file_perms;
+allow ims wpa_socket:dir rw_dir_perms;
+
+allow ims wifi_data_file:dir r_dir_perms;
+
+unix_socket_send(ims, wpa, wpa)

@@ -1,0 +1,225 @@
+{
+    "flash": {
+        "version": "2.2",
+        "osplatform": "android",
+        "commands": [
+            {
+                "duration": 42000,
+                "restrict": null,
+                "tool": "notifier",
+                "source": "Please reset the edison (with reset button)",
+                "description": "notify"
+            },
+            {
+                "restrict": ["full", "non_os"],
+                "ifwi_dnx": "${fw_dnx_file}",
+                "os_dnx": "${os_dnx_file}",
+                "tool": "xfstkDownloader",
+                "os": "${os_file}",
+                "gpflag": "${gpflag}",
+                "ifwi": "${ifwi_file}",
+                "description": "flashing ifwi via xfstk"
+            },
+            {
+                "restrict": null,
+                "state": "pos",
+                "tool": "waitForDevice",
+                "timeout": 120000,
+                "description": "Waiting for device"
+            },
+            {
+                "restrict": ["full", "os"],
+                "retry": 2,
+                "mandatory": true,
+                "description": "Flashing gpt",
+                "timeout": 60000,
+                "tool": "fastboot",
+                "args": "flash gpt ${gpt_file}"
+            },
+            {
+                "restrict": ["full", "os", "non_os"],
+                "retry": 2,
+                "mandatory": true,
+                "description": "Flashing u-boot",
+                "timeout": 60000,
+                "tool": "fastboot",
+                "args": "flash u-boot ${u-boot_file}"
+            },
+            {
+                "restrict": ["full", "os", "update"],
+                "retry": 2,
+                "mandatory": true,
+                "description": "Flashing boot",
+                "timeout": 60000,
+                "tool": "fastboot",
+                "args": "flash boot_a ${boot_file}"
+            },
+            {
+                "restrict": ["full", "os", "update"],
+                "retry": 2,
+                "mandatory": true,
+                "description": "Flashing system",
+                "timeout": 1200000,
+                "tool": "fastboot",
+                "args": "flash system_a ${system_file}"
+            },
+            {
+                "restrict": ["full", "os", "update"],
+                "retry": 2,
+                "mandatory": true,
+                "description": "Flashing boot",
+                "timeout": 60000,
+                "tool": "fastboot",
+                "args": "flash boot_b ${boot_file}"
+            },
+            {
+                "restrict": ["full", "os", "update"],
+                "retry": 2,
+                "mandatory": true,
+                "description": "Flashing system",
+                "timeout": 1200000,
+                "tool": "fastboot",
+                "args": "flash system_b ${system_file}"
+            },
+            {
+                "restrict": ["full", "os"],
+                "retry": 2,
+                "mandatory": true,
+                "description": "Flashing data",
+                "timeout": 60000,
+                "tool": "fastboot",
+                "args": "flash userdata ${userdata_file}"
+            },
+            {
+                "restrict": ["full", "os", "update"],
+                "retry": 2,
+                "mandatory": true,
+                "description": "Setting slot 0 active",
+                "timeout": 1200000,
+                "tool": "fastboot",
+                "args": "oem set_active 0"
+            },
+            {
+                "restrict": ["full", "os", "update"],
+                "retry": 2,
+                "mandatory": true,
+                "description": "Rebooting",
+                "timeout": 1200000,
+                "tool": "fastboot",
+                "args": "reboot"
+            },
+            {
+                "duration": 60000,
+                "restrict": "non_os",
+                "tool": "notifier",
+                "source": "Run 'provision', then 'fastboot reboot' to boot the device.",
+                "description": "notify"
+            }
+        ],
+        "groups": {},
+        "parameters": {
+            "system_file": {
+                "type": "file",
+                "description": "System",
+                "value": "system.img",
+                "name": "System"
+            },
+            "userdata_file": {
+                "type": "file",
+                "description": "data partition",
+                "value": "userdata.img",
+                "name": "Userdata"
+            },
+            "u-boot_file": {
+                "type": "file",
+                "description": "U-Boot",
+                "value": "u-boot-edison.bin",
+                "name": "U-Boot primary"
+            },
+            "os_file": {
+                "type": "file",
+                "description": "OS",
+                "value": "u-boot-edison.img",
+                "name": "OS"
+            },
+            "gpflag": {
+                "type": "string",
+                "description": "GP flag",
+                "value": "0x80000007",
+                "name": "GP flag"
+            },
+            "fw_dnx_file": {
+                "type": "file",
+                "description": "Firmware DnX",
+                "value": "edison_dnx_fwr.bin",
+                "name": "Firmware DnX"
+            },
+            "ifwi_file": {
+                "type": "file",
+                "description": "Firmware",
+                "value": "edison_ifwi-dbg-00.bin",
+                "name": "Firmware"
+            },
+            "os_dnx_file": {
+                "type": "file",
+                "description": "OS DnX",
+                "value": "edison_dnx_osr.bin",
+                "name": "OS DnX"
+            },
+            "boot_file": {
+                "type": "file",
+                "description": "Boot partition",
+                "value": "boot.img",
+                "name": "Boot partition"
+            },
+            "gpt_file": {
+                "type": "file",
+                "description": "Partition Table",
+                "value": "gpt.bin",
+                "name": "Partition Table"
+            }
+        },
+        "configurations": {
+            "full": {
+                "name": "Full",
+                "parameters": {},
+                "default": false,
+                "documentation": "",
+                "groupsState": {},
+                "brief": "full recovery flashing",
+                "startState": "dnx_fw",
+                "description": "full reflash"
+            },
+            "non_os": {
+                "name": "Non_OS",
+                "parameters": {},
+                "default": true,
+                "documentation": "",
+                "groupsState": {},
+                "brief": "firmware and u-boot flashing",
+                "startState": "dnx_fw",
+                "description": "ifwi and u-boot reflash"
+            },
+            "os": {
+                "name": "OS",
+                "parameters": {},
+                "default": false,
+                "documentation": "",
+                "groupsState": {},
+                "brief": "Flash u-boot, boot, userdata and system images",
+                "startState": "pos",
+                "description": "os reflash"
+            },
+            "update": {
+                "name": "Update",
+                "parameters": {},
+                "default": false,
+                "documentation": "",
+                "groupsState": {},
+                "brief": "Flash boot and system images",
+                "startState": "pos",
+                "description": "update system"
+            }
+        }
+    }
+}

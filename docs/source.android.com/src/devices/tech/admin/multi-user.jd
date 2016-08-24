@@ -1,0 +1,162 @@
+page.title=Supporting Multiple Users
+@jd:body
+
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<div id="qv-wrapper">
+  <div id="qv">
+    <h2>In this document</h2>
+    <ol id="auto-toc">
+    </ol>
+  </div>
+</div>
+
+<p>This document describes the Android multi-user feature. It allows more than one
+user on a single Android device by separating their accounts and application
+data. For instance, parents may let their children use the family tablet. Or a
+critical team might share a mobile device for on-call duty.</p>
+
+<h1 id=definitions>Definitions</h1>
+
+<p>Before supporting multiple Android users, you should understand the basic
+concepts involved. Here are the primary terms used when describing Android
+users and accounts:</p>
+
+<ul>
+  <li><em>User</em> - Each user is intended to be used by a different physical person. Each user
+has distinct application data and some unique settings, as well as a user
+interface to explicitly switch between users. A user can run in the background
+when another user is active; the system manages shutting down users to conserve
+resources when appropriate. Secondary users can be created either directly via
+the primary user interface or from a <a
+href="https://developer.android.com/guide/topics/admin/device-admin.html">Device
+Administration</a> application.
+  <li><em>Account</em> - Accounts are contained within a user but are not defined by a user. Nor is a
+user defined by or linked to any given account. Users and profiles contain
+their own unique accounts but are not required to have accounts to be
+functional. The list of accounts differs by user. See the <a href="https://developer.android.com/reference/android/accounts/Account.html">Account class</a> definition.
+  <li><em>Profile<strong></em> </strong>- A profile has separated app data but shares some system-wide settings (for
+example, Wi-Fi and Bluetooth). A profile is a subset of and tied to the
+existence of a user. A user can have multiple profiles. They are created
+through a <a href="https://developer.android.com/guide/topics/admin/device-admin.html">Device
+Administration</a> application. A profile always has an immutable
+association to a ‘parent’ user, defined by the user that created the profile.
+Profiles do not live beyond the lifetime of the creating user.
+  <li><em>App</em> - An application’s data exists within each associated user. App data is
+sandboxed from other applications within the same user. Apps within the same
+user can interact with each other via IPC. See <a href="https://developer.android.com/training/enterprise/index.html">Building Apps for Work</a>.
+</ul>
+
+<h2 id=user_types>User types</h2>
+
+<ul>
+  <li><em>Primary</em> - The first user added to a device. The primary user cannot be removed except
+by factory reset. This user also has some special privileges and settings only
+it can set. The primary user is always running even when other users are in the
+foreground.
+  <li><em>Secondary</em> - Any user added to the device other than the primary user. They can be
+removed by either themselves or the primary user and cannot impact other users
+on a device. Secondary users can run in the background and will continue to
+have network connectivity when they do.
+  <li><em>Guest<strong></em> </strong>- A guest user is a temporary secondary user with an explicit option to quick
+delete the guest user when its usefulness is over. There can be only one guest
+user at a time.
+</ul>
+
+<h2 id=profile_types>Profile types</h2>
+
+<ul>
+  <li><em>Managed<strong></em> </strong>- Managed profiles are created by an application to contain work data and
+apps. They are managed exclusively by the ‘profile owner’, the app who created
+the corp profile. Launcher, notifications and recent tasks are shared by the
+primary user and the corp profile.
+  <li><em>Restricted</em> - Restricted profiles use the accounts based off the primary user. The Primary
+user can control what apps are available on the restricted profile. Restricted
+profiles are available only on tablets.
+</ul>
+
+<h1 id=effects>Effects</h1>
+
+<p>When users are added to a device, some functionality will be curtailed when
+another user is in the foreground. Since app data is separated by user, the
+state of those apps differs by user. For example, email destined for an account
+of a user not currently in focus won’t be available until that user and account
+are active on the device.</p>
+
+<p>The default state is only the primary user has full access to phone calls and
+texts. The secondary user may receive inbound calls but cannot send or receive
+texts. The primary user must enable these functions for others.</p>
+
+ <p class="note"><strong>Note</strong>: To enable or disable the phone and SMS functions for a secondary user, go to
+Settings > Users, select the user, and switch the <em>Allow phone calls and SMS</em> setting to off.</p>
+
+<p>Please note, some restrictions exist when a secondary user is in background.
+For instance, the background secondary user will not be able to display the
+user interface or make Bluetooth services active. Finally, background secondary
+users will be halted by the system process if the device needs additional
+memory for operations in the foreground user.</p>
+
+<p>Here are aspects of behavior to keep in mind when employing multiple users on
+an Android device:</p>
+
+<ul>
+  <li>Notifications appear for all accounts of a single user at once.
+  <li>Notifications for other users do not appear until they are active.
+  <li>Each user gets his or her own workspace to install and place apps.
+  <li>No user has access to the app data of another user.
+  <li>Any user can affect the installed apps for all users.
+  <li>The primary user can remove apps or even the entire workspace established by
+secondary users.
+</ul>
+
+<h1 id=implementation>Implementation</h1>
+
+<h2 id=managing_users>Managing users</h2>
+
+<p>Management of users and profiles (with the exception of restricted profiles) is
+performed by applications that programmatically invoke API in the <code>DevicePolicyManager</code> class to restrict use.</p>
+
+<p>Schools and enterprises may employ users and profiles to manage the lifetime
+and scope of apps and data on devices. They may use the types outlined above in
+conjunction with the <a href="http://developer.android.com/reference/android/os/UserManager.html">UserManager API</a> to build unique solutions tailored to their use cases.</p>
+
+<h2 id=applying_the_overlay>Applying the overlay</h2>
+
+<p>The multi-user feature is disabled by default in the Android 5.0 release. To
+enable it, device manufacturers must define a resource overlay that replaces
+the following values in frameworks/base/core/res/res/values/config.xml:</p>
+
+<pre>
+&lt;!--  Maximum number of supported users --&gt;
+&lt;integer name="config_multiuserMaximumUsers"&gt;1&lt;/integer&gt;
+&lt;!--  Whether Multiuser UI should be shown --&gt;
+&lt;bool name="config_enableMultiUserUI"&gt;false&lt;/bool&gt;
+</pre>
+
+<p>To apply this overlay and enable guest and secondary users on the device, use the
+<code>DEVICE_PACKAGE_OVERLAYS</code> feature of the Android build system to:</p>
+
+<ul>
+  <li> Replace the value for <code>config_multiuserMaximumUsers</code> with one greater than 1
+  <li> Replace the value of <code>config_enableMultiUserUI</code> with: <code>true</code>
+</ul>
+
+<p>Device manufacturers may decide upon the maximum number of users.</p>
+
+<p>That said, if device manufacturers or others have modified settings, they need
+to ensure SMS and telephony work as defined in the <a
+href="{@docRoot}compatibility/android-cdd.pdf">Android Compatibility Definition
+Document</a> (CDD).</p>

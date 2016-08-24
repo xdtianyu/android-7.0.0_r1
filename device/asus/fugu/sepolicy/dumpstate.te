@@ -1,0 +1,6 @@
+userdebug_or_eng(`
+        allow dumpstate atvr_device:chr_file r_file_perms;
+')
+
+# GPU dynamic fbc feature
+allow dumpstate surfaceflinger:fifo_file rw_file_perms;

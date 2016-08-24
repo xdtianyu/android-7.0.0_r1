@@ -1,0 +1,4 @@
+# init.hikey.usb.rc writes to /config/* to set up USB
+allow init configfs:dir create_file_perms;
+allow init configfs:file write;
+allow init configfs:lnk_file create;

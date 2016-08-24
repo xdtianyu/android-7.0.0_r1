@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2016 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<configuration description="Runs Tests useful on validating a PDK fusion build">
+
+    <include name="cts" />
+
+    <option name="compatibility:plan" value="cts-pdk" />
+
+    <!-- Include test modules -->
+    <option name="compatibility:include-filter" value="CtsAadbHostTestCases" />
+    <option name="compatibility:include-filter" value="CtsBluetoothTestCases" />
+    <option name="compatibility:include-filter" value="CtsGraphicsTestCases" />
+    <option name="compatibility:include-filter" value="CtsGraphics2TestCases" />
+    <option name="compatibility:include-filter" value="CtsHardwareTestCases" />
+    <option name="compatibility:include-filter" value="CtsMediaTestCases" />
+    <option name="compatibility:include-filter" value="CtsNetTestCases" />
+    <option name="compatibility:include-filter" value="CtsDeqpTestCases" />
+    <option name="compatibility:include-filter" value="CtsRenderscriptTestCases" />
+    <option name="compatibility:include-filter" value="CtsRenderscriptLegacyTestCases" />
+    <option name="compatibility:include-filter" value="CtsTelephonyTestCases" />
+    <option name="compatibility:include-filter" value="CtsTelephony2TestCases" />
+    <option name="compatibility:include-filter" value="CtsRsBlasTestCases" />
+    <option name="compatibility:include-filter" value="CtsNativeMediaSlTestCases" />
+    <option name="compatibility:include-filter" value="CtsNativeMediaXaTestCases" />
+
+</configuration>

@@ -1,0 +1,140 @@
+page.title=Security
+@jd:body
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<div id="qv-wrapper">
+  <div id="qv">
+    <h2>In this document</h2>
+    <ol id="auto-toc"></ol>
+  </div>
+</div>
+
+<h2 id="introduction">Introduction</h2>
+<p>Android is a modern mobile platform that was designed to be truly open. Android
+  applications make use of advanced hardware and software, as well as local and
+  served data, exposed through the platform to bring innovation and value to
+  consumers. To protect that value, the platform must offer an application
+  environment that ensures the security of users, data, applications, the device,
+  and the network.</p>
+<p>Securing an open platform requires a robust security architecture and
+  rigorous security programs.  Android was designed with multi-layered
+  security that provides the flexibility required for an open platform, while
+  providing protection for all users of the platform. For information about
+  reporting security issues and the update process, 
+  see <a href="overview/updates-resources.html">Security Updates and Resources</a>.</p>
+<p>Android was designed with developers in mind. Security controls were designed
+  to reduce the burden on developers. Security-savvy developers can easily work
+  with and rely on flexible security controls.  Developers less familiar with
+  security will be protected by safe defaults.</p>
+<p>Android was designed with device users in mind. Users are provided visibility
+  into how applications work, and control over those applications.  This design
+  includes the expectation that attackers would attempt to perform common
+  attacks, such as social engineering attacks to convince device users to install
+  malware, and attacks on third-party applications on Android. Android was
+  designed to both reduce the probability of these attacks and greatly limit the
+  impact of the attack in the event it was successful.</p>
+<p>This documentation outlines the goals of the Android security program, describes the
+  fundamentals of the Android security architecture, and answers the most
+  pertinent questions for system architects and security analysts.  This document
+  focuses on the security features of Android's core platform and does not
+  discuss security issues that are unique to specific applications, such as those
+  related to the browser or SMS application. Recommended best practices for
+  building Android devices, deploying Android devices, or developing applications
+  for Android are not the goal of this document and are provided elsewhere.</p>
+
+<h2 id="background">Background</h2>
+<p>Android provides an open source platform and application environment for mobile
+  devices.</p>
+<p>The sections and pages below describe the security features of the Android
+  platform. <em>Figure 1</em> summarizes the security components and considerations of
+  the various levels of the Android software stack. Each component assumes that
+  the components below are properly secured. With the exception of a small amount
+  of Android OS code running as root, all code above the Linux Kernel is
+  restricted by the Application Sandbox.</p>
+<p><img alt="Figure 1: Android software stack" src="images/android_software_stack.png" /></p>
+<p><em>Figure 1: Android software stack.</em></p>
+<p>The main Android platform building blocks are:</p>
+<ul>
+  <li>
+    <p><strong>Device Hardware</strong>: Android runs on a wide range of hardware configurations
+      including smart phones, tablets, and set-top-boxes.  Android is
+      processor-agnostic, but it does take advantage of some hardware-specific
+      security capabilities such as ARM v6 eXecute-Never.</p>
+  </li>
+  <li>
+    <p><strong>Android Operating System</strong>: The core operating system is built on top of
+      the Linux kernel. All device resources, like camera functions, GPS data,
+      Bluetooth functions, telephony functions, network connections, etc. are
+      accessed through the operating system.</p>
+  </li>
+  <li>
+    <p><strong>Android Application Runtime</strong>: Android applications are most often written
+      in the Java programming language and run in the Dalvik virtual machine.
+      However, many applications, including core Android services and applications
+      are native applications or include native libraries. Both Dalvik and native
+      applications run within the same security environment, contained within the
+      Application Sandbox. Applications get a dedicated part of the filesystem in
+      which they can write private data, including databases and raw files.</p>
+  </li>
+</ul>
+<p>Android applications extend the core Android operating system. There are two
+  primary sources for applications:</p>
+<ul>
+  <li>
+    <p><strong>Pre-Installed Applications</strong>: Android includes a set of pre-installed
+      applications including phone, email, calendar, web browser, and contacts. These
+      function both as user applications and to provide key device capabilities that
+      can be accessed by other applications.  Pre-installed applications may be part
+      of the open source Android platform, or they may be developed by an OEM for a
+      specific device.</p>
+  </li>
+  <li>
+    <p><strong>User-Installed Applications</strong>: Android provides an open development
+      environment supporting any third-party application. Google Play offers
+      users hundreds of thousands of applications.</p>
+  </li>
+</ul>
+<p>Google provides a set of cloud-based services that are available to any
+  compatible Android device. The primary services are:</p>
+<ul>
+  <li>
+    <p><strong>Google Play</strong>: Google Play is a collection of services that
+      allow users to discover, install, and purchase applications from their Android
+      device or the web. Google Play makes it easy for developers to reach Android
+      users and potential customers. Google Play also provides community review,
+      application <a href="https://developer.android.com/guide/publishing/licensing.html">license
+        verification</a>, application security scanning, and other security services.</p>
+  </li>
+  <li>
+    <p><strong>Android Updates</strong>: The Android update service delivers new capabilities and
+      security updates to Android devices, including updates through the web or over
+      the air (OTA).</p>
+  </li>
+  <li>
+    <p><strong>Application Services</strong>: Frameworks that allow Android applications to use
+      cloud capabilities such as (<a href="https://developer.android.com/guide/topics/data/backup.html">backing
+        up</a>) application
+      data and settings and cloud-to-device messaging
+      (<a href="https://developers.google.com/android/c2dm/">C2DM</a>)
+      for push messaging.</p>
+  </li>
+</ul>
+<p>These services are not part of the Android Open Source Project and are out
+  of scope for this document. But they are relevant to the security of most
+  Android devices, so a related security document titled “Google Services for
+  Android: Security Overview” is available.</p>
+
+

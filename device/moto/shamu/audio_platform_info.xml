@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<audio_platform_info>
+    <acdb_ids>
+        <device name="SND_DEVICE_OUT_VOICE_HANDSET"         acdb_id="67"/>
+        <device name="SND_DEVICE_OUT_VOICE_SPEAKER"         acdb_id="66"/>
+        <device name="SND_DEVICE_OUT_VOICE_HANDSET_TMUS"    acdb_id="67"/>
+        <device name="SND_DEVICE_IN_HEADSET_MIC_AEC"        acdb_id="47"/>
+        <device name="SND_DEVICE_IN_VOICE_DMIC_TMUS"        acdb_id="89"/>
+    </acdb_ids>
+
+    <pcm_ids>
+        <usecase name="USECASE_VOICE_CALL" type="in" id="20"/>
+        <usecase name="USECASE_VOICE_CALL" type="out" id="20"/>
+        <usecase name="USECASE_VOICE2_CALL" type="in" id="25"/>
+        <usecase name="USECASE_VOICE2_CALL" type="out" id="25"/>
+        <usecase name="USECASE_VOLTE_CALL" type="in" id="21"/>
+        <usecase name="USECASE_VOLTE_CALL" type="out" id="21"/>
+        <usecase name="USECASE_QCHAT_CALL" type="in" id="33"/>
+        <usecase name="USECASE_QCHAT_CALL" type="out" id="33"/>
+        <usecase name="USECASE_VOWLAN_CALL" type="in" id="-1"/>
+        <usecase name="USECASE_VOWLAN_CALL" type="out" id="-1"/>
+    </pcm_ids>
+
+    <backend_names>
+        <device name="SND_DEVICE_OUT_SPEAKER"           backend="speaker" interface="QUAT_MI2S_RX"/>
+        <device name="SND_DEVICE_OUT_SPEAKER_SAFE"      backend="speaker" interface="QUAT_MI2S_RX"/>
+        <device name="SND_DEVICE_OUT_VOICE_SPEAKER"     backend="speaker" interface="QUAT_MI2S_RX"/>
+        <device name="SND_DEVICE_OUT_SPEAKER_REVERSE"   backend="speaker" interface="QUAT_MI2S_RX"/>
+
+        <device name="SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES"      backend="speaker-and-headphones" interface="QUAT_MI2S_RX-and-SLIMBUS_0_RX"/>
+        <device name="SND_DEVICE_OUT_SPEAKER_AND_LINE"            backend="speaker-and-headphones" interface="QUAT_MI2S_RX-and-SLIMBUS_0_RX"/>
+        <device name="SND_DEVICE_OUT_SPEAKER_SAFE_AND_HEADPHONES" backend="speaker-and-headphones" interface="QUAT_MI2S_RX-and-SLIMBUS_0_RX"/>
+        <device name="SND_DEVICE_OUT_SPEAKER_SAFE_AND_LINE"       backend="speaker-and-headphones" interface="QUAT_MI2S_RX-and-SLIMBUS_0_RX"/>
+
+
+        <device name="SND_DEVICE_OUT_VOICE_HANDSET"             backend="handset" interface="QUAT_MI2S_RX"/>
+        <device name="SND_DEVICE_OUT_VOICE_HAC_HANDSET"         backend="handset" interface="QUAT_MI2S_RX"/>
+        <device name="SND_DEVICE_OUT_VOICE_HANDSET_TMUS"        backend="handset" interface="QUAT_MI2S_RX"/>
+        <device name="SND_DEVICE_OUT_HANDSET"                   backend="handset" interface="QUAT_MI2S_RX"/>
+        <device name="SND_DEVICE_OUT_VOICE_TTY_HCO_HANDSET"     backend="handset" interface="QUAT_MI2S_RX"/>
+    </backend_names>
+
+    <config_params>
+        <!-- If sound card name is not known, remove this entry -->
+        <param key="snd_card_name" value="apq8084-taiko-tfa9890_stereo_codec-snd-card"/>
+    </config_params>
+
+</audio_platform_info>
+

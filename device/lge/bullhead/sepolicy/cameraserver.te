@@ -1,0 +1,6 @@
+allow cameraserver camera:unix_dgram_socket sendto;
+allow cameraserver camera_data_file:sock_file write;
+allow cameraserver perfd_data_file:dir search;
+allow cameraserver perfd_data_file:sock_file write;
+allow cameraserver perfd:unix_stream_socket connectto;
+allow cameraserver scheduling_policy_service:service_manager find;

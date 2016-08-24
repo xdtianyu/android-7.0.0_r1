@@ -1,0 +1,8 @@
+allow mediaserver system_server:unix_stream_socket { read write };
+allow mediaserver self:netlink_kobject_uevent_socket create_socket_perms;
+allow mediaserver sensorservice_service:service_manager find;
+allow mediaserver sysfs_gpu:file r_file_perms;
+
+# needed for widevine classic
+allow mediaserver tee_device:chr_file { ioctl open read write };
+

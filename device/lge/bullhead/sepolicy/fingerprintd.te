@@ -1,0 +1,15 @@
+binder_service(fingerprintd)
+
+# Access to /dev/tee
+allow fingerprintd tee_device:chr_file rw_file_perms;
+
+# Read to /dev/input
+allow fingerprintd input_device:dir r_dir_perms;
+allow fingerprintd input_device:chr_file r_file_perms;
+
+# read clk_enable and wakeup_enable in /sys/devices/soc.0/f9966000.spi_fpc/
+allow fingerprintd sysfs_devices_fingerprint:dir r_dir_perms;
+allow fingerprintd sysfs_devices_fingerprint:file rw_file_perms;
+
+# allow access to /persist
+allow fingerprintd persist_file:dir search;

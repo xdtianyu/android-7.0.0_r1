@@ -1,0 +1,20 @@
+This is the kernel unittest for seccomp-bpf sandboxing.
+
+URL: https://github.com/redpig/seccomp
+Revision: e65c79a14dc2bbb6d8dbf12ebf71905e2253a4b2
+License: BSD
+
+Local modifications:
+- Remove usage of pthread_cancel()
+- Use __android_log_print() instead of fprintf()
+- Rename main() to seccomp_test_main()
+- Add get_seccomp_test_list()
+- Backport TEST(syscall_restart) from upstream
+
+The diff of modifications can be found in local-modifications-android.diff
+and local-modifications-android-2.diff. Note, the TEST(syscall_restart)
+backport is the only change in local-modifications-android-2.diff
+
+Additional modification is to backport fixes for Android Native Bridge:
+https://patchwork.kernel.org/patch/7537891/. This is not found in the above
+diff file. The patch is located in local-modifications-strict-args-fd88d16.diff.

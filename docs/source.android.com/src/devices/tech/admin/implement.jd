@@ -1,0 +1,147 @@
+page.title=Implementing Device Administration
+@jd:body
+
+<!--
+    Copyright 2015 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<div id="qv-wrapper">
+  <div id="qv">
+    <h2>In this document</h2>
+    <ol id="auto-toc">
+    </ol>
+  </div>
+</div>
+
+<p>This page walks you through the many features in Android 5.0 and higher
+platform release that need to be enabled and validated on devices to make them
+ready for managed profile and device owner user cases that are essential to using
+them in a corporate environment. In addition to the related Android Open Source
+Project (AOSP) code, there are a number of additional components required for a
+device to function with managed profiles.</p>
+
+<h2 id=requirements>Requirements</h2>
+
+<p>The following uses-feature need to be defined:</p>
+
+<pre>
+android.software.managed_users
+android.software.device_admin
+</pre>
+
+<p>Confirm with: <code>adb shell pm list features</code></p>
+
+<p>It should not be a low-RAM device, meaning <code>ro.config.low_ram</code>
+should not be defined. The framework automatically limits the number of users
+to 1 when the <code>low_ram</code> flag is defined.</p>
+
+<p>By default, only applications that are essential for correct operation of the
+profile should be enabled as part of provisioning a managed device.</p>
+
+<p>OEMs must ensure the managed profile or device has all required applications by
+modifying:</p>
+
+<pre>
+vendor_required_apps_managed_profile.xml
+vendor_required_apps_managed_device.xml
+</pre>
+
+<p>Here are examples from a Nexus device:</p>
+
+<code>packages/apps/ManagedProvisioning/res/values/vendor_required_apps_managed_device.xml</code>
+
+<pre>
+&lt;resources&gt;
+  &lt;!-- A list of apps to be retained on the managed device --&gt;
+  &lt;string-array name="vendor_required_apps_managed_device"&gt;
+    &lt;item&gt;com.android.vending&lt;/item&gt; &lt;!--­Google Play --&gt;
+    &lt;item&gt;com.google.android.gms&lt;/item&gt; &lt;!--­Required by Play --&gt;
+    &lt;item&gt;com.google.android.contacts&lt;/item&gt; &lt;!--­Google or OEM Contacts­--&gt;
+    &lt;item&gt;com.google.android.googlequicksearchbox&lt;/item&gt; &lt;!--­Google Launcher --&gt;
+    &lt;item&gt;com.google.android.launcher&lt;/item&gt; &lt;!--­Google Launcher or OEM Launcher --&gt;
+    &lt;item&gt;com.google.android.dialer&lt;/item&gt; &lt;!--­Google or OEM dialer to enable making phone calls --&gt;
+  &lt;/string-array&gt;
+&lt;/resources&gt;
+</pre>
+
+<code>
+packages/apps/ManagedProvisioning/res/values/vendor_required_apps_managed_profile.xml
+</code>
+
+<pre>
+&lt;resources&gt;
+    &lt;!-- A list of apps to be retained in the managed profile. This includes any Google experience apps required. --&gt;
+    &lt;string-array name="vendor_required_apps_managed_profile"&gt;
+        &lt;item&gt;com.android.vending&lt;/item&gt; &lt;!-- Google Play --&gt;
+        &lt;item&gt;com.google.android.gms&lt;/item&gt; &lt;!-- Required by Play --&gt;
+        &lt;item&gt;com.google.android.contacts&lt;/item&gt; &lt;!-- Google or OEM Contacts --&gt;
+    &lt;/string-array&gt;
+&lt;/resources&gt;
+</pre>
+
+<h3 id=launcher>Launcher</h3>
+
+<p>The launcher must support badging applications with the icon badge provided
+in the Android Open Source Project (AOSP) to represent the managed applications
+and other badge user interface elements such as recents and notifications.</p> 
+
+<p>Update the Launcher to support badging. If you use <a
+href="https://android.googlesource.com/platform/packages/apps/Launcher3/">launcher3</a>
+in AOSP as-is, then you likely already support this badging feature.
+</p>
+
+<h3 id=nfc>NFC</h3>
+
+<p>On devices with NFC, NFC must be enabled in the Android Setup Wizard and
+configured to accept managed provisioning intents:</p>
+
+<code>packages/apps/Nfc/res/values/provisioning.xml</code>
+
+<pre>
+&lt;bool name="enable_nfc_provisioning"&gt;true&lt;/bool&gt;
+&lt;item>application/com.android.managedprovisioning&lt;/item&gt;
+</pre>
+
+<h3 id=setup_wizard>Setup Wizard</h3>
+
+<p>The Android Setup Wizard needs to support device owner provisioning. When it
+opens, it needs to check if another process (such as device owner provisioning)
+has already finished the user setup. If this is the case, it needs to fire a
+home intent and finish the setup wizard. </p>
+
+<p>This intent will be caught by the provisioning application, which will then
+hand over control to the newly set device owner. This can be achieved by adding
+the following to your setup wizard’s main activity:</p>
+
+<pre>
+&#64;Override
+   protected void onStart() {
+        super.onStart();
+
+        // When returning to a setup wizard activity, check to see if another setup process
+        // has intervened and, if so, complete an orderly exit
+        boolean completed = Settings.Secure.getInt(getContentResolver(),
+                Settings.Secure.USER_SETUP_COMPLETE, 0) != 0;
+        if (completed) { 
+           startActivity(new Intent(Intent.ACTION_MAIN, null)
+                .addCategory(Intent.CATEGORY_HOME)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED));
+           finish();
+       }
+
+       ...
+   }
+</pre>
