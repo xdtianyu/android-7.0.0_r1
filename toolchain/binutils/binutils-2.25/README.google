@@ -1,0 +1,270 @@
+Patches applied to binutils-20141117:
+
+Please include a change to this file with each patch, *and* each
+subsequent modification of the patch.  Do NOT combine patch
+checkins, keep them separate.
+
+Append new entries to the end of this file. Each entry shall include:
+ * The list of files modified by the patch,
+ * The status of the patch (whether it's been checked in upstream,
+   or is a local patch),
+ * The local 'owner' responsible for the patch, and
+ * A description of the patch (preferably including bug numbers).
+
+Please include entries for both local patches and for patches which
+have been checked in to (or back-ported from) the upstream sources.
+When checking in changes made upstream, add an entry to this file but
+DO NOT add entries to the GNU ChangeLog files.
+
+gas/as.c
+gas/as.h
+gas/doc/as.texinfo
+gas/read.c
+gas/testsuite/gas/all/incbin.d
+  Status: google local
+  Owner: aaw
+  Disable .incbin, unless explicitly enabled with new flag --allow-incbin.
+
+binutils/doc/Makefile.am
+binutils/doc/Makefile.in
+gas/doc/Makefile.am
+gas/doc/Makefile.in
+gprof/Makefile.am
+gprof/Makefile.in
+ld/Makefile.am
+ld/Makefile.in
+  Status: local
+  Owner: bmoses
+  Pass --date=" " to pod2man to avoid including build dates when formatting
+  manual and info pages.
+
+gas/testsuite/gas/aarch64/mapmisc.d
+  Status: local
+  Owner: bmoses
+  Add "--allow-incbin" directive to avoid errors with .incbin patch.
+
+gold/configure.ac
+gold/configure
+gold/Makefile.am
+gold/Makefile.in
+gold/testsuite/Makefile.am
+gold/testsuite/Makefile.in
+  Status: local
+  Owner: bmoses
+  Add a Gold configure option to run tests using the native
+  build tools, even if we are building for a non-native
+  target.
+
+gold/errors.cc
+  Status: local
+  Owner: ccoutant
+  Add local go/keymethod link to missing vtable error message.
+
+gold/options.h
+  Status: local
+  Owner: ccoutant
+  Make --disable-new-dtags the default.  See b/12844098.
+
+gold/layout.cc
+  Status: Local
+  Owner: tmsriram
+  Integrated from binutils-2.24.
+  Map input section name prefixes "_function_patch_prologue." and
+  "_function_patch_epilogue." to output section names
+  "_function_patch_prologue" and "_function_patch_epilogue".
+  The compiler patch that creates these sections:
+  http://gcc.gnu.org/ml/gcc-patches/2013-04/msg01835.html
+
+gold/powerpc.cc
+bfd/elf64-ppc.c
+  Status: backport
+  Owner: shenhan
+  Backport upstream patches to fix overflow detection for PPC.
+  See cl/80502043.
+
+gold/powerpc.cc
+  Status: backport
+  Owner: shenhan
+  Backport upstream patch for PowerPC relaxation corner case.
+  See https://sourceware.org/ml/binutils/2014-11/msg00340.html.
+
+gold/aarch64.cc
+  Status: backport
+  Owner: shenhan
+  Backport upstream patch for tlsdesc linking error under -pie.
+  See https://sourceware.org/ml/binutils/2014-11/msg00343.html.
+
+gold/powerpc.cc
+  Status: backport
+  Owner: jingyu
+  Backport 2 upstream patches to retry powerpc gold stub grouping when
+  groups prove too large.
+  See https://sourceware.org/ml/binutils/2014-11/msg00342.html
+  and https://sourceware.org/ml/binutils/2014-12/msg00054.html
+
+gold/aarch64.cc
+  Status: backport
+  Owner: jingyu
+  Backport upstream patch to print informative error message for
+  stub-group-size.
+  See https://sourceware.org/ml/binutils/2014-12/msg00108.html
+
+gold/aarch64.cc
+  Status: backport
+  Owner: jingyu
+  Backport upstream patch to fix a print bug in 32bit mode.
+  See https://sourceware.org/ml/binutils/2014-12/msg00137.html
+
+bfd/elf64-ppc.c
+gold/powerpc.cc
+gold/symtab.cc
+  Status: backport
+  Owner: jingyu
+  Backport 5 upstream patches for PPC.
+  See https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=f9dffbf0863b9010a5eece87bd6b36e38c09ffb0
+  https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=1f98a0748c4dfae57a76c408501c938480c1173c
+  https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=1611bc4afb0f08f0aff64ec355b8d68e9f4f0a73
+  https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=e30880c2eeee3b43897161344bbbffd03f3a1c91
+  https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=b01a4b043a5b08e1208b1fedd61a6f3d65a328e0
+
+gold/powerpc.cc
+  Status: backport
+  Owner: jingyu
+  Backport upstream patch to correct PPC TLSLD linker optimization.
+  See https://sourceware.org/ml/binutils/2015-01/msg00322.html
+
+gold/aarch64-reloc.def
+gold/aarch64.cc
+  Status: backport
+  Owner: jingyu
+  Backport upstream patch to support missing TLSLE relocations.
+  see https://sourceware.org/ml/binutils/2015-02/msg00140.html
+
+gold/parameters.cc
+  Status: backport
+  Owner: ccoutant
+  Fix a race condition when setting default target for ARM targets.
+  https://sourceware.org/ml/binutils-cvs/2015-03/msg00023.html
+
+binutils/dwarf.h
+binutils/readelf.c
+include/dwarf2.def
+include/dwarf2.h
+  Status: local
+  Owner: ccoutant
+  Backport two-level line table support for readelf from upstream binutils
+  branch users/ccoutant/two-level-line-150331.
+
+gas/dwarf2dbg.c
+gas/dwarf2dbg.h
+gas/config/obj-elf.c
+  Status: local
+  Owner: ccoutant
+  Backport two-level line table support for GAS from upstream binutils
+  branch users/ccoutant/two-level-line-150331.
+
+elfcpp/dwarf.h
+gold/debug.h
+gold/dwarf_reader.cc
+gold/dwarf_reader.h
+  Status: local
+  Owner: ccoutant
+  Backport two-level line table support for gold from upstream binutils
+  branch users/ccoutant/two-level-line-150331.
+
+gold/dwp.cc
+gold/dynobj.cc
+gold/object.cc
+gold/object.h
+  Status: backport
+  Owner: ccoutant
+  Backport upstream patch to add gold support for reading compressed
+  debug info in shared object and dwp files.
+
+gold/aarch64-reloc.def
+gold/aarch64.cc
+  Status: backport
+  Owner: jingyu
+  Add support to 2 AARCH64 TLSLD relocations. Change _TLS_MODULE_BASE_.
+  https://sourceware.org/ml/binutils/2015-03/msg00420.html
+
+gold/ehframe.h
+gold/gold.cc
+gold/layout.cc
+gold/layout.h
+gold/options.cc
+gold/testsuite/Makefile.am
+gold/testsuite/Makefile.in
+  Status: backport
+  Owner: ccoutant
+  Fix gold testsuite failures when using newer versions of GCC.
+  https://sourceware.org/ml/binutils-cvs/2015-03/msg00048.html
+  https://sourceware.org/ml/binutils-cvs/2015-03/msg00075.html
+  https://sourceware.org/ml/binutils-cvs/2015-03/msg00146.html
+
+gold/aarch.cc
+  Status: backport
+  Owner: jingyu
+  Fix virtual function signature to match the one in the parent class.
+  https://sourceware.org/ml/binutils/2015-04/msg00045.html
+
+gold/debug.h
+gold/dwarf_reader.cc
+gold/symtab.cc
+gold/testsuite/debug_msg.sh
+  Status: backport
+  Owner: ccoutant
+  Improve ODR checking in gold, to tolerate slight differences in
+  line numbers between clang and gcc.
+  https://sourceware.org/ml/binutils-cvs/2015-04/msg00095.html
+
+gold/layout.cc
+gold/target.h
+gold/x86_64.cc
+  Status: local
+  Owner: tmsriram
+  With PIE links, check the size of the data segment and warn when it is
+  greater than a safe value (128MB for x86_64) to prevent the problem described
+  in go/unsafe-pie.
+
+gold/options.h
+gold/symtab.cc
+gold/symtab.h
+gold/testsuite/Makefile.am
+gold/testsuite/Makefile.in
+gold/testsuite/weak_unresolved_symbols_test.cc
+  Status: backport
+  Owner: tmsriram
+  Backport upstream patch that adds option --warn-unresolved-symbols to gold
+  that treats unresolved symbol references as weak. Details here:
+  https://sourceware.org/ml/binutils/2015-04/msg00358.html
+
+gold/gold.cc
+gold/options.h
+gold/testsuite/Makefile.am
+gold/testsuite/Makefile.in
+gold/testsuite/disable_pie_unsafe_size_test.cc
+gold/testsuite/disable_pie_unsafe_size_test.sh
+  Status: local
+  Owner: tmsriram
+  With PIE links, check the size of the data segment and disable PIE when it
+  is greater than a safe value (128MB for x86_64) to prevent the problem described
+  in go/unsafe-pie.  Allow this to be overridden with
+  --no-disable-pie-when-unsafe-data-size
+
+gold/powerpc.cc
+  Status: backport
+  Owner: saugustine
+  Backport upstream patches that disable assertion when building powerpc symbol
+  tables.
+  https://sourceware.org/ml/binutils/2015-04/msg00428.html
+  https://sourceware.org/ml/binutils/2015-04/msg00429.html
+
+gold/symtab.cc
+gold/testsuite/Makefile.am
+gold/testsuite/tls_pie_test.sh
+  Status: backport
+  Owner: tmsriram
+  Backport upstream patch that allows gold to resolve defined TLS symbols in a
+  PIE link.
+  https://sourceware.org/ml/binutils-cvs/2015-04/msg00098.html
